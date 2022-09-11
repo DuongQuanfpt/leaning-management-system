@@ -1,0 +1,208 @@
+/*===================== 	Premery bg color =====================*/
+
+:root {
+	--primary: #ff5e14;
+	--sc-primary: #e84900;
+}
+
+
+/* Hex */
+
+.skin-2 .bg-primary,
+.skin-2 .btn,
+.skin-2 .comments-area .comment-form p input[type="submit"],
+.skin-2 .pagination>.active>a,
+.skin-2 .pagination>.active>span,
+.skin-2 .pagination>.active>a:hover,
+.skin-2 .pagination>.active>span:hover,
+.skin-2 .pagination>.active>a:focus,
+.skin-2 .pagination>.active>span:focus,
+.skin-2 .feature-filters .active>[class*="btn"],
+.skin-2 .list-num-count>li:before,
+.skin-2 .pagination-bx.primary .pagination>li>a,
+.skin-2 .pagination-bx.primary .pagination>li>span,
+.skin-2 button.back-to-top,
+.skin-2 .rev-btn {
+	background-color: #ff5e14;
+}
+
+
+/*Hex color :hover */
+
+.skin-2 .btn:active,
+.skin-2 .btn:hover,
+.skin-2 .btn:focus,
+.skin-2 .active>.btn,
+.skin-2 .bg-primary-dark,
+.skin-2 .pagination>li>a:hover,
+.skin-2 .pagination>li>span:hover,
+.skin-2 .pagination>li>a:focus,
+.skin-2 .pagination>li>span:focus,
+.skin-2 .pagination>.active>a,
+.skin-2 .pagination>.active>span,
+.skin-2 .pagination>.active>a:hover,
+.skin-2 .pagination>.active>span:hover,
+.skin-2 .pagination>.active>a:focus,
+.skin-2 .pagination>.active>span:focus,
+.skin-2 .sidenav .closebtn:hover,
+.skin-2 .sidenav .closebtn:focus,
+.skin-2 .owl-btn-1.primary .owl-prev:hover,
+.skin-2 .owl-btn-1.primary .owl-next:hover,
+.skin-2 .owl-btn-2.primary .owl-prev:hover,
+.skin-2 .owl-btn-2.primary .owl-next:hover,
+.skin-2 .pagination-bx.primary .pagination>li>a:hover,
+.skin-2 .pagination-bx.primary .pagination>li>span:hover,
+.skin-2 .pagination-bx.primary .pagination>li.active>span,
+.skin-2 .pagination-bx.primary .pagination>li.active>a {
+	background-color: #4d0a91;
+}
+
+
+/*===================== 	Premery text color =====================*/
+
+.skin-2 a,
+.skin-2 .text-primary,
+.skin-2 .primary li:before,
+.skin-2 .menu-links .nav>li.active>a,
+.skin-2 .menu-links .nav>li:hover>a,
+.skin-2 .menu-links .nav>li .mega-menu>li ul a:hover,
+.skin-2 .menu-links .nav>li .sub-menu li:hover>a,
+.skin-2 footer a:active,
+.skin-2 footer a:focus,
+.skin-2 footer a:hover,
+.skin-2 footer h1 a,
+.skin-2 footer h2 a,
+.skin-2 footer h3 a,
+.skin-2 footer h4 a,
+.skin-2 footer h5 a,
+.skin-2 footer h6 a,
+.skin-2 footer p a,
+.skin-2 .testimonial-1 .testimonial-position,
+.skin-2 .acod-head a:after,
+.skin-2 .acod-head a,
+.skin-2 .acod-head a:hover,
+.skin-2 .acod-head a.collapsed:hover,
+.skin-2 .ttr-tabs .nav-tabs>li>a i,
+.skin-2 h1 a:hover,
+.skin-2 h2 a:hover,
+.skin-2 h3 a:hover,
+.skin-2 h4 a:hover,
+.skin-2 h5 a:hover,
+.skin-2 h6 a:hover,
+.skin-2 .btn.outline,
+.skin-2 .btn-link:hover {
+	color: #ff5e14;
+}
+
+
+/*===================== 	Secondery bg color =====================*/
+
+.skin-2 .bg-secondry {
+	background-color: #2d3239;
+}
+
+
+/*===================== 	Secondery text color =====================*/
+
+.skin-2 .text-secondry {
+	color: #2d3239;
+}
+
+.skin-2 .ovpr-light:after,
+.skin-2 .ovpr-middle:after,
+.skin-2 .ovpr-dark:after,
+.skin-2 .ovpr:after,
+.skin-2 .bg-primary {
+	background-color: #ff5e14;
+}
+
+.footer-top,
+.footer-bottom {
+	background-color: #121921;
+}
+
+.skin-2 .ovbl-middle::after,
+.skin-2 .ovbl-light::after,
+.skin-2 .ovbl-dark::after {
+	background: #391800;
+	background: -moz-linear-gradient(left, #391800 0%, #001739 38%, #321001 71%, #011e32 100%);
+	background: -webkit-linear-gradient(left, #391800 0%, #001739 38%, #321001 71%, #011e32 100%);
+	background: linear-gradient(to right, #391800 0%, #001739 38%, #321001 71%, #011e32 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#391800', endColorstr='#011e32', GradientType=1);
+}
+
+.skin-2 .ttr-notify-header::after,
+.skin-2 .widget-bg1,
+.skin-2 .ttr-search-bar,
+.skin-2 .ttr-header,
+.skin-2 .ovpr-dark:after,
+.skin-2 .pricingtable-main,
+.skin-2 .account-head:after {
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ff5e14+0,ff8e14+100 */
+	background: #ff5e14;
+	/* Old browsers */
+	background: -moz-linear-gradient(45deg, #ff5e14 0%, #ff8e14 100%);
+	/* FF3.6-15 */
+	background: -webkit-linear-gradient(45deg, #ff5e14 0%, #ff8e14 100%);
+	/* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(45deg, #ff5e14 0%, #ff8e14 100%);
+	/* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff5e14', endColorstr='#ff8e14', GradientType=1);
+	/* IE6-9 fallback on horizontal gradient */
+}
+
+
+/* Secondry Color */
+
+.skin-2 .portfolio-bx .portfolio-info-bx,
+.skin-2 .course-info-list ul li a.active,
+.skin-2 .course-info-list ul li a:hover,
+.skin-2 .btn,
+.skin-2 .profile-tabnav .nav li a.active,
+.skin-2 button.back-to-top,
+.skin-2 .upcoming-event-carousel.owl-btn-1 .owl-prev,
+.skin-2 .upcoming-event-carousel.owl-btn-1 .owl-next,
+.skin-2 .courses-carousel .owl-nav .owl-next,
+.skin-2 .courses-carousel .owl-nav .owl-prev,
+.skin-2 .recent-news-carousel .owl-nav .owl-next,
+.skin-2 .recent-news-carousel .owl-nav .owl-prev,
+.skin-2 .testimonial-carousel .owl-nav .owl-next,
+.skin-2 .testimonial-carousel .owl-nav .owl-prev {
+	background-color: #ffa415;
+	color: #000;
+}
+
+.skin-2 .footer_widget ul li a:hover,
+.skin-2 [class*="ovbl-"] .counter-style-1 .counter-text,
+.skin-2 .header-transparent .secondary-menu .btn-link:hover,
+.skin-2 .header-transparent .menu-links .nav>li:hover>a,
+.skin-2 .header-transparent .menu-links .nav>li.active>a {
+	color: #ffa415;
+}
+
+.skin-2 .btn.outline:hover,
+.skin-2 .course-info-list ul li a.active:hover,
+.skin-2 .course-info-list ul li a:hover,
+.skin-2 .btn:hover,
+.skin-2 .profile-tabnav .nav li a.active:hover,
+.skin-2 button.back-to-top:hover,
+.skin-2 .upcoming-event-carousel.owl-btn-1 .owl-prev:hover,
+.skin-2 .upcoming-event-carousel.owl-btn-1 .owl-next:hover,
+.skin-2 .courses-carousel .owl-nav .owl-next:hover,
+.skin-2 .courses-carousel .owl-nav .owl-prev:hover,
+.skin-2 .recent-news-carousel .owl-nav .owl-next:hover,
+.skin-2 .recent-news-carousel .owl-nav .owl-prev:hover,
+.skin-2 .testimonial-carousel .owl-nav .owl-next:hover,
+.skin-2 .testimonial-carousel .owl-nav .owl-prev:hover {
+	background-color: #e84900;
+	color: #fff;
+}
+
+.skin-2 .heading-bx.left .title-head {
+	border-color: #ffa415;
+}
+
+.skin-2 .online-cours .text-white h2,
+.skin-2 .online-cours .text-white h5 {
+	color: #000;
+}

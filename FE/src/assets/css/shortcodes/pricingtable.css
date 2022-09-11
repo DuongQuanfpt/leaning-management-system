@@ -1,0 +1,68 @@
+/*== >Pricing table  ===*/
+.pricingtable-inner {
+    text-align: center;
+}
+.pricingtable-price {
+    padding: 20px 20px;
+    background-color: #fff;
+    border: 1px solid #E9E9E9;
+}
+.pricingtable-bx {
+    color: #282a3c;
+    font-size: 45px;
+    font-weight: 500;
+}
+.pricingtable-type {
+    text-transform: capitalize;
+    font-size: 20px;
+    margin-left: 5px;
+}
+.pricingtable-type:before {
+    content: "/";
+    margin-right: 3px;
+}
+.pricingtable-title {
+    background-color: #fff;
+    padding: 20px;
+    text-transform: capitalize;
+}
+.pricingtable-title * {
+    margin: 0;
+    color: #fff;
+    font-weight: 800;
+}
+.pricingtable-features {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border: 1px solid #E9E9E9;
+}
+.pricingtable-features li {
+    padding: 12px;
+    border-bottom: 1px solid #E9E9E9;
+}
+.pricingtable-features li i {
+    margin: 0 3px;
+}
+.pricingtable-features li:nth-child(even) {
+    background-color: #fff;
+}
+.pricingtable-features li:last-child {
+    border-bottom: none;
+}
+.pricingtable-footer {
+    margin-top: -1px;
+    padding: 30px 0;
+    background-color: #fff;
+    border: 1px solid #E9E9E9;
+}
+.pricingtable-highlight {
+    z-index: 99;
+}
+.pricingtable-highlight .pricingtable-price { 
+}
+.pricingtable-highlight .pricingtable-footer { 
+}
+.no-col-gap .pricingtable-wrapper {
+    margin-left: -1px;
+}
