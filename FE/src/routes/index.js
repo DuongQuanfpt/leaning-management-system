@@ -25,6 +25,6 @@ const publicRoutes = [
 ]
 
 // Private routes
-const privateRoutes = [{ path: '/admin/', component: Dashboard }]
+const privateRoutes = [{ path: '/admin', component: Dashboard }]
 
 export { publicRoutes, privateRoutes }

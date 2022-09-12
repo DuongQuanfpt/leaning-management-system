@@ -22,6 +22,7 @@ import '~/assets/vendors/fontawesome/css/font-awesome.min.css'
 import '~/assets/vendors/flaticon/flaticon.css'
 import '~/assets/vendors/line-awesome/css/line-awesome.min.css'
 import '~/assets/vendors/themify/themify-icons.css'
+import ScrollToTop from './components/ScrollToTop'
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
           })}
         </Routes>
       </div>
+      <ScrollToTop />
     </Router>
   )
 }
