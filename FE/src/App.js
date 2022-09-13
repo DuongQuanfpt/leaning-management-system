@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import { publicRoutes } from '~/routes'
 
 // Plugins Stylesheet
@@ -26,7 +26,7 @@ import ScrollToTop from './components/ScrollToTop'
 
 function App() {
   return (
-    <Router>
+    <>
       <div className="App">
         <Routes>
           {publicRoutes.map((route, index) => {
@@ -36,7 +36,7 @@ function App() {
         </Routes>
       </div>
       <ScrollToTop />
-    </Router>
+    </>
   )
 }
 

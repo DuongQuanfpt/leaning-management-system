@@ -1,11 +1,34 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import * as Yup from 'yup'
+import { useForm } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
+import ErrorMsg from '~/components/ErrorMsg'
 
 // Images
 import logoWhite2 from '~/assets/images/logo-white-2.png'
 import bannerImg from '~/assets/images/background/bg2.jpg'
 
 const Login = () => {
+  const schema = Yup.object().shape({
+    email: Yup.string().required().email(),
+    password: Yup.string().required().min(8),
+  })
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid, isSubmitted },
+  } = useForm({ resolver: yupResolver(schema), mode: 'onTouched' })
+
+  // const navigate = useNavigate()
+
+  const submitForm = (data) => {
+    console.log(data)
+    if (!isValid) return
+    // navigate('/')
+  }
+
   return (
     <>
       <div className="account-form">
@@ -24,26 +47,42 @@ const Login = () => {
                 Don't have an account? <Link to="/register">Create one here</Link>
               </p>
             </div>
-            <form className="contact-bx">
+            <form className="contact-bx" onSubmit={handleSubmit(submitForm)}>
               <div className="row placeani">
                 <div className="col-lg-12">
                   <div className="form-group">
                     <div className="input-group">
-                      <input name="name" type="text" required="" placeholder="Your Name" className="form-control" />
+                      <input
+                        name="email"
+                        type="email"
+                        required=""
+                        placeholder="Email"
+                        className="form-control"
+                        autoComplete="false"
+                        {...register('email')}
+                      />
                     </div>
+                    {errors.email?.type === 'required' && <ErrorMsg errorMsg="Email is required" />}
+                    {errors.email?.type === 'email' && <ErrorMsg errorMsg="Email is not valid" />}
                   </div>
                 </div>
                 <div className="col-lg-12">
                   <div className="form-group">
                     <div className="input-group">
                       <input
-                        name="email"
+                        name="password"
                         type="password"
-                        className="form-control"
-                        placeholder="Your Password"
                         required=""
+                        placeholder="Your Password"
+                        className="form-control"
+                        autoComplete="false"
+                        {...register('password')}
                       />
                     </div>
+                    {errors.password?.type === 'required' && <ErrorMsg errorMsg="Password is required" />}
+                    {errors.password?.type === 'min' && (
+                      <ErrorMsg errorMsg="Password length must be at least 8 characters" />
+                    )}
                   </div>
                 </div>
                 <div className="col-lg-12">
