@@ -24,4 +24,6 @@ public class UserController {
 		return userService.save(userRequestDTO);
 
 	}
+
+	
 }

@@ -1,6 +1,6 @@
 package swp490.g23.onlinelearningsystem.entities.user.domain.response;
 
-public class UserResponseDTO {
+public class UserResponseDTO  {
 
     private Long userId;
 

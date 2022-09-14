@@ -1,6 +1,6 @@
 package swp490.g23.onlinelearningsystem.entities.user.domain.request;
 
-public class UserRequestDTO {
+public class UserRequestDTO  {
     private Long userId;
 
     private String fullName;

@@ -7,9 +7,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import swp490.g23.onlinelearningsystem.entities.BaseEntity;
+
 @Entity
 @Table(name = "user")
-public class User {
+public class User extends BaseEntity {
     @Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long userId;
