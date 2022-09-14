@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Sticky from 'react-stickynode'
 
@@ -8,6 +8,8 @@ import adv from '~/assets/images/adv/adv.jpg'
 import logoWhite from '~/assets/images/logo-white.png'
 
 const Header = () => {
+  const [authenticated, setAuthenticated] = useState(true)
+
   useEffect(() => {
     // Search Form Popup
     var searchBtn = document.getElementById('quik-search-btn')
@@ -53,6 +55,10 @@ const Header = () => {
     }
   }, [])
 
+  const handleLogout = () => {
+    setAuthenticated(() => !authenticated)
+  }
+
   return (
     <>
       <header className="header rs-nav header-transparent">
@@ -80,12 +86,6 @@ const Header = () => {
                       <option data-icon="flag flag-uk">English UK</option>
                       <option data-icon="flag flag-us">English US</option>
                     </select>
-                  </li>
-                  <li>
-                    <Link to="/login">Login</Link>
-                  </li>
-                  <li>
-                    <Link to="/register">Register</Link>
                   </li>
                 </ul>
               </div>
@@ -119,27 +119,50 @@ const Header = () => {
               <div className="secondary-menu">
                 <div className="secondary-inner">
                   <ul>
-                    <li>
-                      <Link to="#" className="btn-link">
-                        <i className="fa fa-facebook"></i>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="btn-link">
-                        <i className="fa fa-google-plus"></i>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="btn-link">
-                        <i className="fa fa-linkedin"></i>
-                      </Link>
-                    </li>
                     {/* <!-- Search Button ==== --> */}
-                    <li className="search-btn">
+                    <li className="px-2">
                       <button id="quik-search-btn" type="button" className="btn-link">
                         <i className="fa fa-search"></i>
                       </button>
                     </li>
+                    {authenticated ? (
+                      <li>
+                        <a href="#" className="ttr-material-button ttr-submenu-toggle">
+                          <span className="ttr-user-avatar">
+                            <img alt="" src={logoWhite} width="60" height="60" />
+                          </span>
+                        </a>
+                        <div className="ttr-header-submenu">
+                          <ul>
+                            <li>
+                              <Link to="/dashboard">Dashboard</Link>
+                            </li>
+                            <li>
+                              <Link to="/profile">Profile</Link>
+                            </li>
+                            <li>
+                              <Link to="/password-change">Change Password</Link>
+                            </li>
+                            <li onClick={handleLogout}>
+                              <Link to="/">Logout</Link>
+                            </li>
+                          </ul>
+                        </div>
+                      </li>
+                    ) : (
+                      <>
+                        <li className="px-2">
+                          <Link to="/register" className="btn-link">
+                            Register
+                          </Link>
+                        </li>
+                        <li className="px-2">
+                          <Link to="/login" className="btn-link">
+                            Login
+                          </Link>
+                        </li>
+                      </>
+                    )}
                   </ul>
                 </div>
               </div>

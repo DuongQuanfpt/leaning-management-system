@@ -1,30 +1,38 @@
-// Admin pages
-import Dashboard from '~/pages/admin/Dashboard'
+import { lazy } from 'react'
 
 //Common pages
-import HomePage from '~/pages/common/HomePage'
-import Login from '~/pages/common/Login'
-import ForgetPassword from '~/pages/common/Register'
-import Register from '~/pages/common/Register'
-import PasswordChange from '~/pages/user/PasswordChange'
+const HomePage = lazy(() => import('~/pages/common/HomePage'))
+const Login = lazy(() => import('~/pages/common/Login'))
+const ForgetPassword = lazy(() => import('~/pages/common/ForgetPassword'))
+const Register = lazy(() => import('~/pages/common/Register'))
 
-import PageNotFound from '~/pages/common/PageNotFound'
+// Admin pages
+const Dashboard = lazy(() => import('~/pages/admin/Dashboard'))
 
 //User pages
+const Profile = lazy(() => import('~/pages/user/Profile'))
+const PasswordChange = lazy(() => import('~/pages/user/PasswordChange'))
+
+//404 pages
+const PageNotFound = lazy(() => import('~/pages/common/PageNotFound'))
 
 // Public routes
 const publicRoutes = [
-  { path: '*', component: HomePage },
+  { path: '*', component: PageNotFound },
   { path: '/', component: HomePage },
   { path: '/login', component: Login },
   { path: '/forget-password', component: ForgetPassword },
   { path: '/register', component: Register },
-  { path: '/password-change', component: PasswordChange },
-
   { path: '/404', component: PageNotFound },
 ]
 
 // Private routes
-const privateRoutes = [{ path: '/admin', component: Dashboard }]
+const privateRoutes = [
+  // Admin pages
+  { path: '/admin', component: Dashboard },
+  //User pages
+  { path: '/profile', component: Profile },
+  { path: '/password-change', component: PasswordChange },
+]
 
 export { publicRoutes, privateRoutes }

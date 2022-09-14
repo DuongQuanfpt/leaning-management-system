@@ -1,9 +1,7 @@
 import React from 'react'
 
-const PasswordChange = () => {
-  return (
-    <div>PasswordChange</div>
-  )
+const Dashboard = () => {
+  return <div>Dashboard</div>
 }
 
-export default PasswordChange
+export default Dashboard

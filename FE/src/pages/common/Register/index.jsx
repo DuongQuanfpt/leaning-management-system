@@ -19,7 +19,7 @@ const Register = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid, isSubmitted },
+    formState: { errors, isValid },
   } = useForm({ resolver: yupResolver(schema), mode: 'onTouched' })
 
   // const navigate = useNavigate()
