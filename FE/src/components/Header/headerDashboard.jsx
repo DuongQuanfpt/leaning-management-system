@@ -25,24 +25,24 @@ const headerDashboard = () => {
             {/* <!-- header left menu start --> */}
             <ul className="ttr-header-navigation">
               <li>
-                <a href="../index.html" className="ttr-material-button ttr-submenu-toggle">
+                <Link to="/" className="ttr-material-button ttr-submenu-toggle">
                   HOME
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="ttr-material-button ttr-submenu-toggle">
+                <Link href="#" className="ttr-material-button ttr-submenu-toggle">
                   QUICK MENU <i className="fa fa-angle-down"></i>
-                </a>
+                </Link>
                 <div className="ttr-header-submenu">
                   <ul>
                     <li>
-                      <a href="../courses.html">Our Courses</a>
+                      <Link to="">Our Courses</Link>
                     </li>
                     <li>
-                      <a href="../event.html">New Event</a>
+                      <Link to="">New Event</Link>
                     </li>
                     <li>
-                      <a href="../membership.html">Membership</a>
+                      <Link to="">Membership</Link>
                     </li>
                   </ul>
                 </div>
@@ -54,14 +54,14 @@ const headerDashboard = () => {
             {/* <!-- header right menu start --> */}
             <ul className="ttr-header-navigation">
               <li>
-                <a href="#" className="ttr-material-button ttr-search-toggle">
+                <Link to="" className="ttr-material-button ttr-search-toggle">
                   <i className="fa fa-search"></i>
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="ttr-material-button ttr-submenu-toggle">
+                <Link to="#" className="ttr-material-button ttr-submenu-toggle">
                   <i className="fa fa-bell"></i>
-                </a>
+                </Link>
                 <div className="ttr-header-submenu noti-menu">
                   <div className="ttr-notify-header">
                     <span className="ttr-notify-text-top">9 New</span>
@@ -77,7 +77,7 @@ const headerDashboard = () => {
                           <span>Sneha Jogi</span> sent you a message.
                         </span>
                         <span className="notification-time">
-                          <a href="#" className="fa fa-close"></a>
+                          <Link to="/admin" className="fa fa-close"></Link>
                           <span> 02:14</span>
                         </span>
                       </li>
@@ -86,10 +86,10 @@ const headerDashboard = () => {
                           <i className="fa fa-shopping-cart"></i>
                         </span>
                         <span className="notification-text">
-                          <a href="#">Your order is placed</a> sent you a message.
+                          <Link to="">Your order is placed</Link> sent you a message.
                         </span>
                         <span className="notification-time">
-                          <a href="#" className="fa fa-close"></a>
+                          <Link to="/admin" className="fa fa-close"></Link>
                           <span> 7 Min</span>
                         </span>
                       </li>
@@ -101,7 +101,7 @@ const headerDashboard = () => {
                           <span>Your item is shipped</span> sent you a message.
                         </span>
                         <span className="notification-time">
-                          <a href="#" className="fa fa-close"></a>
+                          <Link to="/admin" className="fa fa-close"></Link>
                           <span> 2 May</span>
                         </span>
                       </li>
@@ -110,10 +110,10 @@ const headerDashboard = () => {
                           <i className="fa fa-comments-o"></i>
                         </span>
                         <span className="notification-text">
-                          <a href="#">Sneha Jogi</a> sent you a message.
+                          <Link to="#">Sneha Jogi</Link> sent you a message.
                         </span>
                         <span className="notification-time">
-                          <a href="#" className="fa fa-close"></a>
+                          <Link to="/admin" className="fa fa-close"></Link>
                           <span> 14 July</span>
                         </span>
                       </li>
@@ -125,7 +125,7 @@ const headerDashboard = () => {
                           <span>Sneha Jogi</span> sent you a message.
                         </span>
                         <span className="notification-time">
-                          <a href="#" className="fa fa-close"></a>
+                          <Link to="/admin" className="fa fa-close"></Link>
                           <span> 15 Min</span>
                         </span>
                       </li>
@@ -134,57 +134,57 @@ const headerDashboard = () => {
                 </div>
               </li>
               <li>
-                <a href="#" className="ttr-material-button ttr-submenu-toggle">
+                <Link to="#" className="ttr-material-button ttr-submenu-toggle">
                   <span className="ttr-user-avatar">
                     <img alt="" src="assets/images/testimonials/pic3.jpg" width="32" height="32" />
                   </span>
-                </a>
+                </Link>
                 <div className="ttr-header-submenu">
                   <ul>
                     <li>
-                      <a href="user-profile.html">My profile</a>
+                      <Link to="user-profile.html">My profile</Link>
                     </li>
                     <li>
-                      <a href="list-view-calendar.html">Activity</a>
+                      <Link to="list-view-calendar.html">Activity</Link>
                     </li>
                     <li>
-                      <a href="mailbox.html">Messages</a>
+                      <Link to="mailbox.html">Messages</Link>
                     </li>
                     <li>
-                      <a href="../login.html">Logout</a>
+                      <Link to="/login">Logout</Link>
                     </li>
                   </ul>
                 </div>
               </li>
               <li className="ttr-hide-on-mobile">
-                <a href="#" className="ttr-material-button">
+                <Link to="" className="ttr-material-button">
                   <i className="ti-layout-grid3-alt"></i>
-                </a>
+                </Link>
                 <div className="ttr-header-submenu ttr-extra-menu">
-                  <a href="#">
+                  <Link to="">
                     <i className="fa fa-music"></i>
                     <span>Musics</span>
-                  </a>
-                  <a href="#">
+                  </Link>
+                  <Link to="">
                     <i className="fa fa-youtube-play"></i>
                     <span>Videos</span>
-                  </a>
-                  <a href="#">
+                  </Link>
+                  <Link to="">
                     <i className="fa fa-envelope"></i>
                     <span>Emails</span>
-                  </a>
-                  <a href="#">
+                  </Link>
+                  <Link to="">
                     <i className="fa fa-book"></i>
                     <span>Reports</span>
-                  </a>
-                  <a href="#">
+                  </Link>
+                  <Link to="">
                     <i className="fa fa-smile-o"></i>
                     <span>Persons</span>
-                  </a>
-                  <a href="#">
+                  </Link>
+                  <Link to="">
                     <i className="fa fa-picture-o"></i>
                     <span>Pictures</span>
-                  </a>
+                  </Link>
                 </div>
               </li>
             </ul>

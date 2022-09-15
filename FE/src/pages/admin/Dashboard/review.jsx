@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 import HeaderDashboard from '~/components/Header/headerDashboard'
 import Sidebar from '~/components/Header/sidebar'
 
@@ -12,9 +14,9 @@ const Review = () => {
             <h4 className="breadcrumb-title">Review</h4>
             <ul className="db-breadcrumb-list">
               <li>
-                <a href="#">
+                <Link to="#">
                   <i className="fa fa-home"></i>Home
-                </a>
+                </Link>
               </li>
               <li>Review</li>
             </ul>
@@ -81,9 +83,9 @@ const Review = () => {
                           </p>
                         </div>
                         <div className="col-md-12">
-                          <a href="#" className="btn" data-toggle="modal" data-target="#exampleModal">
+                          <Link to="" className="btn" data-toggle="modal" data-target="#exampleModal">
                             Reply Review
-                          </a>
+                          </Link>
                         </div>
                       </div>
                     </div>
@@ -142,9 +144,9 @@ const Review = () => {
                           </p>
                         </div>
                         <div className="col-md-12">
-                          <a href="#" className="btn" data-toggle="modal" data-target="#exampleModal">
+                          <Link to="" className="btn" data-toggle="modal" data-target="#exampleModal">
                             Reply Review
-                          </a>
+                          </Link>
                         </div>
                       </div>
                     </div>
@@ -203,9 +205,9 @@ const Review = () => {
                           </p>
                         </div>
                         <div className="col-md-12">
-                          <a href="#" className="btn" data-toggle="modal" data-target="#exampleModal">
+                          <Link to="" className="btn" data-toggle="modal" data-target="#exampleModal">
                             Reply Review
-                          </a>
+                          </Link>
                         </div>
                       </div>
                     </div>

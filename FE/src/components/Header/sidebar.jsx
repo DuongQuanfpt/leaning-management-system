@@ -1,3 +1,6 @@
+import { Link } from 'react-router-dom'
+import logo from '~/assets/images/logo.png'
+
 const Sidebar = () => {
   return (
     <>
@@ -5,9 +8,9 @@ const Sidebar = () => {
         <div className="ttr-sidebar-wrapper content-scroll">
           {/* <!-- side menu logo start --> */}
           <div className="ttr-sidebar-logo">
-            <a href="#">
-              <img alt="" src="assets/images/logo.png" width="122" height="27" />
-            </a>
+            <Link to="/">
+              <img alt="" src={logo} width="122" height="27" />
+            </Link>
             {/* <!-- <div className="ttr-sidebar-pin-button" title="Pin/Unpin Menu">
 					<i className="material-icons ttr-fixed-icon">gps_fixed</i>
 					<i className="material-icons ttr-not-fixed-icon">gps_not_fixed</i>
@@ -21,23 +24,23 @@ const Sidebar = () => {
           <nav className="ttr-sidebar-navi">
             <ul>
               <li>
-                <a href="index.html" className="ttr-material-button">
+                <Link to="/admin" className="ttr-material-button">
                   <span className="ttr-icon">
                     <i className="ti-home"></i>
                   </span>
                   <span className="ttr-label">Dashborad</span>
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="courses.html" className="ttr-material-button">
+                <Link to="/admin/courses" className="ttr-material-button">
                   <span className="ttr-icon">
                     <i className="ti-book"></i>
                   </span>
                   <span className="ttr-label">Courses</span>
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="ttr-material-button">
+                <Link to="" className="ttr-material-button">
                   <span className="ttr-icon">
                     <i className="ti-email"></i>
                   </span>
@@ -45,27 +48,27 @@ const Sidebar = () => {
                   <span className="ttr-arrow-icon">
                     <i className="fa fa-angle-down"></i>
                   </span>
-                </a>
+                </Link>
                 <ul>
                   <li>
-                    <a href="mailbox.html" className="ttr-material-button">
+                    <Link to="/admin/mailbox" className="ttr-material-button">
                       <span className="ttr-label">Mail Box</span>
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="mailbox-compose.html" className="ttr-material-button">
+                    <Link to="/admin/mailbox-compose" className="ttr-material-button">
                       <span className="ttr-label">Compose</span>
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="mailbox-read.html" className="ttr-material-button">
+                    <Link to="/admin/mailbox-read" className="ttr-material-button">
                       <span className="ttr-label">Mail Read</span>
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </li>
               <li>
-                <a href="#" className="ttr-material-button">
+                <Link to="/" className="ttr-material-button">
                   <span className="ttr-icon">
                     <i className="ti-calendar"></i>
                   </span>
@@ -73,46 +76,46 @@ const Sidebar = () => {
                   <span className="ttr-arrow-icon">
                     <i className="fa fa-angle-down"></i>
                   </span>
-                </a>
+                </Link>
                 <ul>
                   <li>
-                    <a href="basic-calendar.html" className="ttr-material-button">
+                    <Link to="/admin/basic-calendar" className="ttr-material-button">
                       <span className="ttr-label">Basic Calendar</span>
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="list-view-calendar.html" className="ttr-material-button">
+                    <Link to="/admin/list-view-calendar" className="ttr-material-button">
                       <span className="ttr-label">List View</span>
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </li>
               <li>
-                <a href="bookmark.html" className="ttr-material-button">
+                <Link to="/admin/bookmark" className="ttr-material-button">
                   <span className="ttr-icon">
                     <i className="ti-bookmark-alt"></i>
                   </span>
                   <span className="ttr-label">Bookmarks</span>
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="review.html" className="ttr-material-button">
+                <Link to="/admin/review" className="ttr-material-button">
                   <span className="ttr-icon">
                     <i className="ti-comments"></i>
                   </span>
                   <span className="ttr-label">Review</span>
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="add-listing.html" className="ttr-material-button">
+                <Link to="/admin/add-listing" className="ttr-material-button">
                   <span className="ttr-icon">
                     <i className="ti-layout-accordion-list"></i>
                   </span>
                   <span className="ttr-label">Add listing</span>
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="ttr-material-button">
+                <Link to="" className="ttr-material-button">
                   <span className="ttr-icon">
                     <i className="ti-user"></i>
                   </span>
@@ -120,17 +123,17 @@ const Sidebar = () => {
                   <span className="ttr-arrow-icon">
                     <i className="fa fa-angle-down"></i>
                   </span>
-                </a>
+                </Link>
                 <ul>
                   <li>
-                    <a href="user-profile.html" className="ttr-material-button">
+                    <Link to="/admin/user-profile" className="ttr-material-button">
                       <span className="ttr-label">User Profile</span>
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="teacher-profile.html" className="ttr-material-button">
+                    <Link to="/admin/teacher-profile" className="ttr-material-button">
                       <span className="ttr-label">Teacher Profile</span>
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </li>

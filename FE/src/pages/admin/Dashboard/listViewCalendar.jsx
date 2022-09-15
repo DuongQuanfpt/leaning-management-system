@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 import HeaderDashboard from '~/components/Header/headerDashboard'
 import Sidebar from '~/components/Header/sidebar'
 
@@ -12,9 +14,9 @@ const ListViewCalendar = () => {
             <h4 className="breadcrumb-title">List Views Calendar</h4>
             <ul className="db-breadcrumb-list">
               <li>
-                <a href="#">
+                <Link to="/admin">
                   <i className="fa fa-home"></i>Home
-                </a>
+                </Link>
               </li>
               <li>List Views Calendar</li>
             </ul>

@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 import HeaderDashboard from '~/components/Header/headerDashboard'
 import Sidebar from '~/components/Header/sidebar'
 
@@ -12,9 +14,9 @@ const MailboxRead = () => {
             <h4 className="breadcrumb-title">Mail Read</h4>
             <ul className="db-breadcrumb-list">
               <li>
-                <a href="#">
+                <Link to="#">
                   <i className="fa fa-home"></i>Home
-                </a>
+                </Link>
               </li>
               <li>Mail Read</li>
             </ul>
@@ -26,36 +28,36 @@ const MailboxRead = () => {
                 <div className="email-wrapper">
                   <div className="email-menu-bar">
                     <div className="compose-mail">
-                      <a href="mailbox-compose.html" className="btn btn-block">
+                      <Link to="mailbox-compose.html" className="btn btn-block">
                         Compose
-                      </a>
+                      </Link>
                     </div>
                     <div className="email-menu-bar-inner">
                       <ul>
                         <li className="active">
-                          <a href="mailbox.html">
+                          <Link to="/admin/mailbox-compose">
                             <i className="fa fa-envelope-o"></i>Inbox <span className="badge badge-success">8</span>
-                          </a>
+                          </Link>
                         </li>
                         <li>
-                          <a href="mailbox.html">
+                          <Link to="">
                             <i className="fa fa-send-o"></i>Sent
-                          </a>
+                          </Link>
                         </li>
                         <li>
-                          <a href="mailbox.html">
+                          <Link to="">
                             <i className="fa fa-file-text-o"></i>Drafts <span className="badge badge-warning">8</span>
-                          </a>
+                          </Link>
                         </li>
                         <li>
-                          <a href="mailbox.html">
+                          <Link to="">
                             <i className="fa fa-cloud-upload"></i>Outbox <span className="badge badge-danger">8</span>
-                          </a>
+                          </Link>
                         </li>
                         <li>
-                          <a href="mailbox.html">
+                          <Link to="">
                             <i className="fa fa-trash-o"></i>Trash
-                          </a>
+                          </Link>
                         </li>
                       </ul>
                     </div>
@@ -71,34 +73,34 @@ const MailboxRead = () => {
                         </span>
                         <ul className="dropdown-menu">
                           <li>
-                            <a href="#">
+                            <Link to="">
                               <i className="fa fa-trash-o"></i> Delete
-                            </a>
+                            </Link>
                           </li>
                           <li>
-                            <a href="#">
+                            <Link to="">
                               <i className="fa fa-arrow-down"></i> Archive
-                            </a>
+                            </Link>
                           </li>
                           <li>
-                            <a href="#">
+                            <Link to="">
                               <i className="fa fa-clock-o"></i> Snooze
-                            </a>
+                            </Link>
                           </li>
                           <li>
-                            <a href="#">
+                            <Link to="">
                               <i className="fa fa-envelope-open"></i> Mark as unread
-                            </a>
+                            </Link>
                           </li>
                         </ul>
                       </div>
                       <div className="next-prev-btn">
-                        <a href="#">
+                        <Link to="">
                           <i className="fa fa-angle-left"></i>
-                        </a>
-                        <a href="#">
+                        </Link>
+                        <Link to="">
                           <i className="fa fa-angle-right"></i>
-                        </a>
+                        </Link>
                       </div>
                     </div>
                     <div className="mailbox-view">
@@ -127,24 +129,24 @@ const MailboxRead = () => {
                               </span>
                               <ul className="dropdown-menu dropdown-menu-right">
                                 <li>
-                                  <a href="#">
+                                  <Link to="">
                                     <i className="fa fa-trash-o"></i> Delete
-                                  </a>
+                                  </Link>
                                 </li>
                                 <li>
-                                  <a href="#">
+                                  <Link to="">
                                     <i className="fa fa-arrow-down"></i> Archive
-                                  </a>
+                                  </Link>
                                 </li>
                                 <li>
-                                  <a href="#">
+                                  <Link to="">
                                     <i className="fa fa-clock-o"></i> Snooze
-                                  </a>
+                                  </Link>
                                 </li>
                                 <li>
-                                  <a href="#">
+                                  <Link to="">
                                     <i className="fa fa-envelope-open"></i> Mark as unread
-                                  </a>
+                                  </Link>
                                 </li>
                               </ul>
                             </div>
@@ -180,15 +182,15 @@ const MailboxRead = () => {
                             <i className="fa fa-download m-r5"></i> Attachments <span>(3)</span>
                           </h6>
                           <div className="mailbox-download-file">
-                            <a href="#">
+                            <Link to="">
                               <i className="fa fa-file-image-o"></i> photo.png
-                            </a>
-                            <a href="#">
+                            </Link>
+                            <Link to="">
                               <i className="fa fa-file-text-o"></i> dec.text
-                            </a>
-                            <a href="#">
+                            </Link>
+                            <Link to="">
                               <i className="fa fa-file"></i> video.mkv
-                            </a>
+                            </Link>
                           </div>
                           <hr />
                           <div className="form-group">

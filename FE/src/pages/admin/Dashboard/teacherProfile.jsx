@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 import HeaderDashboard from '~/components/Header/headerDashboard'
 import Sidebar from '~/components/Header/sidebar'
 
@@ -12,9 +14,9 @@ const TeacherProfile = () => {
             <h4 className="breadcrumb-title">Teacher Profile</h4>
             <ul className="db-breadcrumb-list">
               <li>
-                <a href="#">
+                <Link to="#">
                   <i className="fa fa-home"></i>Home
-                </a>
+                </Link>
               </li>
               <li>Teacher Profile</li>
             </ul>
@@ -169,9 +171,9 @@ const TeacherProfile = () => {
                                 <div className="col-md-2">
                                   <label className="col-form-label">Close</label>
                                   <div className="form-group">
-                                    <a className="delete" href="#">
+                                    <Link className="delete" to="">
                                       <i className="fa fa-close"></i>
-                                    </a>
+                                    </Link>
                                   </div>
                                 </div>
                               </div>

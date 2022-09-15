@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 import HeaderDashboard from '~/components/Header/headerDashboard'
 import Sidebar from '~/components/Header/sidebar'
 
@@ -12,9 +14,9 @@ const Bookmark = () => {
             <h4 className="breadcrumb-title">Bookmarks</h4>
             <ul className="db-breadcrumb-list">
               <li>
-                <a href="#">
+                <Link to="/admin">
                   <i className="fa fa-home"></i>Home
-                </a>
+                </Link>
               </li>
               <li>Bookmarks</li>
             </ul>
@@ -78,12 +80,12 @@ const Bookmark = () => {
                           </p>
                         </div>
                         <div className="col-md-12">
-                          <a href="#" className="btn radius-xl">
+                          <Link to="" className="btn radius-xl">
                             View Courses
-                          </a>
-                          <a href="#" className="btn red outline radius-xl ">
+                          </Link>
+                          <Link to="" className="btn red outline radius-xl ">
                             Cancel
-                          </a>
+                          </Link>
                         </div>
                       </div>
                     </div>
@@ -139,12 +141,12 @@ const Bookmark = () => {
                           </p>
                         </div>
                         <div className="col-md-12">
-                          <a href="#" className="btn radius-xl">
+                          <Link to="" className="btn radius-xl">
                             View Courses
-                          </a>
-                          <a href="#" className="btn red outline radius-xl ">
+                          </Link>
+                          <Link to="" className="btn red outline radius-xl ">
                             Cancel
-                          </a>
+                          </Link>
                         </div>
                       </div>
                     </div>
@@ -200,12 +202,12 @@ const Bookmark = () => {
                           </p>
                         </div>
                         <div className="col-md-12">
-                          <a href="#" className="btn radius-xl">
+                          <Link to="" className="btn radius-xl">
                             View Courses
-                          </a>
-                          <a href="#" className="btn red outline radius-xl ">
+                          </Link>
+                          <Link to="" className="btn red outline radius-xl ">
                             Cancel
-                          </a>
+                          </Link>
                         </div>
                       </div>
                     </div>
@@ -261,12 +263,12 @@ const Bookmark = () => {
                           </p>
                         </div>
                         <div className="col-md-12">
-                          <a href="#" className="btn radius-xl">
+                          <Link to="" className="btn radius-xl">
                             View Courses
-                          </a>
-                          <a href="#" className="btn red outline radius-xl ">
+                          </Link>
+                          <Link to="" className="btn red outline radius-xl ">
                             Cancel
-                          </a>
+                          </Link>
                         </div>
                       </div>
                     </div>

@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 import HeaderDashboard from '~/components/Header/headerDashboard'
 import Sidebar from '~/components/Header/sidebar'
 
@@ -12,9 +14,9 @@ const UserProfile = () => {
             <h4 className="breadcrumb-title">User Profile</h4>
             <ul className="db-breadcrumb-list">
               <li>
-                <a href="#">
+                <Link to="#">
                   <i className="fa fa-home"></i>Home
-                </a>
+                </Link>
               </li>
               <li>User Profile</li>
             </ul>
