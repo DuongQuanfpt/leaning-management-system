@@ -160,7 +160,7 @@ const Footer = () => {
                       <h6 className="footer-title">Get In Touch</h6>
                       <ul>
                         <li>
-                          <Link to="/">Dashboard</Link>
+                          <Link to="/admin">Dashboard</Link>
                         </li>
                         <li>
                           <Link to="/blog-classic-grid">Blog</Link>
