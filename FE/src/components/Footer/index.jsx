@@ -3,62 +3,6 @@ import { Link } from 'react-router-dom'
 
 // Images
 import logo from '~/assets/images/logo-white.png'
-// import galleryPic1 from '~/assets/images/gallery/pic1.jpg'
-// import galleryPic2 from '~/assets/images/gallery/pic2.jpg'
-// import galleryPic3 from '~/assets/images/gallery/pic3.jpg'
-// import galleryPic4 from '~/assets/images/gallery/pic4.jpg'
-// import galleryPic5 from '~/assets/images/gallery/pic5.jpg'
-// import galleryPic6 from '~/assets/images/gallery/pic6.jpg'
-// import galleryPic7 from '~/assets/images/gallery/pic7.jpg'
-// import galleryPic8 from '~/assets/images/gallery/pic8.jpg'
-
-// const content = [
-//   {
-//     thumb: galleryPic1,
-//   },
-//   {
-//     thumb: galleryPic2,
-//   },
-//   {
-//     thumb: galleryPic3,
-//   },
-//   {
-//     thumb: galleryPic4,
-//   },
-//   {
-//     thumb: galleryPic5,
-//   },
-//   {
-//     thumb: galleryPic6,
-//   },
-//   {
-//     thumb: galleryPic7,
-//   },
-//   {
-//     thumb: galleryPic8,
-//   },
-// ]
-
-// const options = {
-//   settings: {
-//     overlayColor: 'rgba(0,0,0,0.9)',
-//     backgroundColor: '#FDC716',
-//     slideAnimationType: 'slide',
-//   },
-//   buttons: {
-//     backgroundColor: '#f7b205',
-//     iconColor: 'rgba(255, 255, 255, 1)',
-//     showDownloadButton: false,
-//     showAutoplayButton: false,
-//     showThumbnailsButton: false,
-//   },
-//   caption: {
-//     captionColor: '#232eff',
-//     captionFontFamily: 'Raleway, sans-serif',
-//     captionFontWeight: '300',
-//     captionTextTransform: 'uppercase',
-//   },
-// }
 
 const Footer = () => {
   return (
@@ -194,22 +138,6 @@ const Footer = () => {
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className="col-12 col-lg-3 col-md-5 col-sm-12 footer-col-4">
-                <div className="widget widget_gallery gallery-grid-4">
-                  <h5 className="footer-title">Our Gallery</h5>
-                  {/* <GalleryImg /> */}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="footer-bottom">
-          <div className="container">
-            <div className="row">
-              <div className="col-lg-12 col-md-12 col-sm-12 text-center">
-                {' '}
-                © 2021 <span className="text-white">EduChamp</span> All Rights Reserved.
               </div>
             </div>
           </div>
