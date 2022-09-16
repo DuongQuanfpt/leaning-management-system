@@ -1,6 +1,11 @@
 package swp490.g23.onlinelearningsystem.entities.user.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,10 +25,17 @@ public class UserController {
 
     @PostMapping(value ="/register")// API for registration
 	public UserResponseDTO createNew(@RequestBody UserRequestDTO userRequestDTO) {
-       
+		PasswordEncoder encoder = new BCryptPasswordEncoder();
+		userRequestDTO.setPassword(encoder.encode(userRequestDTO.getPassword()));
 		return userService.save(userRequestDTO);
 
 	}
 
+	@GetMapping(value="")
+	public List<User> testJWT() {
+		
+		return userService.stuff();
+
+	}
 	
 }

@@ -1,8 +1,11 @@
 package swp490.g23.onlinelearningsystem.entities.user.service.impl;
 
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserRequestDTO;
@@ -21,6 +24,10 @@ public class UserService implements IUserService{
         User user = toEntity(UserRequestDTO);
         user = userRepository.save(user);
         return toDTO(user);
+    }
+
+    public List<User> stuff (){
+        return userRepository.findAll();
     }
     
     //Convert DTO to Entity
