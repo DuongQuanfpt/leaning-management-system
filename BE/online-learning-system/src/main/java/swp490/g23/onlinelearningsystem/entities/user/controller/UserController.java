@@ -2,6 +2,8 @@ package swp490.g23.onlinelearningsystem.entities.user.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,7 +26,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping(value ="/register")// API for registration
-	public UserResponseDTO createNew(@RequestBody UserRequestDTO userRequestDTO) {
+	public UserResponseDTO createNew(@RequestBody @Valid UserRequestDTO userRequestDTO) {
 		PasswordEncoder encoder = new BCryptPasswordEncoder();
 		userRequestDTO.setPassword(encoder.encode(userRequestDTO.getPassword()));
 		return userService.save(userRequestDTO);

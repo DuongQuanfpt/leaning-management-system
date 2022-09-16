@@ -8,6 +8,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Pattern;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,7 +27,7 @@ public class User extends BaseEntity implements UserDetails {
     @Column
 	private String fullName;
 
-	@Column
+	@Column(name = "email",unique = true)
 	private String email;
 
 	@Column

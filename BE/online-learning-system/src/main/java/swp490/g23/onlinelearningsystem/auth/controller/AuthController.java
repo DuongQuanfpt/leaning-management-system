@@ -1,5 +1,7 @@
 package swp490.g23.onlinelearningsystem.auth.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +30,7 @@ public class AuthController {
     JwtTokenUtil tokenUtil;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login (@RequestBody AuthRequest request){
+    public ResponseEntity<?> login (@RequestBody @Valid AuthRequest request){
         try {
            Authentication authentication = authenticationManager.authenticate(
                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
