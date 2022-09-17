@@ -14,9 +14,9 @@ const BasicCalendar = () => {
             <h4 className="breadcrumb-title">Basic Calendar</h4>
             <ul className="db-breadcrumb-list">
               <li>
-                <a href="#">
+                <Link to="/">
                   <i className="fa fa-home"></i>Home
-                </a>
+                </Link>
               </li>
               <li>Basic Calendar</li>
             </ul>

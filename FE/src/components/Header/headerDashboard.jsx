@@ -1,6 +1,83 @@
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import $ from 'jquery'
 
-const headerDashboard = () => {
+const HeaderDashboard = () => {
+  useEffect(() => {
+    var searchToggle = function () {
+      $('.ttr-search-toggle').on('click', function (e) {
+        e.preventDefault()
+        $('.ttr-search-bar').toggleClass('active')
+      })
+    }
+
+    var waveEffect = function (e, a) {
+      var s = '.ttr-wave-effect',
+        n = e.outerWidth(),
+        t = a.offsetX,
+        i = a.offsetY
+      return (
+        e.prepend('<span class="ttr-wave-effect"></span>'),
+        $(s)
+          .css({
+            top: i,
+            left: t,
+          })
+          .animate(
+            {
+              opacity: '0',
+              width: 2 * n,
+              height: 2 * n,
+            },
+            500,
+            function () {
+              e.find(s).remove()
+            },
+          )
+      )
+    }
+
+    var materialButton = function () {
+      $('.ttr-material-button').on('click', function (e) {
+        waveEffect($(this), e)
+      })
+    }
+
+    var headerSubMenu = function () {
+      $('.ttr-header-submenu').show()
+      $('.ttr-header-submenu')
+        .parent()
+        .find('a:first')
+        .on('click', function (e) {
+          e.stopPropagation()
+          e.preventDefault()
+          $(this)
+            .parents('.ttr-header-navigation')
+            .find('.ttr-header-submenu')
+            .not($(this).parents('li').find('.ttr-header-submenu'))
+            .removeClass('active')
+          $(this).parents('li').find('.ttr-header-submenu').show().toggleClass('active')
+        })
+      $(document).on('click', function (e) {
+        var a = $(e.target)
+        return (
+          !0 === $('.ttr-header-submenu').hasClass('active') &&
+            !a.hasClass('ttr-submenu-toggle') &&
+            a.parents('.ttr-header-submenu').length < 1 &&
+            $('.ttr-header-submenu').removeClass('active'),
+          a.parents('.ttr-search-bar').length < 1 &&
+            !a.hasClass('ttr-search-bar') &&
+            !a.parent().hasClass('ttr-search-toggle') &&
+            !a.hasClass('ttr-search-toggle') &&
+            $('.ttr-search-bar').removeClass('active')
+        )
+      })
+    }
+
+    searchToggle()
+    materialButton()
+    headerSubMenu()
+  }, [])
   return (
     <>
       <header className="ttr-header">
@@ -26,26 +103,23 @@ const headerDashboard = () => {
             <ul className="ttr-header-navigation">
               <li>
                 <Link to="/" className="ttr-material-button ttr-submenu-toggle">
-                  HOME
+                  DASHBOARD
                 </Link>
               </li>
               <li>
-                <Link href="#" className="ttr-material-button ttr-submenu-toggle">
-                  QUICK MENU <i className="fa fa-angle-down"></i>
+                <Link to="/" className="ttr-material-button ttr-submenu-toggle">
+                  USER
                 </Link>
-                <div className="ttr-header-submenu">
-                  <ul>
-                    <li>
-                      <Link to="">Our Courses</Link>
-                    </li>
-                    <li>
-                      <Link to="">New Event</Link>
-                    </li>
-                    <li>
-                      <Link to="">Membership</Link>
-                    </li>
-                  </ul>
-                </div>
+              </li>
+              <li>
+                <Link to="/" className="ttr-material-button ttr-submenu-toggle">
+                  SETTING
+                </Link>
+              </li>
+              <li>
+                <Link to="#" className="ttr-material-button ttr-submenu-toggle">
+                  ROLE_NAME_HERE
+                </Link>
               </li>
             </ul>
             {/* <!-- header left menu end --> */}
@@ -53,11 +127,6 @@ const headerDashboard = () => {
           <div className="ttr-header-right ttr-with-seperator">
             {/* <!-- header right menu start --> */}
             <ul className="ttr-header-navigation">
-              <li>
-                <Link to="" className="ttr-material-button ttr-search-toggle">
-                  <i className="fa fa-search"></i>
-                </Link>
-              </li>
               <li>
                 <Link to="#" className="ttr-material-button ttr-submenu-toggle">
                   <i className="fa fa-bell"></i>
@@ -86,7 +155,7 @@ const headerDashboard = () => {
                           <i className="fa fa-shopping-cart"></i>
                         </span>
                         <span className="notification-text">
-                          <Link to="">Your order is placed</Link> sent you a message.
+                          <Link to="/">Your order is placed</Link> sent you a message.
                         </span>
                         <span className="notification-time">
                           <Link to="/admin" className="fa fa-close"></Link>
@@ -134,7 +203,7 @@ const headerDashboard = () => {
                 </div>
               </li>
               <li>
-                <Link to="#" className="ttr-material-button ttr-submenu-toggle">
+                <Link to="/" className="ttr-material-button ttr-submenu-toggle">
                   <span className="ttr-user-avatar">
                     <img alt="" src="assets/images/testimonials/pic3.jpg" width="32" height="32" />
                   </span>
@@ -142,16 +211,28 @@ const headerDashboard = () => {
                 <div className="ttr-header-submenu">
                   <ul>
                     <li>
-                      <Link to="user-profile.html">My profile</Link>
+                      <Link to="user-profile.html">
+                        <i className="fa fa-check pr-2"></i>
+                        My profile
+                      </Link>
                     </li>
                     <li>
-                      <Link to="list-view-calendar.html">Activity</Link>
+                      <Link to="list-view-calendar.html">
+                        <i className="fa fa-check pr-2"></i>
+                        Activity
+                      </Link>
                     </li>
                     <li>
-                      <Link to="mailbox.html">Messages</Link>
+                      <Link to="mailbox.html">
+                        <i className="fa fa-check pr-2"></i>
+                        Messages
+                      </Link>
                     </li>
                     <li>
-                      <Link to="/login">Logout</Link>
+                      <Link to="/login">
+                        <i className="fa fa-check pr-2"></i>
+                        Logout
+                      </Link>
                     </li>
                   </ul>
                 </div>
@@ -211,4 +292,4 @@ const headerDashboard = () => {
   )
 }
 
-export default headerDashboard
+export default HeaderDashboard

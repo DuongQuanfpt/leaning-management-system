@@ -1,7 +1,53 @@
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import $ from 'jquery'
+
 import logo from '~/assets/images/logo.png'
 
 const Sidebar = () => {
+  useEffect(() => {
+    var leftSidebar = function () {
+      $('.ttr-toggle-sidebar').on('click', function () {
+        if ($('body').hasClass('ttr-opened-sidebar')) {
+          return $('body').removeClass('ttr-opened-sidebar'), $('body').removeClass('ttr-body-fixed')
+        } else {
+          return (
+            $(window).width() < 760 && $('body').addClass('ttr-body-fixed'), $('body').addClass('ttr-opened-sidebar')
+          )
+        }
+      })
+
+      $('.ttr-sidebar-pin-button').on('click', function () {
+        $('body').toggleClass('ttr-pinned-sidebar')
+      })
+
+      $('.ttr-sidebar-navi li.show > ul').slideDown(200)
+      $('.ttr-sidebar-navi a').on('click', function (e) {
+        var a = $(this)
+        return $(this).next().is('ul')
+          ? (e.preventDefault(),
+            a.parent().hasClass('show')
+              ? (a.parent().removeClass('show'), a.next().slideUp(200))
+              : (a.parent().parent().find('.show ul').slideUp(200),
+                a.parent().parent().find('li').removeClass('show'),
+                a.parent().toggleClass('show'),
+                a.next().slideToggle(200)))
+          : (a.parent().parent().find('.show ul').slideUp(200),
+            a.parent().parent().find('li').removeClass('show'),
+            a.parent().addClass('show'))
+      })
+    }
+
+    var closeNav = function () {
+      $('.ttr-overlay, .ttr-sidebar-toggle-button').on('click', function () {
+        return $('body').removeClass('ttr-opened-sidebar'), $('body').removeClass('ttr-body-fixed')
+      })
+    }
+
+    leftSidebar()
+    closeNav()
+  }, [])
+
   return (
     <>
       <div className="ttr-sidebar">
@@ -28,7 +74,7 @@ const Sidebar = () => {
                   <span className="ttr-icon">
                     <i className="ti-home"></i>
                   </span>
-                  <span className="ttr-label">Dashborad</span>
+                  <span className="ttr-label">Dashboard</span>
                 </Link>
               </li>
               <li>

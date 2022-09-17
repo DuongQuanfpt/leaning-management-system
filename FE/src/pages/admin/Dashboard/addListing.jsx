@@ -85,7 +85,7 @@ const AddListing = () => {
                         </div>
                       </div>
                       <div className="col-12">
-                        <table id="item-add" style="width:100%;">
+                        <table id="item-add" style={{ width: '100%' }}>
                           <tr className="list-item">
                             <td>
                               <div className="row">

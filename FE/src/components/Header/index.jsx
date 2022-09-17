@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import $ from 'jquery'
 import Sticky from 'react-stickynode'
 
 // Images
@@ -53,6 +54,80 @@ const Header = () => {
         console.log('close')
       }
     }
+
+    var searchToggle = function () {
+      $('.ttr-search-toggle').on('click', function (e) {
+        e.preventDefault()
+        $('.ttr-search-bar').toggleClass('active')
+      })
+    }
+
+    var waveEffect = function (e, a) {
+      var s = '.ttr-wave-effect',
+        n = e.outerWidth(),
+        t = a.offsetX,
+        i = a.offsetY
+      return (
+        e.prepend('<span class="ttr-wave-effect"></span>'),
+        $(s)
+          .css({
+            top: i,
+            left: t,
+          })
+          .animate(
+            {
+              opacity: '0',
+              width: 2 * n,
+              height: 2 * n,
+            },
+            500,
+            function () {
+              e.find(s).remove()
+            },
+          )
+      )
+    }
+
+    var materialButton = function () {
+      $('.ttr-material-button').on('click', function (e) {
+        waveEffect($(this), e)
+      })
+    }
+
+    var headerSubMenu = function () {
+      $('.ttr-header-submenu').show()
+      $('.ttr-header-submenu')
+        .parent()
+        .find('a:first')
+        .on('click', function (e) {
+          e.stopPropagation()
+          e.preventDefault()
+          $(this)
+            .parents('.ttr-header-navigation')
+            .find('.ttr-header-submenu')
+            .not($(this).parents('li').find('.ttr-header-submenu'))
+            .removeClass('active')
+          $(this).parents('li').find('.ttr-header-submenu').show().toggleClass('active')
+        })
+      $(document).on('click', function (e) {
+        var a = $(e.target)
+        return (
+          !0 === $('.ttr-header-submenu').hasClass('active') &&
+            !a.hasClass('ttr-submenu-toggle') &&
+            a.parents('.ttr-header-submenu').length < 1 &&
+            $('.ttr-header-submenu').removeClass('active'),
+          a.parents('.ttr-search-bar').length < 1 &&
+            !a.hasClass('ttr-search-bar') &&
+            !a.parent().hasClass('ttr-search-toggle') &&
+            !a.hasClass('ttr-search-toggle') &&
+            $('.ttr-search-bar').removeClass('active')
+        )
+      })
+    }
+
+    searchToggle()
+    materialButton()
+    headerSubMenu()
   }, [])
 
   const handleLogout = () => {

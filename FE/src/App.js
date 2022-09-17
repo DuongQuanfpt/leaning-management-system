@@ -12,13 +12,11 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 
-// React Modal Video
-import 'react-modal-video/css/modal-video.min.css'
-
 // StyleSheet
 import '~/assets/css/typography.css'
 import '~/assets/css/shortcodes/shortcodes.css'
 import '~/assets/css/style.css'
+import '~/assets/css/dashboard.css'
 import '~/assets/css/color/color-1.css'
 
 // Fonts

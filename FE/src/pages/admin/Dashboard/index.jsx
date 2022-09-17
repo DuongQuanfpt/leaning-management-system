@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 import HeaderDashboard from '~/components/Header/headerDashboard'
@@ -6,7 +6,7 @@ import Sidebar from '~/components/Header/sidebar'
 
 const Dashboard = () => {
   return (
-    <>
+    <body>
       <HeaderDashboard />
       <Sidebar />
       <div className="ttr-wrapper">
@@ -36,7 +36,7 @@ const Dashboard = () => {
                     <div
                       className="progress-bar"
                       role="progressbar"
-                      style="width: 78%;"
+                      style={{ width: '78%' }}
                       aria-valuenow="50"
                       aria-valuemin="0"
                       aria-valuemax="100"
@@ -59,7 +59,7 @@ const Dashboard = () => {
                     <div
                       className="progress-bar"
                       role="progressbar"
-                      style="width: 88%;"
+                      style={{ width: '88%' }}
                       aria-valuenow="50"
                       aria-valuemin="0"
                       aria-valuemax="100"
@@ -82,7 +82,7 @@ const Dashboard = () => {
                     <div
                       className="progress-bar"
                       role="progressbar"
-                      style="width: 65%;"
+                      style={{ width: '65%' }}
                       aria-valuenow="50"
                       aria-valuemin="0"
                       aria-valuemax="100"
@@ -105,7 +105,7 @@ const Dashboard = () => {
                     <div
                       className="progress-bar"
                       role="progressbar"
-                      style="width: 90%;"
+                      style={{ width: '90%' }}
                       aria-valuenow="50"
                       aria-valuemin="0"
                       aria-valuemax="100"
@@ -149,7 +149,7 @@ const Dashboard = () => {
                           <span>Sneha Jogi</span> sent you a message.
                         </span>
                         <span className="notification-time">
-                          <Link to="#" className="fa fa-close"></Link>
+                          <Link to="/" className="fa fa-close"></Link>
                           <span> 02:14</span>
                         </span>
                       </li>
@@ -158,10 +158,10 @@ const Dashboard = () => {
                           <i className="fa fa-shopping-cart"></i>
                         </span>
                         <span className="notification-text">
-                          <Link to="#">Your order is placed</Link> sent you a message.
+                          <Link to="/">Your order is placed</Link> sent you a message.
                         </span>
                         <span className="notification-time">
-                          <Link to="#" className="fa fa-close"></Link>
+                          <Link to="/" className="fa fa-close"></Link>
                           <span> 7 Min</span>
                         </span>
                       </li>
@@ -173,7 +173,7 @@ const Dashboard = () => {
                           <span>Your item is shipped</span> sent you a message.
                         </span>
                         <span className="notification-time">
-                          <Link to="#" className="fa fa-close"></Link>
+                          <Link to="/" className="fa fa-close"></Link>
                           <span> 2 May</span>
                         </span>
                       </li>
@@ -182,10 +182,10 @@ const Dashboard = () => {
                           <i className="fa fa-comments-o"></i>
                         </span>
                         <span className="notification-text">
-                          <Link to="#">Sneha Jogi</Link> sent you a message.
+                          <Link to="/">Sneha Jogi</Link> sent you a message.
                         </span>
                         <span className="notification-time">
-                          <Link to="#" className="fa fa-close"></Link>
+                          <Link to="/" className="fa fa-close"></Link>
                           <span> 14 July</span>
                         </span>
                       </li>
@@ -197,7 +197,7 @@ const Dashboard = () => {
                           <span>Sneha Jogi</span> sent you a message.
                         </span>
                         <span className="notification-time">
-                          <Link to="#" className="fa fa-close"></Link>
+                          <Link to="/" className="fa fa-close"></Link>
                           <span> 15 Min</span>
                         </span>
                       </li>
@@ -219,13 +219,13 @@ const Dashboard = () => {
                           <img src="assets/images/testimonials/pic1.jpg" alt="" />
                         </span>
                         <span className="new-users-text">
-                          <Link to="#" className="new-users-name">
+                          <Link to="/" className="new-users-name">
                             Anna Strong{' '}
                           </Link>
                           <span className="new-users-info">Visual Designer,Google Inc </span>
                         </span>
                         <span className="new-users-btn">
-                          <Link to="#" className="btn button-sm outline">
+                          <Link to="/" className="btn button-sm outline">
                             Follow
                           </Link>
                         </span>
@@ -235,14 +235,14 @@ const Dashboard = () => {
                           <img src="assets/images/testimonials/pic2.jpg" alt="" />
                         </span>
                         <span className="new-users-text">
-                          <Link to="#" className="new-users-name">
+                          <Link to="/" className="new-users-name">
                             {' '}
                             Milano Esco{' '}
                           </Link>
                           <span className="new-users-info">Product Designer, Apple Inc </span>
                         </span>
                         <span className="new-users-btn">
-                          <Link to="#" className="btn button-sm outline">
+                          <Link to="/" className="btn button-sm outline">
                             Follow
                           </Link>
                         </span>
@@ -252,13 +252,13 @@ const Dashboard = () => {
                           <img src="assets/images/testimonials/pic1.jpg" alt="" />
                         </span>
                         <span className="new-users-text">
-                          <Link to="#" className="new-users-name">
+                          <Link to="/" className="new-users-name">
                             Nick Bold{' '}
                           </Link>
                           <span className="new-users-info">Web Developer, Facebook Inc </span>
                         </span>
                         <span className="new-users-btn">
-                          <Link to="#" className="btn button-sm outline">
+                          <Link to="/" className="btn button-sm outline">
                             Follow
                           </Link>
                         </span>
@@ -268,13 +268,13 @@ const Dashboard = () => {
                           <img src="assets/images/testimonials/pic2.jpg" alt="" />
                         </span>
                         <span className="new-users-text">
-                          <Link to="#" className="new-users-name">
+                          <Link to="/" className="new-users-name">
                             Wiltor Delton{' '}
                           </Link>
                           <span className="new-users-info">Project Manager, Amazon Inc </span>
                         </span>
                         <span className="new-users-btn">
-                          <Link to="#" className="btn button-sm outline">
+                          <Link to="/" className="btn button-sm outline">
                             Follow
                           </Link>
                         </span>
@@ -284,13 +284,13 @@ const Dashboard = () => {
                           <img src="assets/images/testimonials/pic3.jpg" alt="" />
                         </span>
                         <span className="new-users-text">
-                          <Link to="#" className="new-users-name">
+                          <Link to="/" className="new-users-name">
                             Nick Stone{' '}
                           </Link>
                           <span className="new-users-info">Project Manager, Amazon Inc </span>
                         </span>
                         <span className="new-users-btn">
-                          <Link to="#" className="btn button-sm outline">
+                          <Link to="/" className="btn button-sm outline">
                             Follow
                           </Link>
                         </span>
@@ -310,65 +310,65 @@ const Dashboard = () => {
                     <ul>
                       <li>
                         <span className="orders-title">
-                          <Link to="#" className="orders-title-name">
+                          <Link to="/" className="orders-title-name">
                             Anna Strong{' '}
                           </Link>
                           <span className="orders-info">Order #02357 | Date 12/08/2019</span>
                         </span>
                         <span className="orders-btn">
-                          <Link to="#" className="btn button-sm red">
+                          <Link to="/" className="btn button-sm red">
                             Unpaid
                           </Link>
                         </span>
                       </li>
                       <li>
                         <span className="orders-title">
-                          <Link to="#" className="orders-title-name">
+                          <Link to="/" className="orders-title-name">
                             Revenue
                           </Link>
                           <span className="orders-info">Order #02357 | Date 12/08/2019</span>
                         </span>
                         <span className="orders-btn">
-                          <Link to="#" className="btn button-sm red">
+                          <Link to="/" className="btn button-sm red">
                             Unpaid
                           </Link>
                         </span>
                       </li>
                       <li>
                         <span className="orders-title">
-                          <Link to="#" className="orders-title-name">
+                          <Link to="/" className="orders-title-name">
                             Anna Strong{' '}
                           </Link>
                           <span className="orders-info">Order #02357 | Date 12/08/2019</span>
                         </span>
                         <span className="orders-btn">
-                          <Link to="#" className="btn button-sm green">
+                          <Link to="/" className="btn button-sm green">
                             Paid
                           </Link>
                         </span>
                       </li>
                       <li>
                         <span className="orders-title">
-                          <Link to="#" className="orders-title-name">
+                          <Link to="/" className="orders-title-name">
                             Revenue
                           </Link>
                           <span className="orders-info">Order #02357 | Date 12/08/2019</span>
                         </span>
                         <span className="orders-btn">
-                          <Link to="#" className="btn button-sm green">
+                          <Link to="/" className="btn button-sm green">
                             Paid
                           </Link>
                         </span>
                       </li>
                       <li>
                         <span className="orders-title">
-                          <Link to="#" className="orders-title-name">
+                          <Link to="/" className="orders-title-name">
                             Anna Strong{' '}
                           </Link>
                           <span className="orders-info">Order #02357 | Date 12/08/2019</span>
                         </span>
                         <span className="orders-btn">
-                          <Link to="#" className="btn button-sm green">
+                          <Link to="/" className="btn button-sm green">
                             Paid
                           </Link>
                         </span>
@@ -391,7 +391,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-    </>
+    </body>
   )
 }
 
