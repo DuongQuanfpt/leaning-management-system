@@ -11,7 +11,7 @@ public class UserRequestDTO  {
     @Email
     private String email;
     
-    @Pattern(regexp="[\\S]{4,30}")
+    @Pattern(regexp="[^\s]{4,30}")
     private String password;
 
     private String mobile;

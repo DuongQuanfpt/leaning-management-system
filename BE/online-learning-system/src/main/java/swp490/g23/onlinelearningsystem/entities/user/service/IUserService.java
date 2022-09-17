@@ -5,4 +5,5 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserRespons
 
 public interface IUserService {
     UserResponseDTO save(UserRequestDTO UserRequestDTO);
+    UserResponseDTO getAuthenticatedUser(String authoHeader);
 }

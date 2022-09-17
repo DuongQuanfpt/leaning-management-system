@@ -9,8 +9,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,6 +18,7 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.user.service.impl.UserService;
+import swp490.g23.onlinelearningsystem.security.jwt.JwtTokenFilter;
 
 @RestController
 @RequestMapping("/user")
@@ -25,7 +26,7 @@ public class UserController {
 	@Autowired
     private UserService userService;
 
-    @PostMapping(value ="/register")// API for registration
+    @PostMapping(value ="/register") // API for registration
 	public UserResponseDTO createNew(@RequestBody @Valid UserRequestDTO userRequestDTO) {
 		PasswordEncoder encoder = new BCryptPasswordEncoder();
 		userRequestDTO.setPassword(encoder.encode(userRequestDTO.getPassword()));
@@ -33,11 +34,10 @@ public class UserController {
 
 	}
 
-	@GetMapping(value="")
-	public List<User> testJWT() {
-		
-		return userService.stuff();
-
+	@GetMapping //API to get info of the currently authenticated user
+	public UserResponseDTO getAuthenticatedUser(@RequestHeader("Authorization") String authoHeader ) {
+	
+		return userService.getAuthenticatedUser(authoHeader);
 	}
 	
 }

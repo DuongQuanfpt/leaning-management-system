@@ -12,12 +12,17 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserRequestD
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.entities.user.service.IUserService;
+import swp490.g23.onlinelearningsystem.security.jwt.JwtTokenFilter;
+import swp490.g23.onlinelearningsystem.util.JwtTokenUtil;
 
 @Service
 public class UserService implements IUserService{
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired 
+    private JwtTokenUtil jwtTokenUtil;
 
     @Override
     public UserResponseDTO save(UserRequestDTO UserRequestDTO) {
@@ -26,9 +31,14 @@ public class UserService implements IUserService{
         return toDTO(user);
     }
 
-    public List<User> stuff (){
-        return userRepository.findAll();
-    }
+    @Override
+    public UserResponseDTO getAuthenticatedUser(String authoHeader) {
+        String token = authoHeader.split(" ")[1].trim();
+        String[] subjectArray =jwtTokenUtil.getSubject(token).split(",");
+        Long userID = Long.parseLong(subjectArray[0]);
+       
+        return  toDTO(userRepository.findById(userID).get());
+    } 
     
     //Convert DTO to Entity
     public User toEntity (UserRequestDTO requestDTO) {
@@ -60,5 +70,7 @@ public class UserService implements IUserService{
         responseDTO.setAvatar_url(entity.getAvatar_url());
         
         return responseDTO;
-    } 
+    }
+
+   
 }

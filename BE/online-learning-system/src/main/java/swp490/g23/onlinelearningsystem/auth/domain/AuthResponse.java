@@ -1,7 +1,5 @@
 package swp490.g23.onlinelearningsystem.auth.domain;
 
-import javax.validation.constraints.Email;
-
 public class AuthResponse {
 
     private String email;
