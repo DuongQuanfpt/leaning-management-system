@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import swp490.g23.onlinelearningsystem.auth.domain.AuthRequest;
 import swp490.g23.onlinelearningsystem.auth.domain.AuthResponse;
+import swp490.g23.onlinelearningsystem.auth.service.impl.AuthService;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.util.JwtTokenUtil;
 
@@ -24,24 +25,23 @@ import swp490.g23.onlinelearningsystem.util.JwtTokenUtil;
 public class AuthController {
 
     @Autowired
-    AuthenticationManager authenticationManager;
-
-    @Autowired
-    JwtTokenUtil tokenUtil;
+    private AuthService authService;
 
     @PostMapping("/login")
     public ResponseEntity<?> login (@RequestBody @Valid AuthRequest request){
-        try {
-           Authentication authentication = authenticationManager.authenticate(
-               new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-           );
-           User user = (User) authentication.getPrincipal();
-           String accessToken = tokenUtil.generateAccessToken(user);
-           AuthResponse response = new AuthResponse(user.getEmail(), accessToken);
-           return ResponseEntity.ok(response);
-        } catch (BadCredentialsException e) {
-           return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+        // try {
+        //    Authentication authentication = authenticationManager.authenticate(
+        //        new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+        //    );
+        //    User user = (User) authentication.getPrincipal();
+        //    String accessToken = tokenUtil.generateAccessToken(user);
+        //    AuthResponse response = new AuthResponse(user.getEmail(), accessToken);
+        //    return ResponseEntity.ok(response);
+        // } catch (BadCredentialsException e) {
+        //    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        // }
+        return authService.authenticate(request);
     }
+    
 
 }
