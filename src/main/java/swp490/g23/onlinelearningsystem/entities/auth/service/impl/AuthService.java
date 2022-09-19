@@ -1,4 +1,4 @@
-package swp490.g23.onlinelearningsystem.auth.service.impl;
+package swp490.g23.onlinelearningsystem.entities.auth.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,9 +9,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import swp490.g23.onlinelearningsystem.auth.domain.AuthRequest;
-import swp490.g23.onlinelearningsystem.auth.domain.AuthResponse;
-import swp490.g23.onlinelearningsystem.auth.service.IAuthService;
+import swp490.g23.onlinelearningsystem.entities.auth.domain.AuthRequest;
+import swp490.g23.onlinelearningsystem.entities.auth.domain.AuthResponse;
+import swp490.g23.onlinelearningsystem.entities.auth.service.IAuthService;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.util.JwtTokenUtil;
 
