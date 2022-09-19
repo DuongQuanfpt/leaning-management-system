@@ -57,7 +57,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                                .antMatchers("/user/register").permitAll()
                                .anyRequest().authenticated();
        http.addFilterBefore(jwtTokenFilter,UsernamePasswordAuthenticationFilter.class);                        
-    ;
+       http.cors();
+       ;
 
     }
     
