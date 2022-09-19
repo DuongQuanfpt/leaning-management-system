@@ -16,7 +16,6 @@ import swp490.g23.onlinelearningsystem.entities.auth.service.impl.AuthService;
 
 @RestController
 @RequestMapping("/auth")
-
 public class AuthController {
 
     @Autowired
