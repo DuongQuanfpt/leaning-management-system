@@ -1,5 +1,7 @@
 package swp490.g23.onlinelearningsystem.security;
 
+import java.util.Arrays;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.security.jwt.JwtTokenFilter;
@@ -53,13 +58,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
        http.exceptionHandling().authenticationEntryPoint((request,response,ex) -> {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED,ex.getMessage());
        });
-       http.authorizeRequests().antMatchers("/auth/login").permitAll()
+       http.cors()
+           .and()
+           .authorizeRequests().antMatchers("/auth/login").permitAll()
                                .antMatchers("/user/register").permitAll()
-                               .anyRequest().authenticated();
-       http.addFilterBefore(jwtTokenFilter,UsernamePasswordAuthenticationFilter.class);                        
-       http.cors();
-       ;
+                               .anyRequest().authenticated()
+           .and()
+           .addFilterBefore(jwtTokenFilter,UsernamePasswordAuthenticationFilter.class);                        
+      ;
 
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("*"));
+        configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
     
 }
