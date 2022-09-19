@@ -1,10 +1,15 @@
 package swp490.g23.onlinelearningsystem.entities.user.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserRequestDTO;
+import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserUpdatePassRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.entities.user.service.IUserService;
@@ -20,7 +25,7 @@ public class UserService implements IUserService {
     private JwtTokenUtil jwtTokenUtil;
 
     @Override
-    public UserResponseDTO save(UserRequestDTO UserRequestDTO) {
+    public UserResponseDTO createUser(UserRequestDTO UserRequestDTO) {
         User user = toEntity(UserRequestDTO);
         user = userRepository.save(user);
         return toDTO(user);
@@ -28,11 +33,37 @@ public class UserService implements IUserService {
 
     @Override
     public UserResponseDTO getAuthenticatedUser(String authoHeader) {
+
+        return toDTO(getUserFromToken(authoHeader));
+    }
+
+    @Override
+    public ResponseEntity<?> updatePassword(UserUpdatePassRequestDTO dto, String authoHeader) {
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+
+        User user = getUserFromToken(authoHeader);
+        if (dto.getOldPassword().equals(dto.getNewPassword())) { // compare newpassword with oldpassword
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("New password must be different from current password");
+        }
+
+        if (encoder.matches(dto.getOldPassword(), user.getPassword()) == false) {// compare oldpassword with user password
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password not match with user");
+        }
+
+        dto.setNewPassword(encoder.encode(dto.getNewPassword()));
+        user.setPassword(dto.getNewPassword());
+        user = userRepository.save(user);
+        return ResponseEntity.ok(toDTO(user));
+    }
+
+    // get User from jwt token
+    public User getUserFromToken(String authoHeader) {
         String token = authoHeader.split(" ")[1].trim();
         String[] subjectArray = jwtTokenUtil.getSubject(token).split(",");
         Long userID = Long.parseLong(subjectArray[0]);
 
-        return toDTO(userRepository.findById(userID).get());
+        return userRepository.findById(userID).get();
     }
 
     // Convert DTO to Entity
@@ -66,5 +97,4 @@ public class UserService implements IUserService {
 
         return responseDTO;
     }
-
 }

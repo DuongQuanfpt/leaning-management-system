@@ -3,6 +3,8 @@ package swp490.g23.onlinelearningsystem.util;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
@@ -14,9 +16,10 @@ public class DbInit {
     @Autowired
     private UserRepository userRepository;
  
-    @PostConstruct
+    @PostConstruct // Create User on app startup
     private void postConstruct() {
-        User defaultUser = new User("xucxichbo@doivl.com", "123456");
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        User defaultUser = new User("xucxichbo@doivl.com", encoder.encode("123456"));
         userRepository.save(defaultUser);
     }
 }
