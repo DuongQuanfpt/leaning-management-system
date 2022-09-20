@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
-import swp490.g23.onlinelearningsystem.entities.auth.domain.AuthRequest;
+import net.bytebuddy.utility.RandomString;
+import swp490.g23.onlinelearningsystem.entities.auth.domain.request.AuthRequest;
 import swp490.g23.onlinelearningsystem.entities.auth.service.impl.AuthService;
 
 @RestController
@@ -29,4 +29,10 @@ public class AuthController {
         return authService.authenticate(request);
     }
 
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody @Valid AuthRequest request) {
+        
+        String generatedPassword = RandomString.make(10);
+        return authService.register(request,generatedPassword);
+    }
 }

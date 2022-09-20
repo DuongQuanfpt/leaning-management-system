@@ -8,6 +8,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import swp490.g23.onlinelearningsystem.config.EmailConfig;
+import swp490.g23.onlinelearningsystem.entities.email.EmailDetails;
+import swp490.g23.onlinelearningsystem.entities.email.service.impl.EmailService;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserUpdatePassRequestDTO;
@@ -19,7 +21,8 @@ import swp490.g23.onlinelearningsystem.util.JwtTokenUtil;
 @Service
 public class UserService implements IUserService {
 
-    private EmailConfig emailConfig;
+    @Autowired
+    private EmailService emailService;
 
     @Autowired
     private UserRepository userRepository;
@@ -27,13 +30,9 @@ public class UserService implements IUserService {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-    public UserService (EmailConfig emailConfig){
-        this.emailConfig = emailConfig;
-    }
-
     @Override
     public UserResponseDTO createUser(UserRequestDTO UserRequestDTO) {
-       
+
         User user = toEntity(UserRequestDTO);
         user = userRepository.save(user);
         return toDTO(user);
@@ -50,7 +49,7 @@ public class UserService implements IUserService {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         User user = getUserFromToken(authoHeader);
 
-        if (dto.getOldPassword()!=null) {
+        if (dto.getOldPassword() != null) {
             if (dto.getOldPassword().equals(dto.getNewPassword())) { // compare newpassword with oldpassword
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("New password must be different from current password");
@@ -75,7 +74,14 @@ public class UserService implements IUserService {
         if (user != null) {
             user.setPassword(encoder.encode(resetPass));
             userRepository.save(user);
-            emailConfig.sendResetPasswordMail(email, resetPass);
+            
+            EmailDetails details = new EmailDetails();
+       
+            details.setRecipient(email);
+            details.setMsgBody("Generated password is : "+resetPass);
+            details.setSubject("Register");
+            
+            emailService.sendSimpleMail(details);
             return ResponseEntity.ok(toDTO(user));
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No user match with given email");
