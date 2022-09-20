@@ -49,7 +49,7 @@ public class UserController {
 		return userService.updatePassword(updatePassRequestDTO, authoHeader);
 	}
 
-	@PostMapping(value = "/forgot-pass")
+	@PutMapping(value = "/forgot-pass")
 	public ResponseEntity<?> forgotPassword(@RequestBody UserUpdatePassRequestDTO updatePassRequestDTO){
 		String resetToken = RandomString.make(10);						
 		return userService.resetPassword(updatePassRequestDTO.getEmail(), resetToken);
