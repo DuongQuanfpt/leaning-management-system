@@ -78,9 +78,9 @@ public class UserService implements IUserService {
             EmailDetails details = new EmailDetails();
        
             details.setRecipient(email);
-            details.setMsgBody("Generated password is : "+resetPass);
-            details.setSubject("Register");
-            
+            details.setMsgBody("Your requested password is : "+resetPass);
+            details.setSubject("Reset Password");
+
             emailService.sendSimpleMail(details);
             return ResponseEntity.ok(toDTO(user));
         } else {
