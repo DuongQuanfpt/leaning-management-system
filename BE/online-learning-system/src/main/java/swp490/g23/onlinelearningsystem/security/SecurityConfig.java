@@ -4,8 +4,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -18,7 +20,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.security.jwt.JwtTokenFilter;
 
+@Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     
     @Autowired
@@ -48,17 +52,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
      
+       http.cors();
        http.csrf().disable();
        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
        http.exceptionHandling().authenticationEntryPoint((request,response,ex) -> {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED,ex.getMessage());
        });
+       
        http.authorizeRequests().antMatchers("/auth/login").permitAll()
+                               .antMatchers("/user/forgot-pass").permitAll()
+                               .antMatchers("/auth/register").permitAll()
                                .antMatchers("/user/register").permitAll()
                                .anyRequest().authenticated();
        http.addFilterBefore(jwtTokenFilter,UsernamePasswordAuthenticationFilter.class);                        
-    ;
 
-    }
-    
+    }   
 }

@@ -7,6 +7,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import swp490.g23.onlinelearningsystem.config.EmailConfig;
+import swp490.g23.onlinelearningsystem.entities.email.EmailDetails;
+import swp490.g23.onlinelearningsystem.entities.email.service.impl.EmailService;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserUpdatePassRequestDTO;
@@ -19,6 +22,9 @@ import swp490.g23.onlinelearningsystem.util.JwtTokenUtil;
 public class UserService implements IUserService {
 
     @Autowired
+    private EmailService emailService;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -26,6 +32,7 @@ public class UserService implements IUserService {
 
     @Override
     public UserResponseDTO createUser(UserRequestDTO UserRequestDTO) {
+
         User user = toEntity(UserRequestDTO);
         user = userRepository.save(user);
         return toDTO(user);
@@ -40,21 +47,45 @@ public class UserService implements IUserService {
     @Override
     public ResponseEntity<?> updatePassword(UserUpdatePassRequestDTO dto, String authoHeader) {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
-
         User user = getUserFromToken(authoHeader);
-        if (dto.getOldPassword().equals(dto.getNewPassword())) { // compare newpassword with oldpassword
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("New password must be different from current password");
-        }
 
-        if (encoder.matches(dto.getOldPassword(), user.getPassword()) == false) {// compare oldpassword with user password
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password not match with user");
+        if (dto.getOldPassword() != null) {
+            if (dto.getOldPassword().equals(dto.getNewPassword())) { // compare newpassword with oldpassword
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("New password must be different from current password");
+            }
+
+            if (encoder.matches(dto.getOldPassword(), user.getPassword()) == false) {// compare oldpassword with user
+                                                                                     // password
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password not match with user");
+            }
         }
 
         dto.setNewPassword(encoder.encode(dto.getNewPassword()));
         user.setPassword(dto.getNewPassword());
         user = userRepository.save(user);
         return ResponseEntity.ok(toDTO(user));
+    }
+
+    @Override
+    public ResponseEntity<?> resetPassword(String email, String resetPass) {
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        User user = userRepository.findOneByEmail(email);
+        if (user != null) {
+            user.setPassword(encoder.encode(resetPass));
+            userRepository.save(user);
+            
+            EmailDetails details = new EmailDetails();
+       
+            details.setRecipient(email);
+            details.setMsgBody("Your requested password is : "+resetPass);
+            details.setSubject("Reset Password");
+
+            emailService.sendSimpleMail(details);
+            return ResponseEntity.ok(toDTO(user));
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No user match with given email");
+        }
     }
 
     // get User from jwt token
@@ -97,4 +128,5 @@ public class UserService implements IUserService {
 
         return responseDTO;
     }
+
 }

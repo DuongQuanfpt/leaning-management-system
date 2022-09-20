@@ -1,4 +1,4 @@
-package swp490.g23.onlinelearningsystem.auth.domain;
+package swp490.g23.onlinelearningsystem.entities.auth.domain.response;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,9 +11,13 @@ public class AuthResponse {
 
     private String accessToken;
 
-    public AuthResponse(String email, String accessToken) {
+    private String fullName;
+
+    public AuthResponse(String email, String accessToken, String fullName) {
         this.email = email;
         this.accessToken = accessToken;
+        this.fullName = fullName;
     }
 
+    
 }
