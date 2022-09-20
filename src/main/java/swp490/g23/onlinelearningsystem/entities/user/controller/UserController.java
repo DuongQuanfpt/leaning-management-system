@@ -28,6 +28,7 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
+	
 	@PostMapping(value = "/register") // API for registration
 	public UserResponseDTO register(@RequestBody @Valid UserRequestDTO userRequestDTO) {
 		PasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -36,18 +37,35 @@ public class UserController {
 
 	}
 
+	/**
+	 * Get user info from the token sent from client
+	 * @param authoHeader // header contain access token sent from client
+	 * @return info of the currently authenticated user
+	 */
 	@GetMapping // API to get info of the currently authenticated user
 	public UserResponseDTO getAuthenticatedUser(@RequestHeader("Authorization") String authoHeader) {
 
 		return userService.getAuthenticatedUser(authoHeader);
 	}
 
+	/**
+	 * Update the password of the user extracted from token
+	 * @param updatePassRequestDTO // contain current password ,new password sent from client
+	 * @param authoHeader // header contain access token sent from client
+	 * @return
+	 */
 	@PutMapping(value = "/update-pass")
 	public ResponseEntity<?> updatePassword(@RequestBody UserUpdatePassRequestDTO updatePassRequestDTO
 										 ,@RequestHeader("Authorization") String authoHeader){
 											
 		return userService.updatePassword(updatePassRequestDTO, authoHeader);
 	}
+
+	/**
+	 * Reset password of user
+	 * @param updatePassRequestDTO // contain email address sent from client
+	 * @return sent an email to the address containing the new randomly generated password
+	 */
 
 	@PutMapping(value = "/forgot-pass")
 	public ResponseEntity<?> forgotPassword(@RequestBody UserUpdatePassRequestDTO updatePassRequestDTO){

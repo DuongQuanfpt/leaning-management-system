@@ -23,11 +23,22 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
+    /**
+     * login api
+     * @param request // login info sent from client
+     * @return an access token
+     */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid AuthRequest request) {
     
         return authService.authenticate(request);
     }
+
+    /**
+     * register api
+     * @param request // email , fullName sent from client
+     * @return 
+     */
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody @Valid AuthRequest request) {

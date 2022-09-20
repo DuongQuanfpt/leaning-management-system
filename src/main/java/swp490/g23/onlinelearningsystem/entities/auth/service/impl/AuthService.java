@@ -53,6 +53,10 @@ public class AuthService implements IAuthService {
 
     @Override 
     public ResponseEntity<?> register(AuthRequest request, String password) {
+        if(userRepository.findOneByEmail(request.getEmail())!=null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email already exist");
+        }
+        
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         User user = new User();
         user.setFullName(request.getFullName());
