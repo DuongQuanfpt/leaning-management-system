@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import net.bytebuddy.utility.RandomString;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserUpdatePassRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserResponseDTO;
@@ -22,7 +23,7 @@ import swp490.g23.onlinelearningsystem.entities.user.service.impl.UserService;
 
 @RestController
 @RequestMapping("/user")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin
 public class UserController {
 	@Autowired
 	private UserService userService;
@@ -46,5 +47,11 @@ public class UserController {
 										 ,@RequestHeader("Authorization") String authoHeader){
 											
 		return userService.updatePassword(updatePassRequestDTO, authoHeader);
+	}
+
+	@PostMapping(value = "/forgot-pass")
+	public ResponseEntity<?> forgotPassword(@RequestBody UserUpdatePassRequestDTO updatePassRequestDTO){
+		String resetToken = RandomString.make(10);						
+		return userService.resetPassword(updatePassRequestDTO.getEmail(), resetToken);
 	}
 }

@@ -1,7 +1,5 @@
 package swp490.g23.onlinelearningsystem.security;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +16,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
 
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.security.jwt.JwtTokenFilter;
@@ -60,20 +57,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
        http.exceptionHandling().authenticationEntryPoint((request,response,ex) -> {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED,ex.getMessage());
        });
-       http.cors().configurationSource(request -> {
-            var cors = new CorsConfiguration();
-            cors.setAllowedOrigins(List.of("*"));
-            cors.setAllowedMethods(List.of("GET","POST", "PUT", "DELETE", "OPTIONS"));
-            cors.setAllowedHeaders(List.of("*"));
-            return cors;
-       })
+       http.cors()
            .and()
            .authorizeRequests().antMatchers("/auth/login").permitAll()
                                .antMatchers("/user/register").permitAll()
                                .anyRequest().authenticated()
            .and()
            .addFilterBefore(jwtTokenFilter,UsernamePasswordAuthenticationFilter.class);                        
-      ;
 
     }   
 }

@@ -17,7 +17,7 @@ import swp490.g23.onlinelearningsystem.entities.auth.service.impl.AuthService;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin
 public class AuthController {
 
     @Autowired
