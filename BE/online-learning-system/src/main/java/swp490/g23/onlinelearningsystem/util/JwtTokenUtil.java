@@ -18,7 +18,7 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 
 @Component
 public class JwtTokenUtil {
-    private static final long EXPIRE_DURATION = 1 * 1 * 30 * 1000; // 24h
+    private static final long EXPIRE_DURATION = 1 * 60 * 60 * 1000; // 1h
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtTokenUtil.class);
 
     @Value("${app.jwt.secret}")

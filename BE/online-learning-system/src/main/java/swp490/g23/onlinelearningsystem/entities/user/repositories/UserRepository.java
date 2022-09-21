@@ -8,4 +8,5 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
+    User findOneByEmail(String email);
 }
