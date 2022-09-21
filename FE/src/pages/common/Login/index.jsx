@@ -141,7 +141,7 @@ const Login = () => {
 
                   <h6 className="m-b15 m-t15">Login with Social media</h6>
                   <Link className="btn flex-fill m-l5 google-plus" to="#">
-                    <i className="fa fa-google-plus"></i>Sign Up To Google
+                    <i className="fa fa-google-plus"></i>Sign Up
                   </Link>
                 </div>
               </div>

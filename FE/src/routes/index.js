@@ -5,6 +5,7 @@ const HomePage = lazy(() => import('~/pages/common/HomePage'))
 const Login = lazy(() => import('~/pages/common/Login'))
 const ForgetPassword = lazy(() => import('~/pages/common/ForgetPassword'))
 const Register = lazy(() => import('~/pages/common/Register'))
+const RegisterSuccessed = lazy(() => import('~/pages/common/RegisterSuccessed'))
 
 // Admin pages
 const Dashboard = lazy(() => import('~/pages/admin/Dashboard/index'))
@@ -34,6 +35,7 @@ const publicRoutes = [
   { path: '/login', component: Login },
   { path: '/forget-password', component: ForgetPassword },
   { path: '/register', component: Register },
+  { path: '/register-successed', component: RegisterSuccessed },
   { path: '/404', component: PageNotFound },
 ]
 

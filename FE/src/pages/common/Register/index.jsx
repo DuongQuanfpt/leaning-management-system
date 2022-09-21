@@ -14,7 +14,7 @@ import axios from 'axios'
 const Register = () => {
   const navigateTo = useNavigate()
 
-  const [registed, setRegistered] = useState(false)
+  const [isEmailAvailable, setIsEmailAvailable] = useState(false)
   const [verified, setVerified] = useState(false)
 
   const schema = Yup.object().shape({
@@ -25,7 +25,7 @@ const Register = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors, isValid, isSubmitting },
   } = useForm({ resolver: yupResolver(schema), mode: 'onTouched' })
 
   // const navigate = useNavigate()
@@ -40,12 +40,11 @@ const Register = () => {
         },
       })
       console.log(response)
-      setRegistered(true)
       console.log('Register sucess')
-      // navigateTo('/')
+      navigateTo('/register-successed')
     } catch (error) {
       console.log('Error at register', error)
-      setRegistered(false)
+      setIsEmailAvailable(true)
     }
   }
 
@@ -112,8 +111,8 @@ const Register = () => {
                 <div className="col-lg-12 mb-10">
                   <ReCAPTCHA sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" onChange={handleCaptchaOnChange} />
                 </div>
-                <div className="col-lg-12 m-b30">
-                  {!registed ? <ErrorMsg errorMsg="Email is available" /> : <Fragment />}
+                <div className="col-lg-12 m-b30 m-t15">
+                  {isEmailAvailable ? <ErrorMsg errorMsg="Email is available" /> : <Fragment />}
                   <button
                     name="submit"
                     type="submit"
@@ -121,13 +120,13 @@ const Register = () => {
                     className="btn button-md m-t15"
                     disabled={!verified}
                   >
-                    Sign Up
+                    {isSubmitting ? `Registering....` : `Register`}
                   </button>
                 </div>
                 <div className="col-lg-12">
                   <h6 className="m-b15">Sign Up with Social media</h6>
                   <Link className="btn flex-fill m-l5 google-plus" to="#">
-                    <i className="fa fa-google-plus"></i>Sign Up To Google
+                    <i className="fa fa-google-plus"></i>Sign Up
                   </Link>
                 </div>
               </div>
