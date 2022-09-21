@@ -2,7 +2,7 @@ import axios from 'axios'
 import queryString from 'query-string'
 
 const axiosClient = axios.create({
-  baseURL: process.env.LMS_REACT_APP_API_URL,
+  baseURL: 'https://lms-app-1.herokuapp.com',
   headers: {
     'content-type': 'application/json',
   },
@@ -22,7 +22,6 @@ axiosClient.interceptors.response.use(
     return response
   },
   (error) => {
-    //Will handle errors here
     console.log(error)
     throw error
   },

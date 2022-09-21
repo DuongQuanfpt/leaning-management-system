@@ -1,19 +1,25 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { Fragment, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import * as Yup from 'yup'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import ErrorMsg from '~/components/ErrorMsg'
+import ReCAPTCHA from 'react-google-recaptcha'
 
 // Images
 import logoWhite2 from '~/assets/images/logo-white-2.png'
 import bannerImg from '~/assets/images/background/bg2.jpg'
+import axios from 'axios'
 
 const Register = () => {
+  const navigateTo = useNavigate()
+
+  const [registed, setRegistered] = useState(false)
+  const [verified, setVerified] = useState(false)
+
   const schema = Yup.object().shape({
     name: Yup.string().required().min(3),
     email: Yup.string().required().email(),
-    password: Yup.string().required().min(8),
   })
 
   const {
@@ -24,10 +30,27 @@ const Register = () => {
 
   // const navigate = useNavigate()
 
-  const submitForm = (data) => {
+  const submitForm = async (data) => {
     console.log(data)
     if (!isValid) return
-    // navigate('/')
+    try {
+      const response = await axios.post('https://lms-app-1.herokuapp.com/auth/register', JSON.stringify(data), {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      console.log(response)
+      setRegistered(true)
+      console.log('Register sucess')
+      // navigateTo('/')
+    } catch (error) {
+      console.log('Error at register', error)
+      setRegistered(false)
+    }
+  }
+
+  const handleCaptchaOnChange = (value) => {
+    setVerified(true)
   }
 
   return (
@@ -86,37 +109,25 @@ const Register = () => {
                     {errors.email?.type === 'email' && <ErrorMsg errorMsg="Email is not valid" />}
                   </div>
                 </div>
-                <div className="col-lg-12">
-                  <div className="form-group">
-                    <div className="input-group">
-                      <input
-                        name="password"
-                        type="password"
-                        placeholder="Your Password"
-                        className="form-control"
-                        required=""
-                        autoComplete="false"
-                        {...register('password')}
-                      />
-                    </div>
-                    {errors.password?.type === 'required' && <ErrorMsg errorMsg="Password is required" />}
-                    {errors.password?.type === 'min' && (
-                      <ErrorMsg errorMsg="Password length must be at least 8 characters" />
-                    )}
-                  </div>
+                <div className="col-lg-12 mb-10">
+                  <ReCAPTCHA sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" onChange={handleCaptchaOnChange} />
                 </div>
                 <div className="col-lg-12 m-b30">
-                  <button name="submit" type="submit" value="Submit" className="btn button-md">
+                  {!registed ? <ErrorMsg errorMsg="Email is available" /> : <Fragment />}
+                  <button
+                    name="submit"
+                    type="submit"
+                    value="Submit"
+                    className="btn button-md m-t15"
+                    disabled={!verified}
+                  >
                     Sign Up
                   </button>
                 </div>
                 <div className="col-lg-12">
                   <h6 className="m-b15">Sign Up with Social media</h6>
-                  <Link className="btn flex-fill m-r10 facebook" to="#">
-                    <i className="fa fa-facebook"></i>Facebook
-                  </Link>
                   <Link className="btn flex-fill m-l5 google-plus" to="#">
-                    <i className="fa fa-google-plus"></i>Google Plus
+                    <i className="fa fa-google-plus"></i>Sign Up To Google
                   </Link>
                 </div>
               </div>

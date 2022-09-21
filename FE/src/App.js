@@ -1,5 +1,5 @@
-import { Routes, Route } from 'react-router-dom'
-import { Fragment, Suspense } from 'react'
+import { Routes, Route, useNavigate } from 'react-router-dom'
+import { Fragment, Suspense, useEffect } from 'react'
 
 import { privateRoutes, publicRoutes } from '~/routes'
 import ScrollToTop from '~/components/ScrollToTop'
@@ -26,9 +26,14 @@ import '~/assets/vendors/line-awesome/css/line-awesome.min.css'
 import '~/assets/vendors/themify/themify-icons.css'
 
 function App() {
-  const isAuthenticated = () => {
-    return true
-  }
+  // const navigateTo = useNavigate()
+
+  // useEffect(() => {
+  //   if (!localStorage.getItem('LMS-User-Token')) {
+  //     navigateTo('/')
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [])
 
   return (
     <Fragment>
@@ -40,11 +45,10 @@ function App() {
               return <Route key={index} path={route.path} element={<Page />} />
             })}
 
-            {isAuthenticated &&
-              privateRoutes.map((route, index) => {
-                const Page = route.component
-                return <Route key={index} path={route.path} element={<Page />} />
-              })}
+            {privateRoutes.map((route, index) => {
+              const Page = route.component
+              return <Route key={index} path={route.path} element={<Page />} />
+            })}
           </Routes>
         </div>
         <ScrollToTop />

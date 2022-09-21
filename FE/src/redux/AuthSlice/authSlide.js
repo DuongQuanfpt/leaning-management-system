@@ -1,19 +1,26 @@
 import { createSlice } from '@reduxjs/toolkit'
-let initialState = {
-  userInfo: [],
+
+const currentUser = JSON.parse(localStorage.getItem('LMS-Profile-Data'))
+
+const initialState = {
+  isLoggedIn: false,
+  currentUser: currentUser ? currentUser : undefined,
 }
 
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    getUserInfo() {},
-    setUserInfo: (state, { payload }) => ({
-      ...state,
-      userInfo: payload,
-    }),
+    loginSuccess(state, action) {
+      state.isLoggedIn = true
+      state.currentUser = action.payload
+    },
+    logout(state) {
+      state.isLoggedIn = false
+      state.currentUser = undefined
+    },
   },
 })
 
-export const { getUserInfo, setUserInfo } = authSlice.actions
+export const { loginSuccess, logout } = authSlice.actions
 export default authSlice.reducer

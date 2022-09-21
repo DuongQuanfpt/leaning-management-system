@@ -1,14 +1,9 @@
 import axiosClient from './axiosClient'
 
 const userApi = {
-  getAll: (params) => {
-    const url = `/user`
-    return axiosClient.get(url, { params })
-  },
-
-  get: (email) => {
-    const url = `/user/${email}`
-    return axiosClient.get(url)
+  getToken: (params) => {
+    const url = `https://lms-app-1.herokuapp.com/auth/login`
+    return axiosClient.post(url, { params })
   },
 }
 

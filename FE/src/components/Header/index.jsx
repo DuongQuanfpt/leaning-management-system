@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import $ from 'jquery'
 import Sticky from 'react-stickynode'
 
@@ -9,8 +9,9 @@ import adv from '~/assets/images/adv/adv.jpg'
 import logoWhite from '~/assets/images/logo-white.png'
 
 const Header = () => {
-  const [authenticated, setAuthenticated] = useState(true)
+  const navigateTo = useNavigate()
 
+  const [logged, setLogged] = useState(false)
   useEffect(() => {
     // Search Form Popup
     var searchBtn = document.getElementById('quik-search-btn')
@@ -130,8 +131,17 @@ const Header = () => {
     headerSubMenu()
   }, [])
 
+  useEffect(() => {
+    if (localStorage.getItem('LMS-User-Token')) {
+      setLogged(true)
+    }
+  }, [])
+
   const handleLogout = () => {
-    setAuthenticated(() => !authenticated)
+    localStorage.removeItem('LMS-User-Token')
+    localStorage.removeItem('LMS-Profile-Data')
+    //Reload page
+    navigateTo(0)
   }
 
   return (
@@ -167,6 +177,7 @@ const Header = () => {
             </div>
           </div>
         </div>
+        {/* {logged ? ( */}
         <Sticky enabled={true} className="sticky-header navbar-expand-lg">
           <div className="menu-bar clearfix">
             <div className="container clearfix">
@@ -200,30 +211,49 @@ const Header = () => {
                         <i className="fa fa-search"></i>
                       </button>
                     </li>
-                    {authenticated ? (
-                      <li>
-                        <a href="#" className="ttr-material-button ttr-submenu-toggle">
-                          <span className="ttr-user-avatar">
-                            <img alt="" src={logoWhite} width="60" height="60" />
-                          </span>
-                        </a>
-                        <div className="ttr-header-submenu">
-                          <ul>
-                            <li>
-                              <Link to="/dashboard">Dashboard</Link>
-                            </li>
-                            <li>
-                              <Link to="/profile">Profile</Link>
-                            </li>
-                            <li>
-                              <Link to="/password-change">Change Password</Link>
-                            </li>
-                            <li onClick={handleLogout}>
-                              <Link to="/">Logout</Link>
-                            </li>
-                          </ul>
-                        </div>
-                      </li>
+                    {logged ? (
+                      <>
+                        <li>
+                          <Link to="#" className="ttr-material-button ttr-submenu-toggle">
+                            <span className="ttr-user-avatar">
+                              <img alt="" src={logoWhite} width="60" height="60" />
+                            </span>
+                          </Link>
+                          <div className="ttr-header-submenu">
+                            <ul>
+                              <li>
+                                <Link to="/dashboard">
+                                  <i className="fa fa-check pr-2"></i>
+                                  Dashboard
+                                </Link>
+                              </li>
+                              <li>
+                                <Link to="/profile">
+                                  <i className="fa fa-check pr-2"></i>
+                                  Profile
+                                </Link>
+                              </li>
+                              <li>
+                                <Link to="/password-change">
+                                  <i className="fa fa-check pr-2"></i>
+                                  Change Password
+                                </Link>
+                              </li>
+                              <li onClick={handleLogout}>
+                                <Link to="/">
+                                  <i className="fa fa-check pr-2"></i>
+                                  Logout
+                                </Link>
+                              </li>
+                            </ul>
+                          </div>
+                        </li>
+                        <li onClick={handleLogout}>
+                          <Link to="/" className="text-white">
+                            Logout
+                          </Link>
+                        </li>
+                      </>
                     ) : (
                       <>
                         <li className="px-2">
