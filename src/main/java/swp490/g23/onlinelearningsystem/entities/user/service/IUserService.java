@@ -8,7 +8,7 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserRespons
 public interface IUserService {
     UserResponseDTO createUser(UserRequestDTO UserRequestDTO);
 
-    UserResponseDTO getAuthenticatedUser(String authoHeader);
+    ResponseEntity<?> getAuthenticatedUser(String authoHeader);
 
     ResponseEntity<?> updatePassword(UserUpdatePassRequestDTO newPassword, String authoHeader);
 

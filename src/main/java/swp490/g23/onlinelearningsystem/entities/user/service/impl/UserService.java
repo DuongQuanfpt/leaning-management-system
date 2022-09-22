@@ -38,15 +38,23 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public UserResponseDTO getAuthenticatedUser(String authoHeader) {
-
-        return toDTO(getUserFromToken(authoHeader));
+    public ResponseEntity<?> getAuthenticatedUser(String authoHeader) {
+        User user = getUserFromToken(authoHeader);
+        if (user != null){
+            return ResponseEntity.ok(toDTO(user));
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There are no authenticated user");
+        
     }
 
     @Override
     public ResponseEntity<?> updatePassword(UserUpdatePassRequestDTO dto, String authoHeader) {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         User user = getUserFromToken(authoHeader);
+
+        if(user == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User doesnt exsist");
+        }
 
         if (dto.getOldPassword() != null) {
             if (dto.getOldPassword().equals(dto.getNewPassword())) { // compare newpassword with oldpassword
@@ -92,7 +100,9 @@ public class UserService implements IUserService {
         String token = authoHeader.split(" ")[1].trim();
         String[] subjectArray = jwtTokenUtil.getSubject(token).split(",");
         Long userID = Long.parseLong(subjectArray[0]);
-
+        if(!userRepository.findById(userID).isPresent()){
+            return null ;
+        }
         return userRepository.findById(userID).get();
     }
 
