@@ -7,7 +7,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import swp490.g23.onlinelearningsystem.config.EmailConfig;
 import swp490.g23.onlinelearningsystem.entities.email.EmailDetails;
 import swp490.g23.onlinelearningsystem.entities.email.service.impl.EmailService;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;

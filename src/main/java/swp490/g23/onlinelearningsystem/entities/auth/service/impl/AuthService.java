@@ -35,6 +35,7 @@ public class AuthService implements IAuthService {
     @Autowired
     JwtTokenUtil tokenUtil;
     
+    
     @Override
     public ResponseEntity<?> authenticate( AuthRequest request) {
         try {
@@ -46,7 +47,7 @@ public class AuthService implements IAuthService {
             AuthResponse response = new AuthResponse(user.getEmail(), accessToken , user.getFullName());
             return ResponseEntity.ok(response);
         } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorect credentials");
         }
       
     }
