@@ -72,7 +72,7 @@ public class AuthService implements IAuthService {
         details.setSubject("Register");
         emailService.sendSimpleMail(details);
         
-        return ResponseEntity.ok(user.getPassword());
+        return ResponseEntity.ok("Successfull register , password has been to your email");
     }
     
 }

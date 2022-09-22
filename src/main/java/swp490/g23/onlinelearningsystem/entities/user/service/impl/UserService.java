@@ -63,7 +63,7 @@ public class UserService implements IUserService {
         dto.setNewPassword(encoder.encode(dto.getNewPassword()));
         user.setPassword(dto.getNewPassword());
         user = userRepository.save(user);
-        return ResponseEntity.ok(toDTO(user));
+        return ResponseEntity.ok("your password have been updated");
     }
 
     @Override
@@ -81,7 +81,7 @@ public class UserService implements IUserService {
             details.setSubject("Reset Password");
 
             emailService.sendSimpleMail(details);
-            return ResponseEntity.ok(toDTO(user));
+            return ResponseEntity.ok("your password have been resetted , we have sent the new password to your email");
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No user match with given email");
         }

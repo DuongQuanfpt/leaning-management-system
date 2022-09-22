@@ -58,10 +58,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors();
         http.csrf().disable();
       
-        // http.exceptionHandling().authenticationEntryPoint((request, response, ex) ->
-        // {
-        // response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
-        // });
+        http.exceptionHandling().authenticationEntryPoint((request, response, ex) ->
+        {
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
+        });
 
         http.authorizeRequests().antMatchers("/auth/login").permitAll()
                 .antMatchers("/user/forgot-pass").permitAll()
