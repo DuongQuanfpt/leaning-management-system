@@ -67,7 +67,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user/forgot-pass").permitAll()
                 .antMatchers("/auth/register").permitAll()
                 // .antMatchers("/auth/login-google").permitAll()
-                .anyRequest().authenticated().and().oauth2Login();
+                .anyRequest().authenticated().and();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
     
