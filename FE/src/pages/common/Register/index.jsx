@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import * as Yup from 'yup'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import ErrorMsg from '~/components/ErrorMsg'
+import ErrorMsg from '~/components/Common/ErrorMsg'
 import ReCAPTCHA from 'react-google-recaptcha'
 
 // Images

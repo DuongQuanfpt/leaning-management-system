@@ -6,7 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import axios from 'axios'
 import ReCAPTCHA from 'react-google-recaptcha'
 
-import ErrorMsg from '~/components/ErrorMsg'
+import ErrorMsg from '~/components/Common/ErrorMsg'
 
 // Images
 import logoWhite2 from '~/assets/images/logo-white-2.png'

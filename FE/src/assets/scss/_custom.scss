@@ -1,0 +1,16 @@
+a, .btn-link{
+  text-decoration: none;
+}
+
+.btn {
+  background-color: #f7b205;
+}
+
+.btn:hover {
+  background-color: #4c1864;
+  color: #fff
+}
+
+.btn:disabled{
+  background-color: #e4e4e4;
+}
