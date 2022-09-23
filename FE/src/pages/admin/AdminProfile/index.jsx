@@ -4,8 +4,9 @@ import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 
 import { CContainer, CRow, CCol, CForm, CButton } from '@coreui/react'
 import avatar from '~/assets/images/profile/pic1.jpg'
+import { Link } from 'react-router-dom'
 
-const AdminUserDetail = () => {
+const Profile = () => {
   return (
     <>
       <AdminSidebar />
@@ -20,7 +21,7 @@ const AdminUserDetail = () => {
                     <div className="col-lg-12 m-b30">
                       <div className="widget-box">
                         <div className="wc-title">
-                          <h4>User Detail</h4>
+                          <h4>Profile</h4>
                         </div>
                         <div className="widget-inner">
                           <div className="row col-12 w-100">
@@ -28,6 +29,18 @@ const AdminUserDetail = () => {
                               <label className="col-form-label align-middle">Avatar</label>
                               <div>
                                 <img src={avatar} alt="" />
+                              </div>
+                              <div className="d-flex pt-4">
+                                <CButton size="md" color="success">
+                                  Change Avatar
+                                </CButton>
+                              </div>
+                              <div className="d-flex pt-4">
+                                <Link to="/admin/change-password">
+                                  <CButton size="md" color="danger">
+                                    Change Password
+                                  </CButton>
+                                </Link>
                               </div>
                             </div>
                             <div className="row col-9">
@@ -97,4 +110,4 @@ const AdminUserDetail = () => {
   )
 }
 
-export default AdminUserDetail
+export default Profile

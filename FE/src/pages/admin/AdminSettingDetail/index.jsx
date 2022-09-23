@@ -48,16 +48,22 @@ const AdminSettingDetail = () => {
                               </div>
                             </div>
                             <div className="form-group col-12">
+                              <label className="col-form-label">Display Order</label>
+                              <div>
+                                <input className="form-control" type="text" value="Active" />
+                              </div>
+                            </div>
+                            <div className="form-group col-12">
                               <label className="col-form-label">Description</label>
                               <div>
                                 <textarea className="form-control" type="text" value="Description here!!" />
                               </div>
                             </div>
                             <div className="d-flex justify-content-evenly">
-                              <CButton size="lg" color="success" type="submit">
+                              <CButton size="md" color="success" type="submit">
                                 Save
                               </CButton>
-                              <CButton size="lg" color="warning" type="reset">
+                              <CButton size="md" color="warning" type="reset">
                                 Cancel
                               </CButton>
                             </div>
