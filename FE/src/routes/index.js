@@ -9,6 +9,7 @@ const RegisterSuccessed = lazy(() => import('~/pages/common/RegisterSuccessed'))
 
 // Admin pages
 const AdminDashboard = lazy(() => import('~/pages/admin/AdminDashboard'))
+const AdminSettingDetail = lazy(() => import('~/pages/admin/AdminSettingDetail'))
 
 //404 pages
 const PageNotFound = lazy(() => import('~/pages/common/PageNotFound'))
@@ -24,7 +25,10 @@ const commonRoutes = [
 ]
 
 // Admin routes
-const adminRoutes = [{ path: '/admin', component: AdminDashboard }]
+const adminRoutes = [
+  { path: '/admin', component: AdminDashboard },
+  { path: '/admin/setting-detail', component: AdminSettingDetail },
+]
 
 // Manager routes
 const managerRoutes = []
