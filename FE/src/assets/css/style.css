@@ -4514,8 +4514,3 @@ select:focus,
 .recent-posts-entry .media-post:after {
   content: none;
 }
-
-.button-distance {
-  display: flex;
-  justify-content: space-evenly;
-}
