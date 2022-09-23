@@ -1,5 +1,6 @@
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { setSidebarShow, setSidebarUnfoldable } from '~/redux/SidebarSlice/sidebarSlice'
 
 import { CSidebar, CSidebarBrand, CSidebarNav, CSidebarToggler } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
@@ -17,17 +18,15 @@ import navigation from '~/_nav'
 
 const AdminSidebar = () => {
   const dispatch = useDispatch()
-  const unfoldable = useSelector((state) => state.sidebarUnfoldable)
-  const sidebarShow = useSelector((state) => state.sidebarShow)
+  const sidebarShow = useSelector((state) => state.sidebar.sidebarShow)
+  const unfoldable = useSelector((state) => state.sidebar.sidebarUnfoldable)
 
   return (
     <CSidebar
       position="fixed"
       unfoldable={unfoldable}
       visible={sidebarShow}
-      onVisibleChange={(visible) => {
-        dispatch({ type: 'set', sidebarShow: visible })
-      }}
+      onVisibleChange={(visible) => dispatch(setSidebarShow(visible))}
     >
       <CSidebarBrand className="d-none d-md-flex" to="/">
         <CIcon className="sidebar-brand-full" icon={logoNegative} height={35} />
@@ -38,10 +37,7 @@ const AdminSidebar = () => {
           <AdminSidebarNav items={navigation} />
         </SimpleBar>
       </CSidebarNav>
-      <CSidebarToggler
-        className="d-none d-lg-flex"
-        onClick={() => dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })}
-      />
+      <CSidebarToggler className="d-none d-lg-flex" onClick={() => dispatch(setSidebarUnfoldable(!unfoldable))} />
     </CSidebar>
   )
 }
