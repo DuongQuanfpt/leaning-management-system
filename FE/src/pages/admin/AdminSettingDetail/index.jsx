@@ -1,10 +1,8 @@
 import React from 'react'
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
-import CancelButton from '~/components/Common/Button/CancelButton'
-import SaveButton from '~/components/Common/Button/SaveButton'
 
-import { CContainer, CRow, CCol, CForm } from '@coreui/react'
+import { CContainer, CRow, CCol, CForm, CButton } from '@coreui/react'
 
 const AdminSettingDetail = () => {
   return (
@@ -55,9 +53,13 @@ const AdminSettingDetail = () => {
                                 <textarea className="form-control" type="text" value="Description here!!" />
                               </div>
                             </div>
-                            <div className="button-distance">
-                              <SaveButton />
-                              <CancelButton />
+                            <div className="d-flex justify-content-evenly">
+                              <CButton size="lg" color="success" type="submit">
+                                Save
+                              </CButton>
+                              <CButton size="lg" color="warning" type="reset">
+                                Cancel
+                              </CButton>
                             </div>
                           </div>
                         </div>
