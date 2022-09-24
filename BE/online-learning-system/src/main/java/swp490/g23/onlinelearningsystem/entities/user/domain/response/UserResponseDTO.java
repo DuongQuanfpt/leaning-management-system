@@ -1,5 +1,7 @@
 package swp490.g23.onlinelearningsystem.entities.user.domain.response;
 
+import java.util.List;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,5 +23,6 @@ public class UserResponseDTO  {
 
     private String note;
 
+    private List<String> roles;
     
 }
