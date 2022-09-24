@@ -39,7 +39,8 @@ public class UserService implements IUserService {
     private JwtTokenUtil jwtTokenUtil;
 
     @Override
-    public ResponseEntity<?> getAuthenticatedUser(User user) {
+    public ResponseEntity<?> getAuthenticatedUser(String email) {
+        User user = userRepository.findOneByEmail(email);
         if (user != null) {
 
             return ResponseEntity.ok(toDTO(user));

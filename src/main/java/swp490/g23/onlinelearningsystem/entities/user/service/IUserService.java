@@ -1,13 +1,11 @@
 package swp490.g23.onlinelearningsystem.entities.user.service;
 
 import org.springframework.http.ResponseEntity;
-
-import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserUpdatePassRequestDTO;
 
 public interface IUserService {
 
-    ResponseEntity<?> getAuthenticatedUser(User user);
+    ResponseEntity<?> getAuthenticatedUser(String email);
 
     ResponseEntity<?> updatePassword(UserUpdatePassRequestDTO newPassword, String authoHeader);
 

@@ -29,7 +29,7 @@ public class UserController {
 	@GetMapping(value = "/register") // API for registration
 	@RolesAllowed({"ROLE_ADMIN"})
 	public String register(@AuthenticationPrincipal User user) {
-		return "man";
+		return user.getFullName()+"A??"+user.getSettings()+"B??"+user.getAuthorities();
 	}
 
 	/**
@@ -41,7 +41,7 @@ public class UserController {
 	@GetMapping // API to get info of the currently authenticated user
 	public ResponseEntity<?> getAuthenticatedUser(@AuthenticationPrincipal User user) {
 
-		return userService.getAuthenticatedUser(user);
+		return userService.getAuthenticatedUser(user.getUsername());
 		// return ResponseEntity.ok(user.toString());
 	}
 
