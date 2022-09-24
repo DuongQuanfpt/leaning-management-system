@@ -1,14 +1,14 @@
 import React from 'react'
 
-import Footer from '~/components/Footer'
-import Header from '~/components/Header'
-import MainSlider from '~/components/MainSlider'
-import ServiceContent from '~/components/ServiceContent'
-import PopularCoursesSlider from '~/components/PopularCoursesSlider'
-import OnlineCoursesCount from '~/components/OnlineCoursesCount'
-import UpcomingEventSlider from '~/components/UpcommingEventSlider'
-import PeopleFeedbackSlider from '~/components/PeopleFeedbackSlider'
-import RecentNewsSlider from '~/components/RecentNewsSliders'
+import Header from '~/components/Homepage/Header'
+import MainSlider from '~/components/Homepage/MainSlider'
+import ServiceContent from '~/components/Homepage/ServiceContent'
+import PopularCoursesSlider from '~/components/Homepage/PopularCoursesSlider'
+import OnlineCoursesCount from '~/components/Homepage/OnlineCoursesCount'
+import UpcomingEventSlider from '~/components/Homepage/UpcommingEventSlider'
+import PeopleFeedbackSlider from '~/components/Homepage/PeopleFeedbackSlider'
+import RecentNewsSlider from '~/components/Homepage/RecentNewsSliders'
+import Footer from '~/components/Homepage/Footer'
 
 const HomePage = () => {
   return (

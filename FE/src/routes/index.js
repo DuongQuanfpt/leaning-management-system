@@ -5,56 +5,51 @@ const HomePage = lazy(() => import('~/pages/common/HomePage'))
 const Login = lazy(() => import('~/pages/common/Login'))
 const ForgetPassword = lazy(() => import('~/pages/common/ForgetPassword'))
 const Register = lazy(() => import('~/pages/common/Register'))
+const RegisterSuccessed = lazy(() => import('~/pages/common/RegisterSuccessed'))
 
 // Admin pages
-const Dashboard = lazy(() => import('~/pages/admin/Dashboard/index'))
-const AddListing = lazy(() => import('~/pages/admin/Dashboard/addListing'))
-const BasicCalendar = lazy(() => import('~/pages/admin/Dashboard/basicCalendar'))
-const Bookmark = lazy(() => import('~/pages/admin/Dashboard/bookmark'))
-const Courses = lazy(() => import('~/pages/admin/Dashboard/courses'))
-const ListViewCalendar = lazy(() => import('~/pages/admin/Dashboard/listViewCalendar'))
-const Mailbox = lazy(() => import('~/pages/admin/Dashboard/mailbox'))
-const MailboxCompose = lazy(() => import('~/pages/admin/Dashboard/mailboxCompose'))
-const MailboxRead = lazy(() => import('~/pages/admin/Dashboard/mailboxRead'))
-const Review = lazy(() => import('~/pages/admin/Dashboard/review'))
-const TeacherProfile = lazy(() => import('~/pages/admin/Dashboard/teacherProfile'))
-const UserProfile = lazy(() => import('~/pages/admin/Dashboard/userProfile'))
-
-//User pages
-const Profile = lazy(() => import('~/pages/user/Profile'))
-const PasswordChange = lazy(() => import('~/pages/user/PasswordChange'))
+const AdminDashboard = lazy(() => import('~/pages/admin/AdminDashboard'))
+const AdminProfile = lazy(() => import('~/pages/admin/AdminProfile'))
+const AdminChangePassword = lazy(() => import('~/pages/admin/AdminChangePassword'))
+const AdminSettingList = lazy(() => import('~/pages/admin/AdminSettingList'))
+const AdminSettingDetail = lazy(() => import('~/pages/admin/AdminSettingDetail'))
+const AdminUserList = lazy(() => import('~/pages/admin/AdminUserList'))
+const AdminUserDetail = lazy(() => import('~/pages/admin/AdminUserDetail'))
 
 //404 pages
 const PageNotFound = lazy(() => import('~/pages/common/PageNotFound'))
 
-// Public routes
-const publicRoutes = [
-  { path: '*', component: PageNotFound },
+// Common routes
+const commonRoutes = [
   { path: '/', component: HomePage },
   { path: '/login', component: Login },
   { path: '/forget-password', component: ForgetPassword },
   { path: '/register', component: Register },
+  { path: '/register-successed', component: RegisterSuccessed },
   { path: '/404', component: PageNotFound },
 ]
 
-// Private routes
-const privateRoutes = [
-  // Admin pages
-  { path: '/admin', component: Dashboard },
-  { path: '/admin/add-listing', component: AddListing },
-  { path: '/admin/basic-calendar', component: BasicCalendar },
-  { path: '/admin/bookmark', component: Bookmark },
-  { path: '/admin/courses', component: Courses },
-  { path: '/admin/list-view-calendar', component: ListViewCalendar },
-  { path: '/admin/mailbox', component: Mailbox },
-  { path: '/admin/mailbox-compose', component: MailboxCompose },
-  { path: '/admin/mailbox-read', component: MailboxRead },
-  { path: '/admin/review', component: Review },
-  { path: '/admin/teacher-profile', component: TeacherProfile },
-  { path: '/admin/user-profile', component: UserProfile },
-  //User pages
-  { path: '/profile', component: Profile },
-  { path: '/password-change', component: PasswordChange },
+// Admin routes
+const adminRoutes = [
+  { path: '/admin', component: AdminDashboard },
+  { path: '/admin/profile', component: AdminProfile },
+  { path: '/admin/change-password', component: AdminChangePassword },
+  { path: '/admin/setting-list', component: AdminSettingList },
+  { path: '/admin/setting-detail', component: AdminSettingDetail },
+  { path: '/admin/user-list', component: AdminUserList },
+  { path: '/admin/user-detail', component: AdminUserDetail },
 ]
 
-export { publicRoutes, privateRoutes }
+// Manager routes
+const managerRoutes = []
+
+// Supporter routes
+const supporterRoutes = []
+
+// Trainer routes
+const trainerRoutes = []
+
+// Trainee routes
+const traineeRoutes = []
+
+export { commonRoutes, adminRoutes, managerRoutes, supporterRoutes, trainerRoutes, traineeRoutes }
