@@ -1,7 +1,10 @@
 package swp490.g23.onlinelearningsystem.entities.user.controller;
 
+import javax.annotation.security.RolesAllowed;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -11,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import net.bytebuddy.utility.RandomString;
+import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserUpdatePassRequestDTO;
-import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.user.service.impl.UserService;
 
 @RestController
@@ -23,8 +26,9 @@ public class UserController {
 	private UserService userService;
 
 	@GetMapping(value = "/register") // API for registration
-	public String register() {
-		return "test";
+	@RolesAllowed({"ROLE_ADMIN"})
+	public String register(@AuthenticationPrincipal User user) {
+		return "man";
 	}
 
 	/**
@@ -34,9 +38,10 @@ public class UserController {
 	 * @return info of the currently authenticated user
 	 */
 	@GetMapping // API to get info of the currently authenticated user
-	public ResponseEntity<?> getAuthenticatedUser(@RequestHeader("Authorization") String authoHeader) {
+	public ResponseEntity<?> getAuthenticatedUser(@AuthenticationPrincipal User user) {
 
-		return userService.getAuthenticatedUser(authoHeader);
+		return userService.getAuthenticatedUser(user);
+		// return ResponseEntity.ok(user.toString());
 	}
 
 	/**

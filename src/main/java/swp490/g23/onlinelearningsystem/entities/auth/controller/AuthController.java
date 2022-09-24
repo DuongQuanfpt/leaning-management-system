@@ -55,6 +55,6 @@ public class AuthController {
 
         String email = principal.getAttribute("email");
         
-        return "email";
+        return email;
     }
 }

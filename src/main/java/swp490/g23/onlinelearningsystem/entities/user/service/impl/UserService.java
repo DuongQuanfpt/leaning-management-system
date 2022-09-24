@@ -1,5 +1,8 @@
 package swp490.g23.onlinelearningsystem.entities.user.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,8 +10,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import io.jsonwebtoken.Claims;
 import swp490.g23.onlinelearningsystem.entities.email.EmailDetails;
 import swp490.g23.onlinelearningsystem.entities.email.service.impl.EmailService;
+import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
+import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserUpdatePassRequestDTO;
@@ -21,6 +27,9 @@ import swp490.g23.onlinelearningsystem.util.JwtTokenUtil;
 public class UserService implements IUserService {
 
     @Autowired
+    private SettingRepositories settingRepositories;
+
+    @Autowired
     private EmailService emailService;
 
     @Autowired
@@ -30,17 +39,9 @@ public class UserService implements IUserService {
     private JwtTokenUtil jwtTokenUtil;
 
     @Override
-    public UserResponseDTO createUser(UserRequestDTO UserRequestDTO) {
-
-        User user = toEntity(UserRequestDTO);
-        user = userRepository.save(user);
-        return toDTO(user);
-    }
-
-    @Override
-    public ResponseEntity<?> getAuthenticatedUser(String authoHeader) {
-        User user = getUserFromToken(authoHeader);
+    public ResponseEntity<?> getAuthenticatedUser(User user) {
         if (user != null){
+            
             return ResponseEntity.ok(toDTO(user));
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There are no authenticated user");
@@ -97,13 +98,26 @@ public class UserService implements IUserService {
 
     // get User from jwt token
     public User getUserFromToken(String authoHeader) {
+        
         String token = authoHeader.split(" ")[1].trim();
+
+        Claims claims = jwtTokenUtil.parseClaims(token);
+
+        String claimsRole = (String) claims.get("roles");
+        claimsRole = claimsRole.replace("[", "").replace("]", "");
+        String[] roles = claimsRole.split(",");
+
         String[] subjectArray = jwtTokenUtil.getSubject(token).split(",");
         Long userID = Long.parseLong(subjectArray[0]);
         if(!userRepository.findById(userID).isPresent()){
             return null ;
         }
-        return userRepository.findById(userID).get();
+
+        User user = userRepository.findById(userID).get();
+        for (String role : roles) {
+            user.addRole(settingRepositories.findBySettingValue(role));
+        }
+        return user;
     }
 
     // Convert DTO to Entity
@@ -135,6 +149,11 @@ public class UserService implements IUserService {
         responseDTO.setUserId(entity.getUserId());
         responseDTO.setAvatar_url(entity.getAvatar_url());
 
+        List<String> roleNames = new ArrayList<>();
+        for (Setting setting : entity.getSettings()) {
+            roleNames.add(setting.getSettingTitle());
+        }
+        responseDTO.setRoles(roleNames);
         return responseDTO;
     }
 

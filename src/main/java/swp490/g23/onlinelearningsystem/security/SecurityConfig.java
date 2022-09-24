@@ -26,6 +26,11 @@ import swp490.g23.onlinelearningsystem.security.jwt.JwtTokenFilter;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(
+    prePostEnabled = false,
+    securedEnabled = false,
+    jsr250Enabled = true
+)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
