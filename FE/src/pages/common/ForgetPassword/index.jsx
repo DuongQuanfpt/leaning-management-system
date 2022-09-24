@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { CButton } from '@coreui/react'
 
 // Images
 import logoWhite2 from '~/assets/images/logo-white-2.png'

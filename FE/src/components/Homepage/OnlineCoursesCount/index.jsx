@@ -1,6 +1,7 @@
 import React from 'react'
 
 import CounterUp from '~/components/Common/CounterUp'
+import { CButton } from '@coreui/react'
 
 // Images
 import bg1 from '~/assets/images/background/bg1.jpg'
@@ -21,9 +22,9 @@ const OnlineCoursesCount = () => {
                 <div className="input-group">
                   <input type="text" className="form-control" placeholder="What do you want to learn today?" />
                   <div className="input-group-append">
-                    <button className="btn-custom" type="submit">
+                    <CButton type="submit" color="warning">
                       Search
-                    </button>
+                    </CButton>
                   </div>
                 </div>
               </form>

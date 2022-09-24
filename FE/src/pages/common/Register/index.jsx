@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import ErrorMsg from '~/components/Common/ErrorMsg'
 import ReCAPTCHA from 'react-google-recaptcha'
+import { CButton } from '@coreui/react'
 
 // Images
 import logoWhite2 from '~/assets/images/logo-white-2.png'
@@ -120,6 +121,7 @@ const Register = () => {
                     value="Submit"
                     className="btn button-md m-t15"
                     disabled={!verified}
+                    color="success"
                   >
                     {isSubmitting ? `Registering....` : `Register`}
                   </CButton>

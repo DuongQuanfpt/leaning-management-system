@@ -16,6 +16,7 @@ import swp490.g23.onlinelearningsystem.entities.auth.domain.response.AuthRespons
 import swp490.g23.onlinelearningsystem.entities.auth.service.IAuthService;
 import swp490.g23.onlinelearningsystem.entities.email.EmailDetails;
 import swp490.g23.onlinelearningsystem.entities.email.service.impl.EmailService;
+import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.util.JwtTokenUtil;
@@ -24,54 +25,60 @@ import swp490.g23.onlinelearningsystem.util.JwtTokenUtil;
 public class AuthService implements IAuthService {
 
     @Autowired
+    private SettingRepositories settingRepositories;
+
+    @Autowired
     AuthenticationManager authenticationManager;
 
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired 
+    @Autowired
     private EmailService emailService;
 
     @Autowired
     JwtTokenUtil tokenUtil;
-    
+
+    public static final String ADMIN = "ROLE_ADMIN";
+    public static final String TRAINEE = "ROLE_TRAINEE";
+
     @Override
-    public ResponseEntity<?> authenticate( AuthRequest request) {
+    public ResponseEntity<?> authenticate(AuthRequest request) {
         try {
             Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-            );
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
             User user = (User) authentication.getPrincipal();
             String accessToken = tokenUtil.generateAccessToken(user);
-            AuthResponse response = new AuthResponse(user.getEmail(), accessToken , user.getFullName());
+            AuthResponse response = new AuthResponse(user.getEmail(), accessToken, user.getFullName());
             return ResponseEntity.ok(response);
         } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorect credentials");
         }
-      
+
     }
 
-    @Override 
+    @Override
     public ResponseEntity<?> register(AuthRequest request, String password) {
-        if(userRepository.findOneByEmail(request.getEmail())!=null){
+        if (userRepository.findOneByEmail(request.getEmail()) != null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email already exist");
         }
-        
+
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         User user = new User();
         user.setFullName(request.getFullName());
         user.setEmail(request.getEmail());
         user.setPassword(encoder.encode(password));
+        user.addRole(settingRepositories.findBySettingValue(TRAINEE));
 
         userRepository.save(user);
         EmailDetails details = new EmailDetails();
-       
+
         details.setRecipient(request.getEmail());
-        details.setMsgBody("Generated password is "+password);
+        details.setMsgBody("Generated password is " + password);
         details.setSubject("Register");
         emailService.sendSimpleMail(details);
-        
-        return ResponseEntity.ok(user.getPassword());
+
+        return ResponseEntity.ok("Successfull register , password has been to your email");
     }
-    
+
 }

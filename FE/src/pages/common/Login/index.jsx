@@ -5,8 +5,12 @@ import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import axios from 'axios'
 import ReCAPTCHA from 'react-google-recaptcha'
+<<<<<<< HEAD
 import { useDispatch } from 'react-redux'
 import { setProfile } from '~/redux/ProfileSlice/profileSlice'
+=======
+import { CButton } from '@coreui/react'
+>>>>>>> 83dda9112bef656b8c57307f323f8f021027fe3f
 
 import ErrorMsg from '~/components/Common/ErrorMsg'
 
@@ -149,6 +153,7 @@ const Login = () => {
                     className="btn button-md m-t15"
                     color="warning"
                     disabled={!verified}
+                    color="success"
                   >
                     {isSubmitting ? `Logging....` : `Login`}
                   </CButton>
