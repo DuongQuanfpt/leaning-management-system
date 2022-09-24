@@ -54,6 +54,9 @@ public class User extends BaseEntity implements UserDetails {
     private String avatar_url;
 
     @Column
+    private String mailToken;
+
+    @Column
     @Enumerated(EnumType.STRING)
     private UserStatusEnum status;
 

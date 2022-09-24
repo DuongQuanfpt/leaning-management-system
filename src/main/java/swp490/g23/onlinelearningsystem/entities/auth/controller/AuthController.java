@@ -55,9 +55,9 @@ public class AuthController {
     }
 
     @GetMapping(value = "/verify")
-	public ResponseEntity<?> forgotPassword(@RequestParam("id")Long id) {
+	public ResponseEntity<?> forgotPassword(@RequestParam("token")String token) {
 	
-		return authService.verifyUser(id);
+		return authService.verifyUser(token);
 	}
 
     @GetMapping("/login-google")

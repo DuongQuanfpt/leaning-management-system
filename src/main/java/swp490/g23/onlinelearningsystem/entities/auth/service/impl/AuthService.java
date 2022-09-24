@@ -15,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import net.bytebuddy.utility.RandomString;
 import swp490.g23.onlinelearningsystem.entities.auth.domain.request.AuthRequest;
 import swp490.g23.onlinelearningsystem.entities.auth.domain.response.AuthResponse;
 import swp490.g23.onlinelearningsystem.entities.auth.service.IAuthService;
@@ -76,10 +77,10 @@ public class AuthService implements IAuthService {
         user.setPassword(encoder.encode(password));
         user.addRole(settingRepositories.findBySettingValue(RoleEnum.ROLE_TRAINEE.toString()));
         user.setStatus(UserStatusEnum.INACTIVE);
-
+        user.setMailToken( RandomString.make(30));
         userRepository.save(user);
         try {
-            String verifyUrl = "https://lms-app-1.herokuapp.com/auth/verify?id="+user.getUserId();
+            String verifyUrl = "https://lms-app-1.herokuapp.com/auth/verify?token="+user.getUserId();
             sendRegisterMail(request.getEmail(), verifyUrl, password);
         } catch (UnsupportedEncodingException | MessagingException e) {
             e.printStackTrace();
@@ -90,12 +91,15 @@ public class AuthService implements IAuthService {
 
     
     @Override
-    public ResponseEntity<?> verifyUser(Long id) {
-        User user = userRepository.findUserToVerify(id);
+    public ResponseEntity<?> verifyUser(String token) {
+        User user = userRepository.findByMailToken(token);
+       
         if(user == null){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User doesnt exist");
         }
+        System.out.print(user.getEmail());
         user.setStatus(UserStatusEnum.ACTIVE);
+        user.setMailToken(null);
         userRepository.save(user);
         return ResponseEntity.ok().body(user.getFullName()+ " has been verified");
     }
