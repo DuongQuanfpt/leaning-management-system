@@ -1,6 +1,12 @@
 .wrapper {
   width: 100%;
+<<<<<<< HEAD
   @include ltr-rtl('padding-left', var(--cui-sidebar-occupy-start, 0));
   will-change: auto;
   @include transition(padding 0.15s);
+=======
+  @include ltr-rtl("padding-left", var(--cui-sidebar-occupy-start, 0));
+  will-change: auto;
+  @include transition(padding .15s);
+>>>>>>> 97c28d28194e537edc5b9180bf670f33dfad3fe7
 }

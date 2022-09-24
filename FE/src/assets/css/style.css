@@ -112,6 +112,31 @@
   font-style: normal;
 }
 /*=================================
+	0. CUSTOM
+=================================*/
+.header-client {
+  position: relative;
+  z-index: 99999;
+}
+a,
+.btn-link {
+  text-decoration: none !important;
+}
+
+.btn {
+  background-color: #f7b205 !important;
+}
+
+.btn:hover {
+  background-color: #4c1864 !important;
+  color: #fff !important;
+}
+
+.btn:disabled {
+  background-color: #e4e4e4 !important;
+}
+
+/*=================================
 	1. HEADER
 =================================*/
 .bg-fix {
@@ -125,6 +150,7 @@
   position: relative;
   z-index: 99999;
 }
+
 .header ul,
 .header ol {
   margin-bottom: 0;

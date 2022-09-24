@@ -8,6 +8,31 @@ import logo from '~/assets/images/logo.png'
 import adv from '~/assets/images/adv/adv.jpg'
 import logoWhite from '~/assets/images/logo-white.png'
 
+import {
+  CAvatar,
+  CBadge,
+  CDropdown,
+  CDropdownDivider,
+  CDropdownHeader,
+  CDropdownItem,
+  CDropdownMenu,
+  CDropdownToggle,
+} from '@coreui/react'
+import {
+  cilBell,
+  cilCreditCard,
+  cilCommentSquare,
+  cilEnvelopeOpen,
+  cilFile,
+  cilAccountLogout,
+  cilSettings,
+  cilTask,
+  cilUser,
+} from '@coreui/icons'
+import CIcon from '@coreui/icons-react'
+
+import avatar from '~/assets/images/profile/pic1.jpg'
+
 const Header = () => {
   const navigateTo = useNavigate()
 
@@ -146,7 +171,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="header rs-nav header-transparent">
+      <header className="header-client rs-nav header-transparent">
         {/* {logged ? ( */}
         <Sticky enabled={true} className="sticky-header navbar-expand-lg">
           <div className="menu-bar clearfix">
@@ -182,48 +207,29 @@ const Header = () => {
                       </button>
                     </li>
                     {logged ? (
-                      <>
-                        <li>
-                          <Link to="#" className="ttr-material-button ttr-submenu-toggle">
-                            <span className="ttr-user-avatar">
-                              <img alt="" src={logoWhite} width="60" height="60" />
-                            </span>
-                          </Link>
-                          <div className="ttr-header-submenu">
-                            <ul>
-                              <li>
-                                <Link to="/dashboard">
-                                  <i className="fa fa-check pr-2"></i>
-                                  Dashboard
-                                </Link>
-                              </li>
-                              <li>
-                                <Link to="/profile">
-                                  <i className="fa fa-check pr-2"></i>
-                                  Profile
-                                </Link>
-                              </li>
-                              <li>
-                                <Link to="/password-change">
-                                  <i className="fa fa-check pr-2"></i>
-                                  Change Password
-                                </Link>
-                              </li>
-                              <li onClick={handleLogout}>
-                                <Link to="/">
-                                  <i className="fa fa-check pr-2"></i>
-                                  Logout
-                                </Link>
-                              </li>
-                            </ul>
-                          </div>
-                        </li>
-                        <li onClick={handleLogout}>
-                          <Link to="/" className="text-white">
+                      <CDropdown variant="nav-item">
+                        <CDropdownToggle placement="bottom-end" className="py-0" caret={false}>
+                          <CAvatar src={avatar} size="md" />
+                        </CDropdownToggle>
+                        <CDropdownMenu className="pt-0" placement="bottom-end">
+                          <CDropdownItem href="/admin">
+                            <CIcon icon={cilUser} className="me-2" />
+                            Dashboard
+                          </CDropdownItem>
+                          <CDropdownItem href="/admin/profile">
+                            <CIcon icon={cilSettings} className="me-2" />
+                            Profile
+                          </CDropdownItem>
+                          <CDropdownItem href="/admin/change-password">
+                            <CIcon icon={cilCreditCard} className="me-2" />
+                            Change Password
+                          </CDropdownItem>
+                          <CDropdownItem onClick={handleLogout}>
+                            <CIcon icon={cilAccountLogout} className="me-2" />
                             Logout
-                          </Link>
-                        </li>
-                      </>
+                          </CDropdownItem>
+                        </CDropdownMenu>
+                      </CDropdown>
                     ) : (
                       <>
                         <li className="px-2">

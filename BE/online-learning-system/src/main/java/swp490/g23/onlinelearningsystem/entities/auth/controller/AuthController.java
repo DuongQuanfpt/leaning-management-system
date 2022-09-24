@@ -5,7 +5,10 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +29,7 @@ public class AuthController {
     /**
      * login api
      * @param request // login info sent from client
-     * @return an access token
+     * @return return an expirable token
      */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid AuthRequest request) {
@@ -36,8 +39,8 @@ public class AuthController {
 
     /**
      * register api
-     * @param request // email , fullName sent from client
-     * @return 
+     * @param request // email address , fullName sent from client
+     * @return sent an email to the email address contain a random generated password
      */
 
     @PostMapping("/register")
@@ -45,5 +48,13 @@ public class AuthController {
         
         String generatedPassword = RandomString.make(10);
         return authService.register(request,generatedPassword);
+    }
+
+    @GetMapping("/login-google")
+    public String loginGoogle(@AuthenticationPrincipal OAuth2User principal) {
+
+        String email = principal.getAttribute("email");
+        
+        return email;
     }
 }

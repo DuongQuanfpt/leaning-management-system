@@ -9,7 +9,12 @@ const RegisterSuccessed = lazy(() => import('~/pages/common/RegisterSuccessed'))
 
 // Admin pages
 const AdminDashboard = lazy(() => import('~/pages/admin/AdminDashboard'))
+const AdminProfile = lazy(() => import('~/pages/admin/AdminProfile'))
+const AdminChangePassword = lazy(() => import('~/pages/admin/AdminChangePassword'))
+const AdminSettingList = lazy(() => import('~/pages/admin/AdminSettingList'))
 const AdminSettingDetail = lazy(() => import('~/pages/admin/AdminSettingDetail'))
+const AdminUserList = lazy(() => import('~/pages/admin/AdminUserList'))
+const AdminUserDetail = lazy(() => import('~/pages/admin/AdminUserDetail'))
 
 //404 pages
 const PageNotFound = lazy(() => import('~/pages/common/PageNotFound'))
@@ -27,7 +32,12 @@ const commonRoutes = [
 // Admin routes
 const adminRoutes = [
   { path: '/admin', component: AdminDashboard },
+  { path: '/admin/profile', component: AdminProfile },
+  { path: '/admin/change-password', component: AdminChangePassword },
+  { path: '/admin/setting-list', component: AdminSettingList },
   { path: '/admin/setting-detail', component: AdminSettingDetail },
+  { path: '/admin/user-list', component: AdminUserList },
+  { path: '/admin/user-detail', component: AdminUserDetail },
 ]
 
 // Manager routes
