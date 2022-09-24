@@ -14,13 +14,14 @@ public class EmailService implements IEmailService {
 
     @Autowired
     private JavaMailSender javaMailSender;
-
+    // ${spring.mail.username}
     @Value("test@gmail.com") private String sender;
 
     @Override
     public String sendSimpleMail(EmailDetails details) {
         // Creating a simple mail message
         SimpleMailMessage mailMessage = new SimpleMailMessage();
+    
 
         // Setting up necessary details
         mailMessage.setFrom(sender);

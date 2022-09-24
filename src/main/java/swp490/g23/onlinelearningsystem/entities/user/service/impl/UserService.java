@@ -40,12 +40,12 @@ public class UserService implements IUserService {
 
     @Override
     public ResponseEntity<?> getAuthenticatedUser(User user) {
-        if (user != null){
-            
+        if (user != null) {
+
             return ResponseEntity.ok(toDTO(user));
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There are no authenticated user");
-        
+
     }
 
     @Override
@@ -53,7 +53,7 @@ public class UserService implements IUserService {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         User user = getUserFromToken(authoHeader);
 
-        if(user == null) {
+        if (user == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User doesnt exsist");
         }
 
@@ -82,11 +82,11 @@ public class UserService implements IUserService {
         if (user != null) {
             user.setPassword(encoder.encode(resetPass));
             userRepository.save(user);
-            
+
             EmailDetails details = new EmailDetails();
-       
+
             details.setRecipient(email);
-            details.setMsgBody("Your requested password is : "+resetPass);
+            details.setMsgBody("Your requested password is : " + resetPass);
             details.setSubject("Reset Password");
 
             emailService.sendSimpleMail(details);
@@ -96,9 +96,23 @@ public class UserService implements IUserService {
         }
     }
 
+    @Override
+    public ResponseEntity<?> updateUserProfile(String fullName, String avatarUrl, String mobile, Long userId) {
+        if (!userRepository.findById(userId).isPresent()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User doesnt exist");
+        }
+        User user = userRepository.findById(userId).get();
+        user.setMobile(mobile);
+        user.setFullName(fullName);
+        user.setAvatar_url(avatarUrl);
+        userRepository.save(user);
+
+        return ResponseEntity.ok(toDTO(user));
+    }
+
     // get User from jwt token
     public User getUserFromToken(String authoHeader) {
-        
+
         String token = authoHeader.split(" ")[1].trim();
 
         Claims claims = jwtTokenUtil.parseClaims(token);
@@ -109,8 +123,8 @@ public class UserService implements IUserService {
 
         String[] subjectArray = jwtTokenUtil.getSubject(token).split(",");
         Long userID = Long.parseLong(subjectArray[0]);
-        if(!userRepository.findById(userID).isPresent()){
-            return null ;
+        if (!userRepository.findById(userID).isPresent()) {
+            return null;
         }
 
         User user = userRepository.findById(userID).get();

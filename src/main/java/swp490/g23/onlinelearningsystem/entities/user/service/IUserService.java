@@ -13,4 +13,6 @@ public interface IUserService {
 
     ResponseEntity<?> resetPassword(String email, String token);
 
+    ResponseEntity<?> updateUserProfile(String fullName,String avatarUrl,String mobile,Long userId);
+
 }

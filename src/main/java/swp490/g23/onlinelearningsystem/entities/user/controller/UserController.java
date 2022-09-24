@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import net.bytebuddy.utility.RandomString;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
+import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserUpdatePassRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.service.impl.UserService;
 
@@ -71,5 +72,14 @@ public class UserController {
 	public ResponseEntity<?> forgotPassword(@RequestBody UserUpdatePassRequestDTO updatePassRequestDTO) {
 		String resetToken = RandomString.make(10);
 		return userService.resetPassword(updatePassRequestDTO.getEmail(), resetToken);
+	}
+
+	@PutMapping(value = "/update-profile")
+	@RolesAllowed({"ROLE_TRAINEE"})
+	public ResponseEntity<?> updateProfile(@RequestBody UserRequestDTO requestDTO
+										  ,@AuthenticationPrincipal User user) 
+	{
+	
+		return userService.updateUserProfile(requestDTO.getFullName(), requestDTO.getAvatar_url(), requestDTO.getMobile(), user.getUserId());
 	}
 }
