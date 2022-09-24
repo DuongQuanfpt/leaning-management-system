@@ -118,7 +118,7 @@ const PopularCoursesSlider = () => {
                 <div className="cours-bx">
                   <div className="action-box">
                     <img src={item.thumb} alt="" />
-                    <Link to="/courses-details" className="btn">
+                    <Link to="/courses-details" className="btn bg-light">
                       Read More
                     </Link>
                   </div>

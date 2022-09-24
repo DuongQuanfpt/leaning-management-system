@@ -21,7 +21,7 @@ const OnlineCoursesCount = () => {
                 <div className="input-group">
                   <input type="text" className="form-control" placeholder="What do you want to learn today?" />
                   <div className="input-group-append">
-                    <button className="btn" type="submit">
+                    <button className="btn-custom" type="submit">
                       Search
                     </button>
                   </div>

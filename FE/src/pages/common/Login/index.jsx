@@ -5,12 +5,16 @@ import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import axios from 'axios'
 import ReCAPTCHA from 'react-google-recaptcha'
+import { useDispatch } from 'react-redux'
+import { setProfile } from '~/redux/ProfileSlice/profileSlice'
 
 import ErrorMsg from '~/components/Common/ErrorMsg'
 
 // Images
 import logoWhite2 from '~/assets/images/logo-white-2.png'
 import bannerImg from '~/assets/images/background/bg2.jpg'
+import { useEffect } from 'react'
+import { CButton } from '@coreui/react'
 
 const Login = () => {
   const schema = Yup.object().shape({
@@ -29,6 +33,15 @@ const Login = () => {
   const [logged, setLogged] = useState(false)
   const [verified, setVerified] = useState(false)
 
+  useEffect(() => {
+    if (localStorage.getItem('LMS-User-Token')) {
+      navigateTo('/')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const dispatch = useDispatch()
+
   const submitForm = async (data) => {
     if (!isValid) return
     try {
@@ -36,13 +49,13 @@ const Login = () => {
       const responseAuthLogin = await axios.post('https://lms-app-1.herokuapp.com/auth/login', data)
       const token = responseAuthLogin.data.accessToken
       localStorage.setItem('LMS-User-Token', token)
-
       //Get profile data
       const responseProfileData = await axios.get('https://lms-app-1.herokuapp.com/user', {
         headers: { Authorization: `Bearer ${token}` },
       })
       const profileData = responseProfileData.data
-      localStorage.setItem('LMS-Profile-Data', JSON.stringify(profileData))
+      dispatch(setProfile(profileData))
+      console.log(profileData)
       setLogged(true)
       navigateTo('/')
     } catch (error) {
@@ -129,15 +142,16 @@ const Login = () => {
                 </div>
                 <div className="col-lg-12 mb-10">
                   {logged ? <ErrorMsg errorMsg="Your email or password is not available" /> : <Fragment />}
-                  <button
+                  <CButton
                     name="submit"
                     type="submit"
                     value="Submit"
                     className="btn button-md m-t15"
+                    color="warning"
                     disabled={!verified}
                   >
                     {isSubmitting ? `Logging....` : `Login`}
-                  </button>
+                  </CButton>
 
                   <h6 className="m-b15 m-t15">Login with Social media</h6>
                   <Link className="btn flex-fill m-l5 google-plus" to="#">

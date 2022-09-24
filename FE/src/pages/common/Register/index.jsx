@@ -10,6 +10,7 @@ import ReCAPTCHA from 'react-google-recaptcha'
 import logoWhite2 from '~/assets/images/logo-white-2.png'
 import bannerImg from '~/assets/images/background/bg2.jpg'
 import axios from 'axios'
+import { CButton } from '@coreui/react'
 
 const Register = () => {
   const navigateTo = useNavigate()
@@ -113,7 +114,7 @@ const Register = () => {
                 </div>
                 <div className="col-lg-12 m-b30 m-t15">
                   {isEmailAvailable ? <ErrorMsg errorMsg="Email is available" /> : <Fragment />}
-                  <button
+                  <CButton
                     name="submit"
                     type="submit"
                     value="Submit"
@@ -121,7 +122,7 @@ const Register = () => {
                     disabled={!verified}
                   >
                     {isSubmitting ? `Registering....` : `Register`}
-                  </button>
+                  </CButton>
                 </div>
                 <div className="col-lg-12">
                   <h6 className="m-b15">Sign Up with Social media</h6>

@@ -1,9 +1,9 @@
 import { combineReducers } from '@reduxjs/toolkit'
-import authSlice from './AuthSlice/authSlide'
 import sidebarSlice from './SidebarSlice/sidebarSlice'
+import profileSlice from './ProfileSlice/profileSlice'
 
 const reducer = combineReducers({
-  auth: authSlice,
   sidebar: sidebarSlice,
+  profile: profileSlice,
 })
 export default reducer

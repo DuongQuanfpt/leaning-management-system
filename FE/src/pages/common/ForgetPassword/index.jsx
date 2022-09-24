@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 // Images
 import logoWhite2 from '~/assets/images/logo-white-2.png'
 import bannerImg from '~/assets/images/background/bg2.jpg'
+import { CButton } from '@coreui/react'
 
 const ForgetPassword = () => {
   return (
@@ -40,9 +41,9 @@ const ForgetPassword = () => {
                   </div>
                 </div>
                 <div className="col-lg-12 m-b30">
-                  <button name="submit" type="submit" value="Submit" className="btn button-md">
+                  <CButton name="submit" type="submit" value="Submit" className="btn button-md" color="success">
                     Submit
-                  </button>
+                  </CButton>
                 </div>
               </div>
             </form>

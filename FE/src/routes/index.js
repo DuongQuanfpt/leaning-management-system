@@ -10,7 +10,7 @@ const RegisterSuccessed = lazy(() => import('~/pages/common/RegisterSuccessed'))
 // Admin pages
 const AdminDashboard = lazy(() => import('~/pages/admin/AdminDashboard'))
 const AdminProfile = lazy(() => import('~/pages/admin/AdminProfile'))
-const AdminChangePassword = lazy(() => import('~/pages/admin/AdminChangePassword'))
+const AdminChangePassword = lazy(() => import('~/pages/user/ChangePassword'))
 const AdminSettingList = lazy(() => import('~/pages/admin/AdminSettingList'))
 const AdminSettingDetail = lazy(() => import('~/pages/admin/AdminSettingDetail'))
 const AdminUserList = lazy(() => import('~/pages/admin/AdminUserList'))
@@ -31,13 +31,13 @@ const commonRoutes = [
 
 // Admin routes
 const adminRoutes = [
-  { path: '/admin', component: AdminDashboard },
-  { path: '/admin/profile', component: AdminProfile },
-  { path: '/admin/change-password', component: AdminChangePassword },
-  { path: '/admin/setting-list', component: AdminSettingList },
-  { path: '/admin/setting-detail', component: AdminSettingDetail },
-  { path: '/admin/user-list', component: AdminUserList },
-  { path: '/admin/user-detail', component: AdminUserDetail },
+  { path: '/dashboard', component: AdminDashboard },
+  { path: '/profile', component: AdminProfile },
+  { path: '/change-password', component: AdminChangePassword },
+  { path: '/setting-list', component: AdminSettingList },
+  { path: '/setting-detail', component: AdminSettingDetail },
+  { path: '/user-list', component: AdminUserList },
+  { path: '/user-detail', component: AdminUserDetail },
 ]
 
 // Manager routes
