@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import net.bytebuddy.utility.RandomString;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
+import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserUpdatePassRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.service.impl.UserService;
 
@@ -28,7 +28,7 @@ public class UserController {
 	@GetMapping(value = "/register") // API for registration
 	@RolesAllowed({"ROLE_ADMIN"})
 	public String register(@AuthenticationPrincipal User user) {
-		return "man";
+		return user.getFullName()+"A??"+user.getSettings()+"B??"+user.getAuthorities();
 	}
 
 	/**
@@ -40,7 +40,7 @@ public class UserController {
 	@GetMapping // API to get info of the currently authenticated user
 	public ResponseEntity<?> getAuthenticatedUser(@AuthenticationPrincipal User user) {
 
-		return userService.getAuthenticatedUser(user);
+		return userService.getAuthenticatedUser(user.getUserId());
 		// return ResponseEntity.ok(user.toString());
 	}
 
@@ -54,9 +54,9 @@ public class UserController {
 	 */
 	@PutMapping(value = "/update-pass")
 	public ResponseEntity<?> updatePassword(@RequestBody UserUpdatePassRequestDTO updatePassRequestDTO,
-			@RequestHeader("Authorization") String authoHeader) {
+											@AuthenticationPrincipal User user) {
 
-		return userService.updatePassword(updatePassRequestDTO, authoHeader);
+		return userService.updatePassword(updatePassRequestDTO, user.getUserId());
 	}
 
 	/**
@@ -68,8 +68,19 @@ public class UserController {
 	 */
 
 	@PutMapping(value = "/forgot-pass")
-	public ResponseEntity<?> forgotPassword(@RequestBody UserUpdatePassRequestDTO updatePassRequestDTO) {
+	public ResponseEntity<?> forgotPassword(@RequestBody UserUpdatePassRequestDTO updatePassRequestDTO) 
+	{
 		String resetToken = RandomString.make(10);
+		
 		return userService.resetPassword(updatePassRequestDTO.getEmail(), resetToken);
+	}
+
+	@PutMapping(value = "/update-profile")
+	@RolesAllowed({"ROLE_TRAINEE"})
+	public ResponseEntity<?> updateProfile(@RequestBody UserRequestDTO requestDTO
+										  ,@AuthenticationPrincipal User user) 
+	{
+	
+		return userService.updateUserProfile(requestDTO.getFullName(), requestDTO.getAvatar_url(), requestDTO.getMobile(), user.getUserId());
 	}
 }
