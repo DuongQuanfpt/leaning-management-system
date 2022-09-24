@@ -5,12 +5,9 @@ import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import axios from 'axios'
 import ReCAPTCHA from 'react-google-recaptcha'
-<<<<<<< HEAD
 import { useDispatch } from 'react-redux'
 import { setProfile } from '~/redux/ProfileSlice/profileSlice'
-=======
 import { CButton } from '@coreui/react'
->>>>>>> 83dda9112bef656b8c57307f323f8f021027fe3f
 
 import ErrorMsg from '~/components/Common/ErrorMsg'
 
@@ -18,7 +15,6 @@ import ErrorMsg from '~/components/Common/ErrorMsg'
 import logoWhite2 from '~/assets/images/logo-white-2.png'
 import bannerImg from '~/assets/images/background/bg2.jpg'
 import { useEffect } from 'react'
-import { CButton } from '@coreui/react'
 
 const Login = () => {
   const schema = Yup.object().shape({

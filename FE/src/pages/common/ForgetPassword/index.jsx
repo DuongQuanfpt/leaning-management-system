@@ -5,7 +5,6 @@ import { CButton } from '@coreui/react'
 // Images
 import logoWhite2 from '~/assets/images/logo-white-2.png'
 import bannerImg from '~/assets/images/background/bg2.jpg'
-import { CButton } from '@coreui/react'
 
 const ForgetPassword = () => {
   return (

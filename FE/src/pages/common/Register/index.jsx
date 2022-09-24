@@ -11,7 +11,6 @@ import { CButton } from '@coreui/react'
 import logoWhite2 from '~/assets/images/logo-white-2.png'
 import bannerImg from '~/assets/images/background/bg2.jpg'
 import axios from 'axios'
-import { CButton } from '@coreui/react'
 
 const Register = () => {
   const navigateTo = useNavigate()
