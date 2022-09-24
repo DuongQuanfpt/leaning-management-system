@@ -123,16 +123,17 @@ a,
   text-decoration: none !important;
 }
 
-.btn {
+.btn-custom {
   background-color: #f7b205 !important;
+  color: #000;
 }
 
-.btn:hover {
+.btn-custom:hover {
   background-color: #4c1864 !important;
   color: #fff !important;
 }
 
-.btn:disabled {
+.btn-custom:disabled {
   background-color: #e4e4e4 !important;
 }
 

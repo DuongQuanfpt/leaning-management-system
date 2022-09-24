@@ -112,7 +112,7 @@ const RecentNewsSlider = () => {
                     </h5>
                     <p>{item.text}</p>
                     <div className="post-extra">
-                      <Link to="/blog-details" className="btn-link">
+                      <Link to="/blog-details" className="btn-custom radius-xl btn-custom button-sm">
                         Read More
                       </Link>
                       <Link to="/blog-details" className="comments-bx">

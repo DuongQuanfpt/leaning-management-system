@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import axios from 'axios'
 import ReCAPTCHA from 'react-google-recaptcha'
+import { CButton } from '@coreui/react'
 
 import ErrorMsg from '~/components/Common/ErrorMsg'
 
@@ -129,15 +130,16 @@ const Login = () => {
                 </div>
                 <div className="col-lg-12 mb-10">
                   {logged ? <ErrorMsg errorMsg="Your email or password is not available" /> : <Fragment />}
-                  <button
+                  <CButton
                     name="submit"
                     type="submit"
                     value="Submit"
                     className="btn button-md m-t15"
                     disabled={!verified}
+                    color="success"
                   >
                     {isSubmitting ? `Logging....` : `Login`}
-                  </button>
+                  </CButton>
 
                   <h6 className="m-b15 m-t15">Login with Social media</h6>
                   <Link className="btn flex-fill m-l5 google-plus" to="#">

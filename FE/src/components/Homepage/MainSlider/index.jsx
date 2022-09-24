@@ -31,10 +31,10 @@ const MainSlider = () => {
                   Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
                   industry's standard dummy text ever since the
                 </p>
-                <Link className="btn radius-xl m-r15 button-md white" to="/contact-1">
+                <Link className="btn-custom radius-xl m-r15 button-md white" to="/contact-1">
                   Contact Us
                 </Link>
-                <Link className="btn radius-xl button-md" to="/about-1">
+                <Link className="btn-custom radius-xl button-md" to="/about-1">
                   Read More
                 </Link>
               </div>
@@ -54,10 +54,10 @@ const MainSlider = () => {
                   Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
                   industry's standard dummy text ever since the
                 </p>
-                <Link className="btn radius-xl m-r15 button-md white" to="/contact-1">
+                <Link className="btn-custom radius-xl m-r15 btn-custom button-md " to="/contact-1">
                   Contact Us
                 </Link>
-                <Link className="btn radius-xl button-md" to="/about-1">
+                <Link className="btn-custom radius-xl button-md" to="/about-1">
                   Read More
                 </Link>
               </div>

@@ -39,13 +39,8 @@ const Header = () => {
   const [logged, setLogged] = useState(false)
   useEffect(() => {
     // Search Form Popup
-    var searchBtn = document.getElementById('quik-search-btn')
     var searchForm = document.querySelector('.nav-search-bar')
     var closeBtn = document.getElementById('search-remove')
-
-    searchBtn.addEventListener('click', function () {
-      searchForm.classList.add('show')
-    })
 
     closeBtn.addEventListener('click', function () {
       searchForm.classList.remove('show')
@@ -200,12 +195,6 @@ const Header = () => {
               <div className="secondary-menu">
                 <div className="secondary-inner">
                   <ul>
-                    {/* <!-- Search Button ==== --> */}
-                    <li className="px-2">
-                      <button id="quik-search-btn" type="button" className="btn-link">
-                        <i className="fa fa-search"></i>
-                      </button>
-                    </li>
                     {logged ? (
                       <CDropdown variant="nav-item">
                         <CDropdownToggle placement="bottom-end" className="py-0" caret={false}>
@@ -231,7 +220,7 @@ const Header = () => {
                         </CDropdownMenu>
                       </CDropdown>
                     ) : (
-                      <>
+                      <div className="d-flex justify-content-evenly">
                         <li className="px-2">
                           <Link to="/register" className="btn-link">
                             Register
@@ -242,7 +231,7 @@ const Header = () => {
                             Login
                           </Link>
                         </li>
-                      </>
+                      </div>
                     )}
                   </ul>
                 </div>
