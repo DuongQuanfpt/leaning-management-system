@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { CButton } from '@coreui/react'
 
 // Images
 import logoWhite2 from '~/assets/images/logo-white-2.png'
@@ -40,9 +41,9 @@ const ForgetPassword = () => {
                   </div>
                 </div>
                 <div className="col-lg-12 m-b30">
-                  <button name="submit" type="submit" value="Submit" className="btn button-md">
+                  <CButton name="submit" type="submit" value="Submit" className="btn button-md" color="success">
                     Submit
-                  </button>
+                  </CButton>
                 </div>
               </div>
             </form>

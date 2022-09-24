@@ -76,7 +76,7 @@
 
 // fusv-disable
 // $primary-dark:  #1f1498 !default;
-// $primary-base:  #321fdb !default;
+$primary-base: #321fdb !default;
 // $primary-50:    #988fed !default;
 // $primary-25:    #ccc7f6 !default;
 
@@ -106,7 +106,7 @@ $warning-base: #f9b115 !default;
 // $danger-25:    #f9d4d4 !default;
 
 // $light-dark:     $gray-100 !default;
-// $light-base:     $gray-100 !default;
+// $light-base: $gray-100 !default;
 // $light-50:       shift-color($light-base, -70) !default;
 // $light-25:       shift-color($light-base, -80) !default;
 
@@ -117,13 +117,13 @@ $warning-base: #f9b115 !default;
 // fusv-enable
 
 // scss-docs-start theme-color-variables
-// $primary:       $primary-base !default;
+$primary: $primary-base !default;
 // $secondary:     $secondary-base !default;
 $success: $success-base !default;
 // $info:          $info-base !default;
 $warning: $warning-base !default;
 // $danger:        $danger-base !default;
-// $light:         $light-base !default;
+// $light: $light-base !default;
 // $dark:          $dark-base !default;
 // scss-docs-end theme-color-variables
 

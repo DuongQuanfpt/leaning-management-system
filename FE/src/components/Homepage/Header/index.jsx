@@ -8,27 +8,8 @@ import logo from '~/assets/images/logo.png'
 import adv from '~/assets/images/adv/adv.jpg'
 import logoWhite from '~/assets/images/logo-white.png'
 
-import {
-  CAvatar,
-  CBadge,
-  CDropdown,
-  CDropdownDivider,
-  CDropdownHeader,
-  CDropdownItem,
-  CDropdownMenu,
-  CDropdownToggle,
-} from '@coreui/react'
-import {
-  cilBell,
-  cilCreditCard,
-  cilCommentSquare,
-  cilEnvelopeOpen,
-  cilFile,
-  cilAccountLogout,
-  cilSettings,
-  cilTask,
-  cilUser,
-} from '@coreui/icons'
+import { CAvatar, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
+import { cilCreditCard, cilAccountLogout, cilSettings, cilUser } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
 
 import avatar from '~/assets/images/profile/pic1.jpg'
@@ -39,13 +20,8 @@ const Header = () => {
   const [logged, setLogged] = useState(false)
   useEffect(() => {
     // Search Form Popup
-    var searchBtn = document.getElementById('quik-search-btn')
     var searchForm = document.querySelector('.nav-search-bar')
     var closeBtn = document.getElementById('search-remove')
-
-    searchBtn.addEventListener('click', function () {
-      searchForm.classList.add('show')
-    })
 
     closeBtn.addEventListener('click', function () {
       searchForm.classList.remove('show')
@@ -164,7 +140,6 @@ const Header = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('LMS-User-Token')
-    localStorage.removeItem('LMS-Profile-Data')
     //Reload page
     navigateTo(0)
   }
@@ -200,27 +175,21 @@ const Header = () => {
               <div className="secondary-menu">
                 <div className="secondary-inner">
                   <ul>
-                    {/* <!-- Search Button ==== --> */}
-                    <li className="px-2">
-                      <button id="quik-search-btn" type="button" className="btn-link">
-                        <i className="fa fa-search"></i>
-                      </button>
-                    </li>
                     {logged ? (
                       <CDropdown variant="nav-item">
                         <CDropdownToggle placement="bottom-end" className="py-0" caret={false}>
                           <CAvatar src={avatar} size="md" />
                         </CDropdownToggle>
                         <CDropdownMenu className="pt-0" placement="bottom-end">
-                          <CDropdownItem href="/admin">
+                          <CDropdownItem href="/dashboard">
                             <CIcon icon={cilUser} className="me-2" />
                             Dashboard
                           </CDropdownItem>
-                          <CDropdownItem href="/admin/profile">
+                          <CDropdownItem href="/profile">
                             <CIcon icon={cilSettings} className="me-2" />
                             Profile
                           </CDropdownItem>
-                          <CDropdownItem href="/admin/change-password">
+                          <CDropdownItem href="/change-password">
                             <CIcon icon={cilCreditCard} className="me-2" />
                             Change Password
                           </CDropdownItem>
@@ -231,7 +200,7 @@ const Header = () => {
                         </CDropdownMenu>
                       </CDropdown>
                     ) : (
-                      <>
+                      <div className="d-flex justify-content-evenly">
                         <li className="px-2">
                           <Link to="/register" className="btn-link">
                             Register
@@ -242,7 +211,7 @@ const Header = () => {
                             Login
                           </Link>
                         </li>
-                      </>
+                      </div>
                     )}
                   </ul>
                 </div>

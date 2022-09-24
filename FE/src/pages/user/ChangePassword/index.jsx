@@ -23,7 +23,7 @@ const AdminChangePassword = () => {
 
   const handleSubmit = async () => {
     if (newPassword !== confirmNewPassword) {
-      setError('New Password and Confirm New Password must same')
+      setError('New Password and Verify New Password must same')
       return
     }
     if (oldPassword.length === 0 || newPassword.length === 0 || confirmNewPassword.length === 0) {
@@ -77,7 +77,7 @@ const AdminChangePassword = () => {
                         <div className="row col-12 w-100">
                           <div className="row col-6">
                             <div className="form-group col-12">
-                              <label className="col-form-label">Old Password</label>
+                              <label className="col-form-label">Current Password</label>
                               <div>
                                 <input
                                   className="form-control"
@@ -99,7 +99,7 @@ const AdminChangePassword = () => {
                               </div>
                             </div>
                             <div className="form-group col-12">
-                              <label className="col-form-label">Confirm New Password</label>
+                              <label className="col-form-label">Verify New Password</label>
                               <div>
                                 <input
                                   className="form-control"
@@ -111,7 +111,7 @@ const AdminChangePassword = () => {
                             </div>
                             <ErrorMsg errorMsg={error} />
                             <div className="d-flex justify-content-evenly">
-                              <CButton size="md" color="success" onClick={handleSubmit}>
+                              <CButton size="md" color="warning" onClick={handleSubmit}>
                                 Submit
                               </CButton>
                               <CButton size="md" color="warning" onClick={handleReset}>
