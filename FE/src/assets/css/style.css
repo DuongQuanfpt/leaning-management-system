@@ -822,9 +822,7 @@ a,
   margin: 0;
 }
 .secondary-inner ul li {
-  display: inline-block;
   position: relative;
-  margin-left: 10px;
 }
 .secondary-inner ul li a {
   color: #000;

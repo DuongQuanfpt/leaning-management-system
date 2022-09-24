@@ -12,6 +12,7 @@ import { AdminSidebarNav } from './AdminSidebarNav'
 
 import SimpleBar from 'simplebar-react'
 import 'simplebar/dist/simplebar.min.css'
+import '~/assets/css/custom/scrollbar.css'
 
 // sidebar nav config
 import navigation from '~/_nav'
