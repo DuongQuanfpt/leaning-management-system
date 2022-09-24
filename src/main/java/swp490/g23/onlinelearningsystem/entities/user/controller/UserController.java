@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -41,7 +40,7 @@ public class UserController {
 	@GetMapping // API to get info of the currently authenticated user
 	public ResponseEntity<?> getAuthenticatedUser(@AuthenticationPrincipal User user) {
 
-		return userService.getAuthenticatedUser(user.getUsername());
+		return userService.getAuthenticatedUser(user.getUserId());
 		// return ResponseEntity.ok(user.toString());
 	}
 
@@ -55,9 +54,9 @@ public class UserController {
 	 */
 	@PutMapping(value = "/update-pass")
 	public ResponseEntity<?> updatePassword(@RequestBody UserUpdatePassRequestDTO updatePassRequestDTO,
-			@RequestHeader("Authorization") String authoHeader) {
+											@AuthenticationPrincipal User user) {
 
-		return userService.updatePassword(updatePassRequestDTO, authoHeader);
+		return userService.updatePassword(updatePassRequestDTO, user.getUserId());
 	}
 
 	/**
@@ -69,8 +68,10 @@ public class UserController {
 	 */
 
 	@PutMapping(value = "/forgot-pass")
-	public ResponseEntity<?> forgotPassword(@RequestBody UserUpdatePassRequestDTO updatePassRequestDTO) {
+	public ResponseEntity<?> forgotPassword(@RequestBody UserUpdatePassRequestDTO updatePassRequestDTO) 
+	{
 		String resetToken = RandomString.make(10);
+		
 		return userService.resetPassword(updatePassRequestDTO.getEmail(), resetToken);
 	}
 

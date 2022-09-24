@@ -39,8 +39,9 @@ public class UserService implements IUserService {
     private JwtTokenUtil jwtTokenUtil;
 
     @Override
-    public ResponseEntity<?> getAuthenticatedUser(String email) {
-        User user = userRepository.findOneByEmail(email);
+    public ResponseEntity<?> getAuthenticatedUser(Long id) {
+        User user = userRepository.findUserById(id);
+
         if (user != null) {
 
             return ResponseEntity.ok(toDTO(user));
@@ -50,9 +51,9 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponseEntity<?> updatePassword(UserUpdatePassRequestDTO dto, String authoHeader) {
+    public ResponseEntity<?> updatePassword(UserUpdatePassRequestDTO dto, Long id) {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
-        User user = getUserFromToken(authoHeader);
+        User user = userRepository.findUserById(id);
 
         if (user == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User doesnt exsist");
@@ -110,6 +111,27 @@ public class UserService implements IUserService {
 
         return ResponseEntity.ok(toDTO(user));
     }
+
+    // public void sendRegisterMail(String email, String verifyUrl ,String password) {
+
+    //     EmailDetails details = new EmailDetails();
+
+    //     details.setRecipient(email);
+
+    //     String password= "";
+    //     String content = "<p>Hello,</p>"
+    //     + "<p>Your account have been successfully created, here your password : "+password+" .</p>"
+    //     + "<p>For the final step , click the link below to activate your account :</p>"
+    //     + "<p><a href=\"" + verifyUrl + "\">Change my password</a></p>"
+    //     + "<br>"
+    //     + "<p>Ignore this email if you do remember your password, "
+    //     + "or you have not made the request.</p>";
+
+    //     details.setMsgBody(content);
+    //     details.setSubject("Reset Password");
+
+    //     emailService.sendSimpleMail(details);
+    // }
 
     // get User from jwt token
     public User getUserFromToken(String authoHeader) {

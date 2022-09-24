@@ -5,9 +5,9 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserUpdatePa
 
 public interface IUserService {
 
-    ResponseEntity<?> getAuthenticatedUser(String email);
+    ResponseEntity<?> getAuthenticatedUser(Long id);
 
-    ResponseEntity<?> updatePassword(UserUpdatePassRequestDTO newPassword, String authoHeader);
+    ResponseEntity<?> updatePassword(UserUpdatePassRequestDTO newPassword, Long id);
 
     ResponseEntity<?> resetPassword(String email, String token);
 

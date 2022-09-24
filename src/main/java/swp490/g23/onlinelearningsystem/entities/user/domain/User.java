@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -24,6 +26,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.BaseEntity;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
+import swp490.g23.onlinelearningsystem.util.EnumEntity.UserStatusEnum;
 
 @Entity
 @Table(name = "user")
@@ -51,7 +54,8 @@ public class User extends BaseEntity implements UserDetails {
     private String avatar_url;
 
     @Column
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private UserStatusEnum status;
 
     @Column
     private String note;
