@@ -80,7 +80,7 @@ public class AuthService implements IAuthService {
         user.setMailToken( RandomString.make(30));
         userRepository.save(user);
         try {
-            String verifyUrl = "https://lms-app-1.herokuapp.com/auth/verify?token="+user.getUserId();
+            String verifyUrl = "https://lms-app-1.herokuapp.com/auth/verify?token="+user.getMailToken();
             sendRegisterMail(request.getEmail(), verifyUrl, password);
         } catch (UnsupportedEncodingException | MessagingException e) {
             e.printStackTrace();
