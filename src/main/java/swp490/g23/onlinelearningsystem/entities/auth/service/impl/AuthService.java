@@ -66,7 +66,7 @@ public class AuthService implements IAuthService {
 
     @Override
     public ResponseEntity<?> register(AuthRequest request, String password) {
-        if (userRepository.findOneByEmail(request.getEmail()) != null) {
+        if (userRepository.findUserWithEmail(request.getEmail()) != null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email already exist");
         }
 
@@ -80,7 +80,9 @@ public class AuthService implements IAuthService {
         user.setMailToken( RandomString.make(30));
         userRepository.save(user);
         try {
-            String verifyUrl = "https://lms-app-1.herokuapp.com/auth/verify?token="+user.getMailToken();
+            // String verifyUrl = "https://lms-app-1.herokuapp.com/auth/verify?token="+user.getMailToken();
+            String verifyUrl = request.getLink()+user.getMailToken();
+            System.out.println(verifyUrl);
             sendRegisterMail(request.getEmail(), verifyUrl, password);
         } catch (UnsupportedEncodingException | MessagingException e) {
             e.printStackTrace();

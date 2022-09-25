@@ -44,12 +44,12 @@ public class AuthController {
      * 
      * @param request // email address , fullName sent from client
      * @return sent an email to the email address contain a random generated
-     *         password
+     *         password and a verify link
      */
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody @Valid AuthRequest request) {
-
+    public ResponseEntity<?> register(@RequestBody @Valid AuthRequest request) 
+    {
         String generatedPassword = RandomString.make(10);
         return authService.register(request, generatedPassword);
     }
