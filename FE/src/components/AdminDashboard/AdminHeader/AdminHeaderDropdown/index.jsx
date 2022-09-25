@@ -1,25 +1,6 @@
 import React from 'react'
-import {
-  CAvatar,
-  CBadge,
-  CDropdown,
-  CDropdownDivider,
-  CDropdownHeader,
-  CDropdownItem,
-  CDropdownMenu,
-  CDropdownToggle,
-} from '@coreui/react'
-import {
-  cilBell,
-  cilCreditCard,
-  cilCommentSquare,
-  cilEnvelopeOpen,
-  cilFile,
-  cilAccountLogout,
-  cilSettings,
-  cilTask,
-  cilUser,
-} from '@coreui/icons'
+import { CAvatar, CDropdown, CDropdownDivider, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
+import { cilAccountLogout, cilSettings, cilUser } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
 
 import avatar from '~/assets/images/profile/pic1.jpg'
@@ -28,9 +9,9 @@ import { Link, useNavigate } from 'react-router-dom'
 const AdminHeaderDropdown = () => {
   const navigateTo = useNavigate()
   const handleLogout = () => {
-    localStorage.removeItem('LMS-User-Token')
+    localStorage.removeItem('persist:root')
     //Reload page
-    navigateTo(0)
+    navigateTo('/')
   }
   return (
     <CDropdown variant="nav-item">

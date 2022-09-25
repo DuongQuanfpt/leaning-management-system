@@ -32,7 +32,10 @@ const Register = () => {
   // const navigate = useNavigate()
 
   const submitForm = async (data) => {
-    console.log(data)
+    data = {
+      ...data,
+      'link-verify': 'http://localhost:3000/verify',
+    }
     if (!isValid) return
     try {
       const response = await axios.post('https://lms-app-1.herokuapp.com/auth/register', JSON.stringify(data), {

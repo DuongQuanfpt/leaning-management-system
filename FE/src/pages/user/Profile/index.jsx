@@ -1,41 +1,85 @@
 import React from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { getProfile } from '~/redux/ProfileSlice/profileSlice'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
+import { useDispatch, useSelector } from 'react-redux'
+import { setProfile } from '~/redux/ProfileSlice/profileSlice'
+
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 
 import { CContainer, CRow, CCol, CForm, CButton } from '@coreui/react'
 import avatar from '~/assets/images/profile/pic1.jpg'
 import { Link } from 'react-router-dom'
-import { useState } from 'react'
-import { useEffect } from 'react'
+import ErrorMsg from '~/components/Common/ErrorMsg'
 
 const Profile = () => {
-  const dispatch = useDispatch()
-  const profileData = useSelector((state) => state.profile.personal)
+  const profileData = useSelector((state) => state.profile)
 
-  const [isChange, setIsChange] = useState(false)
+  const [isEditMode, setIsEditMode] = useState(false)
   const [name, setName] = useState('')
   const [mobile, setMobile] = useState('')
+  const [error, setError] = useState('')
+
+  const dispatch = useDispatch()
+  const currentAccessToken = useSelector((state) => state.auth.token)
+  const currentProfile = useSelector((state) => state.profile)
 
   useEffect(() => {
     setName(profileData.fullName)
     setMobile(profileData.mobile)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
   const handleAvatar = () => {}
-  const handleSave = () => {}
+  const handleSave = async () => {
+    if (name?.length < 3) {
+      setError('Your name must longer than 3 characters')
+      return
+    }
+    if (mobile?.length < 9 || mobile?.length > 11) {
+      setError('Your mobile number must 9-10 characters')
+      return
+    }
+    try {
+      const data = {
+        fullName: name,
+        mobile,
+      }
+      const response = await axios.put('https://lms-app-1.herokuapp.com/user/update-profile', data, {
+        headers: { Authorization: `Bearer ${currentAccessToken}` },
+      })
+      console.log(response.status)
+      if (response.status === 200) {
+        setError('You have successfully changed your password')
+        dispatch(
+          setProfile({
+            ...currentProfile,
+            ...data,
+          }),
+        )
+        return
+      }
+    } catch (error) {
+      if (error.code === 'ERR_BAD_REQUEST') {
+        setError('Some mistake, try again')
+        return
+      }
+      console.error('Failed to fetch edit profile at Edit Profile', error)
+    }
+  }
   const handleReset = () => {
     setName(profileData.fullName)
     setMobile(profileData.mobile)
+    setError('')
   }
   const handleCancel = () => {
     setName(profileData.fullName)
     setMobile(profileData.mobile)
-    setIsChange(false)
+    setError('')
+    setIsEditMode(false)
   }
   const handleEdit = () => {
-    setIsChange(true)
+    setIsEditMode(true)
   }
   console.log(profileData)
   return (
@@ -62,16 +106,9 @@ const Profile = () => {
                                 <img src={profileData.avatar_url === '' ? avatar : profileData.avatar_url} alt="" />
                               </div>
                               <div className="d-flex pt-4">
-                                <CButton size="md" color="success" onClick={handleAvatar}>
-                                  Change Avatar
+                                <CButton size="md" color="warning" onClick={handleAvatar}>
+                                  Edit Avatar
                                 </CButton>
-                              </div>
-                              <div className="d-flex pt-4">
-                                <Link to="/admin/change-password">
-                                  <CButton size="md" color="danger">
-                                    Change Password
-                                  </CButton>
-                                </Link>
                               </div>
                             </div>
                             <div className="row col-9">
@@ -93,7 +130,7 @@ const Profile = () => {
                                     className="form-control"
                                     type="text"
                                     value={name}
-                                    disabled={!isChange}
+                                    disabled={!isEditMode}
                                     onChange={(e) => setName(e.target.value)}
                                   />
                                 </div>
@@ -116,7 +153,7 @@ const Profile = () => {
                                     className="form-control"
                                     type="text"
                                     value={mobile}
-                                    disabled={!isChange}
+                                    disabled={!isEditMode}
                                     onChange={(e) => setMobile(e.target.value)}
                                   />
                                 </div>
@@ -127,7 +164,7 @@ const Profile = () => {
                                   <input
                                     className="form-control"
                                     type="text"
-                                    value={profileData.role}
+                                    value={profileData.roles.join(' / ')}
                                     disabled={true}
                                   />
                                 </div>
@@ -154,23 +191,31 @@ const Profile = () => {
                                   />
                                 </div>
                               </div>
+                              <ErrorMsg errorMsg={error} />
                               <div className="d-flex justify-content-evenly">
-                                {isChange ? (
+                                {isEditMode ? (
                                   <>
-                                    <CButton size="md" color="success" onClick={handleSave}>
+                                    <CButton size="md" color="warning" onClick={handleSave}>
                                       Save
                                     </CButton>
-                                    <CButton size="md" color="success" onClick={handleReset}>
+                                    <CButton size="md" color="warning" onClick={handleReset}>
                                       Reset
                                     </CButton>
-                                    <CButton size="md" color="success" onClick={handleCancel}>
+                                    <CButton size="md" color="warning" onClick={handleCancel}>
                                       Cancel
                                     </CButton>
                                   </>
                                 ) : (
-                                  <CButton size="md" color="success" onClick={handleEdit}>
-                                    Edit profile
-                                  </CButton>
+                                  <>
+                                    <CButton size="md" color="warning" onClick={handleEdit}>
+                                      Edit profile
+                                    </CButton>
+                                    <Link to="/change-password">
+                                      <CButton size="md" color="danger">
+                                        Change Password
+                                      </CButton>
+                                    </Link>
+                                  </>
                                 )}
                               </div>
                             </div>

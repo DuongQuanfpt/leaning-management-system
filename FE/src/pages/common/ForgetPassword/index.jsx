@@ -41,7 +41,7 @@ const ForgetPassword = () => {
                   </div>
                 </div>
                 <div className="col-lg-12 m-b30">
-                  <CButton name="submit" type="submit" value="Submit" className="btn button-md" color="success">
+                  <CButton name="submit" type="submit" value="Submit" className="btn button-md" color="warning">
                     Submit
                   </CButton>
                 </div>

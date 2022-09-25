@@ -1,9 +1,10 @@
 import React, { Suspense } from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
+import { PersistGate } from 'redux-persist/integration/react'
 import { BrowserRouter } from 'react-router-dom'
 import App from '~/App'
-import store from '~/redux/store'
+import store, { persistor } from '~/redux/store'
 import Loading from './pages/common/Loading'
 import reportWebVitals from './reportWebVitals'
 
@@ -11,9 +12,11 @@ ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
       <Provider store={store}>
-        <Suspense fallback={<Loading />}>
-          <App />
-        </Suspense>
+        <PersistGate loading={null} persistor={persistor}>
+          <Suspense fallback={<Loading />}>
+            <App />
+          </Suspense>
+        </PersistGate>
       </Provider>
     </BrowserRouter>
   </React.StrictMode>,

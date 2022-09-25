@@ -13,6 +13,7 @@ import { cilCreditCard, cilAccountLogout, cilSettings, cilUser } from '@coreui/i
 import CIcon from '@coreui/icons-react'
 
 import avatar from '~/assets/images/profile/pic1.jpg'
+import { useSelector } from 'react-redux'
 
 const Header = () => {
   const navigateTo = useNavigate()
@@ -132,14 +133,17 @@ const Header = () => {
     headerSubMenu()
   }, [])
 
+  const currentAccessToken = useSelector((state) => state.auth.token)
+
   useEffect(() => {
-    if (localStorage.getItem('LMS-User-Token')) {
+    if (currentAccessToken) {
       setLogged(true)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleLogout = () => {
-    localStorage.removeItem('LMS-User-Token')
+    localStorage.removeItem('persist:root')
     //Reload page
     navigateTo(0)
   }

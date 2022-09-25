@@ -7,12 +7,15 @@ import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 import ErrorMsg from '~/components/Common/ErrorMsg'
+import { useSelector } from 'react-redux'
 
 const AdminChangePassword = () => {
   const [oldPassword, setOldPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmNewPassword, setConfirmNewPassword] = useState('')
   const [error, setError] = useState('')
+
+  const currentAccessToken = useSelector((state) => state.auth.token)
 
   const handleReset = () => {
     setOldPassword('')
@@ -34,8 +37,7 @@ const AdminChangePassword = () => {
       setError('Password length must longer than 6 characters')
       return
     }
-    //Fetch get password here
-    const accessToken = localStorage.getItem('LMS-User-Token')
+    const accessToken = currentAccessToken
     try {
       const data = {
         oldPassword,
