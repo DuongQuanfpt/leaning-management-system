@@ -6,6 +6,7 @@ import javax.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import swp490.g23.onlinelearningsystem.util.EnumEntity.UserStatusEnum;
 
 @Getter @Setter @NoArgsConstructor
 public class UserRequestDTO  {
@@ -23,7 +24,7 @@ public class UserRequestDTO  {
 
     private String avatar_url;
 
-    private String status;
+    private UserStatusEnum status;
 
     private String note;
 
