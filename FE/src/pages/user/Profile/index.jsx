@@ -1,13 +1,16 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
+import { useDispatch, useSelector } from 'react-redux'
+import { setProfile } from '~/redux/ProfileSlice/profileSlice'
+
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 
 import { CContainer, CRow, CCol, CForm, CButton } from '@coreui/react'
 import avatar from '~/assets/images/profile/pic1.jpg'
 import { Link } from 'react-router-dom'
-import { useState } from 'react'
-import { useEffect } from 'react'
+import ErrorMsg from '~/components/Common/ErrorMsg'
 
 const Profile = () => {
   const profileData = useSelector((state) => state.profile)
@@ -15,6 +18,11 @@ const Profile = () => {
   const [isEditMode, setIsEditMode] = useState(false)
   const [name, setName] = useState('')
   const [mobile, setMobile] = useState('')
+  const [error, setError] = useState('')
+
+  const dispatch = useDispatch()
+  const currentAccessToken = useSelector((state) => state.auth.token)
+  const currentProfile = useSelector((state) => state.profile)
 
   useEffect(() => {
     setName(profileData.fullName)
@@ -23,14 +31,51 @@ const Profile = () => {
   }, [])
 
   const handleAvatar = () => {}
-  const handleSave = () => {}
+  const handleSave = async () => {
+    if (name?.length < 3) {
+      setError('Your name must longer than 3 characters')
+      return
+    }
+    if (mobile?.length < 9 || mobile?.length > 11) {
+      setError('Your mobile number must 9-10 characters')
+      return
+    }
+    try {
+      const data = {
+        fullName: name,
+        mobile,
+      }
+      const response = await axios.put('https://lms-app-1.herokuapp.com/user/update-profile', data, {
+        headers: { Authorization: `Bearer ${currentAccessToken}` },
+      })
+      console.log(response.status)
+      if (response.status === 200) {
+        setError('You have successfully changed your password')
+        dispatch(
+          setProfile({
+            ...currentProfile,
+            ...data,
+          }),
+        )
+        return
+      }
+    } catch (error) {
+      if (error.code === 'ERR_BAD_REQUEST') {
+        setError('Some mistake, try again')
+        return
+      }
+      console.error('Failed to fetch edit profile at Edit Profile', error)
+    }
+  }
   const handleReset = () => {
     setName(profileData.fullName)
     setMobile(profileData.mobile)
+    setError('')
   }
   const handleCancel = () => {
     setName(profileData.fullName)
     setMobile(profileData.mobile)
+    setError('')
     setIsEditMode(false)
   }
   const handleEdit = () => {
@@ -86,7 +131,7 @@ const Profile = () => {
                                     type="text"
                                     value={name}
                                     disabled={!isEditMode}
-                                    onEdit={(e) => setName(e.target.value)}
+                                    onChange={(e) => setName(e.target.value)}
                                   />
                                 </div>
                               </div>
@@ -109,7 +154,7 @@ const Profile = () => {
                                     type="text"
                                     value={mobile}
                                     disabled={!isEditMode}
-                                    onEdit={(e) => setMobile(e.target.value)}
+                                    onChange={(e) => setMobile(e.target.value)}
                                   />
                                 </div>
                               </div>
@@ -146,6 +191,7 @@ const Profile = () => {
                                   />
                                 </div>
                               </div>
+                              <ErrorMsg errorMsg={error} />
                               <div className="d-flex justify-content-evenly">
                                 {isEditMode ? (
                                   <>

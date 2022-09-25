@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import axios from 'axios'
 import ReCAPTCHA from 'react-google-recaptcha'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { setToken } from '~/redux/AuthSlice/authSlice'
 import { setProfile } from '~/redux/ProfileSlice/profileSlice'
 import { CButton } from '@coreui/react'
@@ -33,8 +33,8 @@ const Login = () => {
   const [logged, setLogged] = useState(false)
   const [verified, setVerified] = useState(false)
 
+  const currentAccessToken = useSelector((state) => state.auth.token)
   useEffect(() => {
-    const currentAccessToken = JSON.parse(JSON.parse(localStorage.getItem('persist:root')).auth).token
     if (currentAccessToken) {
       navigateTo('/')
     }
@@ -58,7 +58,7 @@ const Login = () => {
       dispatch(setProfile(profileData))
       setLogged(true)
       console.log(JSON.parse(JSON.parse(localStorage.getItem('persist:root')).auth).token)
-      // navigateTo('/')
+      navigateTo('/')
     } catch (error) {
       console.error('Failed to fetch token authenticated at Login', error)
       setLogged(false)

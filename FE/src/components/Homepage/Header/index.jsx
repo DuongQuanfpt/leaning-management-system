@@ -13,6 +13,7 @@ import { cilCreditCard, cilAccountLogout, cilSettings, cilUser } from '@coreui/i
 import CIcon from '@coreui/icons-react'
 
 import avatar from '~/assets/images/profile/pic1.jpg'
+import { useSelector } from 'react-redux'
 
 const Header = () => {
   const navigateTo = useNavigate()
@@ -132,11 +133,13 @@ const Header = () => {
     headerSubMenu()
   }, [])
 
+  const currentAccessToken = useSelector((state) => state.auth.token)
+
   useEffect(() => {
-    const currentAccessToken = JSON.parse(JSON.parse(localStorage.getItem('persist:root')).auth).token
     if (currentAccessToken) {
       setLogged(true)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleLogout = () => {
