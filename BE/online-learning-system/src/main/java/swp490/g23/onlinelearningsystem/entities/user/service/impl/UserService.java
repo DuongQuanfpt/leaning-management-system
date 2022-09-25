@@ -1,7 +1,10 @@
 package swp490.g23.onlinelearningsystem.entities.user.service.impl;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
+import net.bytebuddy.utility.RandomString;
 import swp490.g23.onlinelearningsystem.entities.email.EmailDetails;
 import swp490.g23.onlinelearningsystem.entities.email.service.impl.EmailService;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
@@ -78,24 +82,30 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponseEntity<?> resetPassword(String email, String resetPass) {
-        PasswordEncoder encoder = new BCryptPasswordEncoder();
+    public ResponseEntity<?> resetPassword(String email, String link) {
         User user = userRepository.findOneByEmail(email);
         if (user != null) {
-            user.setPassword(encoder.encode(resetPass));
+            user.setMailToken(RandomString.make(30));
             userRepository.save(user);
 
-            EmailDetails details = new EmailDetails();
-
-            details.setRecipient(email);
-            details.setMsgBody("Your requested password is : " + resetPass);
-            details.setSubject("Reset Password");
-
-            emailService.sendSimpleMail(details);
-            return ResponseEntity.ok("your password have been resetted , we have sent the new password to your email");
+            resetPasswordMail(user.getEmail(), link);
+            return ResponseEntity.ok("your password have been reset , we have sent the new password to your email");
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No user match with given email");
         }
+    }
+
+    @Override
+    public ResponseEntity<?> resetProcessing(String newPassword, String token) {
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        User user = userRepository.findByMailToken(token);
+        if(user == null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User doesnt exist");
+        }
+        user.setPassword(encoder.encode(newPassword));
+        user.setMailToken(null);
+        userRepository.save(user);
+        return ResponseEntity.ok().body("Your password have been reset sucessfully");
     }
 
     @Override
@@ -112,26 +122,30 @@ public class UserService implements IUserService {
         return ResponseEntity.ok(toDTO(user));
     }
 
-    // public void sendRegisterMail(String email, String verifyUrl ,String password) {
+    //sent email with password reset link to user
+    public void resetPasswordMail(String email, String verifyUrl) {
 
-    //     EmailDetails details = new EmailDetails();
+        EmailDetails details = new EmailDetails();
 
-    //     details.setRecipient(email);
+        details.setRecipient(email);
 
-    //     String password= "";
-    //     String content = "<p>Hello,</p>"
-    //     + "<p>Your account have been successfully created, here your password : "+password+" .</p>"
-    //     + "<p>For the final step , click the link below to activate your account :</p>"
-    //     + "<p><a href=\"" + verifyUrl + "\">Change my password</a></p>"
-    //     + "<br>"
-    //     + "<p>Ignore this email if you do remember your password, "
-    //     + "or you have not made the request.</p>";
+        String subject = "Here's the link to reset your password";
 
-    //     details.setMsgBody(content);
-    //     details.setSubject("Reset Password");
+        String content = "<p>Hello,</p>"
+                + "<p>You have requested to reset your password.</p>"
+                + "<p>Click the link below to change your password:</p>"
+                + "<p><a href=\"" + verifyUrl + "\">Change my password</a></p>"
+                + "<br>";
 
-    //     emailService.sendSimpleMail(details);
-    // }
+        details.setMsgBody(content);
+        details.setSubject(subject);
+
+        try {
+            emailService.sendMimeMail(details);
+        } catch (UnsupportedEncodingException | MessagingException e) {
+            e.printStackTrace();
+        }
+    }
 
     // get User from jwt token
     public User getUserFromToken(String authoHeader) {
@@ -193,5 +207,7 @@ public class UserService implements IUserService {
         responseDTO.setRoles(roleNames);
         return responseDTO;
     }
+
+    
 
 }
