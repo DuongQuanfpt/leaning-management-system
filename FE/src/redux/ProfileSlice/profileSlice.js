@@ -1,26 +1,24 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 
-export const getProfile = createAsyncThunk('')
 const initialState = {
-  personal: {
-    userId: 'a',
-    fullName: 'b',
-    email: 'c',
-    mobile: 'd',
-    avatar_url: '',
-    status: 'e',
-    note: 'f',
-    roles: 'g',
-  },
+  userId: '',
+  fullName: '',
+  email: '',
+  mobile: '',
+  avatar_url: '',
+  status: '',
+  note: '',
+  roles: {},
 }
 
 const profileSlice = createSlice({
   name: 'profile',
   initialState,
   reducers: {
-    setProfile(state, action) {
-      state.personal = action.payload
-    },
+    setProfile: (state, action) => ({
+      ...state,
+      ...action.payload,
+    }),
   },
 })
 

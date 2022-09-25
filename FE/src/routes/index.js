@@ -6,15 +6,16 @@ const Login = lazy(() => import('~/pages/common/Login'))
 const ForgetPassword = lazy(() => import('~/pages/common/ForgetPassword'))
 const Register = lazy(() => import('~/pages/common/Register'))
 const RegisterSuccessed = lazy(() => import('~/pages/common/RegisterSuccessed'))
+const Verify = lazy(() => import('~/pages/common/Verify'))
 
 // Admin pages
-const AdminDashboard = lazy(() => import('~/pages/admin/AdminDashboard'))
-const AdminProfile = lazy(() => import('~/pages/admin/AdminProfile'))
-const AdminChangePassword = lazy(() => import('~/pages/user/ChangePassword'))
-const AdminSettingList = lazy(() => import('~/pages/admin/AdminSettingList'))
-const AdminSettingDetail = lazy(() => import('~/pages/admin/AdminSettingDetail'))
-const AdminUserList = lazy(() => import('~/pages/admin/AdminUserList'))
-const AdminUserDetail = lazy(() => import('~/pages/admin/AdminUserDetail'))
+const Dashboard = lazy(() => import('~/pages/admin/AdminDashboard'))
+const Profile = lazy(() => import('~/pages/user/Profile'))
+const ChangePassword = lazy(() => import('~/pages/user/ChangePassword'))
+const SettingList = lazy(() => import('~/pages/admin/AdminSettingList'))
+const SettingDetail = lazy(() => import('~/pages/admin/AdminSettingDetail'))
+const UserList = lazy(() => import('~/pages/admin/AdminUserList'))
+const UserDetail = lazy(() => import('~/pages/admin/AdminUserDetail'))
 
 //404 pages
 const PageNotFound = lazy(() => import('~/pages/common/PageNotFound'))
@@ -26,18 +27,19 @@ const commonRoutes = [
   { path: '/forget-password', component: ForgetPassword },
   { path: '/register', component: Register },
   { path: '/register-successed', component: RegisterSuccessed },
+  { path: '/verify', component: Verify },
   { path: '/404', component: PageNotFound },
 ]
 
 // Admin routes
 const adminRoutes = [
-  { path: '/dashboard', component: AdminDashboard },
-  { path: '/profile', component: AdminProfile },
-  { path: '/change-password', component: AdminChangePassword },
-  { path: '/setting-list', component: AdminSettingList },
-  { path: '/setting-detail', component: AdminSettingDetail },
-  { path: '/user-list', component: AdminUserList },
-  { path: '/user-detail', component: AdminUserDetail },
+  { path: '/dashboard', component: Dashboard },
+  { path: '/profile', component: Profile },
+  { path: '/change-password', component: ChangePassword },
+  { path: '/setting-list', component: SettingList },
+  { path: '/setting-detail', component: SettingDetail },
+  { path: '/user-list', component: UserList },
+  { path: '/user-detail', component: UserDetail },
 ]
 
 // Manager routes

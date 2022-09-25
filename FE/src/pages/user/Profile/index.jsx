@@ -1,6 +1,5 @@
 import React from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { getProfile } from '~/redux/ProfileSlice/profileSlice'
+import { useSelector } from 'react-redux'
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 
@@ -11,10 +10,9 @@ import { useState } from 'react'
 import { useEffect } from 'react'
 
 const Profile = () => {
-  const dispatch = useDispatch()
-  const profileData = useSelector((state) => state.profile.personal)
+  const profileData = useSelector((state) => state.profile)
 
-  const [isChange, setIsChange] = useState(false)
+  const [isEditMode, setIsEditMode] = useState(false)
   const [name, setName] = useState('')
   const [mobile, setMobile] = useState('')
 
@@ -23,6 +21,7 @@ const Profile = () => {
     setMobile(profileData.mobile)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
   const handleAvatar = () => {}
   const handleSave = () => {}
   const handleReset = () => {
@@ -32,10 +31,10 @@ const Profile = () => {
   const handleCancel = () => {
     setName(profileData.fullName)
     setMobile(profileData.mobile)
-    setIsChange(false)
+    setIsEditMode(false)
   }
   const handleEdit = () => {
-    setIsChange(true)
+    setIsEditMode(true)
   }
   console.log(profileData)
   return (
@@ -62,16 +61,9 @@ const Profile = () => {
                                 <img src={profileData.avatar_url === '' ? avatar : profileData.avatar_url} alt="" />
                               </div>
                               <div className="d-flex pt-4">
-                                <CButton size="md" color="success" onClick={handleAvatar}>
-                                  Change Avatar
+                                <CButton size="md" color="warning" onClick={handleAvatar}>
+                                  Edit Avatar
                                 </CButton>
-                              </div>
-                              <div className="d-flex pt-4">
-                                <Link to="/admin/change-password">
-                                  <CButton size="md" color="danger">
-                                    Change Password
-                                  </CButton>
-                                </Link>
                               </div>
                             </div>
                             <div className="row col-9">
@@ -93,8 +85,8 @@ const Profile = () => {
                                     className="form-control"
                                     type="text"
                                     value={name}
-                                    disabled={!isChange}
-                                    onChange={(e) => setName(e.target.value)}
+                                    disabled={!isEditMode}
+                                    onEdit={(e) => setName(e.target.value)}
                                   />
                                 </div>
                               </div>
@@ -116,8 +108,8 @@ const Profile = () => {
                                     className="form-control"
                                     type="text"
                                     value={mobile}
-                                    disabled={!isChange}
-                                    onChange={(e) => setMobile(e.target.value)}
+                                    disabled={!isEditMode}
+                                    onEdit={(e) => setMobile(e.target.value)}
                                   />
                                 </div>
                               </div>
@@ -127,7 +119,7 @@ const Profile = () => {
                                   <input
                                     className="form-control"
                                     type="text"
-                                    value={profileData.role}
+                                    value={profileData.roles.join(' / ')}
                                     disabled={true}
                                   />
                                 </div>
@@ -155,22 +147,29 @@ const Profile = () => {
                                 </div>
                               </div>
                               <div className="d-flex justify-content-evenly">
-                                {isChange ? (
+                                {isEditMode ? (
                                   <>
-                                    <CButton size="md" color="success" onClick={handleSave}>
+                                    <CButton size="md" color="warning" onClick={handleSave}>
                                       Save
                                     </CButton>
-                                    <CButton size="md" color="success" onClick={handleReset}>
+                                    <CButton size="md" color="warning" onClick={handleReset}>
                                       Reset
                                     </CButton>
-                                    <CButton size="md" color="success" onClick={handleCancel}>
+                                    <CButton size="md" color="warning" onClick={handleCancel}>
                                       Cancel
                                     </CButton>
                                   </>
                                 ) : (
-                                  <CButton size="md" color="success" onClick={handleEdit}>
-                                    Edit profile
-                                  </CButton>
+                                  <>
+                                    <CButton size="md" color="warning" onClick={handleEdit}>
+                                      Edit profile
+                                    </CButton>
+                                    <Link to="/change-password">
+                                      <CButton size="md" color="danger">
+                                        Change Password
+                                      </CButton>
+                                    </Link>
+                                  </>
                                 )}
                               </div>
                             </div>

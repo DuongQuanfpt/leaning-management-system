@@ -133,13 +133,14 @@ const Header = () => {
   }, [])
 
   useEffect(() => {
-    if (localStorage.getItem('LMS-User-Token')) {
+    const currentAccessToken = JSON.parse(JSON.parse(localStorage.getItem('persist:root')).auth).token
+    if (currentAccessToken) {
       setLogged(true)
     }
   }, [])
 
   const handleLogout = () => {
-    localStorage.removeItem('LMS-User-Token')
+    localStorage.removeItem('persist:root')
     //Reload page
     navigateTo(0)
   }

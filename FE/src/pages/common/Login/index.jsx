@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import * as Yup from 'yup'
 import { useForm } from 'react-hook-form'
@@ -6,6 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import axios from 'axios'
 import ReCAPTCHA from 'react-google-recaptcha'
 import { useDispatch } from 'react-redux'
+import { setToken } from '~/redux/AuthSlice/authSlice'
 import { setProfile } from '~/redux/ProfileSlice/profileSlice'
 import { CButton } from '@coreui/react'
 
@@ -14,7 +15,6 @@ import ErrorMsg from '~/components/Common/ErrorMsg'
 // Images
 import logoWhite2 from '~/assets/images/logo-white-2.png'
 import bannerImg from '~/assets/images/background/bg2.jpg'
-import { useEffect } from 'react'
 
 const Login = () => {
   const schema = Yup.object().shape({
@@ -34,7 +34,8 @@ const Login = () => {
   const [verified, setVerified] = useState(false)
 
   useEffect(() => {
-    if (localStorage.getItem('LMS-User-Token')) {
+    const currentAccessToken = JSON.parse(JSON.parse(localStorage.getItem('persist:root')).auth).token
+    if (currentAccessToken) {
       navigateTo('/')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -48,16 +49,16 @@ const Login = () => {
       //Get user token
       const responseAuthLogin = await axios.post('https://lms-app-1.herokuapp.com/auth/login', data)
       const token = responseAuthLogin.data.accessToken
-      localStorage.setItem('LMS-User-Token', token)
+      dispatch(setToken(token))
       //Get profile data
       const responseProfileData = await axios.get('https://lms-app-1.herokuapp.com/user', {
         headers: { Authorization: `Bearer ${token}` },
       })
       const profileData = responseProfileData.data
       dispatch(setProfile(profileData))
-      console.log(profileData)
       setLogged(true)
-      navigateTo('/')
+      console.log(JSON.parse(JSON.parse(localStorage.getItem('persist:root')).auth).token)
+      // navigateTo('/')
     } catch (error) {
       console.error('Failed to fetch token authenticated at Login', error)
       setLogged(false)
@@ -149,7 +150,6 @@ const Login = () => {
                     className="btn button-md m-t15"
                     color="warning"
                     disabled={!verified}
-                    color="success"
                   >
                     {isSubmitting ? `Logging....` : `Login`}
                   </CButton>

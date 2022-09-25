@@ -19,6 +19,7 @@ const RegisterSuccessed = () => {
             <div className="error-page">
               <h2 className="m-b15">Sign Up Successfully</h2>
               <p className="m-b30">Password has been sent to your email and ready to login!</p>
+              <p className="m-b30">Go to your email and verify your account</p>
               <div className="">
                 <Link to="/login" className="btn m-r15">
                   Go To Login
