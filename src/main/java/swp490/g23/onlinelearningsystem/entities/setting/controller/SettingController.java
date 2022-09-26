@@ -39,9 +39,9 @@ public class SettingController {
 	}
 
 	@PutMapping(value = "/admin/setting/{id}")
-	public ResponseEntity<?> getSetting(@RequestBody SettingRequestDTO requestDTO) {
+	public ResponseEntity<?> viewSetting(@PathVariable("id") Long id, @RequestBody SettingRequestDTO requestDTO) {
 
-		return settingService.updateSetting(requestDTO);
+		return settingService.updateSetting(requestDTO,id);
 	}
 
 	@PutMapping(value = "/admin/setting/status/{id}")

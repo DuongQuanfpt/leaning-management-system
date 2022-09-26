@@ -69,7 +69,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         String[] roles = claimsRole.split(", ");
 
         for (String role : roles) {
-            user.addRole(settingRepositories.findBySettingValue(role));
+            user.addRole(settingRepositories.findActiveSettingByValue(role));
            
         }
 

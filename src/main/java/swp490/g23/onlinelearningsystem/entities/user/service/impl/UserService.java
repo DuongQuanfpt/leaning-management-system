@@ -167,7 +167,7 @@ public class UserService implements IUserService {
 
         User user = userRepository.findById(userID).get();
         for (String role : roles) {
-            user.addRole(settingRepositories.findBySettingValue(role));
+            user.addRole(settingRepositories.findActiveSettingByValue(role));
         }
         return user;
     }

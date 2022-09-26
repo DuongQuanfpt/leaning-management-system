@@ -7,6 +7,6 @@ import swp490.g23.onlinelearningsystem.entities.setting.domain.request.SettingRe
 public interface ISettingService {
     ResponseEntity<?> displaySettings(int limit, int currentPage);
     ResponseEntity<?> viewSetting(long id);
-    ResponseEntity<?> updateSetting(SettingRequestDTO dto);
+    ResponseEntity<?> updateSetting(SettingRequestDTO dto , Long id);
     ResponseEntity<?> updateStatus(Long id);
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +27,7 @@ public class SettingService implements ISettingService {
     @Override
     public ResponseEntity<?> displaySettings(int limit, int currentPage) {
 
-        Pageable pageable = PageRequest.of(currentPage - 1, limit);
+        Pageable pageable = PageRequest.of(currentPage - 1, limit, Sort.by(Sort.Direction.ASC, "displayOrder"));
         List<Setting> settings = settingRepositories.findByTypeNotNull(pageable).getContent();
         List<SettingResponseDTO> result = new ArrayList<>();
 
@@ -52,14 +53,17 @@ public class SettingService implements ISettingService {
     }
 
     @Override
-    public ResponseEntity<?> updateSetting(SettingRequestDTO dto) {
-        Setting setting = settingRepositories.findById(dto.getSettingId()).get();
+    public ResponseEntity<?> updateSetting(SettingRequestDTO dto, Long id) {
+        if (settingRepositories.findBySettingTitle(dto.getSettingValue()) != null) {
+            return ResponseEntity.ok("Setting value already exist");
+        }
+        Setting setting = settingRepositories.findById(id).get();
         setting.setSettingTitle(dto.getSettingTitle());
         setting.setSettingValue(dto.getSettingValue());
         setting.setDisplayOrder(dto.getDisplayOrder());
         setting.setStatus(dto.getStatus());
         setting.setDescription(dto.getDescription());
-        setting.setType(settingRepositories.findBySettingTitle(dto.getTypeName()));
+        setting.setType(settingRepositories.findBySettingValue(dto.getTypeName()));
 
         settingRepositories.save(setting);
         return ResponseEntity.ok("Setting has been udated");
@@ -69,12 +73,13 @@ public class SettingService implements ISettingService {
     public ResponseEntity<?> updateStatus(Long id) {
         Setting setting = settingRepositories.findById(id).get();
         if (setting.getType() != null) {
-            if(setting.getStatus() == SettingStatusEnum.ACTIVE ) {
+            if (setting.getStatus() == SettingStatusEnum.ACTIVE) {
                 setting.setStatus(SettingStatusEnum.INACTIVE);
-            }else {
+            } else {
                 setting.setStatus(SettingStatusEnum.ACTIVE);
             }
-            return ResponseEntity.ok(toDTO(setting));
+            settingRepositories.save(setting);
+            return ResponseEntity.ok("Setting status updated");
         }
         return ResponseEntity.ok("Cant view this setting");
     }
@@ -104,7 +109,7 @@ public class SettingService implements ISettingService {
         responseDTO.setSettingTitle(entity.getSettingTitle());
         responseDTO.setSettingValue(entity.getSettingValue());
         responseDTO.setStatus(entity.getStatus());
-        responseDTO.setTypeName(entity.getType().getSettingTitle());
+        responseDTO.setTypeName(entity.getType().getSettingValue());
         responseDTO.setDescription(entity.getSettingTitle());
         responseDTO.setDisplayOrder(entity.getDisplayOrder());
 

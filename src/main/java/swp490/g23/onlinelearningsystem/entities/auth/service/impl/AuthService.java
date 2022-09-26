@@ -84,7 +84,7 @@ public class AuthService implements IAuthService {
         user.setEmail(request.getEmail());
         user.setPassword(encoder.encode(password));
         user.addRole(settingRepositories.findBySettingValue(RoleEnum.ROLE_TRAINEE.toString()));
-        user.setStatus(UserStatusEnum.INACTIVE);
+        user.setStatus(UserStatusEnum.UNVERIFIED);
         user.setMailToken(RandomString.make(30));
         userRepository.save(user);
         try {

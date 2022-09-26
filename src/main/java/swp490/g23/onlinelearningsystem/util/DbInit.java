@@ -42,6 +42,12 @@ public class DbInit {
         Setting test2 = new Setting("test2", "TEST2", SettingStatusEnum.ACTIVE, "description for test", "1",
                 typeTest);
 
+        Setting test3 = new Setting("test3", "TEST3", SettingStatusEnum.INACTIVE, "description for test", "2",
+                typeTest);
+
+        Setting test4 = new Setting("test4", "TEST4", SettingStatusEnum.INACTIVE, "description for test", "3",
+                typeTest);
+
         Setting adminRole = new Setting("admin", "ROLE_ADMIN", SettingStatusEnum.ACTIVE, "description for admin", "1",
                 typeRole);
         Setting traineeRole = new Setting("trainee", "ROLE_TRAINEE", SettingStatusEnum.ACTIVE,
@@ -50,26 +56,27 @@ public class DbInit {
                 "description for manager", "1", typeRole);
         Setting supporterRole = new Setting("supporter", "ROLE_SUPPORTER", SettingStatusEnum.ACTIVE,
                 "description for supporter", "1", typeRole);
-        Setting trainerRole = new Setting("trainee", "ROLE_TRAINER", SettingStatusEnum.ACTIVE,
+        Setting trainerRole = new Setting("trainer", "ROLE_TRAINER", SettingStatusEnum.ACTIVE,
                 "description for trainer", "1", typeRole);
-        settingRepositories.saveAll(List.of(typeRole, adminRole, traineeRole, managerRole, supporterRole, trainerRole,typeTest,test1,test2));
+        settingRepositories.saveAll(List.of(typeRole, adminRole, traineeRole, managerRole, supporterRole, trainerRole,
+                typeTest, test1, test2,test3,test4));
 
         User defaultUser = new User("xucxichbo@doivl.com", encoder.encode("123456"));
         User u1 = new User("quan1@doivl.com", encoder.encode("123456"),
-                settingRepositories.findBySettingValue(RoleEnum.ROLE_MANAGER.toString()));
+                settingRepositories.findActiveSettingByValue(RoleEnum.ROLE_MANAGER.toString()));
 
         User u2 = new User("quan2@doivl.com", encoder.encode("123456"),
-                settingRepositories.findBySettingValue(RoleEnum.ROLE_SUPPORTER.toString()));
+                settingRepositories.findActiveSettingByValue(RoleEnum.ROLE_SUPPORTER.toString()));
 
         User u3 = new User("quan3@doivl.com", encoder.encode("123456"),
-                settingRepositories.findBySettingValue(RoleEnum.ROLE_TRAINEE.toString()));
+                settingRepositories.findActiveSettingByValue(RoleEnum.ROLE_TRAINEE.toString()));
 
         User u4 = new User("quan4@doivl.com", encoder.encode("123456"),
-                settingRepositories.findBySettingValue(RoleEnum.ROLE_TRAINER.toString()));
+                settingRepositories.findActiveSettingByValue(RoleEnum.ROLE_TRAINER.toString()));
 
         defaultUser.setStatus(UserStatusEnum.ACTIVE);
-        defaultUser.addRole(settingRepositories.findBySettingValue("ROLE_ADMIN"));
-        defaultUser.addRole(settingRepositories.findBySettingValue("ROLE_TRAINEE"));
+        defaultUser.addRole(settingRepositories.findActiveSettingByValue("ROLE_ADMIN"));
+        defaultUser.addRole(settingRepositories.findActiveSettingByValue("ROLE_TRAINEE"));
         userRepository.saveAll(List.of(defaultUser, u1, u2, u3, u4));
 
     }
