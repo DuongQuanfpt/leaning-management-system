@@ -5,14 +5,14 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserUpdatePa
 
 public interface IUserService {
 
-    ResponseEntity<?> getAuthenticatedUser(Long id); 
+    ResponseEntity<?> getAuthenticatedUser(Long id); //get currently authenticated user
 
-    ResponseEntity<?> updatePassword(UserUpdatePassRequestDTO newPassword, Long id);
+    ResponseEntity<?> updatePassword(UserUpdatePassRequestDTO newPassword, Long id);//update user password
 
-    ResponseEntity<?> resetPassword(String email, String link);
+    ResponseEntity<?> resetPassword(String email, String link);//sent reset pass link to user email
 
-    ResponseEntity<?> resetProcessing(String newPassword ,String token);
+    ResponseEntity<?> resetProcessing(String newPassword ,String token);//update password for user get from token
 
-    ResponseEntity<?> updateUserProfile(String fullName,String avatarUrl,String mobile,Long userId);
+    ResponseEntity<?> updateUserProfile(String fullName,String avatarUrl,String mobile,Long userId);///update user profile
 
 }

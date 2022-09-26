@@ -13,9 +13,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findByMailToken(String mailToken);
 
-    @Query(value = "SELECT * FROM user WHERE user_id= ?1 AND status = 'INACTIVE'",nativeQuery = true)
-    User findUserToVerify(Long id);
-
     @Query(value = "SELECT * FROM user WHERE email= ?1 AND status = 'ACTIVE'",nativeQuery = true)
     Optional<User> findByEmail(String email);
 

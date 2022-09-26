@@ -63,8 +63,7 @@ public class UserController {
 	 * Reset password of user
 	 * 
 	 * @param updatePassRequestDTO // contain email address sent from client
-	 * @return sent an email to the address containing the new randomly generated
-	 *         password
+	 * @return sent a reset password link to user email
 	 */
 
 	@PutMapping(value = "/forgot-pass")
@@ -74,6 +73,12 @@ public class UserController {
 		return userService.resetPassword(updatePassRequestDTO.getEmail(),updatePassRequestDTO.getLink());
 	}
 
+	/**
+	 * Update password for user that request password reset 
+	 * @param token get the user to update
+	 * @param updatePassRequestDTO contain new password
+	 * @return update user password and set mailToken to null
+	 */
 	@PutMapping(value = "/forgot-processing")
 	public ResponseEntity<?> forgotProcess(@RequestParam("token")String token
 										 ,@RequestBody UserUpdatePassRequestDTO updatePassRequestDTO) 
@@ -81,6 +86,12 @@ public class UserController {
 		return userService.resetProcessing(updatePassRequestDTO.getNewPassword(), token);
 	}
 
+	/**
+	 * Update user info
+	 * @param requestDTO contain new avartar_Url,fullName,mobile 
+	 * @param user currently authenticated user
+	 * @return update user info
+	 */
 	@PutMapping(value = "/update-profile")
 	@RolesAllowed({"ROLE_TRAINEE"})
 	public ResponseEntity<?> updateProfile(@RequestBody UserRequestDTO requestDTO

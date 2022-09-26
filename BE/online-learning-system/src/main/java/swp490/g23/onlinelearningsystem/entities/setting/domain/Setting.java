@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.BaseEntity;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
-import swp490.g23.onlinelearningsystem.util.EnumEntity.RoleStatusEnum;;
+import swp490.g23.onlinelearningsystem.util.EnumEntity.SettingStatusEnum;
 
 
 @Entity
@@ -42,7 +42,7 @@ public class Setting extends BaseEntity {
 
     @Column
     @Enumerated(EnumType.STRING)
-    private RoleStatusEnum status;
+    private SettingStatusEnum status;
 
     @Column
     private String description;
@@ -66,13 +66,14 @@ public class Setting extends BaseEntity {
         this.description = description;
     }
 
-   
-    public Setting(String settingTitle, String settingValue, String description, Setting type) {
+    public Setting(String settingTitle, String settingValue, SettingStatusEnum status, String description,
+            String displayOrder, Setting type) {
         this.settingTitle = settingTitle;
         this.settingValue = settingValue;
+        this.status = status;
         this.description = description;
+        this.displayOrder = displayOrder;
         this.type = type;
-        this.status=RoleStatusEnum.ACTIVE;
     }
 
 
