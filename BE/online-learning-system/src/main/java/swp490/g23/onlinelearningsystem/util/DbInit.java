@@ -28,7 +28,7 @@ public class DbInit {
     private void postConstruct() {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
 
-        Setting typeRole = new Setting("userRole", "TYPE_ROLE", "contain settings relate to user role");
+        Setting typeRole = new Setting("User Role", "TYPE_ROLE", "contain settings relate to user role");
         // typeRole.setStatus(Status.ACTIVE.toString());
 
         Setting adminRole = new Setting("admin","ROLE_ADMIN","description for admin",typeRole);

@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import net.bytebuddy.utility.RandomString;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserUpdatePassRequestDTO;
@@ -70,9 +70,15 @@ public class UserController {
 	@PutMapping(value = "/forgot-pass")
 	public ResponseEntity<?> forgotPassword(@RequestBody UserUpdatePassRequestDTO updatePassRequestDTO) 
 	{
-		String resetToken = RandomString.make(10);
 		
-		return userService.resetPassword(updatePassRequestDTO.getEmail(), resetToken);
+		return userService.resetPassword(updatePassRequestDTO.getEmail(),updatePassRequestDTO.getLink());
+	}
+
+	@PutMapping(value = "/forgot-processing")
+	public ResponseEntity<?> forgotProcess(@RequestParam("token")String token
+										 ,@RequestBody UserUpdatePassRequestDTO updatePassRequestDTO) 
+	{	
+		return userService.resetProcessing(updatePassRequestDTO.getNewPassword(), token);
 	}
 
 	@PutMapping(value = "/update-profile")
