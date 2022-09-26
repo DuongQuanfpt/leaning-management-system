@@ -10,8 +10,9 @@ const AdminHeaderDropdown = () => {
   const navigateTo = useNavigate()
   const handleLogout = () => {
     localStorage.removeItem('persist:root')
-    //Reload page
+    //Navigate to Homepage and reload
     navigateTo('/')
+    navigateTo(0)
   }
   return (
     <CDropdown variant="nav-item">
