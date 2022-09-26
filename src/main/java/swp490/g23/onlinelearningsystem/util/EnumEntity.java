@@ -1,7 +1,7 @@
 package swp490.g23.onlinelearningsystem.util;
 
 public class EnumEntity {
-    public enum RoleStatusEnum {
+    public enum SettingStatusEnum {
         ACTIVE,INACTIVE;
     }
 

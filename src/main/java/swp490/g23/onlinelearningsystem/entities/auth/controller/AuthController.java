@@ -43,22 +43,26 @@ public class AuthController {
      * register api
      * 
      * @param request // email address , fullName sent from client
-     * @return sent an email to the email address contain a random generated
-     *         password and a verify link
+     * @return assign a tokenMail to the user and sent a random generated
+     *         password and a verify link to user email
      */
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody @Valid AuthRequest request) 
-    {
+    public ResponseEntity<?> register(@RequestBody @Valid AuthRequest request) {
         String generatedPassword = RandomString.make(10);
         return authService.register(request, generatedPassword);
     }
 
+    /**
+     * Verify user
+     * @param token 
+     * @return set user status to ACTIVE , and mailToken to null
+     */
     @GetMapping(value = "/verify")
-	public ResponseEntity<?> forgotPassword(@RequestParam("token")String token) {
-	
-		return authService.verifyUser(token);
-	}
+    public ResponseEntity<?> forgotPassword(@RequestParam("token") String token) {
+
+        return authService.verifyUser(token);
+    }
 
     @GetMapping("/login-google")
     public String loginGoogle(@AuthenticationPrincipal OAuth2User principal) {

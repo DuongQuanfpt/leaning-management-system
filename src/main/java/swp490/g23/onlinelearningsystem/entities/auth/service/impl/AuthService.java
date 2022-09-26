@@ -51,7 +51,15 @@ public class AuthService implements IAuthService {
 
     @Override
     public ResponseEntity<?> authenticate(AuthRequest request) {
+
+        if (userRepository.findUserWithEmail(request.getEmail()) != null) {
+            if (userRepository.findUserWithEmail(request.getEmail()).getStatus() == UserStatusEnum.INACTIVE) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("This account is unverified");
+            }
+        }
+
         try {
+
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
             User user = (User) authentication.getPrincipal();
@@ -59,9 +67,9 @@ public class AuthService implements IAuthService {
             AuthResponse response = new AuthResponse(user.getEmail(), accessToken, user.getFullName());
             return ResponseEntity.ok(response);
         } catch (BadCredentialsException e) {
+
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorect credentials");
         }
-
     }
 
     @Override
@@ -77,11 +85,12 @@ public class AuthService implements IAuthService {
         user.setPassword(encoder.encode(password));
         user.addRole(settingRepositories.findBySettingValue(RoleEnum.ROLE_TRAINEE.toString()));
         user.setStatus(UserStatusEnum.INACTIVE);
-        user.setMailToken( RandomString.make(30));
+        user.setMailToken(RandomString.make(30));
         userRepository.save(user);
         try {
-            // String verifyUrl = "https://lms-app-1.herokuapp.com/auth/verify?token="+user.getMailToken();
-            String verifyUrl = request.getLink()+user.getMailToken();
+            // String verifyUrl =
+            // "https://lms-app-1.herokuapp.com/auth/verify?token="+user.getMailToken();
+            String verifyUrl = request.getLink() + user.getMailToken();
             System.out.println(verifyUrl);
             sendRegisterMail(request.getEmail(), verifyUrl, password);
         } catch (UnsupportedEncodingException | MessagingException e) {
@@ -91,22 +100,22 @@ public class AuthService implements IAuthService {
         return ResponseEntity.ok("Successfull register , password has been to your email");
     }
 
-    
     @Override
     public ResponseEntity<?> verifyUser(String token) {
         User user = userRepository.findByMailToken(token);
-       
-        if(user == null){
+
+        if (user == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User doesnt exist");
         }
         System.out.print(user.getEmail());
         user.setStatus(UserStatusEnum.ACTIVE);
         user.setMailToken(null);
         userRepository.save(user);
-        return ResponseEntity.ok().body(user.getFullName()+ " has been verified");
+        return ResponseEntity.ok().body(user.getFullName() + " has been verified");
     }
 
-    public void sendRegisterMail(String email, String verifyUrl, String password) throws UnsupportedEncodingException, MessagingException  {
+    public void sendRegisterMail(String email, String verifyUrl, String password)
+            throws UnsupportedEncodingException, MessagingException {
 
         EmailDetails details = new EmailDetails();
 
@@ -125,6 +134,5 @@ public class AuthService implements IAuthService {
 
         emailService.sendMimeMail(details);
     }
-
 
 }

@@ -8,7 +8,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -63,8 +62,9 @@ public class User extends BaseEntity implements UserDetails {
     @Column
     private String note;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "userId", referencedColumnName = "userId")
+    @ManyToMany
+    @JoinTable(name = "user_roles"
+    , joinColumns = @JoinColumn(name = "userId", referencedColumnName = "userId")
     , inverseJoinColumns = @JoinColumn(name = "roleId", referencedColumnName = "settingId"))
     private List<Setting>  settings = new ArrayList<>();
 
