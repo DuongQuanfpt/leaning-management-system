@@ -29,12 +29,10 @@ const Register = () => {
     formState: { errors, isValid, isSubmitting },
   } = useForm({ resolver: yupResolver(schema), mode: 'onTouched' })
 
-  // const navigate = useNavigate()
-
   const submitForm = async (data) => {
     data = {
       ...data,
-      'link-verify': 'http://localhost:3000/verify',
+      link: 'http://localhost:3000/verify?token=',
     }
     if (!isValid) return
     try {
@@ -43,11 +41,10 @@ const Register = () => {
           'Content-Type': 'application/json',
         },
       })
+      console.log(data)
       console.log(response)
-      console.log('Register sucess')
       navigateTo('/register-successed')
     } catch (error) {
-      console.log('Error at register', error)
       setIsEmailAvailable(true)
     }
   }
@@ -123,7 +120,7 @@ const Register = () => {
                     value="Submit"
                     className="btn button-md m-t15"
                     disabled={!verified}
-                    color="success"
+                    color="warning"
                   >
                     {isSubmitting ? `Registering....` : `Register`}
                   </CButton>

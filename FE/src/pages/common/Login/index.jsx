@@ -31,6 +31,7 @@ const Login = () => {
   const navigateTo = useNavigate()
 
   const [logged, setLogged] = useState(false)
+  const [error, setError] = useState('')
   const [verified, setVerified] = useState(false)
 
   const currentAccessToken = useSelector((state) => state.auth.token)
@@ -57,10 +58,15 @@ const Login = () => {
       const profileData = responseProfileData.data
       dispatch(setProfile(profileData))
       setLogged(true)
-      console.log(JSON.parse(JSON.parse(localStorage.getItem('persist:root')).auth).token)
       navigateTo('/')
     } catch (error) {
-      console.error('Failed to fetch token authenticated at Login', error)
+      console.log(error)
+      if (error.response.data === 'Incorect credentials') {
+        setError('This account is unverified!')
+      }
+      if (error.response.data === 'Incorect credentials') {
+        setError('You email or password is incorrect!')
+      }
       setLogged(false)
     }
   }
@@ -143,6 +149,7 @@ const Login = () => {
                 </div>
                 <div className="col-lg-12 mb-10">
                   {logged ? <ErrorMsg errorMsg="Your email or password is not available" /> : <Fragment />}
+                  {error !== '' ? <ErrorMsg errorMsg={error} /> : <Fragment />}
                   <CButton
                     name="submit"
                     type="submit"
