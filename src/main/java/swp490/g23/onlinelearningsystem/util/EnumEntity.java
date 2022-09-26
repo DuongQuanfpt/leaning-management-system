@@ -6,7 +6,7 @@ public class EnumEntity {
     }
 
     public enum UserStatusEnum {
-        ACTIVE,INACTIVE;
+        ACTIVE,INACTIVE,UNVERIFIED;
     }
     
     public enum RoleEnum {

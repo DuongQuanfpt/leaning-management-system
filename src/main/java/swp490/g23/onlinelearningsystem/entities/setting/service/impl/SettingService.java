@@ -10,10 +10,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
+import swp490.g23.onlinelearningsystem.entities.setting.domain.request.SettingRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.response.SettingResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.response.SettingResponsePaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.setting.service.ISettingService;
+import swp490.g23.onlinelearningsystem.util.EnumEntity.SettingStatusEnum;
 
 @Service
 public class SettingService implements ISettingService {
@@ -35,38 +37,63 @@ public class SettingService implements ISettingService {
         SettingResponsePaginateDTO responseDTO = new SettingResponsePaginateDTO();
         responseDTO.setPage(currentPage);
         responseDTO.setListResult(result);
-        responseDTO.setTotalPage((int) Math.ceil((double) settingRepositories.count() / limit));
+        responseDTO.setTotalPage((int) Math.ceil((double) settingRepositories.countByTypeNotNull() / limit));
 
         return ResponseEntity.ok(responseDTO);
     }
 
     @Override
     public ResponseEntity<?> viewSetting(long id) {
-
-        return ResponseEntity.ok(settingRepositories.findById(id).get());
+        Setting setting = settingRepositories.findById(id).get();
+        if (setting.getType() != null) {
+            return ResponseEntity.ok(toDTO(setting));
+        }
+        return ResponseEntity.ok("Cant view this setting");
     }
 
     @Override
-    public ResponseEntity<?> updateSetting() {
+    public ResponseEntity<?> updateSetting(SettingRequestDTO dto) {
+        Setting setting = settingRepositories.findById(dto.getSettingId()).get();
+        setting.setSettingTitle(dto.getSettingTitle());
+        setting.setSettingValue(dto.getSettingValue());
+        setting.setDisplayOrder(dto.getDisplayOrder());
+        setting.setStatus(dto.getStatus());
+        setting.setDescription(dto.getDescription());
+        setting.setType(settingRepositories.findBySettingTitle(dto.getTypeName()));
 
-        return null;
+        settingRepositories.save(setting);
+        return ResponseEntity.ok("Setting has been udated");
+    }
+
+    @Override
+    public ResponseEntity<?> updateStatus(Long id) {
+        Setting setting = settingRepositories.findById(id).get();
+        if (setting.getType() != null) {
+            if(setting.getStatus() == SettingStatusEnum.ACTIVE ) {
+                setting.setStatus(SettingStatusEnum.INACTIVE);
+            }else {
+                setting.setStatus(SettingStatusEnum.ACTIVE);
+            }
+            return ResponseEntity.ok(toDTO(setting));
+        }
+        return ResponseEntity.ok("Cant view this setting");
     }
 
     // public Setting toEntity(Setting requestDTO) {
-    //     User entity = new User();
+    // User entity = new User();
 
-    //     if (requestDTO.getUserId() != null) {
-    //         entity.setUserId(requestDTO.getUserId());
-    //     }
-    //     entity.setFullName(requestDTO.getFullName());
-    //     entity.setEmail(requestDTO.getEmail());
-    //     entity.setMobile(requestDTO.getMobile());
-    //     entity.setPassword(requestDTO.getPassword());
-    //     entity.setNote(requestDTO.getNote());
-    //     entity.setStatus(requestDTO.getStatus());
-    //     entity.setAvatar_url(requestDTO.getAvatar_url());
+    // if (requestDTO.getUserId() != null) {
+    // entity.setUserId(requestDTO.getUserId());
+    // }
+    // entity.setFullName(requestDTO.getFullName());
+    // entity.setEmail(requestDTO.getEmail());
+    // entity.setMobile(requestDTO.getMobile());
+    // entity.setPassword(requestDTO.getPassword());
+    // entity.setNote(requestDTO.getNote());
+    // entity.setStatus(requestDTO.getStatus());
+    // entity.setAvatar_url(requestDTO.getAvatar_url());
 
-    //     return entity;
+    // return entity;
     // }
 
     // Convert Entity to DTO
@@ -83,4 +110,5 @@ public class SettingService implements ISettingService {
 
         return responseDTO;
     }
+
 }

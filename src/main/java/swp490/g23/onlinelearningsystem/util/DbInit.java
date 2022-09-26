@@ -33,6 +33,15 @@ public class DbInit {
         Setting typeRole = new Setting("User Role", "TYPE_ROLE", "contain settings relate to user role");
         typeRole.setStatus(SettingStatusEnum.ACTIVE);
 
+        Setting typeTest = new Setting("Test", "TYPE_TEST", "type for test");
+        typeRole.setStatus(SettingStatusEnum.ACTIVE);
+
+        Setting test1 = new Setting("test1", "TEST", SettingStatusEnum.ACTIVE, "description for test", "1",
+                typeTest);
+
+        Setting test2 = new Setting("test2", "TEST2", SettingStatusEnum.ACTIVE, "description for test", "1",
+                typeTest);
+
         Setting adminRole = new Setting("admin", "ROLE_ADMIN", SettingStatusEnum.ACTIVE, "description for admin", "1",
                 typeRole);
         Setting traineeRole = new Setting("trainee", "ROLE_TRAINEE", SettingStatusEnum.ACTIVE,
@@ -43,7 +52,7 @@ public class DbInit {
                 "description for supporter", "1", typeRole);
         Setting trainerRole = new Setting("trainee", "ROLE_TRAINER", SettingStatusEnum.ACTIVE,
                 "description for trainer", "1", typeRole);
-        settingRepositories.saveAll(List.of(typeRole, adminRole, traineeRole, managerRole, supporterRole, trainerRole));
+        settingRepositories.saveAll(List.of(typeRole, adminRole, traineeRole, managerRole, supporterRole, trainerRole,typeTest,test1,test2));
 
         User defaultUser = new User("xucxichbo@doivl.com", encoder.encode("123456"));
         User u1 = new User("quan1@doivl.com", encoder.encode("123456"),

@@ -17,6 +17,10 @@ public interface SettingRepositories extends JpaRepository<Setting, Long> {
     List<Setting> findAllType();
 
     Page<Setting>findByTypeNotNull(Pageable pageable);
+
+    Long countByTypeNotNull();
+
+    Setting findBySettingTitle(String name);
 }
 
 
