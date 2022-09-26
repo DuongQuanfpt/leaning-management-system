@@ -29,9 +29,7 @@ public class SettingService implements ISettingService {
         List<SettingResponseDTO> result = new ArrayList<>();
 
         for (Setting setting : settings) {
-            result.add(new SettingResponseDTO(setting.getSettingId(), setting.getSettingTitle(),
-                    setting.getSettingValue(), setting.getStatus(), setting.getDescription(), setting.getDisplayOrder(),
-                    setting.getType().getRoleName()));
+            result.add(toDTO(setting));
         }
 
         SettingResponsePaginateDTO responseDTO = new SettingResponsePaginateDTO();
@@ -45,37 +43,44 @@ public class SettingService implements ISettingService {
     @Override
     public ResponseEntity<?> viewSetting(long id) {
 
-        return null;
+        return ResponseEntity.ok(settingRepositories.findById(id).get());
     }
 
     @Override
     public ResponseEntity<?> updateSetting() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 
-    // public Setting toEntity(Sett requestDTO) {
-    // User entity = new User();
+    // public Setting toEntity(Setting requestDTO) {
+    //     User entity = new User();
 
-    // if (requestDTO.getUserId() != null) {
-    // entity.setUserId(requestDTO.getUserId());
-    // }
-    // entity.setFullName(requestDTO.getFullName());
-    // entity.setEmail(requestDTO.getEmail());
-    // entity.setMobile(requestDTO.getMobile());
-    // entity.setPassword(requestDTO.getPassword());
-    // entity.setNote(requestDTO.getNote());
-    // entity.setStatus(requestDTO.getStatus());
-    // entity.setAvatar_url(requestDTO.getAvatar_url());
+    //     if (requestDTO.getUserId() != null) {
+    //         entity.setUserId(requestDTO.getUserId());
+    //     }
+    //     entity.setFullName(requestDTO.getFullName());
+    //     entity.setEmail(requestDTO.getEmail());
+    //     entity.setMobile(requestDTO.getMobile());
+    //     entity.setPassword(requestDTO.getPassword());
+    //     entity.setNote(requestDTO.getNote());
+    //     entity.setStatus(requestDTO.getStatus());
+    //     entity.setAvatar_url(requestDTO.getAvatar_url());
 
-    // return entity;
+    //     return entity;
     // }
 
     // Convert Entity to DTO
     public SettingResponseDTO toDTO(Setting entity) {
         SettingResponseDTO responseDTO = new SettingResponseDTO();
+
         responseDTO.setSettingId(entity.getSettingId());
         responseDTO.setSettingTitle(entity.getSettingTitle());
+        responseDTO.setSettingValue(entity.getSettingValue());
+        responseDTO.setStatus(entity.getStatus());
+        responseDTO.setTypeName(entity.getType().getSettingTitle());
+        responseDTO.setDescription(entity.getSettingTitle());
+        responseDTO.setDisplayOrder(entity.getDisplayOrder());
+
         return responseDTO;
     }
 }

@@ -63,14 +63,19 @@ public class User extends BaseEntity implements UserDetails {
     private String note;
 
     @ManyToMany
-    @JoinTable(name = "user_roles"
-    , joinColumns = @JoinColumn(name = "userId", referencedColumnName = "userId")
-    , inverseJoinColumns = @JoinColumn(name = "roleId", referencedColumnName = "settingId"))
-    private List<Setting>  settings = new ArrayList<>();
+    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "userId", referencedColumnName = "userId"), inverseJoinColumns = @JoinColumn(name = "roleId", referencedColumnName = "settingId"))
+    private List<Setting> settings = new ArrayList<>();
 
     public User(String email, String password) {
         this.email = email;
         this.password = password;
+    }
+
+    public User(String email, String password, Setting settings) {
+        this.email = email;
+        this.password = password;
+        this.addRole(settings);
+        this.setStatus(UserStatusEnum.ACTIVE);
     }
 
     public void addRole(Setting role) {
