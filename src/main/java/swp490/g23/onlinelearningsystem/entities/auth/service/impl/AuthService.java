@@ -1,6 +1,8 @@
 package swp490.g23.onlinelearningsystem.entities.auth.service.impl;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.security.GeneralSecurityException;
 
 import javax.mail.MessagingException;
 
@@ -15,8 +17,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
+
+// import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+// import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+
 import net.bytebuddy.utility.RandomString;
 import swp490.g23.onlinelearningsystem.entities.auth.domain.request.AuthRequest;
+import swp490.g23.onlinelearningsystem.entities.auth.domain.request.GoogleAuthRequest;
 import swp490.g23.onlinelearningsystem.entities.auth.domain.response.AuthResponse;
 import swp490.g23.onlinelearningsystem.entities.auth.service.IAuthService;
 import swp490.g23.onlinelearningsystem.entities.email.EmailDetails;
@@ -24,9 +32,10 @@ import swp490.g23.onlinelearningsystem.entities.email.service.impl.EmailService;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
-import swp490.g23.onlinelearningsystem.util.JwtTokenUtil;
 import swp490.g23.onlinelearningsystem.util.EnumEntity.RoleEnum;
 import swp490.g23.onlinelearningsystem.util.EnumEntity.UserStatusEnum;
+import swp490.g23.onlinelearningsystem.util.GoogleHelper;
+import swp490.g23.onlinelearningsystem.util.JwtTokenUtil;
 
 @Service
 public class AuthService implements IAuthService {
@@ -42,6 +51,8 @@ public class AuthService implements IAuthService {
 
     @Autowired
     private EmailService emailService;
+
+    private GoogleHelper googleHelper = new GoogleHelper();
 
     @Autowired
     JwtTokenUtil tokenUtil;
@@ -59,7 +70,6 @@ public class AuthService implements IAuthService {
         }
 
         try {
-
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
             User user = (User) authentication.getPrincipal();
@@ -112,6 +122,44 @@ public class AuthService implements IAuthService {
         user.setMailToken(null);
         userRepository.save(user);
         return ResponseEntity.ok().body(user.getFullName() + " has been verified");
+    }
+
+    @Override
+    public ResponseEntity<?> googleAuthenticate(GoogleAuthRequest authRequest)
+            throws GeneralSecurityException, IOException {
+    
+        Payload payload = googleHelper.getInfo(authRequest);
+        if (payload == null) {
+            return ResponseEntity.ok().body("invalid token");
+        }
+        // Get profile information from payload
+        String email = payload.getEmail();
+        // boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
+        String name = (String) payload.get("name");
+        String pictureUrl = (String) payload.get("picture");
+        // String locale = (String) payload.get("locale");
+        // String familyName = (String) payload.get("family_name");
+        // String givenName = (String) payload.get("given_name");
+
+        User user = new User();
+        if (userRepository.findByEmail(email).isPresent() == false) {
+           
+            user.setEmail(email);
+            user.setFullName(name);
+            user.setAvatar_url(pictureUrl);
+            user.setStatus(UserStatusEnum.ACTIVE);
+            user.addRole(settingRepositories.findBySettingValue(RoleEnum.ROLE_TRAINEE.toString()));
+
+            userRepository.save(user);
+        }
+        user = userRepository.findUserWithEmail(email);
+        // Authentication authentication = authenticationManager.authenticate(
+        //         new UsernamePasswordAuthenticationToken(email, userRepository.findUserWithEmail(email).getPassword()));
+        // User user = (User) authentication.getPrincipal();
+        String accessToken = tokenUtil.generateAccessToken(user);
+        AuthResponse response = new AuthResponse(user.getEmail(), accessToken, user.getFullName());
+
+        return ResponseEntity.ok(response);
     }
 
     public void sendRegisterMail(String email, String verifyUrl, String password)
