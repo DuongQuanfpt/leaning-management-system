@@ -6,6 +6,8 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import axios from 'axios'
 import ReCAPTCHA from 'react-google-recaptcha'
 import { useDispatch, useSelector } from 'react-redux'
+import { GoogleLogin } from 'react-google-login'
+
 import { setToken } from '~/redux/AuthSlice/authSlice'
 import { setProfile } from '~/redux/ProfileSlice/profileSlice'
 import { CButton } from '@coreui/react'
@@ -17,6 +19,9 @@ import logoWhite2 from '~/assets/images/logo-white-2.png'
 import bannerImg from '~/assets/images/background/bg2.jpg'
 
 const Login = () => {
+  //Thêm 1 cái clientid nữa, 2 cái trùng
+  const clientId = '497995951211-5kk8b1qf0n1cjg5f97t2t0dkpv47arvs.apps.googleusercontent.com'
+
   const schema = Yup.object().shape({
     email: Yup.string().required().email(),
     password: Yup.string().required().min(6),
@@ -58,6 +63,7 @@ const Login = () => {
       const profileData = responseProfileData.data
       dispatch(setProfile(profileData))
       setLogged(true)
+
       navigateTo('/')
     } catch (error) {
       console.log(error)
@@ -73,6 +79,19 @@ const Login = () => {
 
   const handleCaptchaOnChange = (value) => {
     setVerified(true)
+  }
+
+  const onSuccess = (res) => {
+    // eslint-disable-next-line no-unused-vars
+    const data = {
+      email: res.profileObj.email,
+      fullName: res.profileObj.name,
+    }
+    console.log('success', res)
+  }
+
+  const onFailure = (res) => {
+    setError('Something went wrong, please try again later!')
   }
 
   return (
@@ -162,9 +181,15 @@ const Login = () => {
                   </CButton>
 
                   <h6 className="m-b15 m-t15">Login with Social media</h6>
-                  <Link className="btn flex-fill m-l5 google-plus" to="#">
-                    <i className="fa fa-google-plus"></i>Sign Up
-                  </Link>
+                  <GoogleLogin
+                    className="bg-danger text-light"
+                    clientId={clientId}
+                    buttonText="Sign Up with Google"
+                    onSuccess={onSuccess}
+                    onFailure={onFailure}
+                    cookiePolicy={'single_host_origin'}
+                    isSignedIn={false}
+                  />
                 </div>
               </div>
             </form>
