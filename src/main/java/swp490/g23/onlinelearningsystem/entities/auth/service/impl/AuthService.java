@@ -53,7 +53,7 @@ public class AuthService implements IAuthService {
     public ResponseEntity<?> authenticate(AuthRequest request) {
 
         if (userRepository.findUserWithEmail(request.getEmail()) != null) {
-            if (userRepository.findUserWithEmail(request.getEmail()).getStatus() == UserStatusEnum.INACTIVE) {
+            if (userRepository.findUserWithEmail(request.getEmail()).getStatus() == UserStatusEnum.UNVERIFIED) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("This account is unverified");
             }
         }
