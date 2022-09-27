@@ -2,20 +2,10 @@ import React from 'react'
 import { NavLink } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { setSidebarShow } from '~/redux/SidebarSlice/sidebarSlice'
-import {
-  CContainer,
-  CHeader,
-  CHeaderBrand,
-  CHeaderDivider,
-  CHeaderNav,
-  CHeaderToggler,
-  CNavLink,
-  CNavItem,
-} from '@coreui/react'
+import { CContainer, CHeader, CHeaderBrand, CHeaderNav, CHeaderToggler, CNavLink, CNavItem } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilBell, cilEnvelopeOpen, cilList, cilMenu } from '@coreui/icons'
 
-import AdminBreadcrumb from './AdminBreadcrumb'
 import AdminHeaderDropdown from './AdminHeaderDropdown'
 import { logo } from 'src/assets/brand/logo'
 
@@ -65,10 +55,6 @@ const AdminHeader = () => {
         <CHeaderNav className="ms-3">
           <AdminHeaderDropdown />
         </CHeaderNav>
-      </CContainer>
-      <CHeaderDivider />
-      <CContainer fluid>
-        <AdminBreadcrumb />
       </CContainer>
     </CHeader>
   )

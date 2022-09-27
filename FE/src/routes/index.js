@@ -4,8 +4,9 @@ import { lazy } from 'react'
 const HomePage = lazy(() => import('~/pages/common/HomePage'))
 const Login = lazy(() => import('~/pages/common/Login'))
 const ForgetPassword = lazy(() => import('~/pages/common/ForgetPassword'))
+const ForgetPasswordProcessed = lazy(() => import('~/pages/common/ForgetPasswordProcessed'))
 const Register = lazy(() => import('~/pages/common/Register'))
-const RegisterSuccessed = lazy(() => import('~/pages/common/RegisterSuccessed'))
+const RegisterProcessed = lazy(() => import('~/pages/common/RegisterProcessed'))
 const Verify = lazy(() => import('~/pages/common/Verify'))
 
 // Admin pages
@@ -25,8 +26,9 @@ const commonRoutes = [
   { path: '/', component: HomePage },
   { path: '/login', component: Login },
   { path: '/forget-password', component: ForgetPassword },
+  { path: '/forget-password-processed', component: ForgetPasswordProcessed },
   { path: '/register', component: Register },
-  { path: '/register-successed', component: RegisterSuccessed },
+  { path: '/register-processed', component: RegisterProcessed },
   { path: '/verify', component: Verify },
   { path: '/404', component: PageNotFound },
 ]
