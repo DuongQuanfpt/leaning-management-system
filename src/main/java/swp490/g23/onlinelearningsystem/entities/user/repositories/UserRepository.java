@@ -13,11 +13,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findByMailToken(String mailToken);
 
-    @Query(value = "SELECT * FROM user WHERE email= ?1 AND status = 'ACTIVE'",nativeQuery = true)
     Optional<User> findByEmail(String email);
 
     @Query(value = "SELECT * FROM user WHERE email= ?1 AND status = 'ACTIVE'",nativeQuery = true)
-    User findOneByEmail(String email);
+    User findActiveUserByEmail(String email);
 
     @Query(value = "SELECT * FROM user WHERE email= ?1",nativeQuery = true)
     User findUserWithEmail(String email);

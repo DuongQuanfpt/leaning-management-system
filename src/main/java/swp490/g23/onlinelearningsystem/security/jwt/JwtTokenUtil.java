@@ -1,4 +1,4 @@
-package swp490.g23.onlinelearningsystem.util;
+package swp490.g23.onlinelearningsystem.security.jwt;
 
 import java.util.Date;
 

@@ -25,7 +25,8 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserUpdatePa
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.entities.user.service.IUserService;
-import swp490.g23.onlinelearningsystem.util.JwtTokenUtil;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoUserException;
+import swp490.g23.onlinelearningsystem.security.jwt.JwtTokenUtil;
 
 @Service
 public class UserService implements IUserService {
@@ -43,19 +44,17 @@ public class UserService implements IUserService {
     private JwtTokenUtil jwtTokenUtil;
 
     @Override
-    public ResponseEntity<?> getAuthenticatedUser(Long id) {
+    public ResponseEntity<UserResponseDTO> getAuthenticatedUser(Long id) {
         User user = userRepository.findUserById(id);
 
-        if (user != null) {
-
-            return ResponseEntity.ok(toDTO(user));
+        if (user == null) {
+            throw new NoUserException();
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There are no authenticated user");
-
+        return ResponseEntity.ok(toDTO(user));
     }
 
     @Override
-    public ResponseEntity<?> updatePassword(UserUpdatePassRequestDTO dto, Long id) {
+    public ResponseEntity<String> updatePassword(UserUpdatePassRequestDTO dto, Long id) {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         User user = userRepository.findUserById(id);
 
@@ -82,8 +81,8 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponseEntity<?> resetPassword(String email, String link) {
-        User user = userRepository.findOneByEmail(email);
+    public ResponseEntity<String> resetPassword(String email, String link) {
+        User user = userRepository.findActiveUserByEmail(email);
         if (user != null) {
             user.setMailToken(RandomString.make(30));
             userRepository.save(user);
@@ -97,10 +96,10 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponseEntity<?> resetProcessing(String newPassword, String token) {
+    public ResponseEntity<String> resetProcessing(String newPassword, String token) {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         User user = userRepository.findByMailToken(token);
-        if(user == null){
+        if (user == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User doesnt exist");
         }
         user.setPassword(encoder.encode(newPassword));
@@ -110,9 +109,10 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponseEntity<?> updateUserProfile(String fullName, String avatarUrl, String mobile, Long userId) {
+    public ResponseEntity<UserResponseDTO> updateUserProfile(String fullName, String avatarUrl, String mobile,
+            Long userId) {
         if (!userRepository.findById(userId).isPresent()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User doesnt exist");
+            throw new NoUserException();
         }
         User user = userRepository.findById(userId).get();
         user.setMobile(mobile);
@@ -123,7 +123,7 @@ public class UserService implements IUserService {
         return ResponseEntity.ok(toDTO(user));
     }
 
-    //sent email with password reset link to user
+    // sent email with password reset link to user
     public void resetPasswordMail(String email, String verifyUrl) {
 
         EmailDetails details = new EmailDetails();
@@ -208,7 +208,5 @@ public class UserService implements IUserService {
         responseDTO.setRoles(roleNames);
         return responseDTO;
     }
-
-    
 
 }

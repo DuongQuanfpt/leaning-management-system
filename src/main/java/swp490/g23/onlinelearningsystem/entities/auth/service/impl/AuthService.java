@@ -32,10 +32,12 @@ import swp490.g23.onlinelearningsystem.entities.email.service.impl.EmailService;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.InvalidTokenException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.UnverifiedUserException;
+import swp490.g23.onlinelearningsystem.security.jwt.JwtTokenUtil;
 import swp490.g23.onlinelearningsystem.util.EnumEntity.RoleEnum;
 import swp490.g23.onlinelearningsystem.util.EnumEntity.UserStatusEnum;
 import swp490.g23.onlinelearningsystem.util.GoogleHelper;
-import swp490.g23.onlinelearningsystem.util.JwtTokenUtil;
 
 @Service
 public class AuthService implements IAuthService {
@@ -61,29 +63,23 @@ public class AuthService implements IAuthService {
     public static final String TRAINEE = "ROLE_TRAINEE";
 
     @Override
-    public ResponseEntity<?> authenticate(AuthRequest request) {
+    public ResponseEntity<AuthResponse> authenticate(AuthRequest request) throws BadCredentialsException {
 
-        if (userRepository.findUserWithEmail(request.getEmail()) != null) {
-            if (userRepository.findUserWithEmail(request.getEmail()).getStatus() == UserStatusEnum.UNVERIFIED) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("This account is unverified");
-            }
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        User user = (User) authentication.getPrincipal();
+
+        if (user.getStatus() == UserStatusEnum.UNVERIFIED) {
+            throw new UnverifiedUserException();
         }
 
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-            User user = (User) authentication.getPrincipal();
-            String accessToken = tokenUtil.generateAccessToken(user);
-            AuthResponse response = new AuthResponse(user.getEmail(), accessToken, user.getFullName());
-            return ResponseEntity.ok(response);
-        } catch (BadCredentialsException e) {
-
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorect credentials");
-        }
+        String accessToken = tokenUtil.generateAccessToken(user);
+        AuthResponse response = new AuthResponse(user.getEmail(), accessToken, user.getFullName());
+        return ResponseEntity.ok(response);
     }
 
     @Override
-    public ResponseEntity<?> register(AuthRequest request, String password) {
+    public ResponseEntity<String> register(AuthRequest request, String password) {
         if (userRepository.findUserWithEmail(request.getEmail()) != null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email already exist");
         }
@@ -111,7 +107,7 @@ public class AuthService implements IAuthService {
     }
 
     @Override
-    public ResponseEntity<?> verifyUser(String token) {
+    public ResponseEntity<String> verifyUser(String token) {
         User user = userRepository.findByMailToken(token);
 
         if (user == null) {
@@ -125,12 +121,12 @@ public class AuthService implements IAuthService {
     }
 
     @Override
-    public ResponseEntity<?> googleAuthenticate(GoogleAuthRequest authRequest)
+    public ResponseEntity<AuthResponse> googleAuthenticate(GoogleAuthRequest authRequest)
             throws GeneralSecurityException, IOException {
-    
+
         Payload payload = googleHelper.getInfo(authRequest);
         if (payload == null) {
-            return ResponseEntity.ok().body("invalid token");
+            throw new InvalidTokenException();
         }
         // Get profile information from payload
         String email = payload.getEmail();
@@ -143,18 +139,24 @@ public class AuthService implements IAuthService {
 
         User user = new User();
         if (userRepository.findByEmail(email).isPresent() == false) {
-           
+
             user.setEmail(email);
             user.setFullName(name);
             user.setAvatar_url(pictureUrl);
             user.setStatus(UserStatusEnum.ACTIVE);
             user.addRole(settingRepositories.findBySettingValue(RoleEnum.ROLE_TRAINEE.toString()));
 
-            userRepository.save(user);
         }
-        user = userRepository.findUserWithEmail(email);
+        user = userRepository.findByEmail(email).get();
+        if (user.getStatus() == UserStatusEnum.UNVERIFIED) {
+            user.setStatus(UserStatusEnum.ACTIVE);
+            user.setMailToken(null);
+        }
+
+        userRepository.save(user);
         // Authentication authentication = authenticationManager.authenticate(
-        //         new UsernamePasswordAuthenticationToken(email, userRepository.findUserWithEmail(email).getPassword()));
+        // new UsernamePasswordAuthenticationToken(email,
+        // userRepository.findUserWithEmail(email).getPassword()));
         // User user = (User) authentication.getPrincipal();
         String accessToken = tokenUtil.generateAccessToken(user);
         AuthResponse response = new AuthResponse(user.getEmail(), accessToken, user.getFullName());

@@ -66,6 +66,7 @@ public class AuthController {
         return authService.verifyUser(token);
     }
 
+   
     @PostMapping("/login-google")
     public ResponseEntity<?> loginGoogle(@RequestBody GoogleAuthRequest authRequest) throws GeneralSecurityException, IOException {
 

@@ -25,7 +25,9 @@ public class GoogleHelper {
                         .singletonList(authRequest.getClientId()))
                 .build();
         GoogleIdToken idToken = verifier.verify(authRequest.getIdToken());
-        
+        if (idToken == null) {
+            return null;
+        }
         Payload payload = idToken.getPayload();
 
         return payload;
