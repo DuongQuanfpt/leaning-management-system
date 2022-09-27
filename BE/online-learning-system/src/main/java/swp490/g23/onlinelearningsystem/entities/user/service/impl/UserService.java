@@ -88,6 +88,7 @@ public class UserService implements IUserService {
             user.setMailToken(RandomString.make(30));
             userRepository.save(user);
 
+            link = link + user.getMailToken();
             resetPasswordMail(user.getEmail(), link);
             return ResponseEntity.ok("your password have been reset , we have sent the new password to your email");
         } else {
@@ -166,7 +167,7 @@ public class UserService implements IUserService {
 
         User user = userRepository.findById(userID).get();
         for (String role : roles) {
-            user.addRole(settingRepositories.findBySettingValue(role));
+            user.addRole(settingRepositories.findActiveSettingByValue(role));
         }
         return user;
     }

@@ -4,15 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
-import swp490.g23.onlinelearningsystem.entities.setting.domain.filter.SettingFilterDTO;
-import swp490.g23.onlinelearningsystem.entities.setting.domain.response.TypeResponseDTO;
+import swp490.g23.onlinelearningsystem.entities.setting.domain.request.SettingRequestDTO;
+import swp490.g23.onlinelearningsystem.entities.setting.domain.response.SettingResponseDTO;
+import swp490.g23.onlinelearningsystem.entities.setting.domain.response.SettingResponsePaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.setting.service.ISettingService;
-import swp490.g23.onlinelearningsystem.util.EnumEntity.RoleStatusEnum;
+import swp490.g23.onlinelearningsystem.util.EnumEntity.SettingStatusEnum;
 
 @Service
 public class SettingService implements ISettingService {
@@ -21,17 +25,95 @@ public class SettingService implements ISettingService {
     private SettingRepositories settingRepositories;
 
     @Override
-    public ResponseEntity<?> getSettingFilter() {
-        SettingFilterDTO filterDTO = new SettingFilterDTO();
-        List<TypeResponseDTO> typeResponseDTOs = new ArrayList<>();
+    public ResponseEntity<?> displaySettings(int limit, int currentPage) {
 
-        for (Setting setting : settingRepositories.findAllType()) {
-            typeResponseDTOs.add(new TypeResponseDTO(
-                setting.getSettingTitle(), setting.getSettingValue()));    
+        Pageable pageable = PageRequest.of(currentPage - 1, limit, Sort.by(Sort.Direction.ASC, "displayOrder"));
+        List<Setting> settings = settingRepositories.findByTypeNotNull(pageable).getContent();
+        List<SettingResponseDTO> result = new ArrayList<>();
+
+        for (Setting setting : settings) {
+            result.add(toDTO(setting));
         }
 
-        filterDTO.setTypeFilter(typeResponseDTOs);
-        filterDTO.setStatusFilter(List.of(RoleStatusEnum.ACTIVE.toString(),RoleStatusEnum.INACTIVE.toString()));
-        return ResponseEntity.ok(filterDTO);
+        SettingResponsePaginateDTO responseDTO = new SettingResponsePaginateDTO();
+        responseDTO.setPage(currentPage);
+        responseDTO.setListResult(result);
+        responseDTO.setTotalPage((int) Math.ceil((double) settingRepositories.countByTypeNotNull() / limit));
+
+        return ResponseEntity.ok(responseDTO);
     }
+
+    @Override
+    public ResponseEntity<?> viewSetting(long id) {
+        Setting setting = settingRepositories.findById(id).get();
+        if (setting.getType() != null) {
+            return ResponseEntity.ok(toDTO(setting));
+        }
+        return ResponseEntity.ok("Cant view this setting");
+    }
+
+    @Override
+    public ResponseEntity<?> updateSetting(SettingRequestDTO dto, Long id) {
+        if (settingRepositories.findBySettingTitle(dto.getSettingValue()) != null) {
+            return ResponseEntity.ok("Setting value already exist");
+        }
+        Setting setting = settingRepositories.findById(id).get();
+        setting.setSettingTitle(dto.getSettingTitle());
+        setting.setSettingValue(dto.getSettingValue());
+        setting.setDisplayOrder(dto.getDisplayOrder());
+        setting.setStatus(dto.getStatus());
+        setting.setDescription(dto.getDescription());
+        setting.setType(settingRepositories.findBySettingValue(dto.getTypeName()));
+
+        settingRepositories.save(setting);
+        return ResponseEntity.ok("Setting has been udated");
+    }
+
+    @Override
+    public ResponseEntity<?> updateStatus(Long id) {
+        Setting setting = settingRepositories.findById(id).get();
+        if (setting.getType() != null) {
+            if (setting.getStatus() == SettingStatusEnum.ACTIVE) {
+                setting.setStatus(SettingStatusEnum.INACTIVE);
+            } else {
+                setting.setStatus(SettingStatusEnum.ACTIVE);
+            }
+            settingRepositories.save(setting);
+            return ResponseEntity.ok("Setting status updated");
+        }
+        return ResponseEntity.ok("Cant view this setting");
+    }
+
+    // public Setting toEntity(Setting requestDTO) {
+    // User entity = new User();
+
+    // if (requestDTO.getUserId() != null) {
+    // entity.setUserId(requestDTO.getUserId());
+    // }
+    // entity.setFullName(requestDTO.getFullName());
+    // entity.setEmail(requestDTO.getEmail());
+    // entity.setMobile(requestDTO.getMobile());
+    // entity.setPassword(requestDTO.getPassword());
+    // entity.setNote(requestDTO.getNote());
+    // entity.setStatus(requestDTO.getStatus());
+    // entity.setAvatar_url(requestDTO.getAvatar_url());
+
+    // return entity;
+    // }
+
+    // Convert Entity to DTO
+    public SettingResponseDTO toDTO(Setting entity) {
+        SettingResponseDTO responseDTO = new SettingResponseDTO();
+
+        responseDTO.setSettingId(entity.getSettingId());
+        responseDTO.setSettingTitle(entity.getSettingTitle());
+        responseDTO.setSettingValue(entity.getSettingValue());
+        responseDTO.setStatus(entity.getStatus());
+        responseDTO.setTypeName(entity.getType().getSettingValue());
+        responseDTO.setDescription(entity.getSettingTitle());
+        responseDTO.setDisplayOrder(entity.getDisplayOrder());
+
+        return responseDTO;
+    }
+
 }
