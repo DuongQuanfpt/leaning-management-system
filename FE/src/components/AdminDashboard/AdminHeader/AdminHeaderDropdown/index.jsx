@@ -1,4 +1,5 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 import { CAvatar, CDropdown, CDropdownDivider, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
 import { cilAccountLogout, cilSettings, cilUser } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
@@ -7,6 +8,8 @@ import avatar from '~/assets/images/profile/pic1.jpg'
 import { Link, useNavigate } from 'react-router-dom'
 
 const AdminHeaderDropdown = () => {
+  const profileData = useSelector((state) => state.profile)
+
   const navigateTo = useNavigate()
   const handleLogout = () => {
     localStorage.removeItem('persist:root')
@@ -17,7 +20,7 @@ const AdminHeaderDropdown = () => {
   return (
     <CDropdown variant="nav-item">
       <CDropdownToggle placement="bottom-end" className="py-0" caret={false}>
-        <CAvatar src={avatar} size="md" />
+        <CAvatar src={profileData.avatar_url ?? avatar} size="md" />
       </CDropdownToggle>
       <CDropdownMenu className="pt-0" placement="bottom-end">
         <CDropdownItem>

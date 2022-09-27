@@ -9,7 +9,7 @@ import bannerImg from '~/assets/images/background/bg2.jpg'
 import { useState } from 'react'
 import ErrorMsg from '~/components/Common/ErrorMsg'
 
-const ForgetPasswordSetPass = () => {
+const ForgetPassword = () => {
   const [email, setEmail] = useState('')
   const [error, setError] = useState('')
 
@@ -85,4 +85,4 @@ const ForgetPasswordSetPass = () => {
   )
 }
 
-export default ForgetPasswordSetPass
+export default ForgetPassword

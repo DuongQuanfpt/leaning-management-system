@@ -67,7 +67,7 @@ const Login = () => {
       navigateTo('/')
     } catch (error) {
       console.log(error)
-      if (error.response.data === 'Incorect credentials') {
+      if (error.response.data === 'This account is unverified') {
         setError('This account is unverified!')
       }
       if (error.response.data === 'Incorect credentials') {
@@ -81,13 +81,45 @@ const Login = () => {
     setVerified(true)
   }
 
-  const onSuccess = (res) => {
+  const onSuccess = async (res) => {
     // eslint-disable-next-line no-unused-vars
     const data = {
-      email: res.profileObj.email,
-      fullName: res.profileObj.name,
+      idToken: res.tokenId,
+      clientId: clientId,
     }
-    console.log('success', res)
+    try {
+      // eslint-disable-next-line no-unused-vars
+      const responseGoogleLogin = await axios
+        .post('https://lms-app-1.herokuapp.com/auth/login-google', JSON.stringify(data), {
+          headers: {
+            'Content-type': 'application/json; charset=utf-8',
+            Accept: 'application/json; charset=utf-8',
+          },
+        })
+        .then((response) => {
+          const token = response.data.accessToken
+          dispatch(setToken(token))
+          try {
+            // eslint-disable-next-line no-unused-vars
+            const responseProfileData = axios
+              .get('https://lms-app-1.herokuapp.com/user', {
+                headers: { Authorization: `Bearer ${token}` },
+              })
+              .then((response) => {
+                const profileData = response.data
+                console.log(response.data)
+                dispatch(setProfile(profileData))
+                setLogged(true)
+
+                navigateTo('/')
+              })
+          } catch (error) {
+            console.log(error)
+          }
+        })
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const onFailure = (res) => {
