@@ -15,22 +15,18 @@ const Verify = () => {
 
   const [verifySuccess, setVerifySuccess] = useState(false)
 
-  console.log(token)
-
   useEffect(() => {
     try {
-      const response = axios.get('https://lms-app-1.herokuapp.com/auth/verify', {
-        params: {
-          token: token,
-        },
-      })
-      if (response.status === 200) {
-        setVerifySuccess(true)
-      } else {
-        setVerifySuccess(false)
-      }
+      // eslint-disable-next-line no-unused-vars
+      const res = axios
+        .get('https://lms-app-1.herokuapp.com/auth/verify', {
+          params: {
+            token: token,
+          },
+        })
+        .then((res) => setVerifySuccess(true))
     } catch (error) {
-      console.log('Error at verify account', error)
+      setVerifySuccess(false)
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

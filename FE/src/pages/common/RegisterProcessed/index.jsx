@@ -6,7 +6,7 @@ import logoWhite2 from '~/assets/images/logo-white-2.png'
 import bannerImg from '~/assets/images/background/bg2.jpg'
 import { CButton } from '@coreui/react'
 
-const RegisterSuccessed = () => {
+const RegisterProcessed = () => {
   return (
     <>
       <div className="account-form">
@@ -35,4 +35,4 @@ const RegisterSuccessed = () => {
   )
 }
 
-export default RegisterSuccessed
+export default RegisterProcessed

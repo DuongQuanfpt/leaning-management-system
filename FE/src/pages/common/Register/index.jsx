@@ -43,7 +43,7 @@ const Register = () => {
       })
       console.log(data)
       console.log(response)
-      navigateTo('/register-successed')
+      navigateTo('/register-processed')
     } catch (error) {
       setIsEmailAvailable(true)
     }
