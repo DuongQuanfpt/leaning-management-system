@@ -26,7 +26,7 @@ const AdminSettingDetail = () => {
                             <div className="form-group col-6">
                               <label className="col-form-label">Type</label>
                               <div>
-                                <input className="form-control" type="text" value="Type 1" />
+                                <input className="form-control" type="text" value="Type 1" disabled />
                               </div>
                             </div>
                             <div className="form-group col-6">

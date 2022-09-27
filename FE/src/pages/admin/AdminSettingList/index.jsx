@@ -15,7 +15,12 @@ import {
   CDropdownToggle,
   CDropdownMenu,
   CDropdownItem,
+  CPagination,
+  CPaginationItem,
 } from '@coreui/react'
+
+import { cilSearch } from '@coreui/icons'
+import CIcon from '@coreui/icons-react'
 
 const AdminSettingList = () => {
   return (
@@ -24,14 +29,38 @@ const AdminSettingList = () => {
       <div className="wrapper d-flex flex-column min-vh-100 bg-light">
         <AdminHeader />
         <div className="body flex-grow-1 px-3">
-          <CDropdown>
-            <CDropdownToggle color="secondary">Dropdown button</CDropdownToggle>
-            <CDropdownMenu>
-              <CDropdownItem href="#">Action</CDropdownItem>
-              <CDropdownItem href="#">Another action</CDropdownItem>
-              <CDropdownItem href="#">Something else here</CDropdownItem>
-            </CDropdownMenu>
-          </CDropdown>
+          <div className="col-lg-12 m-b30">
+            <div className="row">
+              <div className="col-8 d-flex">
+                <input type="search" id="form1" className="form-control" value="Search" />
+                <CButton type="submit" color="primary">
+                  <CIcon icon={cilSearch} />
+                </CButton>
+              </div>
+              <div className="col-4">
+                <div className="d-flex justify-content-evenly">
+                  <h5 className="d-flex flex-column-reverse">Filter By: </h5>
+                  <CDropdown>
+                    <CDropdownToggle color="secondary">Select Type</CDropdownToggle>
+                    <CDropdownMenu>
+                      <CDropdownItem href="#">Action</CDropdownItem>
+                      <CDropdownItem href="#">Another action</CDropdownItem>
+                      <CDropdownItem href="#">Something else here</CDropdownItem>
+                    </CDropdownMenu>
+                  </CDropdown>
+                  <CDropdown>
+                    <CDropdownToggle color="secondary">Select status</CDropdownToggle>
+                    <CDropdownMenu>
+                      <CDropdownItem href="#">Action</CDropdownItem>
+                      <CDropdownItem href="#">Another action</CDropdownItem>
+                      <CDropdownItem href="#">Something else here</CDropdownItem>
+                    </CDropdownMenu>
+                  </CDropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <CTable>
             <CTableHead>
               <CTableRow color="info">
@@ -41,7 +70,9 @@ const AdminSettingList = () => {
                 <CTableHeaderCell scope="col">Value</CTableHeaderCell>
                 <CTableHeaderCell scope="col">Display Order</CTableHeaderCell>
                 <CTableHeaderCell scope="col">Status</CTableHeaderCell>
-                <CTableHeaderCell scope="col">Actions</CTableHeaderCell>
+                <CTableHeaderCell scope="col" className="text-center">
+                  Actions
+                </CTableHeaderCell>
               </CTableRow>
             </CTableHead>
             <CTableBody>
@@ -57,7 +88,7 @@ const AdminSettingList = () => {
                     <CButton color="primary" type="submit">
                       Deactive
                     </CButton>
-                    <CButton color="primary" type="reset">
+                    <CButton color="primary" type="submit">
                       Edit
                     </CButton>
                   </div>
@@ -65,6 +96,13 @@ const AdminSettingList = () => {
               </CTableRow>
             </CTableBody>
           </CTable>
+          <CPagination align="end">
+            <CPaginationItem disabled>Previous</CPaginationItem>
+            <CPaginationItem>1</CPaginationItem>
+            <CPaginationItem>2</CPaginationItem>
+            <CPaginationItem>3</CPaginationItem>
+            <CPaginationItem>Next</CPaginationItem>
+          </CPagination>
         </div>
         <AdminFooter />
       </div>
