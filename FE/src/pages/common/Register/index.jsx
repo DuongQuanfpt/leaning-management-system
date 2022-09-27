@@ -29,10 +29,11 @@ const Register = () => {
     formState: { errors, isValid, isSubmitting },
   } = useForm({ resolver: yupResolver(schema), mode: 'onTouched' })
 
-  // const navigate = useNavigate()
-
   const submitForm = async (data) => {
-    console.log(data)
+    data = {
+      ...data,
+      link: 'http://localhost:3000/verify?token=',
+    }
     if (!isValid) return
     try {
       const response = await axios.post('https://lms-app-1.herokuapp.com/auth/register', JSON.stringify(data), {
@@ -40,11 +41,10 @@ const Register = () => {
           'Content-Type': 'application/json',
         },
       })
+      console.log(data)
       console.log(response)
-      console.log('Register sucess')
       navigateTo('/register-successed')
     } catch (error) {
-      console.log('Error at register', error)
       setIsEmailAvailable(true)
     }
   }
@@ -120,7 +120,7 @@ const Register = () => {
                     value="Submit"
                     className="btn button-md m-t15"
                     disabled={!verified}
-                    color="success"
+                    color="warning"
                   >
                     {isSubmitting ? `Registering....` : `Register`}
                   </CButton>

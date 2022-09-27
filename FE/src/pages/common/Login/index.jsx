@@ -1,10 +1,13 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import * as Yup from 'yup'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import axios from 'axios'
 import ReCAPTCHA from 'react-google-recaptcha'
+import { useDispatch, useSelector } from 'react-redux'
+import { setToken } from '~/redux/AuthSlice/authSlice'
+import { setProfile } from '~/redux/ProfileSlice/profileSlice'
 import { CButton } from '@coreui/react'
 
 import ErrorMsg from '~/components/Common/ErrorMsg'
@@ -28,7 +31,18 @@ const Login = () => {
   const navigateTo = useNavigate()
 
   const [logged, setLogged] = useState(false)
+  const [error, setError] = useState('')
   const [verified, setVerified] = useState(false)
+
+  const currentAccessToken = useSelector((state) => state.auth.token)
+  useEffect(() => {
+    if (currentAccessToken) {
+      navigateTo('/')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const dispatch = useDispatch()
 
   const submitForm = async (data) => {
     if (!isValid) return
@@ -36,18 +50,23 @@ const Login = () => {
       //Get user token
       const responseAuthLogin = await axios.post('https://lms-app-1.herokuapp.com/auth/login', data)
       const token = responseAuthLogin.data.accessToken
-      localStorage.setItem('LMS-User-Token', token)
-
+      dispatch(setToken(token))
       //Get profile data
       const responseProfileData = await axios.get('https://lms-app-1.herokuapp.com/user', {
         headers: { Authorization: `Bearer ${token}` },
       })
       const profileData = responseProfileData.data
-      localStorage.setItem('LMS-Profile-Data', JSON.stringify(profileData))
+      dispatch(setProfile(profileData))
       setLogged(true)
       navigateTo('/')
     } catch (error) {
-      console.error('Failed to fetch token authenticated at Login', error)
+      console.log(error)
+      if (error.response.data === 'Incorect credentials') {
+        setError('This account is unverified!')
+      }
+      if (error.response.data === 'Incorect credentials') {
+        setError('You email or password is incorrect!')
+      }
       setLogged(false)
     }
   }
@@ -130,13 +149,14 @@ const Login = () => {
                 </div>
                 <div className="col-lg-12 mb-10">
                   {logged ? <ErrorMsg errorMsg="Your email or password is not available" /> : <Fragment />}
+                  {error !== '' ? <ErrorMsg errorMsg={error} /> : <Fragment />}
                   <CButton
                     name="submit"
                     type="submit"
                     value="Submit"
                     className="btn button-md m-t15"
+                    color="warning"
                     disabled={!verified}
-                    color="success"
                   >
                     {isSubmitting ? `Logging....` : `Login`}
                   </CButton>

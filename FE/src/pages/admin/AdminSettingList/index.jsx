@@ -70,14 +70,14 @@ const AdminSettingList = () => {
                 <CTableHeaderCell scope="col">Value</CTableHeaderCell>
                 <CTableHeaderCell scope="col">Display Order</CTableHeaderCell>
                 <CTableHeaderCell scope="col">Status</CTableHeaderCell>
-                <CTableHeaderCell scope="col" className="text-center">
-                  Actions
+                <CTableHeaderCell scope="col">
+                  <div className="d-flex justify-content-evenly">Actions</div>
                 </CTableHeaderCell>
               </CTableRow>
             </CTableHead>
             <CTableBody>
               <CTableRow color="info">
-                <CTableDataCell>1</CTableDataCell>
+                <CTableHeaderCell scope="row">1</CTableHeaderCell>
                 <CTableDataCell>Type 1</CTableDataCell>
                 <CTableDataCell>Title 1</CTableDataCell>
                 <CTableDataCell>Value 1</CTableDataCell>

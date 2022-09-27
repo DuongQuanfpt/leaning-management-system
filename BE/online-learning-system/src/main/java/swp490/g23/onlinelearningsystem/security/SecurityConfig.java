@@ -1,18 +1,16 @@
 package swp490.g23.onlinelearningsystem.security;
 
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.boot.web.servlet.RegistrationBean;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -26,11 +24,7 @@ import swp490.g23.onlinelearningsystem.security.jwt.JwtTokenFilter;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(
-    prePostEnabled = false,
-    securedEnabled = false,
-    jsr250Enabled = true
-)
+@EnableGlobalMethodSecurity(prePostEnabled = false, securedEnabled = false, jsr250Enabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -62,20 +56,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.cors();
         http.csrf().disable();
-      
-        http.exceptionHandling().authenticationEntryPoint((request, response, ex) ->
-        {
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
+
+        http.exceptionHandling().authenticationEntryPoint((request, response, ex) -> {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
         });
 
         http.authorizeRequests().antMatchers("/auth/login").permitAll()
                 .antMatchers("/user/forgot-pass").permitAll()
+                .antMatchers("/user/forgot-processing").permitAll()
                 .antMatchers("/auth/register").permitAll()
+                .antMatchers("/auth/verify/**").permitAll()
                 // .antMatchers("/auth/login-google").permitAll()
                 .anyRequest().authenticated().and();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
-    
-    }
 
+    }
 }

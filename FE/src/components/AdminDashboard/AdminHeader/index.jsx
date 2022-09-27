@@ -34,15 +34,15 @@ const AdminHeader = () => {
         </CHeaderBrand>
         <CHeaderNav className="d-none d-md-flex me-auto">
           <CNavItem>
-            <CNavLink to="/admin" component={NavLink}>
+            <CNavLink to="/dashboard" component={NavLink}>
               Dashboard
             </CNavLink>
           </CNavItem>
           <CNavItem>
-            <CNavLink href="/admin/user-list">Users</CNavLink>
+            <CNavLink href="/user-list">Users</CNavLink>
           </CNavItem>
           <CNavItem>
-            <CNavLink href="/admin/setting-list">Settings</CNavLink>
+            <CNavLink href="/setting-list">Settings</CNavLink>
           </CNavItem>
         </CHeaderNav>
         <CHeaderNav>

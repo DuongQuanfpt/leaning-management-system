@@ -33,7 +33,7 @@ const ServiceContent = () => {
                     Lorem Ipsum has been the industry's standard dummy text ever since when an unknown printer took a
                     galley.
                   </p>
-                  <Link to="/courses-details" className="btn-custom radius-xl m-r15 btn-custom button-md ">
+                  <Link to="/courses-details" className="btn-custom radius-xl m-r15 btn-custom button-md">
                     View More
                   </Link>
                 </div>
@@ -52,7 +52,7 @@ const ServiceContent = () => {
                     Lorem Ipsum has been the industry's standard dummy text ever since when an unknown printer took a
                     galley.
                   </p>
-                  <Link to="/courses-details" className="btn-custom radius-xl m-r15 btn-custom button-md ">
+                  <Link to="/courses-details" className="btn-custom radius-xl m-r15 btn-custom button-md">
                     View More
                   </Link>
                 </div>

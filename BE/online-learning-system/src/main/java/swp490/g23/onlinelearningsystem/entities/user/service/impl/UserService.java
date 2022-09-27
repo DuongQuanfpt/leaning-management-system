@@ -1,7 +1,10 @@
 package swp490.g23.onlinelearningsystem.entities.user.service.impl;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
+import net.bytebuddy.utility.RandomString;
 import swp490.g23.onlinelearningsystem.entities.email.EmailDetails;
 import swp490.g23.onlinelearningsystem.entities.email.service.impl.EmailService;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
@@ -39,21 +43,23 @@ public class UserService implements IUserService {
     private JwtTokenUtil jwtTokenUtil;
 
     @Override
-    public ResponseEntity<?> getAuthenticatedUser(User user) {
-        if (user != null){
-            
+    public ResponseEntity<?> getAuthenticatedUser(Long id) {
+        User user = userRepository.findUserById(id);
+
+        if (user != null) {
+
             return ResponseEntity.ok(toDTO(user));
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There are no authenticated user");
-        
+
     }
 
     @Override
-    public ResponseEntity<?> updatePassword(UserUpdatePassRequestDTO dto, String authoHeader) {
+    public ResponseEntity<?> updatePassword(UserUpdatePassRequestDTO dto, Long id) {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
-        User user = getUserFromToken(authoHeader);
+        User user = userRepository.findUserById(id);
 
-        if(user == null) {
+        if (user == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User doesnt exsist");
         }
 
@@ -76,29 +82,75 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponseEntity<?> resetPassword(String email, String resetPass) {
-        PasswordEncoder encoder = new BCryptPasswordEncoder();
+    public ResponseEntity<?> resetPassword(String email, String link) {
         User user = userRepository.findOneByEmail(email);
         if (user != null) {
-            user.setPassword(encoder.encode(resetPass));
+            user.setMailToken(RandomString.make(30));
             userRepository.save(user);
-            
-            EmailDetails details = new EmailDetails();
-       
-            details.setRecipient(email);
-            details.setMsgBody("Your requested password is : "+resetPass);
-            details.setSubject("Reset Password");
 
-            emailService.sendSimpleMail(details);
-            return ResponseEntity.ok("your password have been resetted , we have sent the new password to your email");
+            link = link + user.getMailToken();
+            resetPasswordMail(user.getEmail(), link);
+            return ResponseEntity.ok("your password have been reset , we have sent the new password to your email");
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No user match with given email");
         }
     }
 
+    @Override
+    public ResponseEntity<?> resetProcessing(String newPassword, String token) {
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        User user = userRepository.findByMailToken(token);
+        if(user == null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User doesnt exist");
+        }
+        user.setPassword(encoder.encode(newPassword));
+        user.setMailToken(null);
+        userRepository.save(user);
+        return ResponseEntity.ok().body("Your password have been reset sucessfully");
+    }
+
+    @Override
+    public ResponseEntity<?> updateUserProfile(String fullName, String avatarUrl, String mobile, Long userId) {
+        if (!userRepository.findById(userId).isPresent()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User doesnt exist");
+        }
+        User user = userRepository.findById(userId).get();
+        user.setMobile(mobile);
+        user.setFullName(fullName);
+        user.setAvatar_url(avatarUrl);
+        userRepository.save(user);
+
+        return ResponseEntity.ok(toDTO(user));
+    }
+
+    //sent email with password reset link to user
+    public void resetPasswordMail(String email, String verifyUrl) {
+
+        EmailDetails details = new EmailDetails();
+
+        details.setRecipient(email);
+
+        String subject = "Here's the link to reset your password";
+
+        String content = "<p>Hello,</p>"
+                + "<p>You have requested to reset your password.</p>"
+                + "<p>Click the link below to change your password:</p>"
+                + "<p><a href=\"" + verifyUrl + "\">Change my password</a></p>"
+                + "<br>";
+
+        details.setMsgBody(content);
+        details.setSubject(subject);
+
+        try {
+            emailService.sendMimeMail(details);
+        } catch (UnsupportedEncodingException | MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
     // get User from jwt token
     public User getUserFromToken(String authoHeader) {
-        
+
         String token = authoHeader.split(" ")[1].trim();
 
         Claims claims = jwtTokenUtil.parseClaims(token);
@@ -109,13 +161,13 @@ public class UserService implements IUserService {
 
         String[] subjectArray = jwtTokenUtil.getSubject(token).split(",");
         Long userID = Long.parseLong(subjectArray[0]);
-        if(!userRepository.findById(userID).isPresent()){
-            return null ;
+        if (!userRepository.findById(userID).isPresent()) {
+            return null;
         }
 
         User user = userRepository.findById(userID).get();
         for (String role : roles) {
-            user.addRole(settingRepositories.findBySettingValue(role));
+            user.addRole(settingRepositories.findActiveSettingByValue(role));
         }
         return user;
     }
@@ -156,5 +208,7 @@ public class UserService implements IUserService {
         responseDTO.setRoles(roleNames);
         return responseDTO;
     }
+
+    
 
 }

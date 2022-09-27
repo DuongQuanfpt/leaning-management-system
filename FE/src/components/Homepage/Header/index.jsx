@@ -8,30 +8,12 @@ import logo from '~/assets/images/logo.png'
 import adv from '~/assets/images/adv/adv.jpg'
 import logoWhite from '~/assets/images/logo-white.png'
 
-import {
-  CAvatar,
-  CBadge,
-  CDropdown,
-  CDropdownDivider,
-  CDropdownHeader,
-  CDropdownItem,
-  CDropdownMenu,
-  CDropdownToggle,
-} from '@coreui/react'
-import {
-  cilBell,
-  cilCreditCard,
-  cilCommentSquare,
-  cilEnvelopeOpen,
-  cilFile,
-  cilAccountLogout,
-  cilSettings,
-  cilTask,
-  cilUser,
-} from '@coreui/icons'
+import { CAvatar, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
+import { cilCreditCard, cilAccountLogout, cilSettings, cilUser } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
 
 import avatar from '~/assets/images/profile/pic1.jpg'
+import { useSelector } from 'react-redux'
 
 const Header = () => {
   const navigateTo = useNavigate()
@@ -151,15 +133,17 @@ const Header = () => {
     headerSubMenu()
   }, [])
 
+  const currentAccessToken = useSelector((state) => state.auth.token)
+
   useEffect(() => {
-    if (localStorage.getItem('LMS-User-Token')) {
+    if (currentAccessToken) {
       setLogged(true)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleLogout = () => {
-    localStorage.removeItem('LMS-User-Token')
-    localStorage.removeItem('LMS-Profile-Data')
+    localStorage.removeItem('persist:root')
     //Reload page
     navigateTo(0)
   }
@@ -201,15 +185,15 @@ const Header = () => {
                           <CAvatar src={avatar} size="md" />
                         </CDropdownToggle>
                         <CDropdownMenu className="pt-0" placement="bottom-end">
-                          <CDropdownItem href="/admin">
+                          <CDropdownItem href="/dashboard">
                             <CIcon icon={cilUser} className="me-2" />
                             Dashboard
                           </CDropdownItem>
-                          <CDropdownItem href="/admin/profile">
+                          <CDropdownItem href="/profile">
                             <CIcon icon={cilSettings} className="me-2" />
                             Profile
                           </CDropdownItem>
-                          <CDropdownItem href="/admin/change-password">
+                          <CDropdownItem href="/change-password">
                             <CIcon icon={cilCreditCard} className="me-2" />
                             Change Password
                           </CDropdownItem>
