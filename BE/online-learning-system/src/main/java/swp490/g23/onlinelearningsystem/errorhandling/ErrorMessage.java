@@ -1,4 +1,4 @@
-package swp490.g23.onlinelearningsystem.entities.setting.domain.response;
+package swp490.g23.onlinelearningsystem.errorhandling;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,8 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TypeResponseDTO {
-    String title;
-    String value;
-
+public class ErrorMessage {
+    private int statusCode;
+    private String message;
 }

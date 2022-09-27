@@ -1,12 +1,13 @@
 package swp490.g23.onlinelearningsystem.entities.auth.controller;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import net.bytebuddy.utility.RandomString;
 import swp490.g23.onlinelearningsystem.entities.auth.domain.request.AuthRequest;
+import swp490.g23.onlinelearningsystem.entities.auth.domain.request.GoogleAuthRequest;
 import swp490.g23.onlinelearningsystem.entities.auth.service.impl.AuthService;
 
 @RestController
@@ -64,11 +66,10 @@ public class AuthController {
         return authService.verifyUser(token);
     }
 
-    @GetMapping("/login-google")
-    public String loginGoogle(@AuthenticationPrincipal OAuth2User principal) {
+   
+    @PostMapping("/login-google")
+    public ResponseEntity<?> loginGoogle(@RequestBody GoogleAuthRequest authRequest) throws GeneralSecurityException, IOException {
 
-        String email = principal.getAttribute("email");
-
-        return email;
+        return authService.googleAuthenticate(authRequest);
     }
 }

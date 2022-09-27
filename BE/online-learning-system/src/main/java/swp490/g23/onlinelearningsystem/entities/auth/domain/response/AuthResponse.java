@@ -1,10 +1,11 @@
 package swp490.g23.onlinelearningsystem.entities.auth.domain.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter @Setter @NoArgsConstructor
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class AuthResponse {
 
     private String email;
@@ -13,11 +14,4 @@ public class AuthResponse {
 
     private String fullName;
 
-    public AuthResponse(String email, String accessToken, String fullName) {
-        this.email = email;
-        this.accessToken = accessToken;
-        this.fullName = fullName;
-    }
-
-    
 }
