@@ -103,7 +103,14 @@ const Profile = () => {
                             <div className="row col-3 h-100">
                               <label className="col-form-label align-middle">Avatar</label>
                               <div>
-                                <img src={profileData.avatar_url === '' ? avatar : profileData.avatar_url} alt="" />
+                                <img
+                                  src={profileData.avatar_url === '' ? avatar : profileData.avatar_url}
+                                  alt=""
+                                  style={{
+                                    width: 100,
+                                    height: 100,
+                                  }}
+                                />
                               </div>
                               <div className="d-flex pt-4">
                                 <CButton size="md" color="warning" onClick={handleAvatar}>

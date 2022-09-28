@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 import $ from 'jquery'
 import Sticky from 'react-stickynode'
 
@@ -13,7 +14,6 @@ import { cilCreditCard, cilAccountLogout, cilSettings, cilUser } from '@coreui/i
 import CIcon from '@coreui/icons-react'
 
 import avatar from '~/assets/images/profile/pic1.jpg'
-import { useSelector } from 'react-redux'
 
 const Header = () => {
   const navigateTo = useNavigate()
@@ -51,10 +51,8 @@ const Header = () => {
 
       if (active) {
         current.classList.remove('open')
-        console.log('active')
       } else {
         current.classList.add('open')
-        console.log('close')
       }
     }
 
@@ -134,6 +132,7 @@ const Header = () => {
   }, [])
 
   const currentAccessToken = useSelector((state) => state.auth.token)
+  const profileData = useSelector((state) => state.profile)
 
   useEffect(() => {
     if (currentAccessToken) {
@@ -182,7 +181,7 @@ const Header = () => {
                     {logged ? (
                       <CDropdown variant="nav-item">
                         <CDropdownToggle placement="bottom-end" className="py-0" caret={false}>
-                          <CAvatar src={avatar} size="md" />
+                          <CAvatar src={profileData.avatar_url ?? avatar} size="md" />
                         </CDropdownToggle>
                         <CDropdownMenu className="pt-0" placement="bottom-end">
                           <CDropdownItem href="/dashboard">
