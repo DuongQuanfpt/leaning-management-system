@@ -120,7 +120,7 @@ public class SettingService implements ISettingService {
         responseDTO.setSettingTitle(entity.getSettingTitle());
         responseDTO.setSettingValue(entity.getSettingValue());
         responseDTO.setStatus(entity.getStatus());
-        responseDTO.setTypeName(entity.getType().getSettingValue());
+        responseDTO.setTypeName(entity.getType().getSettingTitle());
         responseDTO.setDescription(entity.getSettingTitle());
         responseDTO.setDisplayOrder(entity.getDisplayOrder());
 
