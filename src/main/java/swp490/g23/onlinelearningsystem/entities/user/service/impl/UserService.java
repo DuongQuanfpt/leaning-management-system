@@ -221,7 +221,7 @@ public class UserService implements IUserService {
         responseDTO.setAvatar_url(entity.getAvatar_url());
 
         List<String> roleNames = new ArrayList<>();
-        for (Setting setting : entity.getSettings()) {
+        for (Setting setting : roles) {
             roleNames.add(setting.getSettingTitle());
         }
         responseDTO.setRoles(roleNames);
