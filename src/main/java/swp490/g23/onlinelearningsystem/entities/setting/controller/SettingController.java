@@ -20,7 +20,7 @@ import swp490.g23.onlinelearningsystem.entities.setting.service.impl.SettingServ
 
 @RestController
 @CrossOrigin
-//@RolesAllowed({ "ROLE_ADMIN"})
+@RolesAllowed({ "ROLE_ADMIN"})
 public class SettingController {
 
 	@Autowired
