@@ -1,6 +1,6 @@
 package swp490.g23.onlinelearningsystem.entities.user.domain.response;
 
-import java.util.Collection;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,5 +24,5 @@ public class AuthenticatedResponseDTO {
 
     private String note;
 
-    private Collection<?> roles;
+    private List<String> roles;
 }

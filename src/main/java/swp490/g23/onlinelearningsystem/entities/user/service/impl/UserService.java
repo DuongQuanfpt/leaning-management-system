@@ -2,7 +2,6 @@ package swp490.g23.onlinelearningsystem.entities.user.service.impl;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.mail.MessagingException;
@@ -46,7 +45,7 @@ public class UserService implements IUserService {
     private JwtTokenUtil jwtTokenUtil;
 
     @Override
-    public ResponseEntity<AuthenticatedResponseDTO> getAuthenticatedUser(Long id , Collection<?> roles) {
+    public ResponseEntity<AuthenticatedResponseDTO> getAuthenticatedUser(Long id , List<Setting> roles) {
         User user = userRepository.findUserById(id);
         
         if (user == null) {
@@ -211,7 +210,7 @@ public class UserService implements IUserService {
         return responseDTO;
     }
 
-    public AuthenticatedResponseDTO toAuthenDTO(User entity , Collection<?> roles) {
+    public AuthenticatedResponseDTO toAuthenDTO(User entity , List<Setting> roles) {
         AuthenticatedResponseDTO responseDTO = new AuthenticatedResponseDTO();
         responseDTO.setFullName(entity.getFullName());
         responseDTO.setEmail(entity.getEmail());
@@ -221,7 +220,11 @@ public class UserService implements IUserService {
         responseDTO.setUserId(entity.getUserId());
         responseDTO.setAvatar_url(entity.getAvatar_url());
 
-        responseDTO.setRoles(roles);
+        List<String> roleNames = new ArrayList<>();
+        for (Setting setting : entity.getSettings()) {
+            roleNames.add(setting.getSettingTitle());
+        }
+        responseDTO.setRoles(roleNames);
         return responseDTO;
     }
 
