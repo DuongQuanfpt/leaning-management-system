@@ -19,7 +19,7 @@ import swp490.g23.onlinelearningsystem.entities.setting.domain.response.SettingR
 import swp490.g23.onlinelearningsystem.entities.setting.service.impl.SettingService;
 
 @RestController
-@CrossOrigin (origins = "*" , exposedHeaders = "**")
+@CrossOrigin (exposedHeaders = "Authorization")
 @RolesAllowed({ "ROLE_ADMIN"})
 public class SettingController {
 
