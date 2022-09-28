@@ -58,11 +58,8 @@ public class SettingService implements ISettingService {
         }
         Setting setting = settingRepositories.findById(id).get();
         setting.setSettingTitle(dto.getSettingTitle());
-        setting.setSettingValue(dto.getSettingValue());
         setting.setDisplayOrder(dto.getDisplayOrder());
-        setting.setStatus(dto.getStatus());
         setting.setDescription(dto.getDescription());
-        setting.setType(settingRepositories.findBySettingValue(dto.getTypeName()));
 
         settingRepositories.save(setting);
         return ResponseEntity.ok("Setting has been udated");

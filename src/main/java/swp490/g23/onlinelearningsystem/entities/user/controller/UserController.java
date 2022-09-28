@@ -39,8 +39,8 @@ public class UserController {
 	 */
 	@GetMapping // API to get info of the currently authenticated user
 	public ResponseEntity<?> getAuthenticatedUser(@AuthenticationPrincipal User user) {
-
-		return userService.getAuthenticatedUser(user.getUserId());
+	
+		return userService.getAuthenticatedUser(user.getUserId(),user.getAuthorities());
 		// return ResponseEntity.ok(user.toString());
 	}
 

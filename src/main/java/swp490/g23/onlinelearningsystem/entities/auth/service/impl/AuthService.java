@@ -153,7 +153,6 @@ public class AuthService implements IAuthService {
                 user.setMailToken(null);
             }
         }
-       
 
         userRepository.save(user);
         // Authentication authentication = authenticationManager.authenticate(

@@ -1,6 +1,6 @@
 package swp490.g23.onlinelearningsystem.entities.user.domain.response;
 
-import java.util.List;
+import java.util.Collection;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,8 +9,7 @@ import lombok.Setter;
 import swp490.g23.onlinelearningsystem.util.EnumEntity.UserStatusEnum;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
-public class UserResponseDTO  {
-
+public class AuthenticatedResponseDTO {
     private Long userId;
 
     private String fullName;
@@ -25,6 +24,5 @@ public class UserResponseDTO  {
 
     private String note;
 
-    private List<String> roles;
-    
+    private Collection<?> roles;
 }

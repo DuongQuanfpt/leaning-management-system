@@ -2,6 +2,7 @@ package swp490.g23.onlinelearningsystem.entities.user.service.impl;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.mail.MessagingException;
@@ -22,6 +23,7 @@ import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepo
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserUpdatePassRequestDTO;
+import swp490.g23.onlinelearningsystem.entities.user.domain.response.AuthenticatedResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.entities.user.service.IUserService;
@@ -44,13 +46,13 @@ public class UserService implements IUserService {
     private JwtTokenUtil jwtTokenUtil;
 
     @Override
-    public ResponseEntity<UserResponseDTO> getAuthenticatedUser(Long id) {
+    public ResponseEntity<AuthenticatedResponseDTO> getAuthenticatedUser(Long id , Collection<?> roles) {
         User user = userRepository.findUserById(id);
-
+        
         if (user == null) {
             throw new NoUserException();
         }
-        return ResponseEntity.ok(toDTO(user));
+        return ResponseEntity.ok(toAuthenDTO(user,roles));
     }
 
     @Override
@@ -59,7 +61,7 @@ public class UserService implements IUserService {
         User user = userRepository.findUserById(id);
 
         if (user == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User doesnt exsist");
+           throw new NoUserException();
         }
 
         if (dto.getOldPassword() != null) {
@@ -206,6 +208,20 @@ public class UserService implements IUserService {
             roleNames.add(setting.getSettingTitle());
         }
         responseDTO.setRoles(roleNames);
+        return responseDTO;
+    }
+
+    public AuthenticatedResponseDTO toAuthenDTO(User entity , Collection<?> roles) {
+        AuthenticatedResponseDTO responseDTO = new AuthenticatedResponseDTO();
+        responseDTO.setFullName(entity.getFullName());
+        responseDTO.setEmail(entity.getEmail());
+        responseDTO.setMobile(entity.getMobile());
+        responseDTO.setNote(entity.getNote());
+        responseDTO.setStatus(entity.getStatus());
+        responseDTO.setUserId(entity.getUserId());
+        responseDTO.setAvatar_url(entity.getAvatar_url());
+
+        responseDTO.setRoles(roles);
         return responseDTO;
     }
 
