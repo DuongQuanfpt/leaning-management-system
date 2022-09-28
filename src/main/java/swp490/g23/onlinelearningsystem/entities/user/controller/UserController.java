@@ -94,7 +94,6 @@ public class UserController {
 	 * @return update user info
 	 */
 	@PutMapping(value = "/update-profile")
-	@RolesAllowed({"ROLE_TRAINEE"})
 	public ResponseEntity<?> updateProfile(@RequestBody UserRequestDTO requestDTO
 										  ,@AuthenticationPrincipal User user) 
 	{
