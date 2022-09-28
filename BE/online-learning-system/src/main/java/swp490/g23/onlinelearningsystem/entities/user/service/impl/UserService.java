@@ -7,6 +7,9 @@ import java.util.List;
 import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,10 +25,12 @@ import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepo
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserUpdatePassRequestDTO;
+import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserListResponsePaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.entities.user.service.IUserService;
 import swp490.g23.onlinelearningsystem.util.JwtTokenUtil;
+import swp490.g23.onlinelearningsystem.util.EnumEntity.UserStatusEnum;
 
 @Service
 public class UserService implements IUserService {
@@ -190,6 +195,58 @@ public class UserService implements IUserService {
         return entity;
     }
 
+    @Override
+    public ResponseEntity<?> displayUsers(int limit, int currentPage) {
+        Pageable pageable = PageRequest.of(currentPage - 1, limit, Sort.by(Sort.Direction.ASC, "userId"));
+        List<User> users = userRepository.findAll(pageable).getContent();
+        List<UserResponseDTO> result = new ArrayList<>();
+
+        for (User user : users) {
+            result.add(toDTO(user));
+        }
+
+        UserListResponsePaginateDTO responseDTO = new UserListResponsePaginateDTO();
+        responseDTO.setPage(currentPage);
+        responseDTO.setListResult(result);
+        responseDTO.setTotalPage((int) Math.ceil((double) userRepository.count() / limit));
+
+        return ResponseEntity.ok(responseDTO);
+    }
+
+    @Override
+    public ResponseEntity<?> viewUser(long id) {
+        User user = userRepository.findById(id).get();
+        if (user.getUserId() != null) {
+            return ResponseEntity.ok(toDTO(user));
+        }
+        return ResponseEntity.ok("Cant view this user");
+    }
+
+    @Override
+    public ResponseEntity<?> updateUser(UserResponseDTO dto, Long id) {
+        User user = userRepository.findById(id).get();
+        user.setFullName(dto.getFullName());
+        user.setEmail(dto.getEmail());
+        user.setMobile(dto.getMobile());
+        user.setStatus(dto.getStatus());
+        user.setNote(dto.getNote());
+        //roles
+        userRepository.save(user);
+        return ResponseEntity.ok("Setting has been udated");
+    }
+
+    @Override
+    public ResponseEntity<?> updateStatus(Long id) {
+        User user = userRepository.findById(id).get();
+        if (user.getStatus() == UserStatusEnum.ACTIVE) {
+            user.setStatus(UserStatusEnum.INACTIVE);
+        } else {
+            user.setStatus(UserStatusEnum.ACTIVE);
+        }
+        userRepository.save(user);
+        return ResponseEntity.ok("User status updated");
+    }
+
     // Convert Entity to DTO
     public UserResponseDTO toDTO(User entity) {
         UserResponseDTO responseDTO = new UserResponseDTO();
@@ -208,7 +265,4 @@ public class UserService implements IUserService {
         responseDTO.setRoles(roleNames);
         return responseDTO;
     }
-
-    
-
 }
