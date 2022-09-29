@@ -48,8 +48,8 @@ const Profile = () => {
       const response = await axios.put('https://lms-app-1.herokuapp.com/user/update-profile', data, {
         headers: { Authorization: `Bearer ${currentAccessToken}` },
       })
-      console.log(response.status)
       if (response.status === 200) {
+        setIsEditMode(false)
         setError('You have successfully changed your password')
         dispatch(
           setProfile({
@@ -61,12 +61,13 @@ const Profile = () => {
       }
     } catch (error) {
       if (error.code === 'ERR_BAD_REQUEST') {
-        setError('Some mistake, try again')
+        setError('Something went wrong, please try again')
         return
       }
-      console.error('Failed to fetch edit profile at Edit Profile', error)
     }
   }
+
+  console.log(currentAccessToken)
   const handleReset = () => {
     setName(profileData.fullName)
     setMobile(profileData.mobile)
@@ -81,6 +82,7 @@ const Profile = () => {
   const handleEdit = () => {
     setIsEditMode(true)
   }
+
   console.log(profileData)
   return (
     <>

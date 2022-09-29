@@ -12,7 +12,6 @@ import { logo } from 'src/assets/brand/logo'
 const AdminHeader = () => {
   const dispatch = useDispatch()
   const sidebarShow = useSelector((state) => state.sidebar.sidebarShow)
-  const profileData = useSelector((state) => state.profile)
 
   return (
     <CHeader position="sticky" className="mb-4">
