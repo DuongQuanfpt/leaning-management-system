@@ -26,7 +26,7 @@ import CIcon from '@coreui/icons-react'
 import { cilReload, cilSearch } from '@coreui/icons'
 
 const AdminSettingList = () => {
-  const ITEM_PER_PAGE = 3
+  const ITEM_PER_PAGE = 6
 
   const currentAccessToken = useSelector((state) => state.auth.token)
 
@@ -43,7 +43,7 @@ const AdminSettingList = () => {
     try {
       // eslint-disable-next-line no-unused-vars
       const response = axios
-        .get(`https://lms-app-1.herokuapp.com/admin/setting?limit=${ITEM_PER_PAGE}`, {
+        .get(`https://lms-app-1.herokuapp.com/admin/setting?limit=${ITEM_PER_PAGE}&page=1`, {
           headers: { Authorization: `Bearer ${currentAccessToken}` },
         })
         .then((response) => {
@@ -102,6 +102,7 @@ const AdminSettingList = () => {
           headers: { Authorization: `Bearer ${currentAccessToken}` },
         })
         .then((response) => {
+          setListSettingFetched(response.data.listResult)
           setListSettingDisplay(response.data.listResult)
         })
     } catch (error) {
@@ -248,7 +249,7 @@ const AdminSettingList = () => {
             nextLabel="Next"
             pageCount={totalPages}
             onPageChange={handlePageChange}
-            pageRangeDisplayed={5}
+            pageRangeDisplayed={3}
             containerClassName="r-pagination"
             pageLinkClassName="r-p-btn"
             previousLinkClassName="r-p-btn"
