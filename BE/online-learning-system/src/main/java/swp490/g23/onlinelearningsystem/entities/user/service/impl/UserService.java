@@ -223,12 +223,9 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponseEntity<?> updateUser(UserResponseDTO dto, Long id) {
+    public ResponseEntity<?> updateUser(UserRequestDTO dto, Long id) {
         User user = userRepository.findById(id).get();
-        user.setFullName(dto.getFullName());
-        user.setEmail(dto.getEmail());
-        user.setMobile(dto.getMobile());
-        user.setStatus(dto.getStatus());
+
         user.setNote(dto.getNote());
         //roles
         userRepository.save(user);

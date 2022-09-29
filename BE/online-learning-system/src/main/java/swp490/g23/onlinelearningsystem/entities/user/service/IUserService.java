@@ -1,8 +1,9 @@
 package swp490.g23.onlinelearningsystem.entities.user.service;
 
 import org.springframework.http.ResponseEntity;
+
+import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserUpdatePassRequestDTO;
-import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserResponseDTO;
 
 public interface IUserService {
 
@@ -20,7 +21,7 @@ public interface IUserService {
 
     ResponseEntity<?> viewUser(long id);
 
-    ResponseEntity<?> updateUser(UserResponseDTO dto , Long id);
+    ResponseEntity<?> updateUser(UserRequestDTO dto , Long id);
 
     ResponseEntity<?> updateStatus(Long id);
 
