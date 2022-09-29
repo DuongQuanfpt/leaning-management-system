@@ -146,11 +146,12 @@ public class AuthService implements IAuthService {
             user.setStatus(UserStatusEnum.ACTIVE);
             user.addRole(settingRepositories.findBySettingValue(RoleEnum.ROLE_TRAINEE.toString()));
 
-        }
-        user = userRepository.findByEmail(email).get();
-        if (user.getStatus() == UserStatusEnum.UNVERIFIED) {
-            user.setStatus(UserStatusEnum.ACTIVE);
-            user.setMailToken(null);
+        } else {
+            user = userRepository.findByEmail(email).get();
+            if (user.getStatus() == UserStatusEnum.UNVERIFIED) {
+                user.setStatus(UserStatusEnum.ACTIVE);
+                user.setMailToken(null);
+            }
         }
 
         userRepository.save(user);
