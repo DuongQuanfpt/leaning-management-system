@@ -1,0 +1,47 @@
+.r-pagination{
+  height: 30px;
+  list-style: none;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.r-p-btn{
+  margin-left: 2px;
+  margin-right: 2px;
+  padding: 8px 15px;
+  cursor: pointer;
+  border: 1px solid #0d6efd;
+  border-radius: 3px;
+  border-color: #0d6efd ;
+  color:black;
+}
+
+.r-p-btn:hover{
+  background-color: #0d6efd;
+  border: 1px solid #0d6efd;
+  border-radius: 3px;
+  color: #fff  ;
+}
+
+.r-p-active{
+  background-color:  #0d6efd;
+  border: 1px solid #0d6efd;
+  border-radius: 3px;
+  color: #fff  ;
+}
+
+.r-p-disabled{
+  background-color:  #9da5b1;
+  border: 1px solid #9da5b1;
+  border-radius: 3px;
+  color: #fff ;
+  cursor: default;
+}
+
+.r-p-disabled:hover{
+  background-color:  #9da5b1;
+  border: 1px solid #9da5b1;
+  border-radius: 3px;
+  color: #fff ;
+  cursor: default;
+}

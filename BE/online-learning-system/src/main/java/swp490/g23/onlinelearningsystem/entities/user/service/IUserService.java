@@ -21,4 +21,12 @@ public interface IUserService {
 
     ResponseEntity<UserResponseDTO> updateUserProfile(String fullName,String avatarUrl,String mobile,Long userId);///update user profile
 
+    ResponseEntity<?> displayUsers(int limit, int currentPage); 
+
+    ResponseEntity<?> viewUser(long id);
+
+    ResponseEntity<?> updateUser(UserResponseDTO dto , Long id);
+
+    ResponseEntity<?> updateStatus(Long id);
+
 }
