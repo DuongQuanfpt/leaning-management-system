@@ -13,7 +13,7 @@ public interface SettingRepositories extends JpaRepository<Setting, Long> {
    
     Setting findBySettingValue(String settingValue);
 
-    @Query(value = "SELECT * FROM setting WHERE type_id IS NULL", nativeQuery = true)
+    @Query(value = "SELECT s FROM Setting s WHERE s.type IS NULL")
     List<Setting> findAllType();
 
     @Query(value = "SELECT * FROM setting WHERE setting_value= ?1 AND status = 'ACTIVE'", nativeQuery = true)
@@ -24,6 +24,9 @@ public interface SettingRepositories extends JpaRepository<Setting, Long> {
     Long countByTypeNotNull();
 
     Setting findBySettingTitle(String name);
+
+    @Query(value = "SELECT * FROM setting WHERE type_id = 1", nativeQuery = true)
+    List<Setting> roleList();
 }
 
 

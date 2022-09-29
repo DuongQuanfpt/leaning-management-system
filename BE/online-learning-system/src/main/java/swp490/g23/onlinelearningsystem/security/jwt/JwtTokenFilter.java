@@ -19,7 +19,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import io.jsonwebtoken.Claims;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
-import swp490.g23.onlinelearningsystem.util.JwtTokenUtil;
+import swp490.g23.onlinelearningsystem.util.EnumEntity.PermisionEnum;
 
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
@@ -33,7 +33,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        
+        System.out.println("URIIIIIII :  " + request.getRequestURI());
         if (!hasAuthorizationHeader(request)) {
             filterChain.doFilter(request, response);
             return;
@@ -49,8 +49,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     }
 
     private void setAuthenticationContext(String accessToken, HttpServletRequest request) {
-        UserDetails userDetails = getUserDetails(accessToken);
-       
+        UserDetails userDetails = getUserDetails(accessToken, request.getRequestURI().toString());
+
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails,
                 null, userDetails.getAuthorities());
 
@@ -58,25 +58,27 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
 
-    private UserDetails getUserDetails(String accessToken) {
+    private UserDetails getUserDetails(String accessToken, String url) {
         User user = new User();
 
         Claims claims = jwtTokenUtil.parseClaims(accessToken);
 
         String claimsRole = (String) claims.get("roles");
-        System.out.println("claimroles : " +claimsRole);
+        System.out.println("claimroles : " + claimsRole);
         claimsRole = claimsRole.replace("[", "").replace("]", "");
         String[] roles = claimsRole.split(", ");
 
         for (String role : roles) {
-            user.addRole(settingRepositories.findActiveSettingByValue(role));
-           
+            if (settingRepositories.findActiveSettingByValue(role) != null) {
+                user.addRole(settingRepositories.findActiveSettingByValue(role));
+            }
         }
 
         // String subject = (String) claims.get(Claims.SUBJECT);
         String[] subjectArray = jwtTokenUtil.getSubject(accessToken).split(",");
         user.setUserId(Long.parseLong(subjectArray[0]));
         user.setEmail(subjectArray[1]);
+        user.addPermission(PermisionEnum.GET_ALL);
         return user;
     }
 
