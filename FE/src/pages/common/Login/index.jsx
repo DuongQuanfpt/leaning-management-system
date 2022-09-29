@@ -55,12 +55,13 @@ const Login = () => {
       //Get user token
       const responseAuthLogin = await axios.post('https://lms-app-1.herokuapp.com/auth/login', data)
       const token = responseAuthLogin.data.accessToken
-      dispatch(setToken(token))
       //Get profile data
       const responseProfileData = await axios.get('https://lms-app-1.herokuapp.com/user', {
         headers: { Authorization: `Bearer ${token}` },
       })
       const profileData = responseProfileData.data
+
+      dispatch(setToken(token))
       dispatch(setProfile(profileData))
       setLogged(true)
 
@@ -71,8 +72,10 @@ const Login = () => {
         setError('This account is unverified!')
       }
       if (error.response.data === 'Incorect credentials') {
-        setError('You email or password is incorrect!')
+        setError('You email or password is incorrect')
       }
+      setError('Something went wrong, please try again')
+
       setLogged(false)
     }
   }
@@ -87,6 +90,7 @@ const Login = () => {
       idToken: res.tokenId,
       clientId: clientId,
     }
+    console.log(JSON.stringify(data))
     try {
       // eslint-disable-next-line no-unused-vars
       const responseGoogleLogin = await axios
@@ -114,10 +118,12 @@ const Login = () => {
                 navigateTo('/')
               })
           } catch (error) {
+            setError('Something went wrong, please try again later!')
             console.log(error)
           }
         })
     } catch (error) {
+      setError('Something went wrong, please try again later!')
       console.log(error)
     }
   }

@@ -3,11 +3,12 @@ package swp490.g23.onlinelearningsystem.entities.auth.domain.request;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter @Setter @NoArgsConstructor
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class AuthRequest {
     @Email
     private String email;

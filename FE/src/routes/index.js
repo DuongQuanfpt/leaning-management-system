@@ -39,9 +39,9 @@ const adminRoutes = [
   { path: '/profile', component: Profile },
   { path: '/change-password', component: ChangePassword },
   { path: '/setting-list', component: SettingList },
-  { path: '/setting-detail', component: SettingDetail },
+  { path: '/setting-detail/:id', component: SettingDetail },
   { path: '/user-list', component: UserList },
-  { path: '/user-detail', component: UserDetail },
+  { path: '/user-detail/:id', component: UserDetail },
 ]
 
 // Manager routes

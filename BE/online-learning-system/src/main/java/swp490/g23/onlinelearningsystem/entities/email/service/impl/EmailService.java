@@ -21,7 +21,7 @@ public class EmailService implements IEmailService {
     @Autowired
     private JavaMailSender javaMailSender;
     // ${spring.mail.username}
-    @Value("test@gmail.com")
+    @Value("${spring.mail.username}")
     private String sender;
 
     @Override

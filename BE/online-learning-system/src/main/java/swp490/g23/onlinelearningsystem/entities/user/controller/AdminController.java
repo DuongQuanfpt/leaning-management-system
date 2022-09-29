@@ -31,7 +31,7 @@ public class AdminController {
 	}
 
 	@GetMapping(value = "/user-list")
-	public ResponseEntity<?> adninUserList(@RequestParam(name = "page", required = false) String currentPage,
+	public ResponseEntity<?> adminUserList(@RequestParam(name = "page", required = false) String currentPage,
 			@RequestParam("limit") int limit) {
 
 		int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);

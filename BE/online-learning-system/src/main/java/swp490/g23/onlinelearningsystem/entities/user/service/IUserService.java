@@ -1,28 +1,37 @@
 package swp490.g23.onlinelearningsystem.entities.user.service;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 
+import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
+import swp490.g23.onlinelearningsystem.entities.user.domain.filter.UserFIlterDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserUpdatePassRequestDTO;
+import swp490.g23.onlinelearningsystem.entities.user.domain.response.AuthenticatedResponseDTO;
+import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserListResponsePaginateDTO;
+import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserResponseDTO;
 
 public interface IUserService {
 
-    ResponseEntity<?> getAuthenticatedUser(Long id); //get currently authenticated user
+    ResponseEntity<AuthenticatedResponseDTO> getAuthenticatedUser(Long id ,List<Setting> roles); //get currently authenticated user
 
-    ResponseEntity<?> updatePassword(UserUpdatePassRequestDTO newPassword, Long id);//update user password
+    ResponseEntity<String> updatePassword(UserUpdatePassRequestDTO newPassword, Long id);//update user password
 
-    ResponseEntity<?> resetPassword(String email, String link);//sent reset pass link to user email
+    ResponseEntity<String> resetPassword(String email, String link);//sent reset pass link to user email
 
-    ResponseEntity<?> resetProcessing(String newPassword ,String token);//update password for user get from token
+    ResponseEntity<String> resetProcessing(String newPassword ,String token);//update password for user get from token
 
-    ResponseEntity<?> updateUserProfile(String fullName,String avatarUrl,String mobile,Long userId);///update user profile
+    ResponseEntity<UserResponseDTO> updateUserProfile(String fullName,String avatarUrl,String mobile,Long userId);///update user profile
 
-    ResponseEntity<?> displayUsers(int limit, int currentPage); 
+    ResponseEntity<UserListResponsePaginateDTO> displayUsers(int limit, int currentPage); 
 
-    ResponseEntity<?> viewUser(long id);
+    ResponseEntity<UserResponseDTO> viewUser(long id);
 
-    ResponseEntity<?> updateUser(UserRequestDTO dto , Long id);
+    ResponseEntity<String> updateUser(UserRequestDTO dto , Long id);
 
-    ResponseEntity<?> updateStatus(Long id);
+    ResponseEntity<String> updateStatus(Long id);
+
+    ResponseEntity<UserFIlterDTO> getFilter();
 
 }
