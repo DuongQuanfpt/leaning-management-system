@@ -36,6 +36,9 @@ public class DbInit {
                 Setting typeTest = new Setting("Test", "TYPE_TEST", "type for test");
                 typeRole.setStatus(SettingStatusEnum.ACTIVE);
 
+                Setting typeScreen = new Setting("System Screen", "TYPE_SCREEN", "contain setting for each screen in system");
+                typeRole.setStatus(SettingStatusEnum.ACTIVE);
+
                 Setting test1 = new Setting("test1", "TEST", SettingStatusEnum.ACTIVE, "description for test", "1",
                                 typeTest);
 
@@ -60,7 +63,7 @@ public class DbInit {
                 Setting trainerRole = new Setting("trainer", "ROLE_TRAINER", SettingStatusEnum.ACTIVE,
                                 "description for trainer", "1", typeRole);
                 settingRepositories.saveAll(
-                                List.of(typeRole, adminRole, traineeRole, managerRole, supporterRole, trainerRole,
+                                List.of(typeScreen,typeRole, adminRole, traineeRole, managerRole, supporterRole, trainerRole,
                                                 typeTest, test1, test2, test3, test4));
 
                 User defaultUser = new User("xucxichbo@doivl.com", encoder.encode("123456"));

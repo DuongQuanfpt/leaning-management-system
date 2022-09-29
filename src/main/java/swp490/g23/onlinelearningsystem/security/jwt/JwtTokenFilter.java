@@ -32,7 +32,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-
+         
+        System.out.println("GRRRRRR :" + request.getRequestURI());        
         if (!hasAuthorizationHeader(request)) {
             filterChain.doFilter(request, response);
             return;
@@ -48,8 +49,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     }
 
     private void setAuthenticationContext(String accessToken, HttpServletRequest request) {
-        UserDetails userDetails = getUserDetails(accessToken);
-
+        UserDetails userDetails = getUserDetails(accessToken , request.getRequestURI().toString());
+        
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails,
                 null, userDetails.getAuthorities());
 
@@ -57,7 +58,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
 
-    private UserDetails getUserDetails(String accessToken) {
+    private UserDetails getUserDetails(String accessToken ,String url) {
         User user = new User();
 
         Claims claims = jwtTokenUtil.parseClaims(accessToken);
@@ -77,6 +78,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         String[] subjectArray = jwtTokenUtil.getSubject(accessToken).split(",");
         user.setUserId(Long.parseLong(subjectArray[0]));
         user.setEmail(subjectArray[1]);
+        user.setPermissions(null);
         return user;
     }
 

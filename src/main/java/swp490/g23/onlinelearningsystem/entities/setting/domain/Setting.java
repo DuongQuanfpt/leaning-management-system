@@ -24,10 +24,12 @@ import swp490.g23.onlinelearningsystem.entities.BaseEntity;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.util.EnumEntity.SettingStatusEnum;
 
-
 @Entity
 @Table(name = "setting")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Setting extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,6 +61,9 @@ public class Setting extends BaseEntity {
     @ManyToMany(mappedBy = "settings")
     private List<User> users = new ArrayList<>();
 
+    // @OneToMany(mappedBy = "setting")
+    // List<SettingPermission> permissions;
+
     public Setting(String settingTitle, String settingValue, String description) {
         this.settingTitle = settingTitle;
         this.settingValue = settingValue;
@@ -74,7 +79,6 @@ public class Setting extends BaseEntity {
         this.displayOrder = displayOrder;
         this.type = type;
     }
-
 
     @Override
     public String toString() {
