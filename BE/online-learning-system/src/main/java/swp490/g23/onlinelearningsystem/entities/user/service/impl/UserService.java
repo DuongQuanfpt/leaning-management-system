@@ -23,6 +23,7 @@ import swp490.g23.onlinelearningsystem.entities.email.service.impl.EmailService;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
+import swp490.g23.onlinelearningsystem.entities.user.domain.filter.UserFIlterDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserUpdatePassRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.AuthenticatedResponseDTO;
@@ -202,7 +203,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponseEntity<?> displayUsers(int limit, int currentPage) {
+    public ResponseEntity<UserListResponsePaginateDTO> displayUsers(int limit, int currentPage) {
         Pageable pageable = PageRequest.of(currentPage - 1, limit, Sort.by(Sort.Direction.ASC, "userId"));
         List<User> users = userRepository.findAll(pageable).getContent();
         List<UserResponseDTO> result = new ArrayList<>();
@@ -220,29 +221,23 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponseEntity<?> viewUser(long id) {
+    public ResponseEntity<UserResponseDTO> viewUser(long id) {
         User user = userRepository.findById(id).get();
-        if (user.getUserId() != null) {
-            return ResponseEntity.ok(toDTO(user));
-        }
-        return ResponseEntity.ok("Cant view this user");
+        return ResponseEntity.ok(toDTO(user));
     }
 
     @Override
-    public ResponseEntity<?> updateUser(UserResponseDTO dto, Long id) {
+    public ResponseEntity<String> updateUser(UserRequestDTO dto, Long id) {
         User user = userRepository.findById(id).get();
-        user.setFullName(dto.getFullName());
-        user.setEmail(dto.getEmail());
-        user.setMobile(dto.getMobile());
-        user.setStatus(dto.getStatus());
+
         user.setNote(dto.getNote());
-        // roles
+        //update roles
         userRepository.save(user);
         return ResponseEntity.ok("Setting has been udated");
     }
 
     @Override
-    public ResponseEntity<?> updateStatus(Long id) {
+    public ResponseEntity<String> updateStatus(Long id) {
         User user = userRepository.findById(id).get();
         if (user.getStatus() == UserStatusEnum.ACTIVE) {
             user.setStatus(UserStatusEnum.INACTIVE);
@@ -251,6 +246,21 @@ public class UserService implements IUserService {
         }
         userRepository.save(user);
         return ResponseEntity.ok("User status updated");
+    }
+
+    
+    @Override
+    public ResponseEntity<UserFIlterDTO> getFilter() {
+        List<String> list = new ArrayList<>();
+        for (Setting setting : settingRepositories.roleList()) {
+            list.add(setting.getSettingTitle());
+        }
+
+        UserFIlterDTO filterDTO = new UserFIlterDTO();
+        filterDTO.setStatusFilter(List.of(UserStatusEnum.ACTIVE.toString(), UserStatusEnum.INACTIVE.toString(), UserStatusEnum.UNVERIFIED.toString()));
+        filterDTO.setRoleFilter(list);
+        
+        return ResponseEntity.ok(filterDTO);
     }
 
     // Convert Entity to DTO

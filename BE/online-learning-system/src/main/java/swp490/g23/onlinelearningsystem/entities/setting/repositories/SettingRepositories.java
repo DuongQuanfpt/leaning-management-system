@@ -24,6 +24,9 @@ public interface SettingRepositories extends JpaRepository<Setting, Long> {
     Long countByTypeNotNull();
 
     Setting findBySettingTitle(String name);
+
+    @Query(value = "SELECT * FROM setting WHERE type_id = 1", nativeQuery = true)
+    List<Setting> roleList();
 }
 
 
