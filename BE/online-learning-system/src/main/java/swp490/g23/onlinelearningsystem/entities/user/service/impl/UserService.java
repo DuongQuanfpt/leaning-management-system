@@ -51,13 +51,13 @@ public class UserService implements IUserService {
     private JwtTokenUtil jwtTokenUtil;
 
     @Override
-    public ResponseEntity<AuthenticatedResponseDTO> getAuthenticatedUser(Long id , List<Setting> roles) {
+    public ResponseEntity<AuthenticatedResponseDTO> getAuthenticatedUser(Long id, List<Setting> roles) {
         User user = userRepository.findUserById(id);
-        
+
         if (user == null) {
             throw new NoUserException();
         }
-        return ResponseEntity.ok(toAuthenDTO(user,roles));
+        return ResponseEntity.ok(toAuthenDTO(user, roles));
     }
 
     @Override
@@ -66,7 +66,7 @@ public class UserService implements IUserService {
         User user = userRepository.findUserById(id);
 
         if (user == null) {
-           throw new NoUserException();
+            throw new NoUserException();
         }
 
         if (dto.getOldPassword() != null) {
@@ -74,11 +74,16 @@ public class UserService implements IUserService {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("New password must be different from current password");
             }
-
-            if (encoder.matches(dto.getOldPassword(), user.getPassword()) == false) {// compare oldpassword with user
-                                                                                     // password
+            if (user.getPassword() != null) {
+                if (encoder.matches(dto.getOldPassword(), user.getPassword()) == false) {// compare oldpassword with
+                                                                                         // user
+                    // password
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password not match with user");
+                }
+            } else if (dto.getOldPassword() != "") {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password not match with user");
             }
+
         }
 
         dto.setNewPassword(encoder.encode(dto.getNewPassword()));
@@ -277,7 +282,7 @@ public class UserService implements IUserService {
         return responseDTO;
     }
 
-    public AuthenticatedResponseDTO toAuthenDTO(User entity , List<Setting> roles) {
+    public AuthenticatedResponseDTO toAuthenDTO(User entity, List<Setting> roles) {
         AuthenticatedResponseDTO responseDTO = new AuthenticatedResponseDTO();
         responseDTO.setFullName(entity.getFullName());
         responseDTO.setEmail(entity.getEmail());

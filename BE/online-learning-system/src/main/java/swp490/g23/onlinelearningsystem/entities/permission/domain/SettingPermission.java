@@ -25,17 +25,17 @@ import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 public class SettingPermission {
     @EmbeddedId
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private SettingPermissionId permissionId;
+    private SettingPermissionId permissionId =new SettingPermissionId();
 
     @ManyToOne
     @MapsId("screenId")
     @JoinColumn(name = "screen_id")
-    private Setting screen_id;
+    private Setting screen;
 
     @ManyToOne
     @MapsId("roleId")
     @JoinColumn(name = "role_id")
-    private Setting role_id;
+    private Setting role;
 
     @Column(name = "get_all_data")
     private boolean canGetAll;
@@ -48,4 +48,7 @@ public class SettingPermission {
 
     @Column
     private boolean canEdit;
+
+    
+
 }
