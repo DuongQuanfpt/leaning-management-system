@@ -19,19 +19,20 @@ import swp490.g23.onlinelearningsystem.entities.setting.domain.response.SettingR
 import swp490.g23.onlinelearningsystem.entities.setting.service.impl.SettingService;
 
 @RestController
-@CrossOrigin (exposedHeaders = "Authorization")
-@RolesAllowed({ "ROLE_ADMIN"})
+@CrossOrigin(exposedHeaders = "Authorization")
+@RolesAllowed({"ROLE_ADMIN"})
 public class SettingController {
 
 	@Autowired
 	private SettingService settingService;
 
 	@GetMapping(value = "/admin/setting")
-
-	public ResponseEntity<SettingResponsePaginateDTO> getSetting(@RequestParam(name = "page", required = false) String currentPage,
-			@RequestParam("limit") int limit) {
+	public ResponseEntity<SettingResponsePaginateDTO> getSetting(
+			@RequestParam(name = "page", required = false) String currentPage,
+			@RequestParam(name = "limit", required = false) String requestLimit) {
 
 		int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
+		int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
 		return settingService.displaySettings(limit, page);
 	}
 
@@ -50,7 +51,7 @@ public class SettingController {
 	@PutMapping(value = "/admin/setting/{id}")
 	public ResponseEntity<String> viewSetting(@PathVariable("id") Long id, @RequestBody SettingRequestDTO requestDTO) {
 
-		return settingService.updateSetting(requestDTO,id);
+		return settingService.updateSetting(requestDTO, id);
 	}
 
 	@PutMapping(value = "/admin/setting/status/{id}")

@@ -15,13 +15,18 @@ import swp490.g23.onlinelearningsystem.entities.user.service.impl.UserService;
 @RestController
 @RequestMapping("/admin")
 @CrossOrigin
+@RolesAllowed({"ROLE_ADMIN"})
 public class AdminController {
+
+	public static final String ADD = "ADD";
+	public static final String DELETE = "DELETE";
+	public static final String EDIT = "EDIT";
+	public static final String GET_ALL = "GET_ALL";
 
 	@Autowired
 	UserService userService;
     
     @GetMapping(value = "/") // API for registration
-	@RolesAllowed({"ROLE_ADMIN"})
 	public String register() {
 		return "If u see this , u are a admin";
 	}

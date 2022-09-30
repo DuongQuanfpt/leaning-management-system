@@ -21,7 +21,6 @@ import swp490.g23.onlinelearningsystem.util.EnumEntity.UserStatusEnum;
 
 @Component
 public class DbInit {
-
         @Autowired
         private UserRepository userRepository;
 
@@ -35,6 +34,7 @@ public class DbInit {
         private void postConstruct() {
                 PasswordEncoder encoder = new BCryptPasswordEncoder();
 
+                // create type setting
                 Setting typeRole = new Setting("User Role", "TYPE_ROLE", "contain settings relate to user role");
                 typeRole.setStatus(SettingStatusEnum.ACTIVE);
 
@@ -45,20 +45,29 @@ public class DbInit {
                                 "contain setting for each screen in system");
                 typeRole.setStatus(SettingStatusEnum.ACTIVE);
 
-                Setting screen1 = new Setting("Setting List", "/admin/setting", SettingStatusEnum.ACTIVE, "description",
+                // create screen setting
+
+                Setting screen1 = new Setting("Setting List ", "/admin/setting", SettingStatusEnum.ACTIVE,
+                                "description",
                                 "1",
                                 typeScreen);
 
-                Setting screen2 = new Setting("Setting Details", "/admin/setting/{id}", SettingStatusEnum.ACTIVE,
+                Setting screen2 = new Setting("User List", "/admin/user", SettingStatusEnum.ACTIVE,
                                 "description ", "1",
                                 typeScreen);
 
+                Setting screen3 = new Setting("PermissionTest", "/user/authorities", SettingStatusEnum.ACTIVE,
+                                "description ", "1",
+                                typeScreen);
+
+                // create test setting
                 Setting test3 = new Setting("test3", "TEST3", SettingStatusEnum.INACTIVE, "description for test", "2",
                                 typeTest);
 
                 Setting test4 = new Setting("test4", "TEST4", SettingStatusEnum.INACTIVE, "description for test", "3",
                                 typeTest);
 
+                // create role setting
                 Setting adminRole = new Setting("admin", "ROLE_ADMIN", SettingStatusEnum.ACTIVE,
                                 "description for admin", "1",
                                 typeRole);
@@ -73,18 +82,43 @@ public class DbInit {
                 settingRepositories.saveAll(
                                 List.of(typeScreen, typeRole, adminRole, traineeRole, managerRole, supporterRole,
                                                 trainerRole,
-                                                typeTest, screen1, screen2, test3, test4));
+                                                typeTest, screen1, screen2, screen3, test3, test4));
 
-                // SettingPermission permission = new  SettingPermission();
-                // permission.setScreen_id(screen1);
-                // permission.setRole_id(adminRole);
-                // permission.setCanAdd(true);
-                // permission.setCanDelete(true);
-                // permission.setCanEdit(true);
-                // permission.setCanGetAll(true);
-                // permissionRepositories.saveAll(List.of(permission));
-                
+                // create permission
+                SettingPermission adminSetting = new SettingPermission();
+                adminSetting.setScreen(screen1);
+                adminSetting.setRole(adminRole);
+                adminSetting.setCanAdd(true);
+                adminSetting.setCanDelete(true);
+                adminSetting.setCanEdit(true);
+                adminSetting.setCanGetAll(true);
 
+                SettingPermission adminUser = new SettingPermission();
+                adminUser.setScreen(screen2);
+                adminUser.setRole(adminRole);
+                adminUser.setCanAdd(true);
+                adminUser.setCanDelete(true);
+                adminUser.setCanEdit(true);
+                adminUser.setCanGetAll(true);
+
+                SettingPermission permissionTest = new SettingPermission();
+                permissionTest.setScreen(screen3);
+                permissionTest.setRole(adminRole);
+                permissionTest.setCanAdd(true);
+                permissionTest.setCanDelete(true);
+                permissionTest.setCanEdit(true);
+                permissionTest.setCanGetAll(true);
+
+                SettingPermission permissionTest2 = new SettingPermission();
+                permissionTest2.setScreen(screen3);
+                permissionTest2.setRole(traineeRole);
+                permissionTest2.setCanAdd(false);
+                permissionTest2.setCanDelete(false);
+                permissionTest2.setCanEdit(true);
+                permissionTest2.setCanGetAll(true);
+                permissionRepositories.saveAll(List.of(adminSetting, adminUser, permissionTest,permissionTest2));
+
+                 // create user
                 User defaultUser = new User("xucxichbo@doivl.com", encoder.encode("123456"));
                 User u1 = new User("quan1@doivl.com", encoder.encode("123456"),
                                 settingRepositories.findActiveSettingByValue(RoleEnum.ROLE_MANAGER.toString()));
@@ -107,4 +141,5 @@ public class DbInit {
                 userRepository.saveAll(List.of(defaultUser, u1, u2, u3, u4, u5));
 
         }
+
 }

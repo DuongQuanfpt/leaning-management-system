@@ -28,9 +28,14 @@ public class SettingService implements ISettingService {
 
     @Override
     public ResponseEntity<SettingResponsePaginateDTO> displaySettings(int limit, int currentPage) {
+        List<Setting> settings = new ArrayList<>();
+        if (limit == 0) {
+            settings = settingRepositories.findByTypeNotNull(null).getContent();
+        } else {
+            Pageable pageable = PageRequest.of(currentPage - 1, limit, Sort.by(Sort.Direction.ASC, "displayOrder"));
+            settings = settingRepositories.findByTypeNotNull(pageable).getContent();
+        }
 
-        Pageable pageable = PageRequest.of(currentPage - 1, limit, Sort.by(Sort.Direction.ASC, "displayOrder"));
-        List<Setting> settings = settingRepositories.findByTypeNotNull(pageable).getContent();
         List<SettingResponseDTO> result = new ArrayList<>();
 
         for (Setting setting : settings) {
@@ -40,8 +45,13 @@ public class SettingService implements ISettingService {
         SettingResponsePaginateDTO responseDTO = new SettingResponsePaginateDTO();
         responseDTO.setPage(currentPage);
         responseDTO.setListResult(result);
-        responseDTO.setTotalPage((int) Math.ceil((double) settingRepositories.countByTypeNotNull() / limit));
+        if (limit == 0) {
+            responseDTO.setTotalPage(0);
+        } else{
+            responseDTO.setTotalPage((int) Math.ceil((double) settingRepositories.countByTypeNotNull() / limit));
+        }
 
+        responseDTO.setTotalItem(settingRepositories.countByTypeNotNull());
         return ResponseEntity.ok(responseDTO);
     }
 
@@ -76,7 +86,7 @@ public class SettingService implements ISettingService {
         SettingFilterDTO filterDTO = new SettingFilterDTO();
         filterDTO.setStatusFilter(List.of(SettingStatusEnum.ACTIVE.toString(), SettingStatusEnum.INACTIVE.toString()));
         filterDTO.setTypeFilter(list);
-        
+
         return ResponseEntity.ok(filterDTO);
     }
 
