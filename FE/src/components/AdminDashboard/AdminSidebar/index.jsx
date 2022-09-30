@@ -15,12 +15,26 @@ import 'simplebar/dist/simplebar.min.css'
 import '~/assets/css/custom/scrollbar.css'
 
 // sidebar nav config
-import navigation from '~/_nav'
+import _nav_admin from '~/features/navigator/_nav_admin'
+import _nav_manager from '~/features/navigator/_nav_manager'
+import _nav_supporter from '~/features/navigator/_nav_supporter'
+import _nav_trainer from '~/features/navigator/_nav_trainer'
+import _nav_trainee from '~/features/navigator/_nav_trainee'
 
 const AdminSidebar = () => {
   const dispatch = useDispatch()
   const sidebarShow = useSelector((state) => state.sidebar.sidebarShow)
   const unfoldable = useSelector((state) => state.sidebar.sidebarUnfoldable)
+
+  const role = useSelector((state) => state.profile.roles)
+  console.log(role)
+
+  let navigator
+  navigator = role.includes('admin') ? _nav_admin : null
+  navigator = role.includes('manager') ? _nav_manager : null
+  navigator = role.includes('supporter') ? _nav_supporter : null
+  navigator = role.includes('trainer') ? _nav_trainer : null
+  navigator = role.includes('trainee') ? _nav_trainee : null
 
   return (
     <CSidebar
@@ -35,7 +49,7 @@ const AdminSidebar = () => {
       </CSidebarBrand>
       <CSidebarNav>
         <SimpleBar>
-          <AdminSidebarNav items={navigation} />
+          <AdminSidebarNav items={navigator} />
         </SimpleBar>
       </CSidebarNav>
       <CSidebarToggler className="d-none d-lg-flex" onClick={() => dispatch(setSidebarUnfoldable(!unfoldable))} />

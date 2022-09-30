@@ -17,6 +17,9 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import io.jsonwebtoken.Claims;
+import swp490.g23.onlinelearningsystem.entities.permission.domain.SettingPermission;
+import swp490.g23.onlinelearningsystem.entities.permission.repositories.PermissionRepositories;
+import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.util.EnumEntity.PermisionEnum;
@@ -28,16 +31,20 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private SettingRepositories settingRepositories;
 
     @Autowired
+    private PermissionRepositories permissionRepositories;
+
+    @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        System.out.println("URIIIIIII :  " + request.getRequestURI());
+        System.out.println("URI :  " + request.getRequestURI());
         if (!hasAuthorizationHeader(request)) {
             filterChain.doFilter(request, response);
             return;
         }
+        
         String accessToken = getAccessToken(request);
         if (!jwtTokenUtil.validateAccessToken(accessToken)) {
             filterChain.doFilter(request, response);
@@ -53,7 +60,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails,
                 null, userDetails.getAuthorities());
-
+        System.out.println("PERMISSION : " + userDetails.getAuthorities().toString());
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
@@ -78,7 +85,33 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         String[] subjectArray = jwtTokenUtil.getSubject(accessToken).split(",");
         user.setUserId(Long.parseLong(subjectArray[0]));
         user.setEmail(subjectArray[1]);
-        user.addPermission(PermisionEnum.GET_ALL);
+
+        for (Setting setting : user.getSettings()) {
+            SettingPermission permission = permissionRepositories.findPermissionForScreen(url,
+                    setting.getSettingValue());
+            if (permission != null) {
+                if (permission.isCanAdd() == true && !user.getPermissions().contains(PermisionEnum.ADD)) {
+                    user.addPermission(PermisionEnum.ADD);
+                }
+
+                if (permission.isCanDelete() == true && !user.getPermissions().contains(PermisionEnum.DELETE)) {
+                    user.addPermission(PermisionEnum.DELETE);
+                }
+
+                if (permission.isCanEdit() == true && !user.getPermissions().contains(PermisionEnum.EDIT)) {
+                    user.addPermission(PermisionEnum.EDIT);
+                }
+
+                if (permission.isCanGetAll() == true && !user.getPermissions().contains(PermisionEnum.GET_ALL)) {
+                    user.addPermission(PermisionEnum.GET_ALL);
+                }
+
+                System.out.println(
+                        permission.getRole().getSettingValue() + " Permission for url :"
+                                + permission.getScreen().getSettingValue() + " : " + user.getPermissions());
+            }
+
+        }
         return user;
     }
 

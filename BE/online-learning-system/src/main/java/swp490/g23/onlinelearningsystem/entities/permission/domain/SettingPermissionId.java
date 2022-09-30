@@ -5,26 +5,37 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 @Embeddable
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+
 public class SettingPermissionId implements Serializable {
     @Column(name = "screen_id")
-    Long screen_id;
+    Long screenId;
 
     @Column(name = "role_id")
-    Long role_id;
+    Long roleId;
+
+    public Long getScreenId() {
+        return screenId;
+    }
+
+    public void setScreenId(Long screenId) {
+        this.screenId = screenId;
+    }
+
+    public Long getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
+    }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((role_id == null) ? 0 : role_id.hashCode());
-        result = prime * result + ((screen_id == null) ? 0 : screen_id.hashCode());
+        result = prime * result + ((roleId == null) ? 0 : roleId.hashCode());
+        result = prime * result + ((screenId == null) ? 0 : screenId.hashCode());
         return result;
     }
 
@@ -37,19 +48,17 @@ public class SettingPermissionId implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         SettingPermissionId other = (SettingPermissionId) obj;
-        if (role_id == null) {
-            if (other.role_id != null)
+        if (roleId == null) {
+            if (other.roleId != null)
                 return false;
-        } else if (!role_id.equals(other.role_id))
+        } else if (!roleId.equals(other.roleId))
             return false;
-        if (screen_id == null) {
-            if (other.screen_id != null)
+        if (screenId == null) {
+            if (other.screenId != null)
                 return false;
-        } else if (!screen_id.equals(other.screen_id))
+        } else if (!screenId.equals(other.screenId))
             return false;
         return true;
     }
-
-    
-    
+       
 }

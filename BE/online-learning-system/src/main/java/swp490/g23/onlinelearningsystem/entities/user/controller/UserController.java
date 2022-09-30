@@ -1,7 +1,5 @@
 package swp490.g23.onlinelearningsystem.entities.user.controller;
 
-import javax.annotation.security.RolesAllowed;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,13 +20,20 @@ import swp490.g23.onlinelearningsystem.entities.user.service.impl.UserService;
 @RequestMapping("/user")
 @CrossOrigin
 public class UserController {
+
+	public static final String ADD = "ADD";
+	public static final String DELETE = "DELETE";
+	public static final String EDIT = "EDIT";
+	public static final String GET_ALL = "GET_ALL";
+
 	@Autowired
 	private UserService userService;
 
-	@GetMapping(value = "/register") // API for registration
-	@RolesAllowed({"ROLE_ADMIN"})
-	public String register(@AuthenticationPrincipal User user) {
-		return user.getFullName()+"A??"+user.getSettings()+"B??"+user.getSettings();
+	@GetMapping(value = "/authorities") // API to get info of the currently authenticated user
+	// @RolesAllowed({"ADD"})
+	public ResponseEntity<?> getAuthorities(@AuthenticationPrincipal User user) {
+        
+		return ResponseEntity.ok(user.getAuthorities().toString());
 	}
 
 	/**

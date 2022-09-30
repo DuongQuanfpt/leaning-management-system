@@ -1,6 +1,5 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { setProfile } from '~/redux/ProfileSlice/profileSlice'
 
@@ -11,6 +10,7 @@ import { CContainer, CRow, CCol, CForm, CButton } from '@coreui/react'
 import avatar from '~/assets/images/profile/pic1.jpg'
 import { Link } from 'react-router-dom'
 import ErrorMsg from '~/components/Common/ErrorMsg'
+import userApi from '~/api/userApi'
 
 const Profile = () => {
   const profileData = useSelector((state) => state.profile)
@@ -21,7 +21,6 @@ const Profile = () => {
   const [error, setError] = useState('')
 
   const dispatch = useDispatch()
-  const currentAccessToken = useSelector((state) => state.auth.token)
   const currentProfile = useSelector((state) => state.profile)
 
   useEffect(() => {
@@ -45,10 +44,7 @@ const Profile = () => {
         fullName: name,
         mobile,
       }
-      const response = await axios.put('https://lms-app-1.herokuapp.com/user/update-profile', data, {
-        headers: { Authorization: `Bearer ${currentAccessToken}` },
-      })
-      if (response.status === 200) {
+      await userApi.updateProfile(data).then((response) => {
         setIsEditMode(false)
         setError('You have successfully changed your password')
         dispatch(
@@ -57,17 +53,13 @@ const Profile = () => {
             ...data,
           }),
         )
-        return
-      }
+      })
     } catch (error) {
-      if (error.code === 'ERR_BAD_REQUEST') {
-        setError('Something went wrong, please try again')
-        return
-      }
+      setError('Something went wrong, please try again')
+      console.log(error)
     }
   }
 
-  console.log(currentAccessToken)
   const handleReset = () => {
     setName(profileData.fullName)
     setMobile(profileData.mobile)
@@ -83,7 +75,6 @@ const Profile = () => {
     setIsEditMode(true)
   }
 
-  console.log(profileData)
   return (
     <>
       <AdminSidebar />
