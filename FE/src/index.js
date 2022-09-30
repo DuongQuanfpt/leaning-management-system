@@ -2,15 +2,18 @@ import React, { Suspense } from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react'
-import { BrowserRouter } from 'react-router-dom'
+import { BrowserRouter, unstable_HistoryRouter as HistoryRouter } from 'react-router-dom'
 import App from '~/App'
 import store, { persistor } from '~/redux/store'
 import Loading from './pages/common/Loading'
 import reportWebVitals from './reportWebVitals'
+import { createBrowserHistory } from 'history'
+
+const history = createBrowserHistory({ window })
 
 ReactDOM.render(
   <React.StrictMode>
-    <BrowserRouter>
+    <HistoryRouter history={history}>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <Suspense fallback={<Loading />}>
@@ -18,7 +21,7 @@ ReactDOM.render(
           </Suspense>
         </PersistGate>
       </Provider>
-    </BrowserRouter>
+    </HistoryRouter>
   </React.StrictMode>,
   document.getElementById('root'),
 )

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
-import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import ReactPaginate from 'react-paginate'
+import settingListApi from '~/api/settingListApi'
 
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
@@ -26,9 +25,7 @@ import CIcon from '@coreui/icons-react'
 import { cilReload, cilSearch } from '@coreui/icons'
 
 const AdminSettingList = () => {
-  const ITEM_PER_PAGE = 6
-
-  const currentAccessToken = useSelector((state) => state.auth.token)
+  const ITEM_PER_PAGE = 7
 
   const navigateTo = useNavigate()
 
@@ -39,38 +36,22 @@ const AdminSettingList = () => {
   const [listType, setListType] = useState([])
   const [search, setSearch] = useState('')
 
-  useEffect(() => {
-    try {
-      // eslint-disable-next-line no-unused-vars
-      const response = axios
-        .get(`https://lms-app-1.herokuapp.com/admin/setting?limit=${ITEM_PER_PAGE}&page=1`, {
-          headers: { Authorization: `Bearer ${currentAccessToken}` },
-        })
-        .then((response) => {
-          setListSettingFetched(response.data.listResult)
-          setListSettingDisplay(response.data.listResult)
-          setTotalPages(response.data.totalPage)
-        })
-    } catch (error) {
-      console.log(error)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  useEffect(() => {
-    // eslint-disable-next-line no-unused-vars
-    const response = axios
-      .get('https://lms-app-1.herokuapp.com/admin/setting-filter', {
-        headers: { Authorization: `Bearer ${currentAccessToken}` },
-      })
-      .then((response) => {
-        setListStatus(response.data.statusFilter)
-        setListType(response.data.typeFilter)
-      })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   const columnHead = ['ID', 'Type', 'Title', 'Value', 'Display Order', 'Status', 'Actions']
+
+  useEffect(() => {
+    const params = { page: 1, limit: ITEM_PER_PAGE }
+
+    settingListApi.getFirstPage(params).then((response) => {
+      setListSettingFetched(response.listResult)
+      setListSettingDisplay(response.listResult)
+      setTotalPages(response.totalPage)
+    })
+
+    settingListApi.getFilter().then((response) => {
+      setListStatus(response.statusFilter)
+      setListType(response.typeFilter)
+    })
+  }, [])
 
   const handleSearch = () => {
     if (search === '') {
@@ -90,41 +71,25 @@ const AdminSettingList = () => {
   }
 
   const handleReload = () => {
-    setListSettingDisplay(listSettingFetched)
-    setSearch('')
+    navigateTo(0)
   }
 
-  const handlePageChange = ({ selected }) => {
-    try {
-      // eslint-disable-next-line no-unused-vars
-      const response = axios
-        .get(`https://lms-app-1.herokuapp.com/admin/setting?limit=${ITEM_PER_PAGE}&page=${selected + 1}`, {
-          headers: { Authorization: `Bearer ${currentAccessToken}` },
-        })
-        .then((response) => {
-          setListSettingFetched(response.data.listResult)
-          setListSettingDisplay(response.data.listResult)
-        })
-    } catch (error) {
-      console.log(error)
-    }
+  const handlePageChange = async ({ selected }) => {
+    const params = { page: selected + 1, limit: ITEM_PER_PAGE }
+    await settingListApi.getPage(params).then((response) => {
+      setListSettingDisplay(response.listResult)
+    })
   }
 
   const handleActive = async ({ settingId }) => {
-    try {
-      // eslint-disable-next-line no-unused-vars
-      const response = await axios
-        .put(`https://lms-app-1.herokuapp.com/admin/setting/status/${settingId}`, {
-          headers: { Authorization: `Bearer ${currentAccessToken}` },
-        })
-        .then((response) => console.log(response))
-    } catch (error) {
-      console.log(error)
-    }
+    // eslint-disable-next-line no-unused-vars
+    settingListApi.changeActive(settingId).then((response) => {
+      console.log(response)
+    })
   }
 
-  const handleView = (item) => {
-    navigateTo(`/setting-detail/${item.settingId}`)
+  const handleView = ({ settingId }) => {
+    navigateTo(`/setting-detail/${settingId}`)
   }
 
   const handleSortColumn = (column) => {

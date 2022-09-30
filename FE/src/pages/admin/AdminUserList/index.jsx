@@ -1,4 +1,6 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import ReactPaginate from 'react-paginate'
+
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
@@ -18,13 +20,23 @@ import {
 
 import { cilReload, cilSearch } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
-import ReactPaginate from 'react-paginate'
-import { useEffect } from 'react'
 
 const AdminUserList = () => {
   const columnHead = ['ID', 'Full name', 'Email', 'Mobile', 'Role', 'Status', 'Actions']
 
-  const handleSearch = () => {}
+  const [listUserFetched, setListUserFetched] = useState([])
+  const [listUserDisplay, setListUserDisplay] = useState([])
+  const [totalPages, setTotalPages] = useState(1)
+  const [search, setSearch] = useState('')
+
+  const handleSearch = () => {
+    if (search === '') {
+      setSearch('')
+      setListUserDisplay(listUserFetched)
+      return
+    }
+    setListUserDisplay(() => listUserFetched.filter((user) => user.settingTitle.includes(search)))
+  }
 
   const handleReload = () => {}
 
@@ -50,8 +62,9 @@ const AdminUserList = () => {
                   type="search"
                   id="form1"
                   className="form-control"
-                  value={''}
-                  placeholder="Searching by title...."
+                  value={search}
+                  placeholder="Searching by name, email or mobile...."
+                  onChange={(e) => setSearch(e.target.value)}
                 />
                 <CButton color="primary" type="submit" className="text-light" onClick={handleSearch}>
                   <CIcon icon={cilSearch} />

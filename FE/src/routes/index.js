@@ -8,6 +8,7 @@ const ForgetPasswordProcessed = lazy(() => import('~/pages/common/ForgetPassword
 const Register = lazy(() => import('~/pages/common/Register'))
 const RegisterProcessed = lazy(() => import('~/pages/common/RegisterProcessed'))
 const Verify = lazy(() => import('~/pages/common/Verify'))
+const AccessDenied = lazy(() => import('~/pages/common/AccessDenied'))
 
 // Admin pages
 const Dashboard = lazy(() => import('~/pages/admin/AdminDashboard'))
@@ -31,6 +32,7 @@ const commonRoutes = [
   { path: '/register-processed', component: RegisterProcessed },
   { path: '/verify', component: Verify },
   { path: '/404', component: PageNotFound },
+  { path: '/access-denied', component: AccessDenied },
 ]
 
 // Admin routes

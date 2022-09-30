@@ -1,9 +1,23 @@
 import axiosClient from './axiosClient'
 
+const currentAccessToken = JSON.parse(JSON.parse(localStorage.getItem('persist:root')).auth).token
+
+const header = {
+  headers: { Authorization: `Bearer ${currentAccessToken}` },
+}
+
 const userApi = {
-  getToken: (params) => {
-    const url = `https://lms-app-1.herokuapp.com/auth/login`
-    return axiosClient.post(url, { params })
+  getProfile: (token) => {
+    const url = `/user`
+    const header = {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+
+    return axiosClient.get(url, header)
+  },
+  updateProfile: (params) => {
+    const url = `/user/update-profile`
+    return axiosClient.put(url, params, header)
   },
 }
 

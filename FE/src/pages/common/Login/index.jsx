@@ -1,12 +1,15 @@
 import React, { Fragment, useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+
 import * as Yup from 'yup'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import axios from 'axios'
 import ReCAPTCHA from 'react-google-recaptcha'
-import { useDispatch, useSelector } from 'react-redux'
 import { GoogleLogin } from 'react-google-login'
+
+import userApi from '~/api/userApi'
+import authApi from '~/api/authApi'
 
 import { setToken } from '~/redux/AuthSlice/authSlice'
 import { setProfile } from '~/redux/ProfileSlice/profileSlice'
@@ -39,44 +42,52 @@ const Login = () => {
   const [error, setError] = useState('')
   const [verified, setVerified] = useState(false)
 
+  const dispatch = useDispatch()
   const currentAccessToken = useSelector((state) => state.auth.token)
+
   useEffect(() => {
+    //If already logged then navigate to homepage
     if (currentAccessToken) {
       navigateTo('/')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const dispatch = useDispatch()
-
   const submitForm = async (data) => {
     if (!isValid) return
     try {
       //Get user token
-      const responseAuthLogin = await axios.post('https://lms-app-1.herokuapp.com/auth/login', data)
-      const token = responseAuthLogin.data.accessToken
-      //Get profile data
-      const responseProfileData = await axios.get('https://lms-app-1.herokuapp.com/user', {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      const profileData = responseProfileData.data
+      await authApi
+        .getAuthToken(data)
+        .then((response) => {
+          const token = response.accessToken
+          dispatch(setToken(token))
+          return token
+        })
+        .then((token) => {
+          //Get profile data
+          userApi.getProfile(token).then((response) => {
+            console.log(response)
+            dispatch(setProfile(response))
 
-      dispatch(setToken(token))
-      dispatch(setProfile(profileData))
-      setLogged(true)
-
-      navigateTo('/')
+            setLogged(true)
+            navigateTo('/')
+          })
+        })
     } catch (error) {
-      console.log(error)
-      if (error.response.data === 'This account is unverified') {
+      setLogged(false)
+
+      const { message } = error.response.data
+
+      if (message === 'This account is unverified') {
         setError('This account is unverified!')
+        return
       }
-      if (error.response.data === 'Incorect credentials') {
+      if (message === 'Incorect credentials') {
         setError('You email or password is incorrect')
+        return
       }
       setError('Something went wrong, please try again')
-
-      setLogged(false)
     }
   }
 
@@ -85,42 +96,28 @@ const Login = () => {
   }
 
   const onSuccess = async (res) => {
-    // eslint-disable-next-line no-unused-vars
     const data = {
       idToken: res.tokenId,
       clientId: clientId,
     }
-    console.log(JSON.stringify(data))
-    try {
-      // eslint-disable-next-line no-unused-vars
-      const responseGoogleLogin = await axios
-        .post('https://lms-app-1.herokuapp.com/auth/login-google', JSON.stringify(data), {
-          headers: {
-            'Content-type': 'application/json; charset=utf-8',
-            Accept: 'application/json; charset=utf-8',
-          },
-        })
-        .then((response) => {
-          const token = response.data.accessToken
-          dispatch(setToken(token))
-          try {
-            // eslint-disable-next-line no-unused-vars
-            const responseProfileData = axios
-              .get('https://lms-app-1.herokuapp.com/user', {
-                headers: { Authorization: `Bearer ${token}` },
-              })
-              .then((response) => {
-                const profileData = response.data
-                console.log(response.data)
-                dispatch(setProfile(profileData))
-                setLogged(true)
 
-                navigateTo('/')
-              })
-          } catch (error) {
-            setError('Something went wrong, please try again later!')
-            console.log(error)
-          }
+    try {
+      //Get google account token
+      await authApi
+        .getLoginGoogle(data)
+        .then((response) => {
+          const token = response.accessToken
+          dispatch(setToken(token))
+          return token
+        })
+        .then((token) => {
+          //Get profile data
+          userApi.getProfile(token).then((response) => {
+            dispatch(setProfile(response))
+
+            setLogged(true)
+            navigateTo('/')
+          })
         })
     } catch (error) {
       setError('Something went wrong, please try again later!')
@@ -147,7 +144,10 @@ const Login = () => {
                 Login to your <span>Account</span>
               </h2>
               <p>
-                Don't have an account? <Link to="/register">Create one here</Link>
+                Don't have an account?{' '}
+                <Link to="/register" color="text-danger">
+                  Create one here
+                </Link>
               </p>
             </div>
             <form className="contact-bx" onSubmit={handleSubmit(submitForm)}>
@@ -196,7 +196,7 @@ const Login = () => {
                         Remember me
                       </label>
                     </div>
-                    <Link to="/forget-password" className="ml-auto">
+                    <Link to="/forget-password" className="ml-auto text-primary">
                       Forgot Password?
                     </Link>
                   </div>
