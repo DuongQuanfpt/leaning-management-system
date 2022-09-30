@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import swp490.g23.onlinelearningsystem.entities.user.domain.filter.UserFIlterDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserRequestDTO;
+import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserListResponsePaginateDTO;
+import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.user.service.impl.UserService;
 
 @RestController
@@ -31,27 +34,33 @@ public class AdminController {
 	}
 
 	@GetMapping(value = "/user-list")
-	public ResponseEntity<?> adminUserList(@RequestParam(name = "page", required = false) String currentPage,
+	public ResponseEntity<UserListResponsePaginateDTO> adminUserList(@RequestParam(name = "page", required = false) String currentPage,
 			@RequestParam("limit") int limit) {
 
 		int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
 		return userService.displayUsers(limit, page);
 	}
 
+	@GetMapping(value = "/user-filter")
+	public ResponseEntity<UserFIlterDTO> getUserFilter() {
+
+		return userService.getFilter();
+	}
+
 	@GetMapping(value = "/user/{id}")
-	public ResponseEntity<?> getUser(@PathVariable("id") Long id) {
+	public ResponseEntity<UserResponseDTO> getUser(@PathVariable("id") Long id) {
 
 		return userService.viewUser(id);
 	}
 
 	@PutMapping(value = "/user/{id}")
-	public ResponseEntity<?> viewSetting(@PathVariable("id") Long id, @RequestBody UserRequestDTO requestDTO) {
+	public ResponseEntity<String> viewSetting(@PathVariable("id") Long id, @RequestBody UserRequestDTO requestDTO) {
 
 		return userService.updateUser(requestDTO,id);
 	}
 
 	@PutMapping(value = "/user/status/{id}")
-	public ResponseEntity<?> updateSettingStatus(@PathVariable("id") Long id) {
+	public ResponseEntity<String> updateSettingStatus(@PathVariable("id") Long id) {
 
 		return userService.updateStatus(id);
 	}

@@ -23,6 +23,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.BaseEntity;
+import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.permission.domain.SettingPermission;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.util.EnumEntity.SettingStatusEnum;
@@ -63,6 +64,9 @@ public class Setting extends BaseEntity {
 
     @ManyToMany(mappedBy = "settings")
     private List<User> users = new ArrayList<>();
+
+    @OneToMany(mappedBy = "setting")
+    private List<Classes> classes = new ArrayList<>();
 
     // @OneToMany(mappedBy = "setting")
     // private List<SettingPermission> permissions;

@@ -27,6 +27,7 @@ public interface SettingRepositories extends JpaRepository<Setting, Long> {
 
     @Query(value = "SELECT s FROM Setting s WHERE s.type = 1")
     List<Setting> roleList();
+
 }
 
 
