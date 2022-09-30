@@ -16,18 +16,43 @@ import {
   CDropdown,
   CDropdownToggle,
   CDropdownMenu,
+  CBadge,
 } from '@coreui/react'
 
 import { cilReload, cilSearch } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
+import userListApi from '~/api/userListApi'
+import { useNavigate } from 'react-router-dom'
 
 const AdminUserList = () => {
+  const ITEM_PER_PAGE = 7
   const columnHead = ['ID', 'Full name', 'Email', 'Mobile', 'Role', 'Status', 'Actions']
+
+  const navigateTo = useNavigate()
 
   const [listUserFetched, setListUserFetched] = useState([])
   const [listUserDisplay, setListUserDisplay] = useState([])
+  const [listRole, setListRole] = useState([])
+  const [listStatus, setListStatus] = useState([])
   const [totalPages, setTotalPages] = useState(1)
   const [search, setSearch] = useState('')
+
+  useEffect(() => {
+    const params = { page: 1, limit: ITEM_PER_PAGE }
+
+    userListApi.getFirstPage(params).then((response) => {
+      setListUserFetched(response.listResult)
+      setListUserDisplay(response.listResult)
+      setTotalPages(response.totalPage)
+    })
+
+    // userListApi.getFilter().then((response) => {
+    //   setListRole(response.roleFilter)
+    //   setListStatus(response.statusFilter)
+    // })
+  }, [])
+
+  console.log(listUserFetched)
 
   const handleSearch = () => {
     if (search === '') {
@@ -38,15 +63,24 @@ const AdminUserList = () => {
     setListUserDisplay(() => listUserFetched.filter((user) => user.settingTitle.includes(search)))
   }
 
-  const handleReload = () => {}
+  const handleReload = () => {
+    navigateTo(0)
+  }
 
   const handleSortColumn = () => {}
 
   const handleActive = () => {}
 
-  const handleView = () => {}
+  const handleView = ({ userId }) => {
+    navigateTo(`/user-detail/${userId}`)
+  }
 
-  const handlePageChange = () => {}
+  const handlePageChange = async ({ selected }) => {
+    const params = { page: selected + 1, limit: ITEM_PER_PAGE }
+    await userListApi.getPage(params).then((response) => {
+      setListUserDisplay(response.listResult)
+    })
+  }
 
   useEffect(() => {}, [])
   return (
@@ -99,47 +133,70 @@ const AdminUserList = () => {
               </CTableRow>
             </CTableHead>
             <CTableBody>
-              <CTableRow color="info">
-                <CTableHeaderCell scope="row">
-                  <div className="d-flex justify-content-evenly">a</div>
-                </CTableHeaderCell>
-                <CTableDataCell>
-                  <div className="d-flex justify-content-evenly">b</div>
-                </CTableDataCell>
-                <CTableDataCell>
-                  <div className="d-flex justify-content-evenly">c</div>
-                </CTableDataCell>
-                <CTableDataCell>
-                  <div className="d-flex justify-content-evenly">d</div>
-                </CTableDataCell>
-                <CTableDataCell>
-                  <div className="d-flex justify-content-evenly">e</div>
-                </CTableDataCell>
-                <CTableDataCell>
-                  <div className="d-flex justify-content-evenly">
-                    <form action="" method="get"></form>
-                  </div>
-                </CTableDataCell>
-                <CTableDataCell>
-                  <div className="d-flex justify-content-evenly">
-                    <CButton color="danger" type="submit" className="text-light">
-                      Deactive
-                    </CButton>
-                    <CButton color="success" type="submit" className="text-light">
-                      Reactive
-                    </CButton>
-                    <CButton color="warning" type="reset">
-                      View
-                    </CButton>
-                  </div>
-                </CTableDataCell>
-              </CTableRow>
+              {listUserDisplay.map((item) => (
+                <>
+                  <CTableRow color="info">
+                    <CTableHeaderCell scope="row">
+                      <div className="d-flex justify-content-evenly">{item.userId}</div>
+                    </CTableHeaderCell>
+                    <CTableDataCell>
+                      <div className="d-flex justify-content-evenly">{item.fullName}</div>
+                    </CTableDataCell>
+                    <CTableDataCell>
+                      <div className="d-flex justify-content-evenly">{item.email}</div>
+                    </CTableDataCell>
+                    <CTableDataCell>
+                      <div className="d-flex justify-content-evenly">{item.mobile}</div>
+                    </CTableDataCell>
+                    <CTableDataCell>
+                      <div className="d-flex justify-content-evenly">{item.roles.join(' / ')}</div>
+                    </CTableDataCell>
+                    <CTableDataCell>
+                      <div className="d-flex justify-content-evenly">
+                        <CBadge
+                          color={
+                            item.status === 'ACTIVE' ? 'success' : item.status === 'INACTIVE' ? 'danger' : 'warning'
+                          }
+                        >
+                          {item.status}
+                        </CBadge>
+                      </div>
+                    </CTableDataCell>
+                    <CTableDataCell>
+                      <div className="d-flex justify-content-evenly">
+                        {item.status === 'ACTIVE' ? (
+                          <CButton
+                            color="danger"
+                            type="submit"
+                            className="text-light"
+                            onClick={() => handleActive(item)}
+                          >
+                            Deactive
+                          </CButton>
+                        ) : (
+                          <CButton
+                            color="success"
+                            type="submit"
+                            className="text-light"
+                            onClick={() => handleActive(item)}
+                          >
+                            Reactive
+                          </CButton>
+                        )}
+                        <CButton color="warning" type="reset" onClick={() => handleView(item)}>
+                          View
+                        </CButton>
+                      </div>
+                    </CTableDataCell>
+                  </CTableRow>
+                </>
+              ))}
             </CTableBody>
           </CTable>
           <ReactPaginate
             previousLabel="Previous"
             nextLabel="Next"
-            pageCount={10}
+            pageCount={totalPages}
             onPageChange={handlePageChange}
             pageRangeDisplayed={3}
             containerClassName="r-pagination"

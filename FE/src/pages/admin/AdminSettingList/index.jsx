@@ -155,7 +155,7 @@ const AdminSettingList = () => {
             </CTableHead>
             <CTableBody>
               {listSettingDisplay.map((item) => {
-                return (
+                ;<>
                   <CTableRow color="info">
                     <CTableHeaderCell scope="row">
                       <div className="d-flex justify-content-evenly">{item.settingId}</div>
@@ -204,7 +204,7 @@ const AdminSettingList = () => {
                       </div>
                     </CTableDataCell>
                   </CTableRow>
-                )
+                </>
               })}
             </CTableBody>
           </CTable>
