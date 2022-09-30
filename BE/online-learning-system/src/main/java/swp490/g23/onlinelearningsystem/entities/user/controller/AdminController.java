@@ -31,7 +31,7 @@ public class AdminController {
 	public static final String GET_ALL = "GET_ALL";
 
 	@Autowired
-	UserService userService;
+	private UserService userService;
     
     @GetMapping(value = "/") // API for registration
 	public String register() {
