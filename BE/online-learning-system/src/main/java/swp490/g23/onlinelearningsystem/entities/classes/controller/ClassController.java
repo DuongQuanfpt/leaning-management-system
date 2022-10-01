@@ -25,9 +25,10 @@ public class ClassController {
 
     @GetMapping("/class-list")
     public ResponseEntity<ClassResponsePaginateDTO> classList(@RequestParam(name = "page", required = false) String currentPage,
-			@RequestParam("limit") int limit) {
+			@RequestParam("limit") String requestLimit) {
 
 		int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
+		int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
 		return classService.displayClasses(limit, page);
 	}
 
@@ -49,7 +50,7 @@ public class ClassController {
 		return classService.updateClass(requestDTO,id);
 	}
 
-	@PutMapping(value = "/user/status/{id}")
+	@PutMapping(value = "/class/status/{id}")
 	public ResponseEntity<String> updateSettingStatus(@PathVariable("id") Long id) {
 
 		return classService.updateStatus(id);

@@ -231,9 +231,8 @@ public class UserService implements IUserService {
         User user = userRepository.findById(id).get();
 
         user.setNote(dto.getNote());
-        //update roles
         userRepository.save(user);
-        return ResponseEntity.ok("Setting has been udated");
+        return ResponseEntity.ok("Setting has been updated");
     }
 
     @Override
