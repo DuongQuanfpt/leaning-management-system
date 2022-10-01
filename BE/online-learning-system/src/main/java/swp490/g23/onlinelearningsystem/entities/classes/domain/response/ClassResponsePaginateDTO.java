@@ -1,4 +1,4 @@
-package swp490.g23.onlinelearningsystem.entities.user.domain.response;
+package swp490.g23.onlinelearningsystem.entities.classes.domain.response;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,9 +12,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserListResponsePaginateDTO {
+public class ClassResponsePaginateDTO {
     private int page;
 	private int totalPage;
 	private long totalItem;
-	private List<UserResponseDTO> listResult = new ArrayList<>();
+	private List<ClassResponseDTO> listResult = new ArrayList<>();
 }

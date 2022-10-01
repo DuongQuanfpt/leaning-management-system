@@ -1,4 +1,6 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import ReactPaginate from 'react-paginate'
+
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
@@ -14,27 +16,94 @@ import {
   CDropdown,
   CDropdownToggle,
   CDropdownMenu,
+  CBadge,
+  CDropdownItem,
 } from '@coreui/react'
 
 import { cilReload, cilSearch } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
-import ReactPaginate from 'react-paginate'
-import { useEffect } from 'react'
+import userListApi from '~/api/userListApi'
+import { useNavigate } from 'react-router-dom'
 
 const AdminUserList = () => {
+  const ITEM_PER_PAGE = 7
   const columnHead = ['ID', 'Full name', 'Email', 'Mobile', 'Role', 'Status', 'Actions']
 
-  const handleSearch = () => {}
+  const navigateTo = useNavigate()
 
-  const handleReload = () => {}
+  const [listUserFetched, setListUserFetched] = useState([])
+  const [listUserDisplay, setListUserDisplay] = useState([])
+  const [listRole, setListRole] = useState([])
+  const [listStatus, setListStatus] = useState([])
+  const [totalPages, setTotalPages] = useState(1)
+  const [search, setSearch] = useState('')
+
+  useEffect(() => {
+    const params = { page: 1, limit: ITEM_PER_PAGE }
+
+    userListApi.getFirstPage(params).then((response) => {
+      setListUserFetched(response.listResult)
+      setListUserDisplay(response.listResult)
+      setTotalPages(response.totalPage)
+    })
+
+    userListApi.getFilter().then((response) => {
+      setListRole(response.roleFilter)
+      setListStatus(response.statusFilter)
+    })
+  }, [])
+
+  const handleSearch = async () => {
+    if (search === '') {
+      setSearch('')
+      setListUserDisplay(listUserFetched)
+      return
+    }
+    const query = search.toLowerCase()
+    await setListUserDisplay(() =>
+      listUserFetched.filter((user) => {
+        return (
+          user.fullName?.toLowerCase().includes(query) ||
+          user.email?.toLowerCase().includes(query) ||
+          user.mobile?.toLowerCase().includes(query)
+        )
+      }),
+    )
+  }
+
+  const handleReload = () => {
+    navigateTo(0)
+  }
+
+  console.log(listRole)
+  console.log(listStatus)
+
+  const handleFilterStatus = (item) => {
+    setListUserDisplay(() => listUserFetched.filter((user) => user.status === item))
+  }
+
+  const handleFilterRole = (item) => {
+    // setListUserDisplay(() => listUserFetched.filter((user) => user.status === item))
+  }
 
   const handleSortColumn = () => {}
 
-  const handleActive = () => {}
+  const handleActive = async ({ userId }) => {
+    await userListApi.changeActive(userId).then((response) => {
+      navigateTo(0)
+    })
+  }
 
-  const handleView = () => {}
+  const handleView = ({ userId }) => {
+    navigateTo(`/user-detail/${userId}`)
+  }
 
-  const handlePageChange = () => {}
+  const handlePageChange = async ({ selected }) => {
+    const params = { page: selected + 1, limit: ITEM_PER_PAGE }
+    await userListApi.getPage(params).then((response) => {
+      setListUserDisplay(response.listResult)
+    })
+  }
 
   useEffect(() => {}, [])
   return (
@@ -50,8 +119,9 @@ const AdminUserList = () => {
                   type="search"
                   id="form1"
                   className="form-control"
-                  value={''}
-                  placeholder="Searching by title...."
+                  value={search}
+                  placeholder="Searching by name, email or mobile...."
+                  onChange={(e) => setSearch(e.target.value)}
                 />
                 <CButton color="primary" type="submit" className="text-light" onClick={handleSearch}>
                   <CIcon icon={cilSearch} />
@@ -61,12 +131,20 @@ const AdminUserList = () => {
                 <div className="d-flex justify-content-evenly">
                   <h6 className="d-flex flex-column-reverse">Filter By: </h6>
                   <CDropdown>
-                    <CDropdownToggle color="secondary">Select Type</CDropdownToggle>
-                    <CDropdownMenu></CDropdownMenu>
+                    <CDropdownToggle color="secondary">Select role</CDropdownToggle>
+                    <CDropdownMenu>
+                      {listRole.map((item) => (
+                        <CDropdownItem onClick={() => handleFilterRole(item.role)}>{item.role}</CDropdownItem>
+                      ))}
+                    </CDropdownMenu>
                   </CDropdown>
                   <CDropdown>
                     <CDropdownToggle color="secondary">Select status</CDropdownToggle>
-                    <CDropdownMenu></CDropdownMenu>
+                    <CDropdownMenu>
+                      {listStatus.map((item) => (
+                        <CDropdownItem onClick={() => handleFilterStatus(item.status)}>{item.status}</CDropdownItem>
+                      ))}
+                    </CDropdownMenu>
                   </CDropdown>
                   <CButton color="success" type="submit" className="text-light" onClick={handleReload}>
                     <CIcon icon={cilReload} />
@@ -86,47 +164,74 @@ const AdminUserList = () => {
               </CTableRow>
             </CTableHead>
             <CTableBody>
-              <CTableRow color="info">
-                <CTableHeaderCell scope="row">
-                  <div className="d-flex justify-content-evenly">a</div>
-                </CTableHeaderCell>
-                <CTableDataCell>
-                  <div className="d-flex justify-content-evenly">b</div>
-                </CTableDataCell>
-                <CTableDataCell>
-                  <div className="d-flex justify-content-evenly">c</div>
-                </CTableDataCell>
-                <CTableDataCell>
-                  <div className="d-flex justify-content-evenly">d</div>
-                </CTableDataCell>
-                <CTableDataCell>
-                  <div className="d-flex justify-content-evenly">e</div>
-                </CTableDataCell>
-                <CTableDataCell>
-                  <div className="d-flex justify-content-evenly">
-                    <form action="" method="get"></form>
-                  </div>
-                </CTableDataCell>
-                <CTableDataCell>
-                  <div className="d-flex justify-content-evenly">
-                    <CButton color="danger" type="submit" className="text-light">
-                      Deactive
-                    </CButton>
-                    <CButton color="success" type="submit" className="text-light">
-                      Reactive
-                    </CButton>
-                    <CButton color="warning" type="reset">
-                      View
-                    </CButton>
-                  </div>
-                </CTableDataCell>
-              </CTableRow>
+              {listUserDisplay.map((item) => (
+                <>
+                  <CTableRow color="info">
+                    <CTableHeaderCell scope="row">
+                      <div className="d-flex justify-content-evenly">{item.userId}</div>
+                    </CTableHeaderCell>
+                    <CTableDataCell>
+                      <div className="d-flex justify-content-evenly">{item.fullName}</div>
+                    </CTableDataCell>
+                    <CTableDataCell>
+                      <div className="d-flex justify-content-evenly">{item.email}</div>
+                    </CTableDataCell>
+                    <CTableDataCell>
+                      <div className="d-flex justify-content-evenly">{item.mobile}</div>
+                    </CTableDataCell>
+                    <CTableDataCell>
+                      <div className="d-flex justify-content-evenly">{item.roles.join(' / ')}</div>
+                    </CTableDataCell>
+                    <CTableDataCell>
+                      <div className="d-flex justify-content-evenly">
+                        <CBadge
+                          color={
+                            item.status === 'ACTIVE' ? 'success' : item.status === 'INACTIVE' ? 'danger' : 'warning'
+                          }
+                        >
+                          {item.status}
+                        </CBadge>
+                      </div>
+                    </CTableDataCell>
+                    <CTableDataCell>
+                      <div className="d-flex justify-content-evenly">
+                        {item.status === 'ACTIVE' ? (
+                          <CButton
+                            color="danger"
+                            type="submit"
+                            className="text-light"
+                            onClick={() => handleActive(item)}
+                          >
+                            Deactive
+                          </CButton>
+                        ) : item.status === 'INACTIVE' ? (
+                          <CButton
+                            color="success"
+                            type="submit"
+                            className="text-light"
+                            onClick={() => handleActive(item)}
+                          >
+                            Reactive
+                          </CButton>
+                        ) : (
+                          <CButton color="info" type="submit" className="text-light" onClick={() => handleActive(item)}>
+                            Verify
+                          </CButton>
+                        )}
+                        <CButton color="warning" type="reset" onClick={() => handleView(item)}>
+                          View
+                        </CButton>
+                      </div>
+                    </CTableDataCell>
+                  </CTableRow>
+                </>
+              ))}
             </CTableBody>
           </CTable>
           <ReactPaginate
             previousLabel="Previous"
             nextLabel="Next"
-            pageCount={10}
+            pageCount={totalPages}
             onPageChange={handlePageChange}
             pageRangeDisplayed={3}
             containerClassName="r-pagination"

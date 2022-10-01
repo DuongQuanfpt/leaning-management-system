@@ -8,6 +8,7 @@ const ForgetPasswordProcessed = lazy(() => import('~/pages/common/ForgetPassword
 const Register = lazy(() => import('~/pages/common/Register'))
 const RegisterProcessed = lazy(() => import('~/pages/common/RegisterProcessed'))
 const Verify = lazy(() => import('~/pages/common/Verify'))
+const AccessDenied = lazy(() => import('~/pages/common/AccessDenied'))
 
 // Admin pages
 const Dashboard = lazy(() => import('~/pages/admin/AdminDashboard'))
@@ -17,6 +18,12 @@ const SettingList = lazy(() => import('~/pages/admin/AdminSettingList'))
 const SettingDetail = lazy(() => import('~/pages/admin/AdminSettingDetail'))
 const UserList = lazy(() => import('~/pages/admin/AdminUserList'))
 const UserDetail = lazy(() => import('~/pages/admin/AdminUserDetail'))
+
+//Manager pages
+const SubjectList = lazy(() => import('~/pages/manager/SubjectList'))
+const SubjectDetail = lazy(() => import('~/pages/manager/SubjectDetail'))
+const ClassList = lazy(() => import('~/pages/manager/ClassList'))
+const ClassDetail = lazy(() => import('~/pages/manager/ClassDetail'))
 
 //404 pages
 const PageNotFound = lazy(() => import('~/pages/common/PageNotFound'))
@@ -31,6 +38,7 @@ const commonRoutes = [
   { path: '/register-processed', component: RegisterProcessed },
   { path: '/verify', component: Verify },
   { path: '/404', component: PageNotFound },
+  { path: '/access-denied', component: AccessDenied },
 ]
 
 // Admin routes
@@ -45,7 +53,12 @@ const adminRoutes = [
 ]
 
 // Manager routes
-const managerRoutes = []
+const managerRoutes = [
+  { path: '/subject-list', component: SubjectList },
+  { path: '/subject-detail/:id', component: SubjectDetail },
+  { path: '/class-list', component: ClassList },
+  { path: '/class-detail/:id', component: ClassDetail },
+]
 
 // Supporter routes
 const supporterRoutes = []

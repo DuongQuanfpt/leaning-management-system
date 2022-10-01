@@ -50,7 +50,6 @@ public class SettingController {
 
 	@PutMapping(value = "/setting/{id}")
 	public ResponseEntity<String> viewSetting(@PathVariable("id") Long id, @RequestBody SettingRequestDTO requestDTO) {
-
 		return settingService.updateSetting(requestDTO, id);
 	}
 

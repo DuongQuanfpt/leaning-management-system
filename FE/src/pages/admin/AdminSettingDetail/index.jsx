@@ -1,18 +1,17 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
+
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 
 import { CContainer, CRow, CCol, CForm, CButton } from '@coreui/react'
-import { useParams } from 'react-router-dom'
-import { useEffect } from 'react'
-import axios from 'axios'
-import { useSelector } from 'react-redux'
+
 import ErrorMsg from '~/components/Common/ErrorMsg'
+import settingListApi from '~/api/settingListApi'
 
 const AdminSettingDetail = () => {
   const { id } = useParams()
 
-  const currentAccessToken = useSelector((state) => state.auth.token)
   const [settingDetail, setSettingDetail] = useState({})
   const [isEditMode, setIsEditMode] = useState(false)
   const [title, setTitle] = useState('')
@@ -22,34 +21,31 @@ const AdminSettingDetail = () => {
 
   useEffect(() => {
     // eslint-disable-next-line no-unused-vars
-    const response = axios
-      .get(`https://lms-app-1.herokuapp.com/admin/setting/${id}`, {
-        headers: { Authorization: `Bearer ${currentAccessToken}` },
-      })
-      .then((response) => {
-        console.log(response.data)
-        setSettingDetail(response.data)
-        setTitle(response.data.settingTitle)
-        setOrder(response.data.displayOrder)
-        setDescription(response.data.description)
-      })
+    settingListApi.getDetail(id).then((response) => {
+      console.log(response)
+      setSettingDetail(response)
+      setTitle(response.settingTitle)
+      setOrder(response.displayOrder)
+      setDescription(response.description)
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleSave = async () => {
+    if (title.length === 0 || order.length === 0) {
+      setError('Title and Display Order must not empty!')
+      return
+    }
     try {
       const data = {
         settingTitle: title,
         displayOrder: order,
         description: description,
       }
-      console.log(data)
-      // eslint-disable-next-line no-unused-vars
-      const response = await axios.put(`https://lms-app-1.herokuapp.com/admin/setting/${id}`, data, {
-        headers: { Authorization: `Bearer ${currentAccessToken}` },
+      await settingListApi.changeDetail(id, data).then((response) => {
+        setIsEditMode(false)
+        setError('You have successfully changed your setting detail')
       })
-      setIsEditMode(false)
-      setError('You have successfully changed your setting detail')
     } catch (error) {
       setError('Something went wrong, please try again')
     }
