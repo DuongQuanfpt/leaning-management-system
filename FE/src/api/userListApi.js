@@ -27,15 +27,15 @@ const userListApi = {
   //   return axiosClient.put(url, header)
   // },
 
-  // getDetail: (id) => {
-  //   const url = `/admin/setting/${id}`
-  //   return axiosClient.get(url, header)
-  // },
+  getDetail: (id) => {
+    const url = `/admin/user/${id}`
+    return axiosClient.get(url, header)
+  },
 
-  // changeDetail: (id, params) => {
-  //   const url = `/admin/setting/${id}`
-  //   return axiosClient.put(url, params, header)
-  // },
+  changeDetail: (id, params) => {
+    const url = `/admin/user/${id}`
+    return axiosClient.put(url, params, header)
+  },
 }
 
 export default userListApi

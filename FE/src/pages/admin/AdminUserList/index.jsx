@@ -52,15 +52,22 @@ const AdminUserList = () => {
     // })
   }, [])
 
-  console.log(listUserFetched)
-
   const handleSearch = () => {
     if (search === '') {
       setSearch('')
       setListUserDisplay(listUserFetched)
       return
     }
-    setListUserDisplay(() => listUserFetched.filter((user) => user.settingTitle.includes(search)))
+    const query = search.toLowerCase()
+    setListUserDisplay(() =>
+      listUserFetched.filter((user) => {
+        return (
+          user.fullName?.toLowerCase().includes(query) ||
+          user.email?.toLowerCase().includes(query) ||
+          user.mobile?.toLowerCase().includes(query)
+        )
+      }),
+    )
   }
 
   const handleReload = () => {
