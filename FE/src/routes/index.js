@@ -19,6 +19,12 @@ const SettingDetail = lazy(() => import('~/pages/admin/AdminSettingDetail'))
 const UserList = lazy(() => import('~/pages/admin/AdminUserList'))
 const UserDetail = lazy(() => import('~/pages/admin/AdminUserDetail'))
 
+//Manager pages
+const SubjectList = lazy(() => import('~/pages/manager/SubjectList'))
+const SubjectDetail = lazy(() => import('~/pages/manager/SubjectDetail'))
+const ClassList = lazy(() => import('~/pages/manager/ClassList'))
+const ClassDetail = lazy(() => import('~/pages/manager/ClassDetail'))
+
 //404 pages
 const PageNotFound = lazy(() => import('~/pages/common/PageNotFound'))
 
@@ -47,7 +53,12 @@ const adminRoutes = [
 ]
 
 // Manager routes
-const managerRoutes = []
+const managerRoutes = [
+  { path: '/subject-list', component: SubjectList },
+  { path: '/subject-detail/:id', component: SubjectDetail },
+  { path: '/class-list', component: ClassList },
+  { path: '/class-detail/:id', component: ClassDetail },
+]
 
 // Supporter routes
 const supporterRoutes = []

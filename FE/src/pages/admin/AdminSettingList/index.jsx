@@ -83,8 +83,8 @@ const AdminSettingList = () => {
 
   const handleActive = async ({ settingId }) => {
     // eslint-disable-next-line no-unused-vars
-    settingListApi.changeActive(settingId).then((response) => {
-      console.log(response)
+    await settingListApi.changeActive(settingId).then((response) => {
+      navigateTo(0)
     })
   }
 

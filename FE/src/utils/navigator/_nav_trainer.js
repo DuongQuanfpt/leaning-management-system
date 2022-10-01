@@ -3,7 +3,7 @@ import CIcon from '@coreui/icons-react'
 import { cilSettings, cilUser, cilHome } from '@coreui/icons'
 import { CNavItem, CNavTitle } from '@coreui/react'
 
-const _nav_supporter = [
+const _nav_trainer = [
   {
     component: CNavItem,
     name: 'Dashboard',
@@ -12,24 +12,34 @@ const _nav_supporter = [
   },
   {
     component: CNavTitle,
-    name: 'Users',
+    name: 'Trainee',
   },
   {
     component: CNavItem,
-    name: 'Users list',
-    to: '/user-list',
+    name: 'Trainee list',
+    to: '/trainee-list',
     icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
   },
   {
     component: CNavTitle,
-    name: 'Settings',
+    name: 'Team',
   },
   {
     component: CNavItem,
-    name: 'Settings list',
-    to: '/setting-list',
+    name: 'Team list',
+    to: '/team-list',
+    icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavTitle,
+    name: 'Milestone',
+  },
+  {
+    component: CNavItem,
+    name: 'Milestone list',
+    to: '/milestone-list',
     icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
   },
 ]
 
-export default _nav_supporter
+export default _nav_trainer

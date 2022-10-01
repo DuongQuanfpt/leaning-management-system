@@ -24,7 +24,7 @@ const settingListApi = {
 
   changeActive: (id) => {
     const url = `/admin/setting/status/${id}`
-    return axiosClient.put(url, header)
+    return axiosClient.put(url, {}, header)
   },
 
   getDetail: (id) => {

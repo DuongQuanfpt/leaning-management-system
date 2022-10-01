@@ -17,6 +17,7 @@ import {
   CDropdownToggle,
   CDropdownMenu,
   CBadge,
+  CDropdownItem,
 } from '@coreui/react'
 
 import { cilReload, cilSearch } from '@coreui/icons'
@@ -46,20 +47,20 @@ const AdminUserList = () => {
       setTotalPages(response.totalPage)
     })
 
-    // userListApi.getFilter().then((response) => {
-    //   setListRole(response.roleFilter)
-    //   setListStatus(response.statusFilter)
-    // })
+    userListApi.getFilter().then((response) => {
+      setListRole(response.roleFilter)
+      setListStatus(response.statusFilter)
+    })
   }, [])
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     if (search === '') {
       setSearch('')
       setListUserDisplay(listUserFetched)
       return
     }
     const query = search.toLowerCase()
-    setListUserDisplay(() =>
+    await setListUserDisplay(() =>
       listUserFetched.filter((user) => {
         return (
           user.fullName?.toLowerCase().includes(query) ||
@@ -74,9 +75,24 @@ const AdminUserList = () => {
     navigateTo(0)
   }
 
+  console.log(listRole)
+  console.log(listStatus)
+
+  const handleFilterStatus = (item) => {
+    setListUserDisplay(() => listUserFetched.filter((user) => user.status === item))
+  }
+
+  const handleFilterRole = (item) => {
+    // setListUserDisplay(() => listUserFetched.filter((user) => user.status === item))
+  }
+
   const handleSortColumn = () => {}
 
-  const handleActive = () => {}
+  const handleActive = async ({ userId }) => {
+    await userListApi.changeActive(userId).then((response) => {
+      navigateTo(0)
+    })
+  }
 
   const handleView = ({ userId }) => {
     navigateTo(`/user-detail/${userId}`)
@@ -115,12 +131,20 @@ const AdminUserList = () => {
                 <div className="d-flex justify-content-evenly">
                   <h6 className="d-flex flex-column-reverse">Filter By: </h6>
                   <CDropdown>
-                    <CDropdownToggle color="secondary">Select Type</CDropdownToggle>
-                    <CDropdownMenu></CDropdownMenu>
+                    <CDropdownToggle color="secondary">Select role</CDropdownToggle>
+                    <CDropdownMenu>
+                      {listRole.map((item) => (
+                        <CDropdownItem onClick={() => handleFilterRole(item.role)}>{item.role}</CDropdownItem>
+                      ))}
+                    </CDropdownMenu>
                   </CDropdown>
                   <CDropdown>
                     <CDropdownToggle color="secondary">Select status</CDropdownToggle>
-                    <CDropdownMenu></CDropdownMenu>
+                    <CDropdownMenu>
+                      {listStatus.map((item) => (
+                        <CDropdownItem onClick={() => handleFilterStatus(item.status)}>{item.status}</CDropdownItem>
+                      ))}
+                    </CDropdownMenu>
                   </CDropdown>
                   <CButton color="success" type="submit" className="text-light" onClick={handleReload}>
                     <CIcon icon={cilReload} />
@@ -180,7 +204,7 @@ const AdminUserList = () => {
                           >
                             Deactive
                           </CButton>
-                        ) : (
+                        ) : item.status === 'INACTIVE' ? (
                           <CButton
                             color="success"
                             type="submit"
@@ -188,6 +212,10 @@ const AdminUserList = () => {
                             onClick={() => handleActive(item)}
                           >
                             Reactive
+                          </CButton>
+                        ) : (
+                          <CButton color="info" type="submit" className="text-light" onClick={() => handleActive(item)}>
+                            Verify
                           </CButton>
                         )}
                         <CButton color="warning" type="reset" onClick={() => handleView(item)}>

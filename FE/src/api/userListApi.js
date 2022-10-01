@@ -17,15 +17,15 @@ const userListApi = {
     return axiosClient.get(url, { ...header, params })
   },
 
-  // getFilter: () => {
-  //   const url = `/admin/user-filter`
-  //   return axiosClient.get(url, header)
-  // },
+  getFilter: () => {
+    const url = `/admin/user-filter`
+    return axiosClient.get(url, header)
+  },
 
-  // changeActive: (id) => {
-  //   const url = `/admin/setting/status/${id}`
-  //   return axiosClient.put(url, header)
-  // },
+  changeActive: (id) => {
+    const url = `/admin/user/status/${id}`
+    return axiosClient.put(url, {}, header)
+  },
 
   getDetail: (id) => {
     const url = `/admin/user/${id}`
