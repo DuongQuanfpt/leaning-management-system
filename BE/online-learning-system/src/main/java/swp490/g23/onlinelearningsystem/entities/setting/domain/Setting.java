@@ -33,6 +33,7 @@ import swp490.g23.onlinelearningsystem.util.EnumEntity.SettingStatusEnum;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Setting extends BaseEntity {
+    public static final String API_PREFIX = "/api";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long settingId;
