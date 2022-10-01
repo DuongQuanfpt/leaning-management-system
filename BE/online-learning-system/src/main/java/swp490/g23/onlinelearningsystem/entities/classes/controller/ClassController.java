@@ -27,8 +27,9 @@ public class ClassController {
 	private ClassService classService;
 
     @GetMapping("/class-list")
-    public ResponseEntity<ClassResponsePaginateDTO> classList(@RequestParam(name = "page", required = false) String currentPage,
-			@RequestParam("limit") String requestLimit) {
+    public ResponseEntity<ClassResponsePaginateDTO> classList(
+			@RequestParam(name = "page", required = false) String currentPage,
+			@RequestParam(name = "limit", required = false) String requestLimit) {
 
 		int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
 		int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);

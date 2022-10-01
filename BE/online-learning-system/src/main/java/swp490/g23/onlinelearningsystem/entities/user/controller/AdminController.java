@@ -37,10 +37,12 @@ public class AdminController {
 	}
 
 	@GetMapping(value = "/user-list")
-	public ResponseEntity<UserListResponsePaginateDTO> adminUserList(@RequestParam(name = "page", required = false) String currentPage,
-			@RequestParam("limit") int limit) {
+	public ResponseEntity<UserListResponsePaginateDTO> adminUserList(
+			@RequestParam(name = "page", required = false) String currentPage,
+			@RequestParam(name = "limit", required = false) String requestLimit) {
 
 		int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
+		int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
 		return userService.displayUsers(limit, page);
 	}
 

@@ -23,6 +23,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = "SELECT * FROM user WHERE email= ?1",nativeQuery = true)
     User findUserWithEmail(String email);
 
-    @Query(value = "SELECT u FROM User u WHERE u.settings.settingValue = 'ROLE_TRAINER'")
-    List<User> findBySettings(List<Setting> settings);
+    // List<User> findBySettings(List<Setting> settings);
 }

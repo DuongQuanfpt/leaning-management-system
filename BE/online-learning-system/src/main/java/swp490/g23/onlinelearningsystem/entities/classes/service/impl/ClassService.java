@@ -98,12 +98,12 @@ public class ClassService implements IClassService{
     @Override
     public ResponseEntity<ClassFilterDTO> getFilter() {
         List<String> list = new ArrayList<>();
-        List<Setting> settings = new ArrayList<>();
-        settings.add(settingRepositories.findBySettingValue("ROLE_TRAINER"));
+        // List<Setting> settings = new ArrayList<>();
+        // settings.add(settingRepositories.findBySettingValue("ROLE_TRAINER"));
 
-        for (User user : userRepository.findBySettings(settings)) {
-            list.add(user.getFullName());
-        }
+        // for (User user : userRepository.findBySettings(settings)) {
+        //     list.add(user.getFullName());
+        // }
 
         ClassFilterDTO filterDTO = new ClassFilterDTO();
         filterDTO.setStatusFilter(List.of(SettingStatusEnum.ACTIVE.toString(), SettingStatusEnum.INACTIVE.toString()));
