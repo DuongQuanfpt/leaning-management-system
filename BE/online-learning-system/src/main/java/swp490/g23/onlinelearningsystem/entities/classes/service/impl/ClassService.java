@@ -17,7 +17,10 @@ import swp490.g23.onlinelearningsystem.entities.classes.domain.response.ClassRes
 import swp490.g23.onlinelearningsystem.entities.classes.domain.response.ClassResponsePaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.classes.repositories.ClassRepositories;
 import swp490.g23.onlinelearningsystem.entities.classes.service.IClassService;
+import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
+import swp490.g23.onlinelearningsystem.entities.user.domain.User;
+import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.util.EnumEntity.SettingStatusEnum;
 
 @Service
@@ -27,12 +30,22 @@ public class ClassService implements IClassService{
     private ClassRepositories classRepositories;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private SettingRepositories settingRepositories;
 
     @Override
     public ResponseEntity<ClassResponsePaginateDTO> displayClasses(int limit, int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage - 1, limit, Sort.by(Sort.Direction.ASC, "classId"));
-        List<Classes> classes = classRepositories.findAll(pageable).getContent();
+        List<Classes> classes = new ArrayList<>();
+        if (limit == 0 ) {
+            classes = classRepositories.findAll();   
+        } else {
+            Pageable pageable = PageRequest.of(currentPage - 1, limit, Sort.by(Sort.Direction.ASC, "classId"));
+            classes = classRepositories.findAll(pageable).getContent();
+        }
+        
+        
         List<ClassResponseDTO> result = new ArrayList<>();
 
         for (Classes clazz : classes) {
@@ -42,7 +55,13 @@ public class ClassService implements IClassService{
         ClassResponsePaginateDTO responseDTO = new ClassResponsePaginateDTO();
         responseDTO.setPage(currentPage);
         responseDTO.setListResult(result);
-        responseDTO.setTotalPage((int) Math.ceil((double) classRepositories.count() / limit));
+        if (limit == 0) {
+            responseDTO.setTotalPage(0);
+        } else{
+            responseDTO.setTotalPage((int) Math.ceil((double) classRepositories.count() / limit));
+        }
+
+        responseDTO.setTotalItem(classRepositories.count());
 
         return ResponseEntity.ok(responseDTO);
     }
@@ -58,7 +77,8 @@ public class ClassService implements IClassService{
         Classes clazz = classRepositories.findById(id).get();
 
         clazz.setCode(dto.getCode());
-        //update roles
+
+
         classRepositories.save(clazz);
         return ResponseEntity.ok("Class has been udated");
     }
@@ -70,21 +90,24 @@ public class ClassService implements IClassService{
             clazz.setStatus(SettingStatusEnum.INACTIVE);
         } else {
             clazz.setStatus(SettingStatusEnum.ACTIVE);
-        }
+        }   
         classRepositories.save(clazz);
         return ResponseEntity.ok("Class status updated");
     }
 
     @Override
     public ResponseEntity<ClassFilterDTO> getFilter() {
-        // List<String> list = new ArrayList<>();
-        // for (Setting setting : settingRepositories.()) {
-        //     list.add(setting.getSettingTitle());
+        List<String> list = new ArrayList<>();
+        // List<Setting> settings = new ArrayList<>();
+        // settings.add(settingRepositories.findBySettingValue("ROLE_TRAINER"));
+
+        // for (User user : userRepository.findBySettings(settings)) {
+        //     list.add(user.getFullName());
         // }
 
         ClassFilterDTO filterDTO = new ClassFilterDTO();
         filterDTO.setStatusFilter(List.of(SettingStatusEnum.ACTIVE.toString(), SettingStatusEnum.INACTIVE.toString()));
-        // filterDTO.setTrainerFilter(list);
+        filterDTO.setTrainerFilter(list);
         
         return ResponseEntity.ok(filterDTO);
     }

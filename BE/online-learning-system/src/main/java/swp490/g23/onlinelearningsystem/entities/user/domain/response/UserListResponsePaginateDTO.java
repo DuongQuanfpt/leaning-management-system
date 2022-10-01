@@ -15,5 +15,6 @@ import lombok.Setter;
 public class UserListResponsePaginateDTO {
     private int page;
 	private int totalPage;
+	private long totalItem;
 	private List<UserResponseDTO> listResult = new ArrayList<>();
 }

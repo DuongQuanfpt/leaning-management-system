@@ -204,8 +204,13 @@ public class UserService implements IUserService {
 
     @Override
     public ResponseEntity<UserListResponsePaginateDTO> displayUsers(int limit, int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage - 1, limit, Sort.by(Sort.Direction.ASC, "userId"));
-        List<User> users = userRepository.findAll(pageable).getContent();
+        List<User> users = new ArrayList<>();
+        if (limit == 0 ) {
+            users = userRepository.findAll();   
+        } else {
+            Pageable pageable = PageRequest.of(currentPage - 1, limit, Sort.by(Sort.Direction.ASC, "userId"));
+            users = userRepository.findAll(pageable).getContent();
+        }
         List<UserResponseDTO> result = new ArrayList<>();
 
         for (User user : users) {
@@ -215,8 +220,13 @@ public class UserService implements IUserService {
         UserListResponsePaginateDTO responseDTO = new UserListResponsePaginateDTO();
         responseDTO.setPage(currentPage);
         responseDTO.setListResult(result);
-        responseDTO.setTotalPage((int) Math.ceil((double) userRepository.count() / limit));
+        if (limit == 0) {
+            responseDTO.setTotalPage(0);
+        } else{
+            responseDTO.setTotalPage((int) Math.ceil((double) userRepository.count() / limit));
+        }
 
+        responseDTO.setTotalItem(userRepository.count());
         return ResponseEntity.ok(responseDTO);
     }
 
@@ -231,9 +241,11 @@ public class UserService implements IUserService {
         User user = userRepository.findById(id).get();
 
         user.setNote(dto.getNote());
-        //update roles
+        for (String role : dto.getRoles()){
+            user.addRole(settingRepositories.findBySettingTitle(role));
+        }
         userRepository.save(user);
-        return ResponseEntity.ok("Setting has been udated");
+        return ResponseEntity.ok("Setting has been updated");
     }
 
     @Override

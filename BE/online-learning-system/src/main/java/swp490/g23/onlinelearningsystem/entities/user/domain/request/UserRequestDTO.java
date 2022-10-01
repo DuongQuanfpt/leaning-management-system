@@ -1,5 +1,7 @@
 package swp490.g23.onlinelearningsystem.entities.user.domain.request;
 
+import java.util.List;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
 
@@ -28,4 +30,5 @@ public class UserRequestDTO  {
 
     private String note;
 
+    private List<String> roles;
 }
