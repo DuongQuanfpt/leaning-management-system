@@ -36,6 +36,9 @@ const AdminSidebar = () => {
   navigator = role.includes('trainer') ? _nav_trainer : null
   navigator = role.includes('trainee') ? _nav_trainee : null
 
+  console.log(role.includes('admin'))
+  console.log(navigator)
+
   return (
     <CSidebar
       position="fixed"
@@ -49,7 +52,19 @@ const AdminSidebar = () => {
       </CSidebarBrand>
       <CSidebarNav>
         <SimpleBar>
-          <AdminSidebarNav items={navigator} />
+          <AdminSidebarNav
+            items={
+              role.includes('admin')
+                ? _nav_admin
+                : role.includes('manager')
+                ? _nav_manager
+                : role.includes('supporter')
+                ? _nav_supporter
+                : role.includes('trainer')
+                ? _nav_trainer
+                : _nav_trainee
+            }
+          />
         </SimpleBar>
       </CSidebarNav>
       <CSidebarToggler className="d-none d-lg-flex" onClick={() => dispatch(setSidebarUnfoldable(!unfoldable))} />

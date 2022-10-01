@@ -1,11 +1,63 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 
 import { CContainer, CRow, CCol, CForm, CButton } from '@coreui/react'
 import avatar from '~/assets/images/profile/pic1.jpg'
+import userListApi from '~/api/userListApi'
 
 const AdminUserDetail = () => {
+  const { id } = useParams()
+
+  const [userDetail, setUserDetail] = useState({})
+  const [isEditMode, setIsEditMode] = useState(false)
+  const [roles, setRoles] = useState({})
+  const [note, setNote] = useState('')
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    // eslint-disable-next-line no-unused-vars
+    userListApi.getDetail(id).then((response) => {
+      console.log(response)
+      setUserDetail(response)
+      setRoles(response.roles)
+      setNote(response.note)
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const handleSave = async () => {
+    if (note.length === 0) {
+      setError('Roles and Note must not empty!')
+      return
+    }
+    try {
+      const data = {
+        roles: { ...roles },
+        note,
+      }
+      await userListApi.changeDetail(id, data).then((response) => {
+        setIsEditMode(false)
+        setError('You have successfully changed your user detail')
+      })
+    } catch (error) {
+      setError('Something went wrong, please try again')
+    }
+  }
+
+  const handleCancel = () => {
+    setRoles(userDetail.roles)
+    setNote(userDetail.note == null ? '' : userDetail.note)
+    setError('')
+    setIsEditMode(false)
+  }
+
+  const handleEdit = () => {
+    setIsEditMode(true)
+    setError('')
+  }
+
   return (
     <>
       <AdminSidebar />
@@ -34,52 +86,74 @@ const AdminUserDetail = () => {
                               <div className="form-group col-6">
                                 <label className="col-form-label">ID</label>
                                 <div>
-                                  <input className="form-control" type="text" value="Type 1" />
+                                  <input className="form-control" type="text" value={userDetail.userId} disabled />
                                 </div>
                               </div>
                               <div className="form-group col-6">
                                 <label className="col-form-label">Full name</label>
                                 <div>
-                                  <input className="form-control" type="text" value="Title 1" />
+                                  <input className="form-control" type="text" value={userDetail.fullName} disabled />
                                 </div>
                               </div>
                               <div className="form-group col-6">
                                 <label className="col-form-label">Email</label>
                                 <div>
-                                  <input className="form-control" type="text" value="Value 1" />
+                                  <input className="form-control" type="text" value={userDetail.email} disabled />
                                 </div>
                               </div>
                               <div className="form-group col-6">
                                 <label className="col-form-label">Mobile</label>
                                 <div>
-                                  <input className="form-control" type="text" value="Active" />
+                                  <input className="form-control" type="text" value={userDetail.mobile} disabled />
                                 </div>
                               </div>
                               <div className="form-group col-6">
                                 <label className="col-form-label">Role</label>
                                 <div>
-                                  <input className="form-control" type="text" value="Active" />
+                                  <input
+                                    className="form-control"
+                                    type="text"
+                                    value={roles}
+                                    onChange={(e) => setRoles(e.target.value)}
+                                    disabled={!isEditMode}
+                                  />
                                 </div>
                               </div>
                               <div className="form-group col-6">
                                 <label className="col-form-label">Status</label>
                                 <div>
-                                  <input className="form-control" type="text" value="Active" />
+                                  <input className="form-control" type="text" value={userDetail.status} disabled />
                                 </div>
                               </div>
                               <div className="form-group col-12">
                                 <label className="col-form-label">Note</label>
                                 <div>
-                                  <textarea className="form-control" type="text" value="Note here!!" />
+                                  <textarea
+                                    className="form-control"
+                                    type="text"
+                                    value={note}
+                                    onChange={(e) => setNote(e.target.value)}
+                                    disabled={!isEditMode}
+                                  />
                                 </div>
                               </div>
                               <div className="d-flex justify-content-evenly">
-                                <CButton size="md" color="success" type="submit">
-                                  Save
-                                </CButton>
-                                <CButton size="md" color="warning" type="reset">
-                                  Cancel
-                                </CButton>
+                                {isEditMode ? (
+                                  <>
+                                    <CButton size="md" color="warning" onClick={handleSave}>
+                                      Save
+                                    </CButton>
+                                    <CButton size="md" color="warning" onClick={handleCancel}>
+                                      Cancel
+                                    </CButton>
+                                  </>
+                                ) : (
+                                  <>
+                                    <CButton size="md" color="warning" onClick={handleEdit}>
+                                      Edit
+                                    </CButton>
+                                  </>
+                                )}
                               </div>
                             </div>
                           </div>
