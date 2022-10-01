@@ -19,6 +19,8 @@ import swp490.g23.onlinelearningsystem.entities.classes.repositories.ClassReposi
 import swp490.g23.onlinelearningsystem.entities.classes.service.IClassService;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
+import swp490.g23.onlinelearningsystem.entities.user.domain.User;
+import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.util.EnumEntity.SettingStatusEnum;
 
 @Service
@@ -26,6 +28,9 @@ public class ClassService implements IClassService{
 
     @Autowired
     private ClassRepositories classRepositories;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private SettingRepositories settingRepositories;
@@ -72,7 +77,8 @@ public class ClassService implements IClassService{
         Classes clazz = classRepositories.findById(id).get();
 
         clazz.setCode(dto.getCode());
-        //update roles
+
+
         classRepositories.save(clazz);
         return ResponseEntity.ok("Class has been udated");
     }
@@ -84,7 +90,7 @@ public class ClassService implements IClassService{
             clazz.setStatus(SettingStatusEnum.INACTIVE);
         } else {
             clazz.setStatus(SettingStatusEnum.ACTIVE);
-        }
+        }   
         classRepositories.save(clazz);
         return ResponseEntity.ok("Class status updated");
     }
@@ -92,8 +98,11 @@ public class ClassService implements IClassService{
     @Override
     public ResponseEntity<ClassFilterDTO> getFilter() {
         List<String> list = new ArrayList<>();
-        for (Setting setting : settingRepositories.trainerList()) {
-            list.add(setting.getSettingTitle());
+        List<Setting> settings = new ArrayList<>();
+        settings.add(settingRepositories.findBySettingValue("ROLE_TRAINER"));
+
+        for (User user : userRepository.findBySettings(settings)) {
+            list.add(user.getFullName());
         }
 
         ClassFilterDTO filterDTO = new ClassFilterDTO();

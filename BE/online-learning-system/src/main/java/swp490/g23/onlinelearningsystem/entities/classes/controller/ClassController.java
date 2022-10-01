@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,9 +16,11 @@ import swp490.g23.onlinelearningsystem.entities.classes.domain.request.ClassRequ
 import swp490.g23.onlinelearningsystem.entities.classes.domain.response.ClassResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.response.ClassResponsePaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.classes.service.impl.ClassService;
+import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 
 @RestController
 @CrossOrigin
+@RequestMapping(Setting.API_PREFIX)
 public class ClassController {
     
     @Autowired
@@ -50,7 +53,7 @@ public class ClassController {
 		return classService.updateClass(requestDTO,id);
 	}
 
-	@PutMapping(value = "/class/status/{id}")
+	@PutMapping(value = "/class-status/{id}")
 	public ResponseEntity<String> updateSettingStatus(@PathVariable("id") Long id) {
 
 		return classService.updateStatus(id);

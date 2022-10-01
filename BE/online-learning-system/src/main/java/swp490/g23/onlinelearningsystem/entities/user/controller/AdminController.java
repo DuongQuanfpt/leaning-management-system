@@ -1,7 +1,5 @@
 package swp490.g23.onlinelearningsystem.entities.user.controller;
 
-import javax.annotation.security.RolesAllowed;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -13,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.user.domain.filter.UserFIlterDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserListResponsePaginateDTO;
@@ -20,9 +19,8 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserRespons
 import swp490.g23.onlinelearningsystem.entities.user.service.impl.UserService;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping(Setting.API_PREFIX)
 @CrossOrigin
-@RolesAllowed({"ROLE_ADMIN"})
 public class AdminController {
 
 	public static final String ADD = "ADD";
@@ -64,7 +62,7 @@ public class AdminController {
 		return userService.updateUser(requestDTO,id);
 	}
 
-	@PutMapping(value = "/user/status/{id}")
+	@PutMapping(value = "/user-status/{id}")
 	public ResponseEntity<String> updateSettingStatus(@PathVariable("id") Long id) {
 
 		return userService.updateStatus(id);
