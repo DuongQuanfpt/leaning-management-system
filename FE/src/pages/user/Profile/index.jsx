@@ -9,6 +9,7 @@ import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import { CContainer, CRow, CCol, CForm, CButton } from '@coreui/react'
 import avatar from '~/assets/images/profile/pic1.jpg'
 import { Link } from 'react-router-dom'
+import Avatar from 'react-avatar-edit'
 import ErrorMsg from '~/components/Common/ErrorMsg'
 import userApi from '~/api/userApi'
 
@@ -20,6 +21,10 @@ const Profile = () => {
   const [mobile, setMobile] = useState('')
   const [error, setError] = useState('')
 
+  const [isAvatarMode, setIsAvatarMode] = useState(false)
+  const [src, setSrc] = useState(null)
+  const [preview, setPreview] = useState(null)
+
   const dispatch = useDispatch()
   const currentProfile = useSelector((state) => state.profile)
 
@@ -29,8 +34,46 @@ const Profile = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const handleAvatar = () => {}
-  const handleSave = async () => {
+  const handleAvatar = () => {
+    setIsAvatarMode(true)
+    setPreview(null)
+  }
+
+  const handleCropAvatar = (view) => {
+    setPreview(view)
+  }
+
+  const handleCloseAvatar = () => {
+    setPreview(null)
+  }
+
+  const handleSaveAvatar = async () => {
+    console.log(preview)
+    try {
+      const data = {
+        avatar_url: preview,
+      }
+      await userApi.updateProfile(data).then((response) => {
+        setIsEditMode(false)
+        setError('You have successfully changed your avatar')
+        dispatch(
+          setProfile({
+            ...currentProfile,
+            ...data,
+          }),
+        )
+      })
+    } catch (error) {
+      setError('Something went wrong, please try again')
+      console.log(error)
+    }
+  }
+
+  const handleBackAvatar = () => {
+    setIsAvatarMode(false)
+  }
+
+  const handleSaveProfile = async () => {
     if (name?.length < 3) {
       setError('Your name must longer than 3 characters')
       return
@@ -95,21 +138,37 @@ const Profile = () => {
                           <div className="row col-12 w-100">
                             <div className="row col-3 h-100">
                               <label className="col-form-label align-middle">Avatar</label>
-                              <div>
-                                <img
-                                  src={profileData.avatar_url === '' ? avatar : profileData.avatar_url}
-                                  alt=""
-                                  style={{
-                                    width: 100,
-                                    height: 100,
-                                  }}
-                                />
-                              </div>
-                              <div className="d-flex pt-4">
-                                <CButton size="md" color="warning" onClick={handleAvatar}>
-                                  Edit Avatar
-                                </CButton>
-                              </div>
+                              {isAvatarMode ? (
+                                <>
+                                  {preview && <img src={preview} alt="" className="w-75 mb-5" />}
+                                  <Avatar
+                                    width={200}
+                                    height={200}
+                                    onCrop={handleCropAvatar}
+                                    onClose={handleCloseAvatar}
+                                    src={src}
+                                  />
+                                  <div className="d-flex pt-4">
+                                    <CButton size="md" color="warning" onClick={handleSaveAvatar} className="mr-5">
+                                      Save
+                                    </CButton>
+                                    <CButton size="md" color="warning" onClick={handleBackAvatar} className="mr-5">
+                                      Back
+                                    </CButton>
+                                  </div>
+                                </>
+                              ) : (
+                                <>
+                                  <div>
+                                    <img src={avatar} alt="" className="w-75" />
+                                  </div>
+                                  <div className="d-flex pt-4">
+                                    <CButton size="md" color="warning" onClick={handleAvatar}>
+                                      Edit Avatar
+                                    </CButton>
+                                  </div>
+                                </>
+                              )}
                             </div>
                             <div className="row col-9">
                               <div className="form-group col-6">
@@ -195,7 +254,7 @@ const Profile = () => {
                               <div className="d-flex justify-content-evenly">
                                 {isEditMode ? (
                                   <>
-                                    <CButton size="md" color="warning" onClick={handleSave}>
+                                    <CButton size="md" color="warning" onClick={handleSaveProfile}>
                                       Save
                                     </CButton>
                                     <CButton size="md" color="warning" onClick={handleReset}>

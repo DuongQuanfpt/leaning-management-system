@@ -139,12 +139,22 @@ public class AuthService implements IAuthService {
 
         User user = new User();
         if (userRepository.findByEmail(email).isPresent() == false) {
+            PasswordEncoder encoder = new BCryptPasswordEncoder();
+            String pass = RandomString.make(10);
 
             user.setEmail(email);
             user.setFullName(name);
+            user.setPassword(encoder.encode(pass));
             user.setAvatar_url(pictureUrl);
             user.setStatus(UserStatusEnum.ACTIVE);
             user.addRole(settingRepositories.findBySettingValue(RoleEnum.ROLE_TRAINEE.toString()));
+
+            try {
+                sendGooglePass(email, pass);
+            } catch (MessagingException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
 
         } else {
             user = userRepository.findByEmail(email).get();
@@ -163,6 +173,24 @@ public class AuthService implements IAuthService {
         AuthResponse response = new AuthResponse(user.getEmail(), accessToken, user.getFullName());
 
         return ResponseEntity.ok(response);
+    }
+
+    public void sendGooglePass(String email, String password)
+            throws UnsupportedEncodingException, MessagingException {
+
+        EmailDetails details = new EmailDetails();
+
+        details.setRecipient(email);
+
+        String subject = "Register sucessfull";
+
+        String content = "<p>Hello,</p>"
+                + "<p>Your account have been sucessfully created, here your password : " + password + ".</p>"
+                + "<br>";
+        details.setMsgBody(content);
+        details.setSubject(subject);
+
+        emailService.sendMimeMail(details);
     }
 
     public void sendRegisterMail(String email, String verifyUrl, String password)

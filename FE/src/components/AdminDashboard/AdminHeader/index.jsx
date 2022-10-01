@@ -28,12 +28,6 @@ const AdminHeader = () => {
               Dashboard
             </CNavLink>
           </CNavItem>
-          <CNavItem>
-            <CNavLink href="/user-list">Users</CNavLink>
-          </CNavItem>
-          <CNavItem>
-            <CNavLink href="/setting-list">Settings</CNavLink>
-          </CNavItem>
         </CHeaderNav>
         <CHeaderNav>
           <CNavItem>
