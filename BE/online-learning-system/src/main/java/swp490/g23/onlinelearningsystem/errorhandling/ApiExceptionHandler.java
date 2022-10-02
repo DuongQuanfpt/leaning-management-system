@@ -9,6 +9,8 @@ import org.springframework.web.context.request.WebRequest;
 
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.InvalidTokenException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoUserException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.PermissionException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.RoleException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.UnverifiedUserException;
 
 @RestControllerAdvice
@@ -21,6 +23,8 @@ public class ApiExceptionHandler {
     
         return new ErrorMessage(10000, ex.getLocalizedMessage());
     }
+
+    
    
     @ExceptionHandler(UnverifiedUserException.class)
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
@@ -44,5 +48,17 @@ public class ApiExceptionHandler {
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ErrorMessage noUserException(Exception ex,  WebRequest request) {
         return new ErrorMessage(10104, "User doesnt exist");
+    }
+
+    @ExceptionHandler(PermissionException.class)
+    @ResponseStatus(value = HttpStatus.FORBIDDEN)
+    public ErrorMessage permissionExceptionHandler(Exception ex,  WebRequest request) {
+        return new ErrorMessage(10105, "Your account dont have access to this resource");
+    }
+
+    @ExceptionHandler(RoleException.class)
+    @ResponseStatus(value = HttpStatus.FORBIDDEN)
+    public ErrorMessage roleExceptionHandler(Exception ex,  WebRequest request) {
+        return new ErrorMessage(10106, "Ko phai admin thi dung co vao :/");
     }
 }

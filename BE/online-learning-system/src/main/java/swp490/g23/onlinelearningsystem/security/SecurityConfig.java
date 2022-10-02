@@ -1,6 +1,5 @@
 package swp490.g23.onlinelearningsystem.security;
 
-
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +19,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
+import swp490.g23.onlinelearningsystem.security.jwt.JwtAuthenticationEntryPoint;
 import swp490.g23.onlinelearningsystem.security.jwt.JwtTokenFilter;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = false, securedEnabled = false, jsr250Enabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint = new JwtAuthenticationEntryPoint();
 
     @Autowired
     private JwtTokenFilter jwtTokenFilter;
@@ -56,10 +59,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.cors();
         http.csrf().disable();
-        
-        http.exceptionHandling().authenticationEntryPoint((request, response, ex) -> {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
-        });
+
+        http.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint);
 
         http.authorizeRequests().antMatchers("/auth/login").permitAll()
                 .antMatchers("/auth/login-google").permitAll()

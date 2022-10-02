@@ -14,7 +14,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.JoinColumn;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -26,7 +25,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.BaseEntity;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
-import swp490.g23.onlinelearningsystem.util.EnumEntity.PermisionEnum;
 import swp490.g23.onlinelearningsystem.util.EnumEntity.UserStatusEnum;
 
 @Entity
@@ -63,13 +61,6 @@ public class User extends BaseEntity implements UserDetails {
 
     @Column
     private String note;
-
-    @Transient
-    private List<PermisionEnum> permissions = new ArrayList<>();
-
-    public void addPermission(PermisionEnum permisson){
-        this.permissions.add(permisson);
-    }
 
     @ManyToMany
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "userId", referencedColumnName = "userId"), inverseJoinColumns = @JoinColumn(name = "roleId", referencedColumnName = "settingId"))

@@ -47,16 +47,20 @@ public class DbInit {
 
                 // create screen setting
 
-                Setting screen1 = new Setting("Setting List ", "/admin/setting", SettingStatusEnum.ACTIVE,
+                Setting setting = new Setting("Setting List ", "/api/setting", SettingStatusEnum.ACTIVE,
                                 "description",
                                 "1",
                                 typeScreen);
 
-                Setting screen2 = new Setting("User List", "/admin/user", SettingStatusEnum.ACTIVE,
+                Setting settingFilter = new Setting("User List", "/api/setting-filter", SettingStatusEnum.ACTIVE,
                                 "description ", "1",
                                 typeScreen);
 
-                Setting screen3 = new Setting("PermissionTest", "/user/authorities", SettingStatusEnum.ACTIVE,
+                Setting settingStatus = new Setting("User List", "/api/setting-status", SettingStatusEnum.ACTIVE,
+                                "description ", "1",
+                                typeScreen);
+
+                Setting screen4 = new Setting("PermissionTest", "/user/authorities", SettingStatusEnum.ACTIVE,
                                 "description ", "1",
                                 typeScreen);
 
@@ -82,43 +86,28 @@ public class DbInit {
                 settingRepositories.saveAll(
                                 List.of(typeScreen, typeRole, adminRole, traineeRole, managerRole, supporterRole,
                                                 trainerRole,
-                                                typeTest, screen1, screen2, screen3, test3, test4));
+                                                typeTest, setting, settingFilter, settingStatus,screen4, test3, test4));
 
                 // create permission
                 SettingPermission adminSetting = new SettingPermission();
-                adminSetting.setScreen(screen1);
+                adminSetting.setScreen(setting);
                 adminSetting.setRole(adminRole);
-                adminSetting.setCanAdd(true);
-                adminSetting.setCanDelete(true);
-                adminSetting.setCanEdit(true);
                 adminSetting.setCanGetAll(true);
+                adminSetting.setCanEdit(true);
 
                 SettingPermission adminUser = new SettingPermission();
-                adminUser.setScreen(screen2);
+                adminUser.setScreen(settingFilter);
                 adminUser.setRole(adminRole);
-                adminUser.setCanAdd(true);
-                adminUser.setCanDelete(true);
-                adminUser.setCanEdit(true);
                 adminUser.setCanGetAll(true);
 
                 SettingPermission permissionTest = new SettingPermission();
-                permissionTest.setScreen(screen3);
+                permissionTest.setScreen(settingStatus);
                 permissionTest.setRole(adminRole);
-                permissionTest.setCanAdd(true);
-                permissionTest.setCanDelete(true);
                 permissionTest.setCanEdit(true);
-                permissionTest.setCanGetAll(true);
 
-                SettingPermission permissionTest2 = new SettingPermission();
-                permissionTest2.setScreen(screen3);
-                permissionTest2.setRole(traineeRole);
-                permissionTest2.setCanAdd(false);
-                permissionTest2.setCanDelete(false);
-                permissionTest2.setCanEdit(true);
-                permissionTest2.setCanGetAll(true);
-                permissionRepositories.saveAll(List.of(adminSetting, adminUser, permissionTest,permissionTest2));
+                permissionRepositories.saveAll(List.of(adminSetting, adminUser, permissionTest));
 
-                 // create user
+                // create user
                 User defaultUser = new User("xucxichbo@doivl.com", encoder.encode("123456"));
                 User u1 = new User("quan1@doivl.com", encoder.encode("123456"),
                                 settingRepositories.findActiveSettingByValue(RoleEnum.ROLE_MANAGER.toString()));

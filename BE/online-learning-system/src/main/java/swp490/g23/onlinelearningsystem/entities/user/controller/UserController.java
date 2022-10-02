@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import swp490.g23.onlinelearningsystem.entities.permission.repositories.PermissionRepositories;
+import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserUpdatePassRequestDTO;
@@ -29,11 +31,17 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private PermissionRepositories permissionRepositories;
+
+	@Autowired
+    private SettingRepositories settingRepositories;
+
 	@GetMapping(value = "/authorities") // API to get info of the currently authenticated user
 	// @RolesAllowed({"ADD"})
 	public ResponseEntity<?> getAuthorities(@AuthenticationPrincipal User user) {
-        
-		return ResponseEntity.ok(user.getAuthorities().toString());
+
+		return ResponseEntity.ok(permissionRepositories.findByScreen(settingRepositories.findActiveSettingByValue("/admin/setting")));
 	}
 
 	/**
@@ -44,8 +52,8 @@ public class UserController {
 	 */
 	@GetMapping // API to get info of the currently authenticated user
 	public ResponseEntity<?> getAuthenticatedUser(@AuthenticationPrincipal User user) {
-	
-		return userService.getAuthenticatedUser(user.getUserId(),user.getSettings());
+
+		return userService.getAuthenticatedUser(user.getUserId(), user.getSettings());
 	}
 
 	/**
@@ -58,7 +66,7 @@ public class UserController {
 	 */
 	@PutMapping(value = "/update-pass")
 	public ResponseEntity<?> updatePassword(@RequestBody UserUpdatePassRequestDTO updatePassRequestDTO,
-											@AuthenticationPrincipal User user) {
+			@AuthenticationPrincipal User user) {
 
 		return userService.updatePassword(updatePassRequestDTO, user.getUserId());
 	}
@@ -71,36 +79,35 @@ public class UserController {
 	 */
 
 	@PutMapping(value = "/forgot-pass")
-	public ResponseEntity<?> forgotPassword(@RequestBody UserUpdatePassRequestDTO updatePassRequestDTO) 
-	{
-		
-		return userService.resetPassword(updatePassRequestDTO.getEmail(),updatePassRequestDTO.getLink());
+	public ResponseEntity<?> forgotPassword(@RequestBody UserUpdatePassRequestDTO updatePassRequestDTO) {
+
+		return userService.resetPassword(updatePassRequestDTO.getEmail(), updatePassRequestDTO.getLink());
 	}
 
 	/**
-	 * Update password for user that request password reset 
-	 * @param token get the user to update
+	 * Update password for user that request password reset
+	 * 
+	 * @param token                get the user to update
 	 * @param updatePassRequestDTO contain new password
 	 * @return update user password and set mailToken to null
 	 */
 	@PutMapping(value = "/forgot-processing")
-	public ResponseEntity<?> forgotProcess(@RequestParam("token")String token
-										 ,@RequestBody UserUpdatePassRequestDTO updatePassRequestDTO) 
-	{	
+	public ResponseEntity<?> forgotProcess(@RequestParam("token") String token,
+			@RequestBody UserUpdatePassRequestDTO updatePassRequestDTO) {
 		return userService.resetProcessing(updatePassRequestDTO.getNewPassword(), token);
 	}
 
 	/**
 	 * Update user info
-	 * @param requestDTO contain new avartar_Url,fullName,mobile 
-	 * @param user currently authenticated user
+	 * 
+	 * @param requestDTO contain new avartar_Url,fullName,mobile
+	 * @param user       currently authenticated user
 	 * @return update user info
 	 */
 	@PutMapping(value = "/update-profile")
-	public ResponseEntity<?> updateProfile(@RequestBody UserRequestDTO requestDTO
-										  ,@AuthenticationPrincipal User user) 
-	{
-	
-		return userService.updateUserProfile(requestDTO.getFullName(), requestDTO.getAvatar_url(), requestDTO.getMobile(), user.getUserId());
+	public ResponseEntity<?> updateProfile(@RequestBody UserRequestDTO requestDTO, @AuthenticationPrincipal User user) {
+
+		return userService.updateUserProfile(requestDTO.getFullName(), requestDTO.getAvatar_url(),
+				requestDTO.getMobile(), user.getUserId());
 	}
 }
