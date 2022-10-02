@@ -53,6 +53,8 @@ const AdminSettingList = () => {
     })
   }, [])
 
+  console.log(typeof JSON.parse(JSON.parse(localStorage.getItem('persist:root')).auth).token)
+
   const handleSearch = () => {
     if (search === '') {
       setSearch('')

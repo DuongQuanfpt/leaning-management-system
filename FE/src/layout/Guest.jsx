@@ -1,7 +1,3 @@
-import { Routes, Route } from 'react-router-dom'
-import { Fragment } from 'react'
-
-import { commonRoutes } from '~/routes'
 import ScrollToTop from '~/components/Common/ScrollToTop'
 
 // Plugins Stylesheet
@@ -24,18 +20,8 @@ import '~/assets/vendors/flaticon/flaticon.css'
 import '~/assets/vendors/line-awesome/css/line-awesome.min.css'
 import '~/assets/vendors/themify/themify-icons.css'
 
-function Client() {
-  return (
-    <Fragment>
-      <Routes>
-        {commonRoutes.map((route, index) => {
-          const Page = route.component
-          return <Route key={index} path={route.path} element={<Page />} />
-        })}
-      </Routes>
-      <ScrollToTop />
-    </Fragment>
-  )
+const Guest = () => {
+  return <ScrollToTop />
 }
 
-export default Client
+export default Guest

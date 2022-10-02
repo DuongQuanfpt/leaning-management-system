@@ -27,36 +27,41 @@ const AdminSidebar = () => {
   const unfoldable = useSelector((state) => state.sidebar.sidebarUnfoldable)
 
   const role = useSelector((state) => state.profile.roles)
+
   return (
-    <CSidebar
-      position="fixed"
-      unfoldable={unfoldable}
-      visible={sidebarShow}
-      onVisibleChange={(visible) => dispatch(setSidebarShow(visible))}
-    >
-      <CSidebarBrand className="d-none d-md-flex" to="/">
-        <CIcon className="sidebar-brand-full" icon={logoNegative} height={35} />
-        <CIcon className="sidebar-brand-narrow" icon={sygnet} height={35} />
-      </CSidebarBrand>
-      <CSidebarNav>
-        <SimpleBar>
-          <AdminSidebarNav
-            items={
-              role.includes('admin')
-                ? _nav_admin
-                : role.includes('manager')
-                ? _nav_manager
-                : role.includes('supporter')
-                ? _nav_supporter
-                : role.includes('trainer')
-                ? _nav_trainer
-                : _nav_trainee
-            }
-          />
-        </SimpleBar>
-      </CSidebarNav>
-      <CSidebarToggler className="d-none d-lg-flex" onClick={() => dispatch(setSidebarUnfoldable(!unfoldable))} />
-    </CSidebar>
+    <>
+      <CSidebar
+        position="fixed"
+        unfoldable={unfoldable}
+        visible={sidebarShow}
+        onVisibleChange={(visible) => dispatch(setSidebarShow(visible))}
+      >
+        <CSidebarBrand className="d-none d-md-flex" to="/">
+          <CIcon className="sidebar-brand-full" icon={logoNegative} height={35} />
+          <CIcon className="sidebar-brand-narrow" icon={sygnet} height={35} />
+        </CSidebarBrand>
+        <CSidebarNav>
+          <SimpleBar>
+            <AdminSidebarNav
+              items={
+                role?.includes('admin')
+                  ? _nav_admin
+                  : role?.includes('manager')
+                  ? _nav_manager
+                  : role?.includes('supporter')
+                  ? _nav_supporter
+                  : role?.includes('trainer')
+                  ? _nav_trainer
+                  : role?.includes('trainer')
+                  ? _nav_trainee
+                  : null
+              }
+            />
+          </SimpleBar>
+        </CSidebarNav>
+        <CSidebarToggler className="d-none d-lg-flex" onClick={() => dispatch(setSidebarUnfoldable(!unfoldable))} />
+      </CSidebar>
+    </>
   )
 }
 

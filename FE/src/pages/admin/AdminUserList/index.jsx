@@ -60,7 +60,7 @@ const AdminUserList = () => {
       return
     }
     const query = search.toLowerCase()
-    await setListUserDisplay(() =>
+    setListUserDisplay(() =>
       listUserFetched.filter((user) => {
         return (
           user.fullName?.toLowerCase().includes(query) ||
@@ -75,11 +75,8 @@ const AdminUserList = () => {
     navigateTo(0)
   }
 
-  console.log(listRole)
-  console.log(listStatus)
-
-  const handleFilterStatus = (item) => {
-    setListUserDisplay(() => listUserFetched.filter((user) => user.status === item))
+  const handleFilterStatus = (status) => {
+    setListUserDisplay(() => listUserFetched.filter((user) => user.status === status))
   }
 
   const handleFilterRole = (item) => {
@@ -105,7 +102,9 @@ const AdminUserList = () => {
     })
   }
 
-  useEffect(() => {}, [])
+  console.log(listStatus)
+  console.log(listRole)
+
   return (
     <div>
       <AdminSidebar />
@@ -141,8 +140,8 @@ const AdminUserList = () => {
                   <CDropdown>
                     <CDropdownToggle color="secondary">Select status</CDropdownToggle>
                     <CDropdownMenu>
-                      {listStatus.map((item) => (
-                        <CDropdownItem onClick={() => handleFilterStatus(item.status)}>{item.status}</CDropdownItem>
+                      {listStatus.map((status) => (
+                        <CDropdownItem onClick={() => handleFilterStatus(status)}>{status}</CDropdownItem>
                       ))}
                     </CDropdownMenu>
                   </CDropdown>
@@ -180,7 +179,7 @@ const AdminUserList = () => {
                       <div className="d-flex justify-content-evenly">{item.mobile}</div>
                     </CTableDataCell>
                     <CTableDataCell>
-                      <div className="d-flex justify-content-evenly">{item.roles.join(' / ')}</div>
+                      <div className="d-flex justify-content-evenly">{item.roles.join('/')}</div>
                     </CTableDataCell>
                     <CTableDataCell>
                       <div className="d-flex justify-content-evenly">

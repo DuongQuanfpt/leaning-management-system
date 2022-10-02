@@ -8,7 +8,7 @@ const initialState = {
   avatar_url: '',
   status: '',
   note: '',
-  roles: {},
+  roles: [],
 }
 
 const profileSlice = createSlice({

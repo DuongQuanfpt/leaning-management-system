@@ -1,8 +1,8 @@
 import { Fragment, useEffect } from 'react'
 import { gapi } from 'gapi-script'
 
-import Client from '~/layout/Client'
-import Admin from './layout/Admin'
+import Client from '~/layout/Guest'
+import Admin from './layout/User'
 
 function App() {
   const clientId = '75646251109-9glq1hvj26fb2l15867ipc9cqqs3koeo.apps.googleusercontent.com'

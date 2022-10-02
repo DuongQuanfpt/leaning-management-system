@@ -8,32 +8,33 @@ const header = {
 
 const settingListApi = {
   getFirstPage: (params) => {
-    const url = `/admin/setting`
+    const url = `/api/setting`
+    console.log(header)
     return axiosClient.get(url, { ...header, params })
   },
 
   getPage: (params) => {
-    const url = `/admin/setting`
+    const url = `/api/setting`
     return axiosClient.get(url, { ...header, params })
   },
 
   getFilter: () => {
-    const url = `/admin/setting-filter`
+    const url = `/api/setting-filter`
     return axiosClient.get(url, header)
   },
 
   changeActive: (id) => {
-    const url = `/admin/setting/status/${id}`
+    const url = `/api/setting/status/${id}`
     return axiosClient.put(url, {}, header)
   },
 
   getDetail: (id) => {
-    const url = `/admin/setting/${id}`
+    const url = `/api/setting/${id}`
     return axiosClient.get(url, header)
   },
 
   changeDetail: (id, params) => {
-    const url = `/admin/setting/${id}`
+    const url = `/api/setting/${id}`
     return axiosClient.put(url, params, header)
   },
 }
