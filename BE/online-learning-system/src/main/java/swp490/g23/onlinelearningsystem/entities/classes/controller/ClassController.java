@@ -26,7 +26,7 @@ public class ClassController {
     @Autowired
 	private ClassService classService;
 
-    @GetMapping("/class-list")
+    @GetMapping("/class")
     public ResponseEntity<ClassResponsePaginateDTO> classList(
 			@RequestParam(name = "page", required = false) String currentPage,
 			@RequestParam(name = "limit", required = false) String requestLimit) {

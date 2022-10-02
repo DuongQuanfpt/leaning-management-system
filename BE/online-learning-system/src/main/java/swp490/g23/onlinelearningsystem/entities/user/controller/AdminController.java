@@ -36,7 +36,7 @@ public class AdminController {
 		return "If u see this , u are a admin";
 	}
 
-	@GetMapping(value = "/user-list")
+	@GetMapping(value = "/user")
 	public ResponseEntity<UserListResponsePaginateDTO> adminUserList(
 			@RequestParam(name = "page", required = false) String currentPage,
 			@RequestParam(name = "limit", required = false) String requestLimit) {
