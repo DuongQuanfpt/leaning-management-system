@@ -18,4 +18,6 @@ public class ClassRequestDTO {
     private StatusEnum status;
 
     private String description;
+
+    private String trainer;
 }
