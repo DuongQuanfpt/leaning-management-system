@@ -18,7 +18,7 @@ import swp490.g23.onlinelearningsystem.entities.setting.domain.response.SettingR
 import swp490.g23.onlinelearningsystem.entities.setting.domain.response.TypeResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.setting.service.ISettingService;
-import swp490.g23.onlinelearningsystem.util.EnumEntity.SettingStatusEnum;
+import swp490.g23.onlinelearningsystem.util.EnumEntity.StatusEnum;
 
 @Service
 public class SettingService implements ISettingService {
@@ -84,7 +84,7 @@ public class SettingService implements ISettingService {
         }
 
         SettingFilterDTO filterDTO = new SettingFilterDTO();
-        filterDTO.setStatusFilter(List.of(SettingStatusEnum.ACTIVE.toString(), SettingStatusEnum.INACTIVE.toString()));
+        filterDTO.setStatusFilter(List.of(StatusEnum.ACTIVE.toString(), StatusEnum.INACTIVE.toString()));
         filterDTO.setTypeFilter(list);
 
         return ResponseEntity.ok(filterDTO);
@@ -94,10 +94,10 @@ public class SettingService implements ISettingService {
     public ResponseEntity<String> updateStatus(Long id) {
         Setting setting = settingRepositories.findById(id).get();
         if (setting.getType() != null) {
-            if (setting.getStatus() == SettingStatusEnum.ACTIVE) {
-                setting.setStatus(SettingStatusEnum.INACTIVE);
+            if (setting.getStatus() == StatusEnum.ACTIVE) {
+                setting.setStatus(StatusEnum.INACTIVE);
             } else {
-                setting.setStatus(SettingStatusEnum.ACTIVE);
+                setting.setStatus(StatusEnum.ACTIVE);
             }
             settingRepositories.save(setting);
             return ResponseEntity.ok("Setting status updated");

@@ -1,7 +1,9 @@
 package swp490.g23.onlinelearningsystem.security.jwt;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -18,12 +20,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.jsonwebtoken.Claims;
 import swp490.g23.onlinelearningsystem.entities.permission.domain.SettingPermission;
 import swp490.g23.onlinelearningsystem.entities.permission.repositories.PermissionRepositories;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
+import swp490.g23.onlinelearningsystem.errorhandling.ErrorMessage;
 
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
@@ -55,7 +61,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
 
         if (userAuthorization(accessToken, request.getRequestURI(), request.getMethod()) == false) {
-            responseToClient(response, "Access denied", HttpServletResponse.SC_FORBIDDEN);
+            ErrorMessage message = new ErrorMessage(10105, "Access denied");
+            responseToClient(response, message, HttpServletResponse.SC_FORBIDDEN);
             return;
         }
 
@@ -181,11 +188,16 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         return token;
     }
 
-    private void responseToClient(HttpServletResponse response, String customError, int httpStatus)
+    private void responseToClient(HttpServletResponse response, ErrorMessage customError, int httpStatus)
             throws IOException {
+
         response.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
         response.setStatus(httpStatus);
-        response.getOutputStream().print(customError);
+        Map<String, ErrorMessage> map = new HashMap<>();
+        map.put("error", customError);
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(Include.NON_NULL);
+        response.getOutputStream().print(mapper.writeValueAsString(map));
         response.flushBuffer();
     }
 
