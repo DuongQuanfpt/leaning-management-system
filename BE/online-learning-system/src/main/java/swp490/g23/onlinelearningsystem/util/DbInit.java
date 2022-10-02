@@ -19,7 +19,6 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.util.EnumEntity.RoleEnum;
 import swp490.g23.onlinelearningsystem.util.EnumEntity.StatusEnum;
-import swp490.g23.onlinelearningsystem.util.EnumEntity.StatusEnum;
 import swp490.g23.onlinelearningsystem.util.EnumEntity.UserStatusEnum;
 
 @Component
@@ -87,11 +86,23 @@ public class DbInit {
                                 "1",
                                 typeScreen);
 
-                Setting settingFilter = new Setting("Setting List", "/api/setting-filter", StatusEnum.ACTIVE,
+                Setting settingFilter = new Setting("Setting Filter", "/api/setting-filter", StatusEnum.ACTIVE,
                                 "description ", "1",
                                 typeScreen);
 
-                Setting settingStatus = new Setting("Setting List", "/api/setting-status", StatusEnum.ACTIVE,
+                Setting settingStatus = new Setting("Setting Status", "/api/setting-status", StatusEnum.ACTIVE,
+                                "description ", "1",
+                                typeScreen);
+
+                Setting user = new Setting("User List", "/api/user", StatusEnum.ACTIVE,
+                                "description ", "1",
+                                typeScreen);
+
+                Setting userStatus = new Setting("User Status", "/api/user-status", StatusEnum.ACTIVE,
+                                "description ", "1",
+                                typeScreen);
+
+                Setting userFilter = new Setting("User Filter", "/api/user-filter", StatusEnum.ACTIVE,
                                 "description ", "1",
                                 typeScreen);
 
@@ -123,7 +134,8 @@ public class DbInit {
                 settingRepositories.saveAll(
                                 List.of(typeScreen, typeRole, adminRole, traineeRole, managerRole, supporterRole,
                                                 trainerRole, expertRole,
-                                                typeTest, setting, settingFilter, settingStatus, subjects, test3,
+                                                typeTest, setting, settingFilter, settingStatus, subjects, user,
+                                                userFilter, userStatus, test3,
                                                 test4));
 
                 // create permission
@@ -133,15 +145,31 @@ public class DbInit {
                 adminSetting.setCanGetAll(true);
                 adminSetting.setCanEdit(true);
 
+                SettingPermission adminSettingFilter = new SettingPermission();
+                adminSettingFilter.setScreen(settingFilter);
+                adminSettingFilter.setRole(adminRole);
+                adminSettingFilter.setCanGetAll(true);
+
+                SettingPermission adminSettingStatus = new SettingPermission();
+                adminSettingStatus.setScreen(settingStatus);
+                adminSettingStatus.setRole(adminRole);
+                adminSettingStatus.setCanEdit(true);
+
                 SettingPermission adminUser = new SettingPermission();
-                adminUser.setScreen(settingFilter);
+                adminUser.setScreen(user);
                 adminUser.setRole(adminRole);
                 adminUser.setCanGetAll(true);
+                adminUser.setCanEdit(true);
 
-                SettingPermission adminSettingFilter = new SettingPermission();
-                adminSettingFilter.setScreen(settingStatus);
-                adminSettingFilter.setRole(adminRole);
-                adminSettingFilter.setCanEdit(true);
+                SettingPermission adminUserFilter = new SettingPermission();
+                adminUserFilter.setScreen(userFilter);
+                adminUserFilter.setRole(adminRole);
+                adminUserFilter.setCanGetAll(true);
+
+                SettingPermission adminUserStatus = new SettingPermission();
+                adminUserStatus.setScreen(userStatus);
+                adminUserStatus.setRole(adminRole);
+                adminUserStatus.setCanEdit(true);
 
                 SettingPermission adminSubjects = new SettingPermission();
                 adminSubjects.setScreen(subjects);
@@ -149,7 +177,9 @@ public class DbInit {
                 adminSubjects.setCanEdit(true);
                 adminSubjects.setCanGetAll(true);
 
-                permissionRepositories.saveAll(List.of(adminSetting, adminUser, adminSettingFilter,adminSubjects));
+                permissionRepositories.saveAll(List.of(adminSetting,
+                                adminSettingFilter, adminSettingStatus, adminUser, adminUserFilter, adminUserStatus,
+                                adminSubjects));
         }
 
         public void loadUser() {
