@@ -76,9 +76,14 @@ public class ClassService implements IClassService{
     @Override
     public ResponseEntity<String> updateClass(ClassRequestDTO dto, Long id) {
         Classes clazz = classRepositories.findById(id).get();
-
-        clazz.setCode(dto.getCode());
+        String trainerEmail = dto.getTrainer();
+        String supporterEmail = dto.getSupporter();
+        User userTrainer = userRepository.findByEmail(trainerEmail).get();
+        User userSupportter = userRepository.findByEmail(supporterEmail).get();
         
+        clazz.setCode(dto.getCode());
+        clazz.setUser(userSupportter);
+        clazz.setUser(userTrainer);
 
         classRepositories.save(clazz);
         return ResponseEntity.ok("Class has been udated");

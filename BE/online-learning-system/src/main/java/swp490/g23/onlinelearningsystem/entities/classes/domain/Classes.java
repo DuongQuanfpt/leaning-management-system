@@ -10,14 +10,13 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.ManyToAny;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.BaseEntity;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
+import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.util.EnumEntity.SettingStatusEnum;
 
 @Entity
@@ -44,4 +43,7 @@ public class Classes extends BaseEntity{
 
     @ManyToOne
     private Setting setting;
+
+    @ManyToOne
+    private User user;
 }
