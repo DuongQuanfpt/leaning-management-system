@@ -245,7 +245,7 @@ public class UserService implements IUserService {
             user.addRole(settingRepositories.findBySettingTitle(role));
         }
         userRepository.save(user);
-        return ResponseEntity.ok("Setting has been updated");
+        return ResponseEntity.ok("User has been updated");
     }
 
     @Override

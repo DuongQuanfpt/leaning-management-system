@@ -13,5 +13,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ClassFilterDTO {
     List <String> trainerFilter;
+    List <String> supporterFilter;
     List <String> statusFilter;
 }
