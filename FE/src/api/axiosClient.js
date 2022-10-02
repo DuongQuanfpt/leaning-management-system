@@ -37,20 +37,22 @@ axiosClient.interceptors.response.use(
   },
   async (error) => {
     // Handle exceptions/invalid logs here
-    const { message } = error.response.data
+    const { message } = error.response.data.error
 
     if (message === 'Missing auth token') {
       //Response return fail by not loggin yet
       //Then logout account and navigate to login page
       localStorage.removeItem('persist:root')
       history.push('/login')
+      window.location.reload()
       console.warn('Error 401', error)
     }
 
     if (message === 'Access denied') {
-      //Response return fail by account not have permission
+      //Response return fail by account not have permission to access
       //Then navigate to access denied page
       history.push('/access-denied')
+      window.location.reload()
       console.warn('Error 403', error)
     }
     return Promise.reject(error)

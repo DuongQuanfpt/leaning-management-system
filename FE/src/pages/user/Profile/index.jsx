@@ -1,17 +1,18 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { setProfile } from '~/redux/ProfileSlice/profileSlice'
+import Avatar from 'react-avatar-edit'
+import { CContainer, CRow, CCol, CForm, CButton } from '@coreui/react'
 
+import userApi from '~/api/profileApi'
+
+import ErrorMsg from '~/components/Common/ErrorMsg'
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 
-import { CContainer, CRow, CCol, CForm, CButton } from '@coreui/react'
 import avatar from '~/assets/images/profile/pic1.jpg'
-import { Link } from 'react-router-dom'
-import Avatar from 'react-avatar-edit'
-import ErrorMsg from '~/components/Common/ErrorMsg'
-import userApi from '~/api/userApi'
 
 const Profile = () => {
   const profileData = useSelector((state) => state.profile)
@@ -41,6 +42,7 @@ const Profile = () => {
 
   const handleCropAvatar = (view) => {
     setPreview(view)
+    console.log(preview)
   }
 
   const handleCloseAvatar = () => {
@@ -116,6 +118,7 @@ const Profile = () => {
   }
   const handleEdit = () => {
     setIsEditMode(true)
+    setError('')
   }
 
   return (
@@ -144,6 +147,7 @@ const Profile = () => {
                                   <Avatar
                                     width={200}
                                     height={200}
+                                    imageWidth={200}
                                     onCrop={handleCropAvatar}
                                     onClose={handleCloseAvatar}
                                     src={src}

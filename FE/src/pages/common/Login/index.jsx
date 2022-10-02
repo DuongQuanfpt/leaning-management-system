@@ -8,7 +8,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import ReCAPTCHA from 'react-google-recaptcha'
 import { GoogleLogin } from 'react-google-login'
 
-import userApi from '~/api/userApi'
+import userApi from '~/api/profileApi'
 import authApi from '~/api/authApi'
 
 import { setToken } from '~/redux/AuthSlice/authSlice'

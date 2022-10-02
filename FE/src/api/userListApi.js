@@ -8,34 +8,34 @@ const header = {
 
 const userListApi = {
   getFirstPage: (params) => {
-    const url = `/admin/user-list`
+    const url = `/api/user`
     return axiosClient.get(url, { ...header, params })
   },
 
   getPage: (params) => {
-    const url = `/admin/user-list`
+    const url = `/api/user`
     return axiosClient.get(url, { ...header, params })
   },
 
   getFilter: () => {
-    const url = `/admin/user-filter`
+    const url = `/api/user-filter`
     return axiosClient.get(url, header)
   },
 
   changeActive: (id) => {
-    const url = `/admin/user/status/${id}`
+    const url = `/api/user-status/${id}`
     return axiosClient.put(url, {}, header)
   },
 
   getDetail: (id) => {
-    const url = `/admin/user/${id}`
+    const url = `/api/user/${id}`
     return axiosClient.get(url, header)
   },
 
-  changeDetail: (id, params) => {
-    const url = `/admin/user/${id}`
-    return axiosClient.put(url, params, header)
-  },
+  // changeDetail: (id, params) => {
+  //   const url = `/api/user/${id}`
+  //   return axiosClient.put(url, params, header)
+  // },
 }
 
 export default userListApi

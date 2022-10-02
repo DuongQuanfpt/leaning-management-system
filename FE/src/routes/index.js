@@ -30,6 +30,7 @@ const PageNotFound = lazy(() => import('~/pages/common/PageNotFound'))
 
 // Common routes
 const commonRoutes = [
+  { path: '*', component: HomePage },
   { path: '/', component: HomePage },
   { path: '/login', component: Login },
   { path: '/forget-password', component: ForgetPassword },
@@ -40,12 +41,15 @@ const commonRoutes = [
   { path: '/404', component: PageNotFound },
   { path: '/access-denied', component: AccessDenied },
 ]
-
-// Admin routes
-const adminRoutes = [
+// User routes
+const userRoutes = [
   { path: '/dashboard', component: Dashboard },
   { path: '/profile', component: Profile },
   { path: '/change-password', component: ChangePassword },
+]
+
+// Admin routes
+const adminRoutes = [
   { path: '/setting-list', component: SettingList },
   { path: '/setting-detail/:id', component: SettingDetail },
   { path: '/user-list', component: UserList },
@@ -69,4 +73,4 @@ const trainerRoutes = []
 // Trainee routes
 const traineeRoutes = []
 
-export { commonRoutes, adminRoutes, managerRoutes, supporterRoutes, trainerRoutes, traineeRoutes }
+export { commonRoutes, userRoutes, adminRoutes, managerRoutes, supporterRoutes, trainerRoutes, traineeRoutes }
