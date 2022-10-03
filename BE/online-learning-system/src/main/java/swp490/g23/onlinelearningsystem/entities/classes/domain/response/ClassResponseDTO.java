@@ -18,4 +18,8 @@ public class ClassResponseDTO {
     private SettingStatusEnum status;
 
     private String description;
+
+    private String trainer;
+
+    private String supporter;
 }

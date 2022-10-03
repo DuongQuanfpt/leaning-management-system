@@ -135,6 +135,8 @@ public class ClassService implements IClassService{
         responseDTO.setCode(entity.getCode());
         responseDTO.setDescription(entity.getDescription());
         responseDTO.setStatus(entity.getStatus());
+        responseDTO.setTrainer(entity.getUser().getUsername());
+        responseDTO.setSupporter(entity.getUser().getUsername());
         return responseDTO;
     }
 }

@@ -9,6 +9,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
+import swp490.g23.onlinelearningsystem.entities.classes.repositories.ClassRepositories;
 import swp490.g23.onlinelearningsystem.entities.permission.domain.SettingPermission;
 import swp490.g23.onlinelearningsystem.entities.permission.repositories.PermissionRepositories;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
@@ -29,6 +31,9 @@ public class DbInit {
 
         @Autowired
         private PermissionRepositories permissionRepositories;
+
+        @Autowired
+        private ClassRepositories classRepositories;
 
         @PostConstruct // Create User on app startup
         private void postConstruct() {
@@ -129,6 +134,12 @@ public class DbInit {
                 defaultUser.addRole(settingRepositories.findActiveSettingByValue("ROLE_TRAINEE"));
                 userRepository.saveAll(List.of(defaultUser, u1, u2, u3, u4, u5));
 
+                //create class
+                Classes defailtClass = new Classes((long) 1, "SWP390",SettingStatusEnum.ACTIVE, "Web project", trainerRole, u4);
+                Classes c1 = new Classes((long) 2, "LAB202",SettingStatusEnum.ACTIVE, "Lab Java", trainerRole, u4);
+                Classes c2 = new Classes((long) 3, "SWP390",SettingStatusEnum.INACTIVE, "Web project", trainerRole, u4);
+                Classes c3 = new Classes((long) 4, "SWP390",SettingStatusEnum.ACTIVE, "Web project", trainerRole, u4);
+                classRepositories.saveAll(List.of(defailtClass, c1, c2, c3));
         }
 
 }
