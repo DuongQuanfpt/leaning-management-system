@@ -110,6 +110,10 @@ public class DbInit {
                                 "description ", "1",
                                 typeScreen);
 
+                Setting subjectsStatus = new Setting("Subject Status", "/api/subjects-status", StatusEnum.ACTIVE,
+                                "description ", "1",
+                                typeScreen);
+
                 // create test setting
                 Setting test3 = new Setting("test3", "TEST3", StatusEnum.INACTIVE, "description for test", "2",
                                 typeTest);
@@ -134,7 +138,8 @@ public class DbInit {
                 settingRepositories.saveAll(
                                 List.of(typeScreen, typeRole, adminRole, traineeRole, managerRole, supporterRole,
                                                 trainerRole, expertRole,
-                                                typeTest, setting, settingFilter, settingStatus, subjects, user,
+                                                typeTest, setting, settingFilter, settingStatus, subjects,
+                                                subjectsStatus, user,
                                                 userFilter, userStatus, test3,
                                                 test4));
 
@@ -177,9 +182,24 @@ public class DbInit {
                 adminSubjects.setCanEdit(true);
                 adminSubjects.setCanGetAll(true);
 
+                SettingPermission adminSubjectsStatus = new SettingPermission();
+                adminSubjectsStatus.setScreen(subjectsStatus);
+                adminSubjectsStatus.setRole(adminRole);
+                adminSubjectsStatus.setCanEdit(true);
+
+                SettingPermission managerSubjects = new SettingPermission();
+                managerSubjects.setScreen(subjects);
+                managerSubjects.setRole(managerRole);
+                managerSubjects.setCanGetAll(true);
+
+                SettingPermission managerSubjectsStatus = new SettingPermission();
+                managerSubjectsStatus.setScreen(subjectsStatus);
+                managerSubjectsStatus.setRole(managerRole);
+                managerSubjectsStatus.setCanEdit(true);
+
                 permissionRepositories.saveAll(List.of(adminSetting,
                                 adminSettingFilter, adminSettingStatus, adminUser, adminUserFilter, adminUserStatus,
-                                adminSubjects));
+                                adminSubjects,adminSubjectsStatus, managerSubjects, managerSubjectsStatus));
         }
 
         public void loadUser() {

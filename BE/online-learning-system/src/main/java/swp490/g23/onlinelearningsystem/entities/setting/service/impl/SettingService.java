@@ -79,6 +79,7 @@ public class SettingService implements ISettingService {
     public ResponseEntity<SettingFilterDTO> getFilter() {
 
         List<TypeResponseDTO> list = new ArrayList<>();
+       
         for (Setting setting : settingRepositories.findAllType()) {
             list.add(new TypeResponseDTO(setting.getSettingTitle(), setting.getSettingValue()));
         }
