@@ -9,6 +9,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
+import swp490.g23.onlinelearningsystem.entities.classes.repositories.ClassRepositories;
 import swp490.g23.onlinelearningsystem.entities.permission.domain.SettingPermission;
 import swp490.g23.onlinelearningsystem.entities.permission.repositories.PermissionRepositories;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
@@ -36,6 +38,9 @@ public class DbInit {
         @Autowired
         private PermissionRepositories permissionRepositories;
 
+        @Autowired
+        private ClassRepositories classRepositories;
+
         @PostConstruct // Create User on app startup
         private void postConstruct() {
 
@@ -47,6 +52,8 @@ public class DbInit {
 
                 // loadSubject
                 loadSubject();
+
+                loadClass();
 
         }
 
@@ -235,4 +242,11 @@ public class DbInit {
 
                 userRepository.saveAll(List.of(defaultUser, u1, u2, u3, u4, u5, u6));
         }
+        public void loadClass(){
+
+                Classes defailtClass = new Classes((long) 1, "SWP390",StatusEnum.ACTIVE, "Web project", settingRepositories.findBySettingValue("TEST3"), userRepository.findByEmail("quan4@doivl.com").get());
+                classRepositories.saveAll(List.of(defailtClass));
+        }
+        //create class
+                
 }
