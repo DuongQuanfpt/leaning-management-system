@@ -27,6 +27,7 @@ import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.BaseEntity;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
+import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
 import swp490.g23.onlinelearningsystem.util.EnumEntity.UserStatusEnum;
 
 @Entity
@@ -75,6 +76,13 @@ public class User extends BaseEntity implements UserDetails {
         this.email = email;
         this.password = password;
     }
+
+    @OneToMany(mappedBy = "manager")
+	private List<Subject> managedSubject = new ArrayList<>();
+
+    @OneToMany(mappedBy = "expert")
+	private List<Subject> expertSubject = new ArrayList<>();
+
 
     public User(String email, String password, Setting settings) {
         this.email = email;
