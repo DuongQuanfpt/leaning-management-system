@@ -59,7 +59,7 @@ public class AdminController {
 	}
 
 	@PutMapping(value = "/user/{id}")
-	public ResponseEntity<String> viewSetting(@PathVariable("id") Long id, @RequestBody UserRequestDTO requestDTO) {
+	public ResponseEntity<String> updateUser(@PathVariable("id") Long id, @RequestBody UserRequestDTO requestDTO) {
 
 		return userService.updateUser(requestDTO,id);
 	}

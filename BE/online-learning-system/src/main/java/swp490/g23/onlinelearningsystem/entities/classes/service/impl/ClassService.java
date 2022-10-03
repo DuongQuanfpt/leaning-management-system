@@ -17,7 +17,6 @@ import swp490.g23.onlinelearningsystem.entities.classes.domain.response.ClassRes
 import swp490.g23.onlinelearningsystem.entities.classes.domain.response.ClassResponsePaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.classes.repositories.ClassRepositories;
 import swp490.g23.onlinelearningsystem.entities.classes.service.IClassService;
-import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
@@ -75,9 +74,14 @@ public class ClassService implements IClassService{
     @Override
     public ResponseEntity<String> updateClass(ClassRequestDTO dto, Long id) {
         Classes clazz = classRepositories.findById(id).get();
-
+        String trainerEmail = dto.getTrainer();
+        String supporterEmail = dto.getSupporter();
+        User userTrainer = userRepository.findByEmail(trainerEmail).get();
+        User userSupportter = userRepository.findByEmail(supporterEmail).get();
+        
         clazz.setCode(dto.getCode());
-
+        clazz.setUser(userSupportter);
+        clazz.setUser(userTrainer);
 
         classRepositories.save(clazz);
         return ResponseEntity.ok("Class has been udated");
@@ -97,7 +101,17 @@ public class ClassService implements IClassService{
 
     @Override
     public ResponseEntity<ClassFilterDTO> getFilter() {
-        List<String> list = new ArrayList<>();
+        List<String> listTrainer = new ArrayList<>();
+        List<String> listSupporter = new ArrayList<>();
+        List<User> users = userRepository.findAll();
+        for(User user : users) {
+            if (user.getSettings().contains(settingRepositories.findBySettingValue("ROLE_TRAINER"))){
+                listTrainer.add(user.getEmail());
+            }
+            if (user.getSettings().contains(settingRepositories.findBySettingValue("ROLE_SUPPORTER"))){
+                listSupporter.add(user.getEmail());
+            }
+        }
         // List<Setting> settings = new ArrayList<>();
         // settings.add(settingRepositories.findBySettingValue("ROLE_TRAINER"));
 
@@ -107,7 +121,8 @@ public class ClassService implements IClassService{
 
         ClassFilterDTO filterDTO = new ClassFilterDTO();
         filterDTO.setStatusFilter(List.of(StatusEnum.ACTIVE.toString(), StatusEnum.INACTIVE.toString()));
-        filterDTO.setTrainerFilter(list);
+        filterDTO.setTrainerFilter(listTrainer);
+        filterDTO.setSupporterFilter(listSupporter);
         
         return ResponseEntity.ok(filterDTO);
     }

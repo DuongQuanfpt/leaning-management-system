@@ -20,4 +20,6 @@ public class ClassRequestDTO {
     private String description;
 
     private String trainer;
+
+    private String supporter;
 }

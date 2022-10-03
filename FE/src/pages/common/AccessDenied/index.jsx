@@ -23,9 +23,9 @@ const AccessDenied = () => {
                 You may not be logged in or your account does not have permission to access this page
               </p>
               <div className="">
-                <Link to="/login">
+                <Link to="/">
                   <CButton name="submit" type="submit" value="Submit" className="btn button-md m-t15" color="warning">
-                    Go to Login
+                    Go to Homepage
                   </CButton>
                 </Link>
               </div>
