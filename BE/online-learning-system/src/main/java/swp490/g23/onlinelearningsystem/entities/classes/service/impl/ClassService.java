@@ -80,8 +80,8 @@ public class ClassService implements IClassService{
         User userSupportter = userRepository.findByEmail(supporterEmail).get();
         
         clazz.setCode(dto.getCode());
-        clazz.setUser(userSupportter);
-        clazz.setUser(userTrainer);
+        clazz.setUserSupporter(userSupportter);
+        clazz.setUserTrainer(userTrainer);
 
         classRepositories.save(clazz);
         return ResponseEntity.ok("Class has been udated");
@@ -133,8 +133,8 @@ public class ClassService implements IClassService{
         responseDTO.setCode(entity.getCode());
         responseDTO.setDescription(entity.getDescription());
         responseDTO.setStatus(entity.getStatus());
-        responseDTO.setTrainer(entity.getUser().getUsername());
-        responseDTO.setSupporter(entity.getUser().getUsername());
+        responseDTO.setTrainer(entity.getUserTrainer().getUsername());
+        responseDTO.setSupporter(entity.getUserSupporter().getUsername());
         return responseDTO;
     }
 }
