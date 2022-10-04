@@ -20,6 +20,7 @@ import io.jsonwebtoken.Claims;
 import net.bytebuddy.utility.RandomString;
 import swp490.g23.onlinelearningsystem.entities.email.EmailDetails;
 import swp490.g23.onlinelearningsystem.entities.email.service.impl.EmailService;
+import swp490.g23.onlinelearningsystem.entities.s3amazon.service.impl.S3Service;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
@@ -32,17 +33,22 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserRespons
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.entities.user.service.IUserService;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoUserException;
-import swp490.g23.onlinelearningsystem.security.jwt.JwtTokenUtil;
+import swp490.g23.onlinelearningsystem.util.JwtTokenUtil;
 import swp490.g23.onlinelearningsystem.util.EnumEntity.UserStatusEnum;
 
 @Service
 public class UserService implements IUserService {
 
+    // Autowired
+    // private AmazonS3Client ;
     @Autowired
     private SettingRepositories settingRepositories;
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private S3Service s3Service;
 
     @Autowired
     private UserRepository userRepository;
@@ -121,7 +127,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponseEntity<UserResponseDTO> updateUserProfile(String fullName, String avatarUrl, String mobile,
+    public ResponseEntity<UserResponseDTO> updateUserProfile(String fullName, String bas64Avatar, String mobile,
             Long userId) {
         if (!userRepository.findById(userId).isPresent()) {
             throw new NoUserException();
@@ -129,7 +135,10 @@ public class UserService implements IUserService {
         User user = userRepository.findById(userId).get();
         user.setMobile(mobile);
         user.setFullName(fullName);
+
+        String avatarUrl=s3Service.saveImg(bas64Avatar, user.getEmail().split("@")[0]);
         user.setAvatar_url(avatarUrl);
+
         userRepository.save(user);
 
         return ResponseEntity.ok(toDTO(user));
@@ -182,24 +191,6 @@ public class UserService implements IUserService {
             user.addRole(settingRepositories.findActiveSettingByValue(role));
         }
         return user;
-    }
-
-    // Convert DTO to Entity
-    public User toEntity(UserRequestDTO requestDTO) {
-        User entity = new User();
-
-        if (requestDTO.getUserId() != null) {
-            entity.setUserId(requestDTO.getUserId());
-        }
-        entity.setFullName(requestDTO.getFullName());
-        entity.setEmail(requestDTO.getEmail());
-        entity.setMobile(requestDTO.getMobile());
-        entity.setPassword(requestDTO.getPassword());
-        entity.setNote(requestDTO.getNote());
-        entity.setStatus(requestDTO.getStatus());
-        entity.setAvatar_url(requestDTO.getAvatar_url());
-
-        return entity;
     }
 
     @Override
@@ -273,6 +264,10 @@ public class UserService implements IUserService {
         filterDTO.setRoleFilter(list);
         
         return ResponseEntity.ok(filterDTO);
+    }
+
+    public String uploadImageS3(String imgBase64){
+        return null;
     }
 
     // Convert Entity to DTO

@@ -198,6 +198,7 @@ public class DbInit {
                 managerSubjects.setScreen(subjects);
                 managerSubjects.setRole(managerRole);
                 managerSubjects.setCanGetAll(true);
+                managerSubjects.setCanEdit(true);
 
                 SettingPermission managerSubjectsStatus = new SettingPermission();
                 managerSubjectsStatus.setScreen(subjectsStatus);
@@ -206,7 +207,7 @@ public class DbInit {
 
                 permissionRepositories.saveAll(List.of(adminSetting,
                                 adminSettingFilter, adminSettingStatus, adminUser, adminUserFilter, adminUserStatus,
-                                adminSubjects,adminSubjectsStatus, managerSubjects, managerSubjectsStatus));
+                                adminSubjects, adminSubjectsStatus, managerSubjects, managerSubjectsStatus));
         }
 
         public void loadUser() {
@@ -236,17 +237,19 @@ public class DbInit {
 
                 u5.addRole(settingRepositories.findActiveSettingByValue(RoleEnum.ROLE_MANAGER.toString()));
                 u5.addRole(settingRepositories.findActiveSettingByValue(RoleEnum.ROLE_SUPPORTER.toString()));
-                u5.addRole(settingRepositories.findActiveSettingByValue(RoleEnum.ROLE_TRAINEE.toString()));
                 u5.addRole(settingRepositories.findActiveSettingByValue(RoleEnum.ROLE_TRAINER.toString()));
                 u5.addRole(settingRepositories.findActiveSettingByValue(RoleEnum.ROLE_TRAINER.toString()));
 
                 userRepository.saveAll(List.of(defaultUser, u1, u2, u3, u4, u5, u6));
         }
-        public void loadClass(){
 
-                Classes defailtClass = new Classes((long) 1, "SWP390",StatusEnum.ACTIVE, "Web project", settingRepositories.findBySettingValue("TEST3"), userRepository.findByEmail("quan4@doivl.com").get());
+        public void loadClass() {
+
+                Classes defailtClass = new Classes((long) 1, "SWP390", StatusEnum.ACTIVE, "Web project",
+                                settingRepositories.findBySettingValue("TEST3"),
+                                userRepository.findByEmail("quan4@doivl.com").get());
                 classRepositories.saveAll(List.of(defailtClass));
         }
-        //create class
-                
+        // create classsssss
+
 }
