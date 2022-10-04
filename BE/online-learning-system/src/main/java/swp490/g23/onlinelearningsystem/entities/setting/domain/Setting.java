@@ -25,7 +25,7 @@ import swp490.g23.onlinelearningsystem.entities.BaseEntity;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.permission.domain.SettingPermission;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
-import swp490.g23.onlinelearningsystem.util.EnumEntity.SettingStatusEnum;
+import swp490.g23.onlinelearningsystem.util.EnumEntity.StatusEnum;
 
 @Entity
 @Table(name = "setting")
@@ -47,7 +47,7 @@ public class Setting extends BaseEntity {
 
     @Column
     @Enumerated(EnumType.STRING)
-    private SettingStatusEnum status;
+    private StatusEnum status;
 
     @Column
     private String description;
@@ -81,7 +81,7 @@ public class Setting extends BaseEntity {
         this.description = description;
     }
 
-    public Setting(String settingTitle, String settingValue, SettingStatusEnum status, String description,
+    public Setting(String settingTitle, String settingValue, StatusEnum status, String description,
             String displayOrder, Setting type) {
         this.settingTitle = settingTitle;
         this.settingValue = settingValue;

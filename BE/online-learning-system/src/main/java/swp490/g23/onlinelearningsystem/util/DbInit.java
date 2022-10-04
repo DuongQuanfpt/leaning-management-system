@@ -9,18 +9,26 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
+import swp490.g23.onlinelearningsystem.entities.classes.repositories.ClassRepositories;
 import swp490.g23.onlinelearningsystem.entities.permission.domain.SettingPermission;
 import swp490.g23.onlinelearningsystem.entities.permission.repositories.PermissionRepositories;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
+import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
+import swp490.g23.onlinelearningsystem.entities.subject.repositories.SubjecRepository;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.util.EnumEntity.RoleEnum;
-import swp490.g23.onlinelearningsystem.util.EnumEntity.SettingStatusEnum;
+import swp490.g23.onlinelearningsystem.util.EnumEntity.StatusEnum;
 import swp490.g23.onlinelearningsystem.util.EnumEntity.UserStatusEnum;
 
 @Component
 public class DbInit {
+
+        @Autowired
+        private SubjecRepository subjecRepository;
+
         @Autowired
         private UserRepository userRepository;
 
@@ -30,63 +38,117 @@ public class DbInit {
         @Autowired
         private PermissionRepositories permissionRepositories;
 
+        @Autowired
+        private ClassRepositories classRepositories;
+
         @PostConstruct // Create User on app startup
         private void postConstruct() {
-                PasswordEncoder encoder = new BCryptPasswordEncoder();
 
+                // load Setting
+                loadSetting();
+
+                // load user
+                loadUser();
+
+                // loadSubject
+                loadSubject();
+
+                loadClass();
+
+        }
+
+        public void loadSubject() {
+                Subject s1 = new Subject("CODE_A", "Subject A", StatusEnum.ACTIVE,
+                                userRepository.findByEmail("quan1@doivl.com").get());
+                Subject s2 = new Subject("CODE_B", "Subject B", StatusEnum.ACTIVE,
+                                userRepository.findByEmail("quan1@doivl.com").get());
+
+                Subject s3 = new Subject("CODE_C", "Subject C", StatusEnum.ACTIVE,
+                                userRepository.findByEmail("hoangnhhe141380@fpt.edu.vn").get());
+
+                Subject s4 = new Subject("CODE_D", "Subject D", StatusEnum.ACTIVE,
+                                userRepository.findByEmail("hoangnhhe141380@fpt.edu.vn").get());
+
+                Subject s5 = new Subject("CODE_E", "Subject E", StatusEnum.ACTIVE,
+                                userRepository.findByEmail("quan1@doivl.com").get());
+                subjecRepository.saveAll(List.of(s1, s2, s3, s4, s5));
+        }
+
+        public void loadSetting() {
                 // create type setting
                 Setting typeRole = new Setting("User Role", "TYPE_ROLE", "contain settings relate to user role");
-                typeRole.setStatus(SettingStatusEnum.ACTIVE);
+                typeRole.setStatus(StatusEnum.ACTIVE);
 
                 Setting typeTest = new Setting("Test", "TYPE_TEST", "type for test");
-                typeRole.setStatus(SettingStatusEnum.ACTIVE);
+                typeRole.setStatus(StatusEnum.ACTIVE);
 
                 Setting typeScreen = new Setting("System Screen", "TYPE_SCREEN",
                                 "contain setting for each screen in system");
-                typeRole.setStatus(SettingStatusEnum.ACTIVE);
+                typeRole.setStatus(StatusEnum.ACTIVE);
 
                 // create screen setting
 
-                Setting setting = new Setting("Setting List ", "/api/setting", SettingStatusEnum.ACTIVE,
+                Setting setting = new Setting("Setting List ", "/api/setting", StatusEnum.ACTIVE,
                                 "description",
                                 "1",
                                 typeScreen);
 
-                Setting settingFilter = new Setting("User List", "/api/setting-filter", SettingStatusEnum.ACTIVE,
+                Setting settingFilter = new Setting("Setting Filter", "/api/setting-filter", StatusEnum.ACTIVE,
                                 "description ", "1",
                                 typeScreen);
 
-                Setting settingStatus = new Setting("User List", "/api/setting-status", SettingStatusEnum.ACTIVE,
+                Setting settingStatus = new Setting("Setting Status", "/api/setting-status", StatusEnum.ACTIVE,
                                 "description ", "1",
                                 typeScreen);
 
-                Setting screen4 = new Setting("PermissionTest", "/user/authorities", SettingStatusEnum.ACTIVE,
+                Setting user = new Setting("User List", "/api/user", StatusEnum.ACTIVE,
+                                "description ", "1",
+                                typeScreen);
+
+                Setting userStatus = new Setting("User Status", "/api/user-status", StatusEnum.ACTIVE,
+                                "description ", "1",
+                                typeScreen);
+
+                Setting userFilter = new Setting("User Filter", "/api/user-filter", StatusEnum.ACTIVE,
+                                "description ", "1",
+                                typeScreen);
+
+                Setting subjects = new Setting("Subject List", "/api/subjects", StatusEnum.ACTIVE,
+                                "description ", "1",
+                                typeScreen);
+
+                Setting subjectsStatus = new Setting("Subject Status", "/api/subjects-status", StatusEnum.ACTIVE,
                                 "description ", "1",
                                 typeScreen);
 
                 // create test setting
-                Setting test3 = new Setting("test3", "TEST3", SettingStatusEnum.INACTIVE, "description for test", "2",
+                Setting test3 = new Setting("test3", "TEST3", StatusEnum.INACTIVE, "description for test", "2",
                                 typeTest);
 
-                Setting test4 = new Setting("test4", "TEST4", SettingStatusEnum.INACTIVE, "description for test", "3",
+                Setting test4 = new Setting("test4", "TEST4", StatusEnum.INACTIVE, "description for test", "3",
                                 typeTest);
 
                 // create role setting
-                Setting adminRole = new Setting("admin", "ROLE_ADMIN", SettingStatusEnum.ACTIVE,
+                Setting adminRole = new Setting("admin", "ROLE_ADMIN", StatusEnum.ACTIVE,
                                 "description for admin", "1",
                                 typeRole);
-                Setting traineeRole = new Setting("trainee", "ROLE_TRAINEE", SettingStatusEnum.ACTIVE,
+                Setting traineeRole = new Setting("trainee", "ROLE_TRAINEE", StatusEnum.ACTIVE,
                                 "description for trainee", "1", typeRole);
-                Setting managerRole = new Setting("manager", "ROLE_MANAGER", SettingStatusEnum.ACTIVE,
+                Setting managerRole = new Setting("manager", "ROLE_MANAGER", StatusEnum.ACTIVE,
                                 "description for manager", "1", typeRole);
-                Setting supporterRole = new Setting("supporter", "ROLE_SUPPORTER", SettingStatusEnum.ACTIVE,
+                Setting supporterRole = new Setting("supporter", "ROLE_SUPPORTER", StatusEnum.ACTIVE,
                                 "description for supporter", "1", typeRole);
-                Setting trainerRole = new Setting("trainer", "ROLE_TRAINER", SettingStatusEnum.ACTIVE,
+                Setting trainerRole = new Setting("trainer", "ROLE_TRAINER", StatusEnum.ACTIVE,
                                 "description for trainer", "1", typeRole);
+                Setting expertRole = new Setting("expert", "ROLE_EXPERT", StatusEnum.ACTIVE,
+                                "description for expert", "1", typeRole);
                 settingRepositories.saveAll(
                                 List.of(typeScreen, typeRole, adminRole, traineeRole, managerRole, supporterRole,
-                                                trainerRole,
-                                                typeTest, setting, settingFilter, settingStatus,screen4, test3, test4));
+                                                trainerRole, expertRole,
+                                                typeTest, setting, settingFilter, settingStatus, subjects,
+                                                subjectsStatus, user,
+                                                userFilter, userStatus, test3,
+                                                test4));
 
                 // create permission
                 SettingPermission adminSetting = new SettingPermission();
@@ -95,24 +157,65 @@ public class DbInit {
                 adminSetting.setCanGetAll(true);
                 adminSetting.setCanEdit(true);
 
+                SettingPermission adminSettingFilter = new SettingPermission();
+                adminSettingFilter.setScreen(settingFilter);
+                adminSettingFilter.setRole(adminRole);
+                adminSettingFilter.setCanGetAll(true);
+
+                SettingPermission adminSettingStatus = new SettingPermission();
+                adminSettingStatus.setScreen(settingStatus);
+                adminSettingStatus.setRole(adminRole);
+                adminSettingStatus.setCanEdit(true);
+
                 SettingPermission adminUser = new SettingPermission();
-                adminUser.setScreen(settingFilter);
+                adminUser.setScreen(user);
                 adminUser.setRole(adminRole);
                 adminUser.setCanGetAll(true);
+                adminUser.setCanEdit(true);
 
-                SettingPermission permissionTest = new SettingPermission();
-                permissionTest.setScreen(settingStatus);
-                permissionTest.setRole(adminRole);
-                permissionTest.setCanEdit(true);
+                SettingPermission adminUserFilter = new SettingPermission();
+                adminUserFilter.setScreen(userFilter);
+                adminUserFilter.setRole(adminRole);
+                adminUserFilter.setCanGetAll(true);
 
-                permissionRepositories.saveAll(List.of(adminSetting, adminUser, permissionTest));
+                SettingPermission adminUserStatus = new SettingPermission();
+                adminUserStatus.setScreen(userStatus);
+                adminUserStatus.setRole(adminRole);
+                adminUserStatus.setCanEdit(true);
 
-                // create user
+                SettingPermission adminSubjects = new SettingPermission();
+                adminSubjects.setScreen(subjects);
+                adminSubjects.setRole(adminRole);
+                adminSubjects.setCanEdit(true);
+                adminSubjects.setCanGetAll(true);
+
+                SettingPermission adminSubjectsStatus = new SettingPermission();
+                adminSubjectsStatus.setScreen(subjectsStatus);
+                adminSubjectsStatus.setRole(adminRole);
+                adminSubjectsStatus.setCanEdit(true);
+
+                SettingPermission managerSubjects = new SettingPermission();
+                managerSubjects.setScreen(subjects);
+                managerSubjects.setRole(managerRole);
+                managerSubjects.setCanGetAll(true);
+
+                SettingPermission managerSubjectsStatus = new SettingPermission();
+                managerSubjectsStatus.setScreen(subjectsStatus);
+                managerSubjectsStatus.setRole(managerRole);
+                managerSubjectsStatus.setCanEdit(true);
+
+                permissionRepositories.saveAll(List.of(adminSetting,
+                                adminSettingFilter, adminSettingStatus, adminUser, adminUserFilter, adminUserStatus,
+                                adminSubjects,adminSubjectsStatus, managerSubjects, managerSubjectsStatus));
+        }
+
+        public void loadUser() {
+                PasswordEncoder encoder = new BCryptPasswordEncoder();
                 User defaultUser = new User("xucxichbo@doivl.com", encoder.encode("123456"));
                 User u1 = new User("quan1@doivl.com", encoder.encode("123456"),
                                 settingRepositories.findActiveSettingByValue(RoleEnum.ROLE_MANAGER.toString()));
 
-                User u2 = new User("quan2@doivl.com", encoder.encode("123456"),
+                User u2 = new User("quan22@doivl.com", encoder.encode("123456"),
                                 settingRepositories.findActiveSettingByValue(RoleEnum.ROLE_SUPPORTER.toString()));
 
                 User u3 = new User("quan3@doivl.com", encoder.encode("123456"),
@@ -124,11 +227,26 @@ public class DbInit {
                 User u5 = new User("hoangnhhe141380@fpt.edu.vn", encoder.encode("123456"),
                                 settingRepositories.findActiveSettingByValue(RoleEnum.ROLE_ADMIN.toString()));
 
+                User u6 = new User("quan6@doivl.com", encoder.encode("123456"),
+                                settingRepositories.findActiveSettingByValue(RoleEnum.ROLE_EXPERT.toString()));
+
                 defaultUser.setStatus(UserStatusEnum.ACTIVE);
                 defaultUser.addRole(settingRepositories.findActiveSettingByValue("ROLE_ADMIN"));
                 defaultUser.addRole(settingRepositories.findActiveSettingByValue("ROLE_TRAINEE"));
-                userRepository.saveAll(List.of(defaultUser, u1, u2, u3, u4, u5));
 
+                u5.addRole(settingRepositories.findActiveSettingByValue(RoleEnum.ROLE_MANAGER.toString()));
+                u5.addRole(settingRepositories.findActiveSettingByValue(RoleEnum.ROLE_SUPPORTER.toString()));
+                u5.addRole(settingRepositories.findActiveSettingByValue(RoleEnum.ROLE_TRAINEE.toString()));
+                u5.addRole(settingRepositories.findActiveSettingByValue(RoleEnum.ROLE_TRAINER.toString()));
+                u5.addRole(settingRepositories.findActiveSettingByValue(RoleEnum.ROLE_TRAINER.toString()));
+
+                userRepository.saveAll(List.of(defaultUser, u1, u2, u3, u4, u5, u6));
         }
+        public void loadClass(){
 
+                Classes defailtClass = new Classes((long) 1, "SWP390",StatusEnum.ACTIVE, "Web project", settingRepositories.findBySettingValue("TEST3"), userRepository.findByEmail("quan4@doivl.com").get(), userRepository.findByEmail("quan2@doivl.com").get()) ;
+                classRepositories.saveAll(List.of(defailtClass));
+        }
+        //create class
+                
 }

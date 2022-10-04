@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import swp490.g23.onlinelearningsystem.util.EnumEntity.SettingStatusEnum;
+import swp490.g23.onlinelearningsystem.util.EnumEntity.StatusEnum;
 
 @Getter
 @Setter
@@ -15,9 +15,11 @@ public class ClassRequestDTO {
 
     private String code;
 
-    private SettingStatusEnum status;
+    private StatusEnum status;
 
     private String description;
 
     private String trainer;
+
+    private String supporter;
 }

@@ -30,8 +30,8 @@ public class AdminController {
 
 	@Autowired
 	private UserService userService;
-    
-    @GetMapping(value = "/") // API for registration
+
+	@GetMapping(value = "/") // API for registration
 	public String register() {
 		return "If u see this , u are a admin";
 	}
@@ -59,9 +59,9 @@ public class AdminController {
 	}
 
 	@PutMapping(value = "/user/{id}")
-	public ResponseEntity<String> viewSetting(@PathVariable("id") Long id, @RequestBody UserRequestDTO requestDTO) {
+	public ResponseEntity<String> updateUser(@PathVariable("id") Long id, @RequestBody UserRequestDTO requestDTO) {
 
-		return userService.updateUser(requestDTO,id);
+		return userService.updateUser(requestDTO, id);
 	}
 
 	@PutMapping(value = "/user-status/{id}")
