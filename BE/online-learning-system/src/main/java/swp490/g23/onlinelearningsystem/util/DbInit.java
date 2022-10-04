@@ -215,7 +215,7 @@ public class DbInit {
                 User u1 = new User("quan1@doivl.com", encoder.encode("123456"),
                                 settingRepositories.findActiveSettingByValue(RoleEnum.ROLE_MANAGER.toString()));
 
-                User u2 = new User("quan2@doivl.com", encoder.encode("123456"),
+                User u2 = new User("quan22@doivl.com", encoder.encode("123456"),
                                 settingRepositories.findActiveSettingByValue(RoleEnum.ROLE_SUPPORTER.toString()));
 
                 User u3 = new User("quan3@doivl.com", encoder.encode("123456"),
