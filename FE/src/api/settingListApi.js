@@ -7,10 +7,10 @@ const header = {
 }
 
 const settingListApi = {
-  getFirstPage: (params) => {
+  getAll: () => {
     const url = `/api/setting`
     console.log(header)
-    return axiosClient.get(url, { ...header, params })
+    return axiosClient.get(url, header)
   },
 
   getPage: (params) => {

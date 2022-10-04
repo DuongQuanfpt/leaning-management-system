@@ -13,8 +13,9 @@ const AdminHeaderDropdown = () => {
   const navigateTo = useNavigate()
   const handleLogout = () => {
     localStorage.removeItem('persist:root')
-    //Navigate to Homepage and reload
+    //Navigate to Login and reload
     navigateTo('/login')
+    navigateTo(0)
   }
   return (
     <CDropdown variant="nav-item">
@@ -22,9 +23,9 @@ const AdminHeaderDropdown = () => {
         <CAvatar src={profileData.avatar_url ?? avatar} size="md" />
       </CDropdownToggle>
       <CDropdownMenu className="pt-0" placement="bottom-end">
-        <CDropdownItem href="/dashboard">
+        <CDropdownItem href="/">
           <CIcon icon={cilUser} className="me-2" />
-          Dashboard
+          Homepage
         </CDropdownItem>
         <CDropdownItem href="/profile">
           <CIcon icon={cilSettings} className="me-2" />

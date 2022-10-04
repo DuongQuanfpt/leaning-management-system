@@ -7,7 +7,7 @@ import PopularCoursesSlider from '~/components/Homepage/PopularCoursesSlider'
 import OnlineCoursesCount from '~/components/Homepage/OnlineCoursesCount'
 import UpcomingEventSlider from '~/components/Homepage/UpcommingEventSlider'
 import PeopleFeedbackSlider from '~/components/Homepage/PeopleFeedbackSlider'
-import RecentNewsSlider from '~/components/Homepage/RecentNewsSliders'
+import ContactUs from '~/components/Homepage/ContactUs'
 import Footer from '~/components/Homepage/Footer'
 
 const HomePage = () => {
@@ -22,7 +22,7 @@ const HomePage = () => {
           <OnlineCoursesCount />
           <UpcomingEventSlider />
           <PeopleFeedbackSlider />
-          <RecentNewsSlider />
+          <ContactUs />
         </div>
       </div>
       <Footer />

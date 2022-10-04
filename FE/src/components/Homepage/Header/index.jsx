@@ -145,6 +145,7 @@ const Header = () => {
     localStorage.removeItem('persist:root')
     //Reload page
     navigateTo('/login')
+    navigateTo(0)
   }
 
   return (
