@@ -24,7 +24,7 @@ public class UserRequestDTO  {
 
     private String mobile;
 
-    private String avatar_url;
+    private String avatarBase64;
 
     private UserStatusEnum status;
 
