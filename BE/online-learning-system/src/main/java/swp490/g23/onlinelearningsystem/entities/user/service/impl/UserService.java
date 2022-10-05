@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.mail.MessagingException;
+import javax.persistence.TypedQuery;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -31,6 +32,7 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.response.Authenticat
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserListResponsePaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
+import swp490.g23.onlinelearningsystem.entities.user.repositories.criteria.UserRepositoriesCriteria;
 import swp490.g23.onlinelearningsystem.entities.user.service.IUserService;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoUserException;
 import swp490.g23.onlinelearningsystem.util.JwtTokenUtil;
@@ -55,6 +57,9 @@ public class UserService implements IUserService {
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+
+    @Autowired
+    private UserRepositoriesCriteria userCriteria;
 
     @Override
     public ResponseEntity<AuthenticatedResponseDTO> getAuthenticatedUser(Long id, List<Setting> roles) {
@@ -197,30 +202,30 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponseEntity<UserListResponsePaginateDTO> displayUsers(int limit, int currentPage) {
-        List<User> users = new ArrayList<>();
-        if (limit == 0 ) {
-            users = userRepository.findAll();   
-        } else {
-            Pageable pageable = PageRequest.of(currentPage - 1, limit, Sort.by(Sort.Direction.ASC, "userId"));
-            users = userRepository.findAll(pageable).getContent();
-        }
-        List<UserResponseDTO> result = new ArrayList<>();
+    public ResponseEntity<UserListResponsePaginateDTO> displayUsers(int limit, int currentPage, String keyword, String filterRole, String filterStatus) {
+        List<UserResponseDTO> users = new ArrayList<>();
+        TypedQuery<User> queryResult= userCriteria.displayUser(keyword, filterRole, filterStatus);
 
-        for (User user : users) {
-            result.add(toDTO(user));
+        int totalItem = queryResult.getResultList().size();
+        int totalPage ;
+        if (limit != 0 ) {
+            queryResult.setFirstResult((currentPage-1)*limit);
+            queryResult.setMaxResults(limit);
+            totalPage = (int) Math.ceil((double) totalItem / limit);
+        } else {
+            totalPage = 1;
+        }
+
+        for (User user : queryResult.getResultList()) {
+            users.add(toDTO(user));
         }
 
         UserListResponsePaginateDTO responseDTO = new UserListResponsePaginateDTO();
         responseDTO.setPage(currentPage);
-        responseDTO.setListResult(result);
-        if (limit == 0) {
-            responseDTO.setTotalPage(0);
-        } else{
-            responseDTO.setTotalPage((int) Math.ceil((double) userRepository.count() / limit));
-        }
-
-        responseDTO.setTotalItem(userRepository.count());
+        responseDTO.setTotalItem(totalItem);
+        responseDTO.setListResult(users);
+        responseDTO.setTotalPage(totalPage);
+        
         return ResponseEntity.ok(responseDTO);
     }
 
@@ -239,7 +244,6 @@ public class UserService implements IUserService {
             settings.add(settingRepositories.findBySettingValue(role));
         }
         user.setSettings(settings);
-
 
         userRepository.save(user);
         return ResponseEntity.ok("User has been updated");

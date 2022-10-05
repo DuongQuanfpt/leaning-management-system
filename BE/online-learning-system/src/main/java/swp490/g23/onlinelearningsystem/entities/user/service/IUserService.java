@@ -24,7 +24,7 @@ public interface IUserService {
 
     ResponseEntity<UserResponseDTO> updateUserProfile(String fullName,String bas64Avatar,String mobile,Long userId);///update user profile
 
-    ResponseEntity<UserListResponsePaginateDTO> displayUsers(int limit, int currentPage); 
+    ResponseEntity<UserListResponsePaginateDTO> displayUsers(int limit, int currentPage, String keyword, String filterRole, String filterStatus); 
 
     ResponseEntity<UserResponseDTO> viewUser(long id);
 

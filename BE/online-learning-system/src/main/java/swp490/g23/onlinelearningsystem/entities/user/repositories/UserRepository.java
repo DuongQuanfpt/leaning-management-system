@@ -22,7 +22,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = "SELECT * FROM user WHERE email= ?1",nativeQuery = true)
     User findUserWithEmail(String email);
 
-    @Query(value = "SELECT u FROM User u WHERE CONCAT(u.fullName, u.email, u.mobile) LIKE ?1")
-    List<User> searchUser(Pageable pageable, String keyword);
+    // @Query(value = "SELECT u FROM User u WHERE CONCAT(u.fullName, u.email, u.mobile) LIKE ?1")
+    // List<User> searchUser(Pageable pageable, String keyword);
     // List<User> findBySettings(List<Setting> settings);
 }
