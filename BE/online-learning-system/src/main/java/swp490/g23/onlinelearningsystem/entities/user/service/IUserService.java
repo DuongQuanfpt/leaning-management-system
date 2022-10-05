@@ -33,5 +33,5 @@ public interface IUserService {
     ResponseEntity<String> updateStatus(Long id);
 
     ResponseEntity<UserFIlterDTO> getFilter();
-
+    
 }
