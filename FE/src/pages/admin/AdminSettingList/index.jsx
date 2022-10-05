@@ -82,9 +82,6 @@ const AdminSettingList = () => {
       default:
         break
     }
-    console.log(column)
-    console.log(listSettingFetched)
-    console.log(listSettingDisplay)
   }
 
   const handleFilterStatus = (item) => {

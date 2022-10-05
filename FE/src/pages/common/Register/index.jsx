@@ -11,12 +11,22 @@ import { CButton } from '@coreui/react'
 import logoWhite2 from '~/assets/images/logo-white-2.png'
 import bannerImg from '~/assets/images/background/bg2.jpg'
 import axios from 'axios'
+import GoogleLogin from 'react-google-login'
+import authApi from '~/api/authApi'
+import { useDispatch } from 'react-redux'
+import userApi from '~/api/profileApi'
+import { setProfile } from '~/redux/ProfileSlice/profileSlice'
+import { setToken } from '~/redux/AuthSlice/authSlice'
 
 const Register = () => {
+  const clientId = '497995951211-5kk8b1qf0n1cjg5f97t2t0dkpv47arvs.apps.googleusercontent.com'
+
   const navigateTo = useNavigate()
 
-  const [isEmailAvailable, setIsEmailAvailable] = useState(false)
+  const dispatch = useDispatch()
+
   const [verified, setVerified] = useState(false)
+  const [error, setError] = useState('')
 
   const schema = Yup.object().shape({
     name: Yup.string().required().min(3),
@@ -45,8 +55,41 @@ const Register = () => {
       console.log(response)
       navigateTo('/register-processed')
     } catch (error) {
-      setIsEmailAvailable(true)
+      setError('Email is available')
     }
+  }
+
+  const onSuccess = async (res) => {
+    const data = {
+      idToken: res.tokenId,
+      clientId: clientId,
+    }
+
+    try {
+      //Get google account token
+      await authApi
+        .getLoginGoogle(data)
+        .then((response) => {
+          const token = response.accessToken
+          dispatch(setToken(token))
+          return token
+        })
+        .then((token) => {
+          //Get profile data
+          userApi.getProfile(token).then((response) => {
+            dispatch(setProfile(response))
+
+            navigateTo('/')
+          })
+        })
+    } catch (error) {
+      setError('Something went wrong, please try again later!')
+      console.log(error)
+    }
+  }
+
+  const onFailure = (res) => {
+    setError('Something went wrong, please try again later!')
   }
 
   const handleCaptchaOnChange = (value) => {
@@ -113,7 +156,7 @@ const Register = () => {
                   <ReCAPTCHA sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" onChange={handleCaptchaOnChange} />
                 </div>
                 <div className="col-lg-12 m-b30 m-t15">
-                  {isEmailAvailable ? <ErrorMsg errorMsg="Email is available" /> : <Fragment />}
+                  <ErrorMsg errorMsg={error} />
                   <CButton
                     name="submit"
                     type="submit"
@@ -127,9 +170,15 @@ const Register = () => {
                 </div>
                 <div className="col-lg-12">
                   <h6 className="m-b15">Sign Up with Social media</h6>
-                  <Link className="btn flex-fill m-l5 google-plus" to="#">
-                    <i className="fa fa-google-plus"></i>Sign Up
-                  </Link>
+                  <GoogleLogin
+                    className="bg-danger text-light"
+                    clientId={clientId}
+                    buttonText="Sign Up with Google"
+                    onSuccess={onSuccess}
+                    onFailure={onFailure}
+                    cookiePolicy={'single_host_origin'}
+                    isSignedIn={false}
+                  />
                 </div>
               </div>
             </form>

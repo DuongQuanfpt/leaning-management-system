@@ -165,68 +165,86 @@ const AdminUserList = () => {
               </CTableRow>
             </CTableHead>
             <CTableBody>
-              {listUserDisplay.map((item) => (
-                <>
-                  <CTableRow color="info">
-                    <CTableHeaderCell scope="row">
-                      <div className="d-flex justify-content-evenly">{item.userId}</div>
-                    </CTableHeaderCell>
-                    <CTableDataCell>
-                      <div className="d-flex justify-content-evenly">{item.fullName}</div>
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <div className="d-flex justify-content-evenly">{item.email}</div>
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <div className="d-flex justify-content-evenly">{item.mobile}</div>
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <div className="d-flex justify-content-evenly">{item.roles.join('/')}</div>
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <div className="d-flex justify-content-evenly">
-                        <CBadge
-                          color={
-                            item.status === 'ACTIVE' ? 'success' : item.status === 'INACTIVE' ? 'danger' : 'warning'
-                          }
-                        >
-                          {item.status}
-                        </CBadge>
-                      </div>
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <div className="d-flex justify-content-evenly">
-                        {item.status === 'ACTIVE' ? (
-                          <CButton
-                            color="danger"
-                            type="submit"
-                            className="text-light"
-                            onClick={() => handleActive(item)}
+              {listUserDisplay.length === 0 ? (
+                <CTableRow color="info">
+                  <CTableDataCell></CTableDataCell>
+                  <CTableDataCell></CTableDataCell>
+                  <CTableDataCell></CTableDataCell>
+                  <CTableDataCell></CTableDataCell>
+                  <CTableDataCell>No data found</CTableDataCell>
+                  <CTableDataCell></CTableDataCell>
+                  <CTableDataCell></CTableDataCell>
+                </CTableRow>
+              ) : (
+                listUserDisplay.map((item) => (
+                  <>
+                    {console.log(item)}
+                    <CTableRow color="info">
+                      <CTableHeaderCell scope="row">
+                        <div className="d-flex justify-content-evenly">{item.userId}</div>
+                      </CTableHeaderCell>
+                      <CTableDataCell>
+                        <div className="d-flex justify-content-evenly">{item.fullName}</div>
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <div className="d-flex justify-content-evenly">{item.email}</div>
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <div className="d-flex justify-content-evenly">{item.mobile}</div>
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <div className="d-flex justify-content-evenly">{item.roles.join('/')}</div>
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <div className="d-flex justify-content-evenly">
+                          <CBadge
+                            color={
+                              item.status === 'ACTIVE' ? 'success' : item.status === 'INACTIVE' ? 'danger' : 'warning'
+                            }
                           >
-                            Deactive
+                            {item.status}
+                          </CBadge>
+                        </div>
+                      </CTableDataCell>
+                      <CTableDataCell>
+                        <div className="d-flex justify-content-evenly">
+                          {item.status === 'ACTIVE' ? (
+                            <CButton
+                              color="danger"
+                              type="submit"
+                              className="text-light"
+                              onClick={() => handleActive(item)}
+                            >
+                              Deactive
+                            </CButton>
+                          ) : item.status === 'INACTIVE' ? (
+                            <CButton
+                              color="success"
+                              type="submit"
+                              className="text-light"
+                              onClick={() => handleActive(item)}
+                            >
+                              Reactive
+                            </CButton>
+                          ) : (
+                            <CButton
+                              color="info"
+                              type="submit"
+                              className="text-light"
+                              onClick={() => handleActive(item)}
+                            >
+                              Verify
+                            </CButton>
+                          )}
+                          <CButton color="warning" type="reset" onClick={() => handleView(item)}>
+                            View
                           </CButton>
-                        ) : item.status === 'INACTIVE' ? (
-                          <CButton
-                            color="success"
-                            type="submit"
-                            className="text-light"
-                            onClick={() => handleActive(item)}
-                          >
-                            Reactive
-                          </CButton>
-                        ) : (
-                          <CButton color="info" type="submit" className="text-light" onClick={() => handleActive(item)}>
-                            Verify
-                          </CButton>
-                        )}
-                        <CButton color="warning" type="reset" onClick={() => handleView(item)}>
-                          View
-                        </CButton>
-                      </div>
-                    </CTableDataCell>
-                  </CTableRow>
-                </>
-              ))}
+                        </div>
+                      </CTableDataCell>
+                    </CTableRow>
+                  </>
+                ))
+              )}
             </CTableBody>
           </CTable>
           <ReactPaginate

@@ -12,7 +12,7 @@ const AdminHeaderDropdown = () => {
 
   const navigateTo = useNavigate()
   const handleLogout = () => {
-    localStorage.removeItem('persist:root')
+    localStorage.removeItem('persist:LMS')
     //Navigate to Login and reload
     navigateTo('/login')
     navigateTo(0)

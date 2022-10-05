@@ -7,7 +7,7 @@ import sidebarSlice from './SidebarSlice/sidebarSlice'
 import profileSlice from './ProfileSlice/profileSlice'
 
 const persistConfig = {
-  key: 'root',
+  key: 'LMS',
   storage,
 }
 

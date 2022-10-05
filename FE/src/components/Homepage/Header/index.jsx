@@ -142,7 +142,7 @@ const Header = () => {
   }, [])
 
   const handleLogout = () => {
-    localStorage.removeItem('persist:root')
+    localStorage.removeItem('persist:LMS')
     //Reload page
     navigateTo('/login')
     navigateTo(0)
