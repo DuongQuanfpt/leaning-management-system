@@ -48,9 +48,11 @@ const AdminUserList = () => {
     })
 
     userListApi.getFilter().then((response) => {
-      setListRole(response.roleFilter)
+      // setListRole(response.roleFilter)
       setListStatus(response.statusFilter)
     })
+
+    setListRole(['admin', 'manager', 'supporter', 'trainer', 'trainee'])
   }, [])
 
   const handleSearch = async () => {
@@ -133,7 +135,7 @@ const AdminUserList = () => {
                     <CDropdownToggle color="secondary">Select role</CDropdownToggle>
                     <CDropdownMenu>
                       {listRole.map((item) => (
-                        <CDropdownItem onClick={() => handleFilterRole(item.role)}>{item.role}</CDropdownItem>
+                        <CDropdownItem onClick={() => handleFilterRole(item)}>{item}</CDropdownItem>
                       ))}
                     </CDropdownMenu>
                   </CDropdown>

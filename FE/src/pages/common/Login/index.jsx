@@ -55,40 +55,37 @@ const Login = () => {
 
   const submitForm = async (data) => {
     if (!isValid) return
-    try {
-      //Get user token
-      await authApi
-        .getAuthToken(data)
-        .then((response) => {
-          const token = response.accessToken
-          dispatch(setToken(token))
-          return token
+    //Get user token
+    await authApi
+      .getAuthToken(data)
+      .then((response) => {
+        const token = response.accessToken
+        dispatch(setToken(token))
+        return token
+      })
+      .then((token) => {
+        //Get profile data
+        userApi.getProfile(token).then((response) => {
+          console.log(response)
+          dispatch(setProfile(response))
+
+          setLogged(true)
+          navigateTo('/')
         })
-        .then((token) => {
-          //Get profile data
-          userApi.getProfile(token).then((response) => {
-            console.log(response)
-            dispatch(setProfile(response))
-
-            setLogged(true)
-            navigateTo('/')
-          })
-        })
-    } catch (error) {
-      setLogged(false)
-
-      const { message } = error.response.data
-
-      if (message === 'This account is unverified') {
-        setError('This account is unverified!')
-        return
-      }
-      if (message === 'Incorect credentials') {
-        setError('You email or password is incorrect')
-        return
-      }
-      setError('Something went wrong, please try again')
-    }
+      })
+      .catch((error) => {
+        setLogged(false)
+        console.log(error)
+        const { message } = error.response.data
+        if (message === 'This account is unverified') {
+          setError('This account is unverified')
+          return
+        }
+        if (message === 'Incorect credentials') {
+          setError('You email or password is incorrect')
+          return
+        }
+      })
   }
 
   const handleCaptchaOnChange = (value) => {

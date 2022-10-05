@@ -32,10 +32,10 @@ const userListApi = {
     return axiosClient.get(url, header)
   },
 
-  // changeDetail: (id, params) => {
-  //   const url = `/api/user/${id}`
-  //   return axiosClient.put(url, params, header)
-  // },
+  changeDetail: (id, params) => {
+    const url = `/api/user/${id}`
+    return axiosClient.put(url, params, header)
+  },
 }
 
 export default userListApi

@@ -37,7 +37,7 @@ axiosClient.interceptors.response.use(
   },
   async (error) => {
     // Handle exceptions/invalid logs here
-    const { message } = error.response.data.error
+    const { message } = error.response.data
 
     if (message === 'Missing auth token') {
       //Response return fail by not loggin yet
