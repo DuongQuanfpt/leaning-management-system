@@ -22,7 +22,6 @@ import logoWhite2 from '~/assets/images/logo-white-2.png'
 import bannerImg from '~/assets/images/background/bg2.jpg'
 
 const Login = () => {
-  //Thêm 1 cái clientid nữa, 2 cái trùng
   const clientId = '497995951211-5kk8b1qf0n1cjg5f97t2t0dkpv47arvs.apps.googleusercontent.com'
 
   const schema = Yup.object().shape({
@@ -54,7 +53,9 @@ const Login = () => {
   }, [])
 
   const submitForm = async (data) => {
+    console.log(errors)
     if (!isValid) return
+
     //Get user token
     await authApi
       .getAuthToken(data)

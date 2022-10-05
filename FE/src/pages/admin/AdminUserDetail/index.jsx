@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import AdminHeader from '~/components/AdminDashboard/AdminHeader'
-import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
+import { useSelector } from 'react-redux'
 
 import { CContainer, CRow, CCol, CForm, CButton } from '@coreui/react'
-import avatar from '~/assets/images/profile/pic1.jpg'
-import userListApi from '~/api/userListApi'
 import Multiselect from 'multiselect-react-dropdown'
+
+import AdminHeader from '~/components/AdminDashboard/AdminHeader'
+import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import ErrorMsg from '~/components/Common/ErrorMsg'
+
+import userListApi from '~/api/userListApi'
+
+import avatar from '~/assets/images/profile/pic1.jpg'
 
 const AdminUserDetail = () => {
   const { id } = useParams()
+  const profileData = useSelector((state) => state.profile)
 
   const [userDetail, setUserDetail] = useState({})
   const [isEditMode, setIsEditMode] = useState(false)
@@ -33,8 +38,10 @@ const AdminUserDetail = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  console.log(roles)
+
   const handleSave = async () => {
-    if (note?.length === 0) {
+    if (note?.length === 0 || roles?.length === 0) {
       setError('Roles and Note must not empty!')
       return
     }
@@ -85,7 +92,7 @@ const AdminUserDetail = () => {
                             <div className="row col-3 h-100">
                               <label className="col-form-label align-middle">Avatar</label>
                               <div>
-                                <img src={avatar} alt="" />
+                                <img src={profileData.avatar_url ?? avatar} alt="" />
                               </div>
                             </div>
                             <div className="row col-9">
