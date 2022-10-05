@@ -107,7 +107,7 @@ public class UserController {
 	@PutMapping(value = "/update-profile")
 	public ResponseEntity<?> updateProfile(@RequestBody UserRequestDTO requestDTO, @AuthenticationPrincipal User user) {
 
-		return userService.updateUserProfile(requestDTO.getFullName(), requestDTO.getAvatar_url(),
+		return userService.updateUserProfile(requestDTO.getFullName(), requestDTO.getAvatarBase64(),
 				requestDTO.getMobile(), user.getUserId());
 	}
 }

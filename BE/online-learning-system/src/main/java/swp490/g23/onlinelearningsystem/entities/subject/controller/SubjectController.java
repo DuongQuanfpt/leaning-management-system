@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
+import swp490.g23.onlinelearningsystem.entities.subject.domain.filter.SubjectFilter;
 import swp490.g23.onlinelearningsystem.entities.subject.domain.request.SubjectRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.subject.domain.response.SubjectResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.subject.domain.response.SubjectResponsePaginateDTO;
@@ -22,9 +23,10 @@ import swp490.g23.onlinelearningsystem.entities.subject.service.impl.SubjectServ
 @CrossOrigin
 public class SubjectController {
 
-    @Autowired SubjectService service ; 
+	@Autowired
+	SubjectService service;
 
-    @GetMapping(value = "/subjects")
+	@GetMapping(value = "/subjects")
 	public ResponseEntity<SubjectResponsePaginateDTO> getSetting(
 			@RequestParam(name = "page", required = false) String currentPage,
 			@RequestParam(name = "limit", required = false) String requestLimit) {
@@ -43,15 +45,21 @@ public class SubjectController {
 
 	@PutMapping(value = "/subjects/{id}")
 	public ResponseEntity<String> editSettingDetails(@PathVariable("id") Long id,
-																@RequestBody SubjectRequestDTO dto) {
+			@RequestBody SubjectRequestDTO dto) {
 
-		return service.editSubject(id,dto);
+		return service.editSubject(id, dto);
 	}
 
 	@PutMapping(value = "/subjects-status/{id}")
 	public ResponseEntity<String> editSettingDetails(@PathVariable("id") Long id) {
 
 		return service.editSubjectStatus(id);
+	}
+
+	@PutMapping(value = "/subjects-filter")
+	public ResponseEntity<SubjectFilter> editSettingDetails() {
+		
+		return service.subjectFilter();
 	}
 
 }

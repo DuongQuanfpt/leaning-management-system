@@ -6,12 +6,15 @@ import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import { CContainer, CRow, CCol, CForm, CButton } from '@coreui/react'
 import avatar from '~/assets/images/profile/pic1.jpg'
 import userListApi from '~/api/userListApi'
+import Multiselect from 'multiselect-react-dropdown'
+import ErrorMsg from '~/components/Common/ErrorMsg'
 
 const AdminUserDetail = () => {
   const { id } = useParams()
 
   const [userDetail, setUserDetail] = useState({})
   const [isEditMode, setIsEditMode] = useState(false)
+  const [allRoles, setAllRoles] = useState([])
   const [roles, setRoles] = useState({})
   const [note, setNote] = useState('')
   const [error, setError] = useState('')
@@ -24,17 +27,20 @@ const AdminUserDetail = () => {
       setRoles(response.roles)
       setNote(response.note)
     })
+    userListApi.getFilter().then((response) => {
+      setAllRoles(response.roleFilter)
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleSave = async () => {
-    if (note.length === 0) {
+    if (note?.length === 0) {
       setError('Roles and Note must not empty!')
       return
     }
     try {
       const data = {
-        roles: { ...roles },
+        roles: [...roles],
         note,
       }
       await userListApi.changeDetail(id, data).then((response) => {
@@ -110,12 +116,18 @@ const AdminUserDetail = () => {
                               <div className="form-group col-6">
                                 <label className="col-form-label">Role</label>
                                 <div>
-                                  <input
-                                    className="form-control"
-                                    type="text"
-                                    value={roles}
-                                    onChange={(e) => setRoles(e.target.value)}
-                                    disabled={!isEditMode}
+                                  <Multiselect
+                                    isObject={false}
+                                    options={allRoles}
+                                    placeholder={''}
+                                    emptyRecordMsg={'No role available'}
+                                    avoidHighlightFirstOption={true}
+                                    showArrow={true}
+                                    selectedValues={roles}
+                                    onSelect={(e) => setRoles(e)}
+                                    onRemove={(e) => setRoles(e)}
+                                    showCheckbox
+                                    disable={!isEditMode}
                                   />
                                 </div>
                               </div>
@@ -137,6 +149,7 @@ const AdminUserDetail = () => {
                                   />
                                 </div>
                               </div>
+                              <ErrorMsg errorMsg={error} />
                               <div className="d-flex justify-content-evenly">
                                 {isEditMode ? (
                                   <>

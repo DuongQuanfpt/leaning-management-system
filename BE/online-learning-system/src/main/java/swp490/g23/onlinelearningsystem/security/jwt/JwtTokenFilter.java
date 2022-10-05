@@ -30,6 +30,7 @@ import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.errorhandling.ErrorMessage;
+import swp490.g23.onlinelearningsystem.util.JwtTokenUtil;
 
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {

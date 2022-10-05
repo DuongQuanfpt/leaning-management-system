@@ -29,11 +29,14 @@ public class SettingController {
 	@GetMapping(value = "/setting")
 	public ResponseEntity<SettingResponsePaginateDTO> getSetting(
 			@RequestParam(name = "page", required = false) String currentPage,
-			@RequestParam(name = "limit", required = false) String requestLimit) {
+			@RequestParam(name = "limit", required = false) String requestLimit,
+			@RequestParam(name = "q", required = false) String keyword,
+			@RequestParam(name = "filterStatus", required = false) String statusFilter,
+			@RequestParam(name = "filterType", required = false) String typeFilter) {
 
 		int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
 		int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
-		return settingService.displaySettings(limit, page);
+		return settingService.displaySettings(limit, page, keyword, statusFilter, typeFilter);
 	}
 
 	@GetMapping(value = "/setting-filter")

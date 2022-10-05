@@ -10,12 +10,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
+import swp490.g23.onlinelearningsystem.entities.subject.domain.filter.SubjectFilter;
 import swp490.g23.onlinelearningsystem.entities.subject.domain.request.SubjectRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.subject.repositories.SubjecRepository;
 import swp490.g23.onlinelearningsystem.entities.subject.domain.response.SubjectResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.subject.domain.response.SubjectResponsePaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.subject.service.ISubjectService;
+import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoSubjectException;
 import swp490.g23.onlinelearningsystem.util.EnumEntity.StatusEnum;
@@ -25,6 +28,9 @@ public class SubjectService implements ISubjectService {
 
     @Autowired
     private SubjecRepository subjecRepository;
+
+    @Autowired
+    private SettingRepositories settingRepositories;
 
     @Autowired
     private UserRepository userRepository;
@@ -74,8 +80,14 @@ public class SubjectService implements ISubjectService {
         if (subject == null) {
             throw new NoSubjectException();
         }
-        subject.setSubjectCode(dto.getSubjectCode());
-        subject.setSubjectName(dto.getSubjectName());
+        if (dto.getSubjectCode() != null) {
+            subject.setSubjectCode(dto.getSubjectCode());
+        }
+
+        if (dto.getSubjectName() != null) {
+            subject.setSubjectName(dto.getSubjectName());
+
+        }
 
         if (dto.getSubjectStatus().equalsIgnoreCase("ACTIVE")) {
             subject.setSubjectStatus(StatusEnum.ACTIVE);
@@ -83,15 +95,19 @@ public class SubjectService implements ISubjectService {
             subject.setSubjectStatus(StatusEnum.INACTIVE);
         }
 
-        if (userRepository.findActiveUserByEmail(dto.getManagerEmail()) == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There are no manager with that email");
+        if (dto.getManagerEmail() != null) {
+            if (userRepository.findActiveUserByEmail(dto.getManagerEmail()) == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There are no manager with that email");
+            }
+            subject.setManager(userRepository.findActiveUserByEmail(dto.getManagerEmail()));
         }
-        subject.setManager(userRepository.findActiveUserByEmail(dto.getManagerEmail()));
 
-        if (userRepository.findActiveUserByEmail(dto.getExpertEmail()) == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There are no expert with that email");
+        if (dto.getExpertEmail() != null) {
+            if (userRepository.findActiveUserByEmail(dto.getExpertEmail()) == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There are no expert with that email");
+            }
+            subject.setExpert(userRepository.findActiveUserByEmail(dto.getExpertEmail()));
         }
-        subject.setExpert(userRepository.findActiveUserByEmail(dto.getExpertEmail()));
         subjecRepository.save(subject);
         return ResponseEntity.ok("Update Success");
     }
@@ -126,6 +142,28 @@ public class SubjectService implements ISubjectService {
         }
         subjecRepository.save(subject);
         return ResponseEntity.ok(" Status update success");
+    }
+
+    @Override
+    public ResponseEntity<SubjectFilter> subjectFilter() {
+        List<String> manager = new ArrayList<>();
+        List<String> expert = new ArrayList<>();
+
+        for (User user : userRepository.findAll()) {
+            if (user.getSettings().contains(settingRepositories.findBySettingValue("ROLE_TRAINER"))) {
+                manager.add(user.getEmail());
+            }
+            if (user.getSettings().contains(settingRepositories.findBySettingValue("ROLE_SUPPORTER"))) {
+                expert.add(user.getEmail());
+            }
+        }
+
+        SubjectFilter filterDTO = new SubjectFilter();
+        filterDTO.setStatusFilter(List.of(StatusEnum.ACTIVE.toString(), StatusEnum.INACTIVE.toString()));
+        filterDTO.setExpertFilter(expert);
+        filterDTO.setManagerFilter(manager);
+
+        return ResponseEntity.ok(filterDTO);
     }
 
 }

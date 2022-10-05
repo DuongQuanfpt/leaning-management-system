@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { setProfile } from '~/redux/ProfileSlice/profileSlice'
 import Avatar from 'react-avatar-edit'
@@ -15,6 +15,8 @@ import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import avatar from '~/assets/images/profile/pic1.jpg'
 
 const Profile = () => {
+  const navigateTo = useNavigate()
+
   const profileData = useSelector((state) => state.profile)
 
   const [isEditMode, setIsEditMode] = useState(false)
@@ -53,20 +55,21 @@ const Profile = () => {
     console.log(preview)
     try {
       const data = {
-        avatar_url: preview,
+        avatarBase64: preview,
       }
       await userApi.updateProfile(data).then((response) => {
         setIsEditMode(false)
-        setError('You have successfully changed your avatar')
+        setError('Your avatar has changed successfully')
         dispatch(
           setProfile({
             ...currentProfile,
             ...data,
           }),
         )
+        navigateTo(0)
       })
     } catch (error) {
-      setError('Something went wrong, please try again')
+      setError('Change avatar failed, please try again')
       console.log(error)
     }
   }
@@ -84,12 +87,13 @@ const Profile = () => {
       setError('Your mobile number must 9-10 characters')
       return
     }
-    try {
-      const data = {
-        fullName: name,
-        mobile,
-      }
-      await userApi.updateProfile(data).then((response) => {
+    const data = {
+      fullName: name,
+      mobile,
+    }
+    await userApi
+      .updateProfile(data)
+      .then((response) => {
         setIsEditMode(false)
         setError('You have successfully changed your password')
         dispatch(
@@ -99,10 +103,10 @@ const Profile = () => {
           }),
         )
       })
-    } catch (error) {
-      setError('Something went wrong, please try again')
-      console.log(error)
-    }
+      .catch((error) => {
+        setError('Something went wrong, please try again')
+        console.log(error)
+      })
   }
 
   const handleReset = () => {
@@ -110,12 +114,14 @@ const Profile = () => {
     setMobile(profileData.mobile)
     setError('')
   }
+
   const handleCancel = () => {
     setName(profileData.fullName)
     setMobile(profileData.mobile)
     setError('')
     setIsEditMode(false)
   }
+
   const handleEdit = () => {
     setIsEditMode(true)
     setError('')
@@ -141,147 +147,154 @@ const Profile = () => {
                           <div className="row col-12 w-100">
                             <div className="row col-3 h-100">
                               <label className="col-form-label align-middle">Avatar</label>
-                              {isAvatarMode ? (
-                                <>
-                                  {preview && <img src={preview} alt="" className="w-75 mb-5" />}
-                                  <Avatar
-                                    width={200}
-                                    height={200}
-                                    imageWidth={200}
-                                    onCrop={handleCropAvatar}
-                                    onClose={handleCloseAvatar}
-                                    src={src}
-                                  />
-                                  <div className="d-flex pt-4">
-                                    <CButton size="md" color="warning" onClick={handleSaveAvatar} className="mr-5">
-                                      Save
-                                    </CButton>
-                                    <CButton size="md" color="warning" onClick={handleBackAvatar} className="mr-5">
-                                      Back
-                                    </CButton>
-                                  </div>
-                                </>
-                              ) : (
-                                <>
-                                  <div>
-                                    <img src={avatar} alt="" className="w-75" />
-                                  </div>
-                                  <div className="d-flex pt-4">
-                                    <CButton size="md" color="warning" onClick={handleAvatar}>
-                                      Edit Avatar
-                                    </CButton>
-                                  </div>
-                                </>
-                              )}
-                            </div>
-                            <div className="row col-9">
-                              <div className="form-group col-6">
-                                <label className="col-form-label">ID</label>
-                                <div>
-                                  <input
-                                    className="form-control"
-                                    type="text"
-                                    value={profileData.userId}
-                                    disabled={true}
-                                  />
-                                </div>
-                              </div>
-                              <div className="form-group col-6">
-                                <label className="col-form-label">Full name</label>
-                                <div>
-                                  <input
-                                    className="form-control"
-                                    type="text"
-                                    value={name}
-                                    disabled={!isEditMode}
-                                    onChange={(e) => setName(e.target.value)}
-                                  />
-                                </div>
-                              </div>
-                              <div className="form-group col-6">
-                                <label className="col-form-label">Email</label>
-                                <div>
-                                  <input
-                                    className="form-control"
-                                    type="text"
-                                    value={profileData.email}
-                                    disabled={true}
-                                  />
-                                </div>
-                              </div>
-                              <div className="form-group col-6">
-                                <label className="col-form-label">Mobile</label>
-                                <div>
-                                  <input
-                                    className="form-control"
-                                    type="text"
-                                    value={mobile}
-                                    disabled={!isEditMode}
-                                    onChange={(e) => setMobile(e.target.value)}
-                                  />
-                                </div>
-                              </div>
-                              <div className="form-group col-6">
-                                <label className="col-form-label">Role</label>
-                                <div>
-                                  <input
-                                    className="form-control"
-                                    type="text"
-                                    value={profileData.roles.join(' / ')}
-                                    disabled={true}
-                                  />
-                                </div>
-                              </div>
-                              <div className="form-group col-6">
-                                <label className="col-form-label">Status</label>
-                                <div>
-                                  <input
-                                    className="form-control"
-                                    type="text"
-                                    value={profileData.status}
-                                    disabled={true}
-                                  />
-                                </div>
-                              </div>
-                              <div className="form-group col-12">
-                                <label className="col-form-label">Note</label>
-                                <div>
-                                  <textarea
-                                    className="form-control"
-                                    type="text"
-                                    value={profileData.note}
-                                    disabled={true}
-                                  />
-                                </div>
-                              </div>
-                              <ErrorMsg errorMsg={error} />
-                              <div className="d-flex justify-content-evenly">
-                                {isEditMode ? (
+                              <div>
+                                {isAvatarMode ? (
                                   <>
-                                    <CButton size="md" color="warning" onClick={handleSaveProfile}>
-                                      Save
-                                    </CButton>
-                                    <CButton size="md" color="warning" onClick={handleReset}>
-                                      Reset
-                                    </CButton>
-                                    <CButton size="md" color="warning" onClick={handleCancel}>
-                                      Cancel
-                                    </CButton>
+                                    <img src={preview ?? profileData.avatar_url} alt="" className="w-75 mb-2" />
+                                    <div className="d-flex pt-4">
+                                      <CButton size="md" color="warning" onClick={handleSaveAvatar} className="mr-5">
+                                        Save
+                                      </CButton>
+                                      <CButton size="md" color="warning" onClick={handleBackAvatar} className="mr-5">
+                                        Back
+                                      </CButton>
+                                    </div>
+                                    <ErrorMsg errorMsg={error} />
                                   </>
                                 ) : (
                                   <>
-                                    <CButton size="md" color="warning" onClick={handleEdit}>
-                                      Edit profile
-                                    </CButton>
-                                    <Link to="/change-password">
-                                      <CButton size="md" color="danger">
-                                        Change Password
+                                    <img src={profileData.avatar_url ?? avatar} alt="" className="w-75" />
+                                    <div className="d-flex pt-4 ml-5">
+                                      <CButton size="md" color="warning" onClick={handleAvatar}>
+                                        Edit Avatar
                                       </CButton>
-                                    </Link>
+                                    </div>
                                   </>
                                 )}
                               </div>
                             </div>
+                            {isAvatarMode ? (
+                              <div className="row col-9">
+                                <Avatar
+                                  width={900}
+                                  height={500}
+                                  imageWidth={900}
+                                  onCrop={handleCropAvatar}
+                                  onClose={handleCloseAvatar}
+                                  src={src}
+                                  className="mb-10"
+                                />
+                              </div>
+                            ) : (
+                              <div className="row col-9">
+                                <div className="form-group col-6">
+                                  <label className="col-form-label">ID</label>
+                                  <div>
+                                    <input
+                                      className="form-control"
+                                      type="text"
+                                      value={profileData.userId}
+                                      disabled={true}
+                                    />
+                                  </div>
+                                </div>
+                                <div className="form-group col-6">
+                                  <label className="col-form-label">Full name</label>
+                                  <div>
+                                    <input
+                                      className="form-control"
+                                      type="text"
+                                      value={name}
+                                      disabled={!isEditMode}
+                                      onChange={(e) => setName(e.target.value)}
+                                    />
+                                  </div>
+                                </div>
+                                <div className="form-group col-6">
+                                  <label className="col-form-label">Email</label>
+                                  <div>
+                                    <input
+                                      className="form-control"
+                                      type="text"
+                                      value={profileData.email}
+                                      disabled={true}
+                                    />
+                                  </div>
+                                </div>
+                                <div className="form-group col-6">
+                                  <label className="col-form-label">Mobile</label>
+                                  <div>
+                                    <input
+                                      className="form-control"
+                                      type="number"
+                                      value={mobile}
+                                      disabled={!isEditMode}
+                                      onChange={(e) => setMobile(e.target.value)}
+                                    />
+                                  </div>
+                                </div>
+                                <div className="form-group col-6">
+                                  <label className="col-form-label">Role</label>
+                                  <div>
+                                    <input
+                                      className="form-control"
+                                      type="text"
+                                      value={profileData.roles.join(' / ')}
+                                      disabled={true}
+                                    />
+                                  </div>
+                                </div>
+                                <div className="form-group col-6">
+                                  <label className="col-form-label">Status</label>
+                                  <div>
+                                    <input
+                                      className="form-control"
+                                      type="text"
+                                      value={profileData.status}
+                                      disabled={true}
+                                    />
+                                  </div>
+                                </div>
+                                <div className="form-group col-12">
+                                  <label className="col-form-label">Note</label>
+                                  <div>
+                                    <textarea
+                                      className="form-control"
+                                      type="text"
+                                      value={profileData.note}
+                                      disabled={true}
+                                    />
+                                  </div>
+                                </div>
+                                <ErrorMsg errorMsg={error} />
+                                <div className="d-flex justify-content-evenly">
+                                  {isEditMode ? (
+                                    <>
+                                      <CButton size="md" color="warning" onClick={handleSaveProfile}>
+                                        Save
+                                      </CButton>
+                                      <CButton size="md" color="warning" onClick={handleReset}>
+                                        Reset
+                                      </CButton>
+                                      <CButton size="md" color="warning" onClick={handleCancel}>
+                                        Cancel
+                                      </CButton>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <CButton size="md" color="warning" onClick={handleEdit}>
+                                        Edit profile
+                                      </CButton>
+                                      <Link to="/change-password">
+                                        <CButton size="md" color="danger">
+                                          Change Password
+                                        </CButton>
+                                      </Link>
+                                    </>
+                                  )}
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
