@@ -69,8 +69,11 @@ public class User extends BaseEntity implements UserDetails {
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "userId", referencedColumnName = "userId"), inverseJoinColumns = @JoinColumn(name = "roleId", referencedColumnName = "settingId"))
     private List<Setting> settings = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "userTrainer")
     private List<Classes> classes;
+
+    @OneToMany(mappedBy = "userSupporter")
+    private List<Classes> classList;
 
     public User(String email, String password) {
         this.email = email;

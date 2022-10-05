@@ -8,9 +8,15 @@ import swp490.g23.onlinelearningsystem.entities.setting.domain.response.SettingR
 import swp490.g23.onlinelearningsystem.entities.setting.domain.response.SettingResponsePaginateDTO;
 
 public interface ISettingService {
-    ResponseEntity<SettingResponsePaginateDTO> displaySettings(int limit, int currentPage);
+
     ResponseEntity<SettingResponseDTO> viewSetting(long id);
-    ResponseEntity<String> updateSetting(SettingRequestDTO dto , Long id);
+
+    ResponseEntity<String> updateSetting(SettingRequestDTO dto, Long id);
+
     ResponseEntity<String> updateStatus(Long id);
+
     ResponseEntity<SettingFilterDTO> getFilter();
+
+    ResponseEntity<SettingResponsePaginateDTO> displaySettings(int limit, int currentPage, String keyword,
+            String statusFilter, String typeFilter);
 }

@@ -71,7 +71,6 @@ public class S3Service implements IFileService {
 
     public byte[] convertToImage(String base64Image) throws IOException {
         String imageDataBytes = base64Image.split(",")[1];
-        System.out.println("huhhhh " + imageDataBytes);
         byte[] imgBytes = Base64.getDecoder().decode(imageDataBytes);
 
         return imgBytes;

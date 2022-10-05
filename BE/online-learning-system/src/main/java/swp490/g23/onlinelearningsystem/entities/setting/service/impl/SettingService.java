@@ -3,10 +3,9 @@ package swp490.g23.onlinelearningsystem.entities.setting.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.TypedQuery;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +16,7 @@ import swp490.g23.onlinelearningsystem.entities.setting.domain.response.SettingR
 import swp490.g23.onlinelearningsystem.entities.setting.domain.response.SettingResponsePaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.response.TypeResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
+import swp490.g23.onlinelearningsystem.entities.setting.repositories.criteria.SettingRepositoriesCriteria;
 import swp490.g23.onlinelearningsystem.entities.setting.service.ISettingService;
 import swp490.g23.onlinelearningsystem.util.EnumEntity.StatusEnum;
 
@@ -24,35 +24,40 @@ import swp490.g23.onlinelearningsystem.util.EnumEntity.StatusEnum;
 public class SettingService implements ISettingService {
 
     @Autowired
+    private SettingRepositoriesCriteria settingCriteria;
+
+    @Autowired
     private SettingRepositories settingRepositories;
 
     @Override
-    public ResponseEntity<SettingResponsePaginateDTO> displaySettings(int limit, int currentPage) {
-        List<Setting> settings = new ArrayList<>();
-        if (limit == 0) {
-            settings = settingRepositories.findByTypeNotNull(null).getContent();
-        } else {
-            Pageable pageable = PageRequest.of(currentPage - 1, limit, Sort.by(Sort.Direction.ASC, "displayOrder"));
-            settings = settingRepositories.findByTypeNotNull(pageable).getContent();
+    public ResponseEntity<SettingResponsePaginateDTO> displaySettings(int limit, int currentPage, String keyword,
+    String statusFilter, String typeFilter) {
+
+        List<SettingResponseDTO> list = new ArrayList<>();
+        TypedQuery<Setting> queryResult= settingCriteria.displaySetting(keyword, typeFilter, statusFilter);
+
+        int totalItem = queryResult.getResultList().size();
+        int totalPage ;
+        if(limit != 0){
+            queryResult.setFirstResult((currentPage-1)*limit);
+            queryResult.setMaxResults(limit);
+            totalPage = (int) Math.ceil((double) totalItem / limit);
+        }else{
+            totalPage = 1;
+        }
+      
+
+        for (Setting setting : queryResult.getResultList()) {
+            list.add(toDTO(setting));
         }
 
-        List<SettingResponseDTO> result = new ArrayList<>();
-
-        for (Setting setting : settings) {
-            result.add(toDTO(setting));
-        }
-
-        SettingResponsePaginateDTO responseDTO = new SettingResponsePaginateDTO();
-        responseDTO.setPage(currentPage);
-        responseDTO.setListResult(result);
-        if (limit == 0) {
-            responseDTO.setTotalPage(0);
-        } else{
-            responseDTO.setTotalPage((int) Math.ceil((double) settingRepositories.countByTypeNotNull() / limit));
-        }
-
-        responseDTO.setTotalItem(settingRepositories.countByTypeNotNull());
-        return ResponseEntity.ok(responseDTO);
+        SettingResponsePaginateDTO dto = new SettingResponsePaginateDTO();
+        dto.setPage(currentPage);
+        dto.setTotalItem(totalItem);
+        dto.setListResult(list);
+        dto.setTotalPage(totalPage);
+        
+        return ResponseEntity.ok(dto);
     }
 
     @Override
@@ -79,7 +84,7 @@ public class SettingService implements ISettingService {
     public ResponseEntity<SettingFilterDTO> getFilter() {
 
         List<TypeResponseDTO> list = new ArrayList<>();
-       
+
         for (Setting setting : settingRepositories.findAllType()) {
             list.add(new TypeResponseDTO(setting.getSettingTitle(), setting.getSettingValue()));
         }
@@ -105,6 +110,8 @@ public class SettingService implements ISettingService {
         }
         return ResponseEntity.ok("Cant view this setting");
     }
+
+  
 
     // public Setting toEntity(Setting requestDTO) {
     // User entity = new User();
