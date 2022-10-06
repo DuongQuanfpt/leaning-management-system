@@ -235,13 +235,18 @@ public class UserService implements IUserService {
     @Override
     public ResponseEntity<String> updateUser(UserRequestDTO dto, Long id) {
         User user = userRepository.findById(id).get();
-        List<Setting> settings = new ArrayList<>();
-        user.setNote(dto.getNote());
-        for (String role : dto.getRoles()){
-            settings.add(settingRepositories.findBySettingValue(role));
+        if (user == null) {
+            throw new NoUserException();
         }
-        user.setSettings(settings);
-
+        List<Setting> settings = user.getSettings();
+        user.setNote(dto.getNote());
+        if (!dto.getRoles().isEmpty()) {
+            for (String role : dto.getRoles()){
+            settings.add(settingRepositories.findBySettingValue(role));
+            }
+            user.setSettings(settings);
+        }
+        
         userRepository.save(user);
         return ResponseEntity.ok("User has been updated");
     }
