@@ -39,11 +39,14 @@ public class AdminController {
 	@GetMapping(value = "/user")
 	public ResponseEntity<UserListResponsePaginateDTO> adminUserList(
 			@RequestParam(name = "page", required = false) String currentPage,
-			@RequestParam(name = "limit", required = false) String requestLimit) {
+			@RequestParam(name = "limit", required = false) String requestLimit,
+			@RequestParam(name = "q", required = false) String keyword,
+			@RequestParam(name = "filterStatus", required = false) String statusFilter,
+			@RequestParam(name = "filterRole", required = false) String roleFilter) {
 
 		int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
 		int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
-		return userService.displayUsers(limit, page);
+		return userService.displayUsers(limit, page, keyword, roleFilter, statusFilter );
 	}
 
 	@GetMapping(value = "/user-filter")

@@ -25,6 +25,7 @@ const Profile = () => {
   const [error, setError] = useState('')
 
   const [isAvatarMode, setIsAvatarMode] = useState(false)
+  // eslint-disable-next-line no-unused-vars
   const [src, setSrc] = useState(null)
   const [preview, setPreview] = useState(null)
 
@@ -44,7 +45,6 @@ const Profile = () => {
 
   const handleCropAvatar = (view) => {
     setPreview(view)
-    console.log(preview)
   }
 
   const handleCloseAvatar = () => {
@@ -52,26 +52,22 @@ const Profile = () => {
   }
 
   const handleSaveAvatar = async () => {
-    console.log(preview)
-    try {
-      const data = {
-        avatarBase64: preview,
-      }
-      await userApi.updateProfile(data).then((response) => {
+    const data = {
+      avatarBase64: preview,
+    }
+    await userApi
+      .updateProfile(data)
+      .then((response) => {
         setIsEditMode(false)
         setError('Your avatar has changed successfully')
-        dispatch(
-          setProfile({
-            ...currentProfile,
-            ...data,
-          }),
-        )
-        navigateTo(0)
+        dispatch(setProfile(response))
+        setTimeout(() => {
+          navigateTo(0)
+        }, 4000)
       })
-    } catch (error) {
-      setError('Change avatar failed, please try again')
-      console.log(error)
-    }
+      .catch((error) => {
+        setError('Change avatar failed, please try again')
+      })
   }
 
   const handleBackAvatar = () => {
@@ -105,7 +101,6 @@ const Profile = () => {
       })
       .catch((error) => {
         setError('Something went wrong, please try again')
-        console.log(error)
       })
   }
 
@@ -150,7 +145,11 @@ const Profile = () => {
                               <div>
                                 {isAvatarMode ? (
                                   <>
-                                    <img src={preview ?? profileData.avatar_url} alt="" className="w-75 mb-2" />
+                                    <img
+                                      src={preview ?? profileData.avatar_url}
+                                      alt=""
+                                      className="w-75 mb-2 rounded-circle"
+                                    />
                                     <div className="d-flex pt-4">
                                       <CButton size="md" color="warning" onClick={handleSaveAvatar} className="mr-5">
                                         Save
@@ -163,7 +162,11 @@ const Profile = () => {
                                   </>
                                 ) : (
                                   <>
-                                    <img src={profileData.avatar_url ?? avatar} alt="" className="w-75" />
+                                    <img
+                                      src={profileData.avatar_url ?? avatar}
+                                      alt=""
+                                      className="w-75 mb-2 rounded-circle"
+                                    />
                                     <div className="d-flex pt-4 ml-5">
                                       <CButton size="md" color="warning" onClick={handleAvatar}>
                                         Edit Avatar
