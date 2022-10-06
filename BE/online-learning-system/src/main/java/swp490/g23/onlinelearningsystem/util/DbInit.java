@@ -61,16 +61,16 @@ public class DbInit {
         public void loadSubject() {
                 Subject s1 = new Subject("LAB101", "Lab Java", Status.ACTIVE,
                                 userRepository.findByEmail("quan1@doivl.com").get());
-                Subject s2 = new Subject("CODE_B", "Subject B", Status.ACTIVE,
+                Subject s2 = new Subject("MAE203", "Math", Status.ACTIVE,
                                 userRepository.findByEmail("quan1@doivl.com").get());
 
-                Subject s3 = new Subject("CODE_C", "Subject C", Status.ACTIVE,
+                Subject s3 = new Subject("PRF192", "Programming Fundamentals", Status.ACTIVE,
                                 userRepository.findByEmail("hoangnhhe141380@fpt.edu.vn").get());
 
-                Subject s4 = new Subject("CODE_D", "Subject D", Status.ACTIVE,
+                Subject s4 = new Subject("PRO201", "Front-end Web Development", Status.ACTIVE,
                                 userRepository.findByEmail("hoangnhhe141380@fpt.edu.vn").get());
 
-                Subject s5 = new Subject("CODE_E", "Subject E", Status.ACTIVE,
+                Subject s5 = new Subject("JPD121", "Elementary Japanese 1.2", Status.ACTIVE,
                                 userRepository.findByEmail("quan1@doivl.com").get());
                 subjecRepository.saveAll(List.of(s1, s2, s3, s4, s5));
         }

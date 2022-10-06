@@ -8,9 +8,8 @@ import swp490.g23.onlinelearningsystem.entities.subject.domain.response.SubjectR
 import swp490.g23.onlinelearningsystem.entities.subject.domain.response.SubjectResponsePaginateDTO;
 
 public interface ISubjectService {
-   ResponseEntity<SubjectResponsePaginateDTO> getSubject(int limit, int page);
 
-   ResponseEntity<SubjectResponsePaginateDTO> getSubject2(int limit, int page, String keyword ,String managerFilter, String expertFilter, String statusFilter);
+   ResponseEntity<SubjectResponsePaginateDTO> getSubject(int limit, int page, String keyword ,String managerFilter, String expertFilter, String statusFilter);
 
    ResponseEntity<SubjectResponseDTO> getSubjectDetail(Long id);
 

@@ -36,7 +36,6 @@ public class Subject {
     private String subjectName;
 
     @Column
-    @Enumerated(EnumType.STRING)
     private Status subjectStatus;
 
     @Column

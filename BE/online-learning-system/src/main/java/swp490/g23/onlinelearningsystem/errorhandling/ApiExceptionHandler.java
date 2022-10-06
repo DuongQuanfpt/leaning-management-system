@@ -17,7 +17,7 @@ import swp490.g23.onlinelearningsystem.errorhandling.CustomException.UnverifiedU
 public class ApiExceptionHandler {
    
     @ExceptionHandler(Exception.class)
-    @ResponseStatus(value = HttpStatus.FORBIDDEN)
+    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorMessage handleAllException(Exception ex, WebRequest request) {
         // quá trình kiểm soat lỗi diễn ra ở đây
     

@@ -38,7 +38,7 @@ public class SubjectController {
 		int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
 		int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
 
-		return service.getSubject2(limit, page, keyword, managerFilter, expertFilter, status);
+		return service.getSubject(limit, page, keyword, managerFilter, expertFilter, status);
 	}
 
 	@GetMapping(value = "/subjects/{id}")

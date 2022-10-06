@@ -1,13 +1,12 @@
 package swp490.g23.onlinelearningsystem.entities.subject.service.impl;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import javax.persistence.TypedQuery;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -26,6 +25,7 @@ import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.DuplicateSubjectCodeException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoSubjectException;
 import swp490.g23.onlinelearningsystem.util.enumutil.Status;
+import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
 
 @Service
 public class SubjectService implements ISubjectService {
@@ -43,7 +43,7 @@ public class SubjectService implements ISubjectService {
     private UserRepository userRepository;
 
     @Override
-    public ResponseEntity<SubjectResponsePaginateDTO> getSubject2(int limit, int currentPage, String keyword,
+    public ResponseEntity<SubjectResponsePaginateDTO> getSubject(int limit, int currentPage, String keyword,
             String managerFilter, String expertFilter, String statusFilter) {
         List<SubjectResponseDTO> list = new ArrayList<>();
         TypedQuery<Subject> queryResult = subjectCriteria.searchFilterSubject(keyword, statusFilter, managerFilter,
@@ -70,36 +70,6 @@ public class SubjectService implements ISubjectService {
         dto.setTotalPage(totalPage);
 
         return ResponseEntity.ok(dto);
-    }
-
-    @Override
-    public ResponseEntity<SubjectResponsePaginateDTO> getSubject(int limit, int page) {
-        List<Subject> subjects = new ArrayList<>();
-        if (limit == 0) {
-            subjects = subjectRepository.findAll();
-        } else {
-            Pageable pageable = PageRequest.of(page - 1, limit);
-            subjects = subjectRepository.findAll(pageable).getContent();
-        }
-
-        List<SubjectResponseDTO> result = new ArrayList<>();
-
-        for (Subject setting : subjects) {
-            result.add(toDTO(setting));
-        }
-
-        SubjectResponsePaginateDTO responseDTO = new SubjectResponsePaginateDTO();
-        responseDTO.setPage(page);
-        responseDTO.setListResult(result);
-        if (limit == 0) {
-            responseDTO.setTotalPage(0);
-        } else {
-            responseDTO.setTotalPage((int) Math.ceil((double) subjectRepository.count() / limit));
-        }
-
-        responseDTO.setTotalItem(subjectRepository.count());
-        return ResponseEntity.ok(responseDTO);
-
     }
 
     @Override
@@ -130,10 +100,8 @@ public class SubjectService implements ISubjectService {
 
         }
 
-        if (dto.getSubjectStatus().equalsIgnoreCase("ACTIVE")) {
-            subject.setSubjectStatus(Status.ACTIVE);
-        } else {
-            subject.setSubjectStatus(Status.INACTIVE);
+        if (dto.getSubjectStatus() != null) {
+            subject.setSubjectStatus(Status.getFromValue(Integer.parseInt(dto.getSubjectStatus())).get());
         }
 
         if (dto.getManagerEmail() != null) {
@@ -176,6 +144,9 @@ public class SubjectService implements ISubjectService {
     @Override
     public ResponseEntity<String> editSubjectStatus(Long id) {
         Subject subject = subjectRepository.findById(id).get();
+        if (subject == null) {
+            throw new NoSubjectException();
+        }
         if (subject.getSubjectStatus() == Status.ACTIVE) {
             subject.setSubjectStatus(Status.INACTIVE);
         } else {
@@ -189,6 +160,7 @@ public class SubjectService implements ISubjectService {
     public ResponseEntity<SubjectFilter> subjectFilter() {
         List<String> manager = new ArrayList<>();
         List<String> expert = new ArrayList<>();
+        List<StatusEntity> statuses = new ArrayList<>();
 
         for (User user : userRepository.findAll()) {
             if (user.getSettings().contains(settingRepositories.findBySettingValue("ROLE_TRAINER"))) {
@@ -199,8 +171,12 @@ public class SubjectService implements ISubjectService {
             }
         }
 
+        for (Status status : new ArrayList<Status>(EnumSet.allOf(Status.class))) {
+            statuses.add(new StatusEntity(status));
+        }
+
         SubjectFilter filterDTO = new SubjectFilter();
-        filterDTO.setStatusFilter(List.of(Status.ACTIVE.toString(), Status.INACTIVE.toString()));
+        filterDTO.setStatusFilter(statuses);
         filterDTO.setExpertFilter(expert);
         filterDTO.setManagerFilter(manager);
 
