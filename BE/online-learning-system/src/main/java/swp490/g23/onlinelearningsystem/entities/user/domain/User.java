@@ -23,6 +23,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.BaseEntity;
+import swp490.g23.onlinelearningsystem.entities.class_user.domain.ClassUser;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
@@ -71,6 +72,9 @@ public class User extends BaseEntity implements UserDetails {
 
     @OneToMany(mappedBy = "userSupporter")
     private List<Classes> classList;
+
+    @OneToMany(mappedBy = "user")
+    private List<ClassUser> classUsers;
 
     public User(String email, String password) {
         this.email = email;

@@ -17,6 +17,10 @@ public class ClassResponseDTO {
 
     private Status status;
 
+    private String packages;
+
+    private String term;
+
     private String description;
 
     private String trainer;

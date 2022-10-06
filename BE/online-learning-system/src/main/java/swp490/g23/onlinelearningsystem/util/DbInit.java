@@ -248,7 +248,8 @@ public class DbInit {
                 Classes defailtClass = new Classes((long) 1, "SWP390", Status.ACTIVE, "Web project",
                                 settingRepositories.findBySettingValue("TEST3"),
                                 userRepository.findByEmail("quan4@doivl.com").get(),
-                                userRepository.findByEmail("quan6@doivl.com").get());
+                                userRepository.findByEmail("quan6@doivl.com").get(),
+                                null);
                 classRepositories.saveAll(List.of(defailtClass));
         }
         // create classsssss
