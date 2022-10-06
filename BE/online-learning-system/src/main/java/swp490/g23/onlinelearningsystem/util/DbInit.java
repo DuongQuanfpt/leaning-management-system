@@ -19,9 +19,9 @@ import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
 import swp490.g23.onlinelearningsystem.entities.subject.repositories.SubjecRepository;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
-import swp490.g23.onlinelearningsystem.util.EnumEntity.RoleEnum;
-import swp490.g23.onlinelearningsystem.util.EnumEntity.StatusEnum;
-import swp490.g23.onlinelearningsystem.util.EnumEntity.UserStatusEnum;
+import swp490.g23.onlinelearningsystem.util.enumutil.EnumEntity.RoleEnum;
+import swp490.g23.onlinelearningsystem.util.enumutil.Status;
+import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
 
 @Component
 public class DbInit {
@@ -59,18 +59,18 @@ public class DbInit {
         }
 
         public void loadSubject() {
-                Subject s1 = new Subject("CODE_A", "Subject A", StatusEnum.ACTIVE,
+                Subject s1 = new Subject("LAB101", "Lab Java", Status.ACTIVE,
                                 userRepository.findByEmail("quan1@doivl.com").get());
-                Subject s2 = new Subject("CODE_B", "Subject B", StatusEnum.ACTIVE,
+                Subject s2 = new Subject("CODE_B", "Subject B", Status.ACTIVE,
                                 userRepository.findByEmail("quan1@doivl.com").get());
 
-                Subject s3 = new Subject("CODE_C", "Subject C", StatusEnum.ACTIVE,
+                Subject s3 = new Subject("CODE_C", "Subject C", Status.ACTIVE,
                                 userRepository.findByEmail("hoangnhhe141380@fpt.edu.vn").get());
 
-                Subject s4 = new Subject("CODE_D", "Subject D", StatusEnum.ACTIVE,
+                Subject s4 = new Subject("CODE_D", "Subject D", Status.ACTIVE,
                                 userRepository.findByEmail("hoangnhhe141380@fpt.edu.vn").get());
 
-                Subject s5 = new Subject("CODE_E", "Subject E", StatusEnum.ACTIVE,
+                Subject s5 = new Subject("CODE_E", "Subject E", Status.ACTIVE,
                                 userRepository.findByEmail("quan1@doivl.com").get());
                 subjecRepository.saveAll(List.of(s1, s2, s3, s4, s5));
         }
@@ -78,70 +78,70 @@ public class DbInit {
         public void loadSetting() {
                 // create type setting
                 Setting typeRole = new Setting("User Role", "TYPE_ROLE", "contain settings relate to user role");
-                typeRole.setStatus(StatusEnum.ACTIVE);
+                typeRole.setStatus(Status.ACTIVE);
 
                 Setting typeTest = new Setting("Test", "TYPE_TEST", "type for test");
-                typeRole.setStatus(StatusEnum.ACTIVE);
+                typeRole.setStatus(Status.ACTIVE);
 
                 Setting typeScreen = new Setting("System Screen", "TYPE_SCREEN",
                                 "contain setting for each screen in system");
-                typeRole.setStatus(StatusEnum.ACTIVE);
+                typeRole.setStatus(Status.ACTIVE);
 
                 // create screen setting
 
-                Setting setting = new Setting("Setting List ", "/api/setting", StatusEnum.ACTIVE,
+                Setting setting = new Setting("Setting List ", "/api/setting", Status.ACTIVE,
                                 "description",
                                 "1",
                                 typeScreen);
 
-                Setting settingFilter = new Setting("Setting Filter", "/api/setting-filter", StatusEnum.ACTIVE,
+                Setting settingFilter = new Setting("Setting Filter", "/api/setting-filter", Status.ACTIVE,
                                 "description ", "1",
                                 typeScreen);
 
-                Setting settingStatus = new Setting("Setting Status", "/api/setting-status", StatusEnum.ACTIVE,
+                Setting settingStatus = new Setting("Setting Status", "/api/setting-status", Status.ACTIVE,
                                 "description ", "1",
                                 typeScreen);
 
-                Setting user = new Setting("User List", "/api/user", StatusEnum.ACTIVE,
+                Setting user = new Setting("User List", "/api/user", Status.ACTIVE,
                                 "description ", "1",
                                 typeScreen);
 
-                Setting userStatus = new Setting("User Status", "/api/user-status", StatusEnum.ACTIVE,
+                Setting userStatus = new Setting("User Status", "/api/user-status", Status.ACTIVE,
                                 "description ", "1",
                                 typeScreen);
 
-                Setting userFilter = new Setting("User Filter", "/api/user-filter", StatusEnum.ACTIVE,
+                Setting userFilter = new Setting("User Filter", "/api/user-filter", Status.ACTIVE,
                                 "description ", "1",
                                 typeScreen);
 
-                Setting subjects = new Setting("Subject List", "/api/subjects", StatusEnum.ACTIVE,
+                Setting subjects = new Setting("Subject List", "/api/subjects", Status.ACTIVE,
                                 "description ", "1",
                                 typeScreen);
 
-                Setting subjectsStatus = new Setting("Subject Status", "/api/subjects-status", StatusEnum.ACTIVE,
+                Setting subjectsStatus = new Setting("Subject Status", "/api/subjects-status", Status.ACTIVE,
                                 "description ", "1",
                                 typeScreen);
 
                 // create test setting
-                Setting test3 = new Setting("test3", "TEST3", StatusEnum.INACTIVE, "description for test", "2",
+                Setting test3 = new Setting("test3", "TEST3", Status.INACTIVE, "description for test", "2",
                                 typeTest);
 
-                Setting test4 = new Setting("test4", "TEST4", StatusEnum.INACTIVE, "description for test", "3",
+                Setting test4 = new Setting("test4", "TEST4", Status.INACTIVE, "description for test", "3",
                                 typeTest);
 
                 // create role setting
-                Setting adminRole = new Setting("admin", "ROLE_ADMIN", StatusEnum.ACTIVE,
+                Setting adminRole = new Setting("admin", "ROLE_ADMIN", Status.ACTIVE,
                                 "description for admin", "1",
                                 typeRole);
-                Setting traineeRole = new Setting("trainee", "ROLE_TRAINEE", StatusEnum.ACTIVE,
+                Setting traineeRole = new Setting("trainee", "ROLE_TRAINEE", Status.ACTIVE,
                                 "description for trainee", "1", typeRole);
-                Setting managerRole = new Setting("manager", "ROLE_MANAGER", StatusEnum.ACTIVE,
+                Setting managerRole = new Setting("manager", "ROLE_MANAGER", Status.ACTIVE,
                                 "description for manager", "1", typeRole);
-                Setting supporterRole = new Setting("supporter", "ROLE_SUPPORTER", StatusEnum.ACTIVE,
+                Setting supporterRole = new Setting("supporter", "ROLE_SUPPORTER", Status.ACTIVE,
                                 "description for supporter", "1", typeRole);
-                Setting trainerRole = new Setting("trainer", "ROLE_TRAINER", StatusEnum.ACTIVE,
+                Setting trainerRole = new Setting("trainer", "ROLE_TRAINER", Status.ACTIVE,
                                 "description for trainer", "1", typeRole);
-                Setting expertRole = new Setting("expert", "ROLE_EXPERT", StatusEnum.ACTIVE,
+                Setting expertRole = new Setting("expert", "ROLE_EXPERT", Status.ACTIVE,
                                 "description for expert", "1", typeRole);
                 settingRepositories.saveAll(
                                 List.of(typeScreen, typeRole, adminRole, traineeRole, managerRole, supporterRole,
@@ -232,7 +232,7 @@ public class DbInit {
                 User u6 = new User("quan6@doivl.com", encoder.encode("123456"),
                                 settingRepositories.findActiveSettingByValue(RoleEnum.ROLE_EXPERT.toString()));
 
-                defaultUser.setStatus(UserStatusEnum.ACTIVE);
+                defaultUser.setStatus(UserStatus.ACTIVE);
                 defaultUser.addRole(settingRepositories.findActiveSettingByValue("ROLE_ADMIN"));
                 defaultUser.addRole(settingRepositories.findActiveSettingByValue("ROLE_TRAINEE"));
 
@@ -245,7 +245,7 @@ public class DbInit {
         }
 
         public void loadClass() {
-                Classes defailtClass = new Classes((long) 1, "SWP390", StatusEnum.ACTIVE, "Web project",
+                Classes defailtClass = new Classes((long) 1, "SWP390", Status.ACTIVE, "Web project",
                                 settingRepositories.findBySettingValue("TEST3"),
                                 userRepository.findByEmail("quan4@doivl.com").get(),
                                 userRepository.findByEmail("quan6@doivl.com").get());

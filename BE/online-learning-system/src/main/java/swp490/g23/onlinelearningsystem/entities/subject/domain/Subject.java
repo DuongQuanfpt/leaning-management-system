@@ -16,7 +16,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
-import swp490.g23.onlinelearningsystem.util.EnumEntity.StatusEnum;
+import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 
 @Entity
 @Getter
@@ -37,7 +37,7 @@ public class Subject {
 
     @Column
     @Enumerated(EnumType.STRING)
-    private StatusEnum subjectStatus;
+    private Status subjectStatus;
 
     @Column
     private String body;
@@ -50,7 +50,7 @@ public class Subject {
 	@JoinColumn(name = "expert_id")
 	private User expert;
 
-    public Subject(String subjectCode, String subjectName, StatusEnum subjectStatus, User manager) {
+    public Subject(String subjectCode, String subjectName, Status subjectStatus, User manager) {
         this.subjectCode = subjectCode;
         this.subjectName = subjectName;
         this.subjectStatus = subjectStatus;

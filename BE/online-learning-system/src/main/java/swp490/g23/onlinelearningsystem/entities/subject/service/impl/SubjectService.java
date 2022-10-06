@@ -3,6 +3,8 @@ package swp490.g23.onlinelearningsystem.entities.subject.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.TypedQuery;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,19 +17,24 @@ import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
 import swp490.g23.onlinelearningsystem.entities.subject.domain.filter.SubjectFilter;
 import swp490.g23.onlinelearningsystem.entities.subject.domain.request.SubjectRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.subject.repositories.SubjecRepository;
+import swp490.g23.onlinelearningsystem.entities.subject.repositories.criteria.SubjectRepositoriesCriteria;
 import swp490.g23.onlinelearningsystem.entities.subject.domain.response.SubjectResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.subject.domain.response.SubjectResponsePaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.subject.service.ISubjectService;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.DuplicateSubjectCodeException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoSubjectException;
-import swp490.g23.onlinelearningsystem.util.EnumEntity.StatusEnum;
+import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 
 @Service
 public class SubjectService implements ISubjectService {
 
     @Autowired
-    private SubjecRepository subjecRepository;
+    private SubjecRepository subjectRepository;
+
+    @Autowired
+    private SubjectRepositoriesCriteria subjectCriteria;
 
     @Autowired
     private SettingRepositories settingRepositories;
@@ -36,13 +43,43 @@ public class SubjectService implements ISubjectService {
     private UserRepository userRepository;
 
     @Override
+    public ResponseEntity<SubjectResponsePaginateDTO> getSubject2(int limit, int currentPage, String keyword,
+            String managerFilter, String expertFilter, String statusFilter) {
+        List<SubjectResponseDTO> list = new ArrayList<>();
+        TypedQuery<Subject> queryResult = subjectCriteria.searchFilterSubject(keyword, statusFilter, managerFilter,
+                expertFilter);
+
+        int totalItem = queryResult.getResultList().size();
+        int totalPage;
+        if (limit != 0) {
+            queryResult.setFirstResult((currentPage - 1) * limit);
+            queryResult.setMaxResults(limit);
+            totalPage = (int) Math.ceil((double) totalItem / limit);
+        } else {
+            totalPage = 1;
+        }
+
+        for (Subject setting : queryResult.getResultList()) {
+            list.add(toDTO(setting));
+        }
+
+        SubjectResponsePaginateDTO dto = new SubjectResponsePaginateDTO();
+        dto.setPage(currentPage);
+        dto.setTotalItem(totalItem);
+        dto.setListResult(list);
+        dto.setTotalPage(totalPage);
+
+        return ResponseEntity.ok(dto);
+    }
+
+    @Override
     public ResponseEntity<SubjectResponsePaginateDTO> getSubject(int limit, int page) {
         List<Subject> subjects = new ArrayList<>();
         if (limit == 0) {
-            subjects = subjecRepository.findAll();
+            subjects = subjectRepository.findAll();
         } else {
             Pageable pageable = PageRequest.of(page - 1, limit);
-            subjects = subjecRepository.findAll(pageable).getContent();
+            subjects = subjectRepository.findAll(pageable).getContent();
         }
 
         List<SubjectResponseDTO> result = new ArrayList<>();
@@ -57,17 +94,17 @@ public class SubjectService implements ISubjectService {
         if (limit == 0) {
             responseDTO.setTotalPage(0);
         } else {
-            responseDTO.setTotalPage((int) Math.ceil((double) subjecRepository.count() / limit));
+            responseDTO.setTotalPage((int) Math.ceil((double) subjectRepository.count() / limit));
         }
 
-        responseDTO.setTotalItem(subjecRepository.count());
+        responseDTO.setTotalItem(subjectRepository.count());
         return ResponseEntity.ok(responseDTO);
 
     }
 
     @Override
     public ResponseEntity<SubjectResponseDTO> getSubjectDetail(Long id) {
-        Subject subject = subjecRepository.findById(id).get();
+        Subject subject = subjectRepository.findById(id).get();
         if (subject == null) {
             throw new NoSubjectException();
         }
@@ -76,7 +113,11 @@ public class SubjectService implements ISubjectService {
 
     @Override
     public ResponseEntity<String> editSubject(Long id, SubjectRequestDTO dto) {
-        Subject subject = subjecRepository.findById(id).get();
+        Subject subject = subjectRepository.findById(id).get();
+        if (subjectRepository.findBySubjectCode(dto.getSubjectCode()) != null) {
+            throw new DuplicateSubjectCodeException();
+        }
+
         if (subject == null) {
             throw new NoSubjectException();
         }
@@ -90,9 +131,9 @@ public class SubjectService implements ISubjectService {
         }
 
         if (dto.getSubjectStatus().equalsIgnoreCase("ACTIVE")) {
-            subject.setSubjectStatus(StatusEnum.ACTIVE);
+            subject.setSubjectStatus(Status.ACTIVE);
         } else {
-            subject.setSubjectStatus(StatusEnum.INACTIVE);
+            subject.setSubjectStatus(Status.INACTIVE);
         }
 
         if (dto.getManagerEmail() != null) {
@@ -108,7 +149,7 @@ public class SubjectService implements ISubjectService {
             }
             subject.setExpert(userRepository.findActiveUserByEmail(dto.getExpertEmail()));
         }
-        subjecRepository.save(subject);
+        subjectRepository.save(subject);
         return ResponseEntity.ok("Update Success");
     }
 
@@ -134,13 +175,13 @@ public class SubjectService implements ISubjectService {
 
     @Override
     public ResponseEntity<String> editSubjectStatus(Long id) {
-        Subject subject = subjecRepository.findById(id).get();
-        if (subject.getSubjectStatus() == StatusEnum.ACTIVE) {
-            subject.setSubjectStatus(StatusEnum.INACTIVE);
+        Subject subject = subjectRepository.findById(id).get();
+        if (subject.getSubjectStatus() == Status.ACTIVE) {
+            subject.setSubjectStatus(Status.INACTIVE);
         } else {
-            subject.setSubjectStatus(StatusEnum.ACTIVE);
+            subject.setSubjectStatus(Status.ACTIVE);
         }
-        subjecRepository.save(subject);
+        subjectRepository.save(subject);
         return ResponseEntity.ok(" Status update success");
     }
 
@@ -159,7 +200,7 @@ public class SubjectService implements ISubjectService {
         }
 
         SubjectFilter filterDTO = new SubjectFilter();
-        filterDTO.setStatusFilter(List.of(StatusEnum.ACTIVE.toString(), StatusEnum.INACTIVE.toString()));
+        filterDTO.setStatusFilter(List.of(Status.ACTIVE.toString(), Status.INACTIVE.toString()));
         filterDTO.setExpertFilter(expert);
         filterDTO.setManagerFilter(manager);
 

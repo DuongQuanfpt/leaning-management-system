@@ -10,16 +10,17 @@ import org.springframework.data.jpa.repository.Query;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 
 public interface SettingRepositories extends JpaRepository<Setting, Long> {
-   
+
     Setting findBySettingValue(String settingValue);
 
     @Query(value = "SELECT s FROM Setting s WHERE s.type IS NULL")
     List<Setting> findAllType();
 
-    @Query(value = "SELECT * FROM setting WHERE setting_value= ?1 AND status = 'ACTIVE'", nativeQuery = true)
+    @Query(value = "SELECT s FROM Setting s WHERE s.settingValue = ?1 " +
+            "AND s.status = swp490.g23.onlinelearningsystem.util.enumutil.Status.ACTIVE")
     Setting findActiveSettingByValue(String settingValue);
 
-    Page<Setting>findByTypeNotNull(Pageable pageable);
+    Page<Setting> findByTypeNotNull(Pageable pageable);
 
     Long countByTypeNotNull();
 
@@ -29,8 +30,3 @@ public interface SettingRepositories extends JpaRepository<Setting, Long> {
     List<Setting> roleList();
 
 }
-
-
-
-
-

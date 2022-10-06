@@ -34,7 +34,7 @@ import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository
 import swp490.g23.onlinelearningsystem.entities.user.service.IUserService;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoUserException;
 import swp490.g23.onlinelearningsystem.util.JwtTokenUtil;
-import swp490.g23.onlinelearningsystem.util.EnumEntity.UserStatusEnum;
+import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
 
 @Service
 public class UserService implements IUserService {
@@ -58,7 +58,7 @@ public class UserService implements IUserService {
 
     @Override
     public ResponseEntity<AuthenticatedResponseDTO> getAuthenticatedUser(Long id, List<Setting> roles) {
-        User user = userRepository.findUserById(id);
+        User user = userRepository.findUserById(id,UserStatus.ACTIVE);
 
         if (user == null) {
             throw new NoUserException();
@@ -69,7 +69,7 @@ public class UserService implements IUserService {
     @Override
     public ResponseEntity<String> updatePassword(UserUpdatePassRequestDTO dto, Long id) {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
-        User user = userRepository.findUserById(id);
+        User user = userRepository.findUserById(id,UserStatus.ACTIVE);
 
         if (user == null) {
             throw new NoUserException();
@@ -248,10 +248,10 @@ public class UserService implements IUserService {
     @Override
     public ResponseEntity<String> updateStatus(Long id) {
         User user = userRepository.findById(id).get();
-        if (user.getStatus() == UserStatusEnum.ACTIVE) {
-            user.setStatus(UserStatusEnum.INACTIVE);
+        if (user.getStatus() == UserStatus.ACTIVE) {
+            user.setStatus(UserStatus.INACTIVE);
         } else {
-            user.setStatus(UserStatusEnum.ACTIVE);
+            user.setStatus(UserStatus.ACTIVE);
         }
         userRepository.save(user);
         return ResponseEntity.ok("User status updated");
@@ -266,7 +266,7 @@ public class UserService implements IUserService {
         }
 
         UserFIlterDTO filterDTO = new UserFIlterDTO();
-        filterDTO.setStatusFilter(List.of(UserStatusEnum.ACTIVE.toString(), UserStatusEnum.INACTIVE.toString(), UserStatusEnum.UNVERIFIED.toString()));
+        filterDTO.setStatusFilter(List.of(UserStatus.ACTIVE.toString(), UserStatus.INACTIVE.toString(), UserStatus.UNVERIFIED.toString()));
         filterDTO.setRoleFilter(list);
         
         return ResponseEntity.ok(filterDTO);

@@ -20,7 +20,7 @@ import swp490.g23.onlinelearningsystem.entities.classes.service.IClassService;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
-import swp490.g23.onlinelearningsystem.util.EnumEntity.StatusEnum;
+import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 
 @Service
 public class ClassService implements IClassService{
@@ -90,10 +90,10 @@ public class ClassService implements IClassService{
     @Override
     public ResponseEntity<String> updateStatus(Long id) {
         Classes clazz = classRepositories.findById(id).get();
-        if (clazz.getStatus() == StatusEnum.ACTIVE) {
-            clazz.setStatus(StatusEnum.INACTIVE);
+        if (clazz.getStatus() == Status.ACTIVE) {
+            clazz.setStatus(Status.INACTIVE);
         } else {
-            clazz.setStatus(StatusEnum.ACTIVE);
+            clazz.setStatus(Status.ACTIVE);
         }   
         classRepositories.save(clazz);
         return ResponseEntity.ok("Class status updated");
@@ -120,7 +120,7 @@ public class ClassService implements IClassService{
         // }
 
         ClassFilterDTO filterDTO = new ClassFilterDTO();
-        filterDTO.setStatusFilter(List.of(StatusEnum.ACTIVE.toString(), StatusEnum.INACTIVE.toString()));
+        filterDTO.setStatusFilter(List.of(Status.ACTIVE.toString(), Status.INACTIVE.toString()));
         filterDTO.setTrainerFilter(listTrainer);
         filterDTO.setSupporterFilter(listSupporter);
         

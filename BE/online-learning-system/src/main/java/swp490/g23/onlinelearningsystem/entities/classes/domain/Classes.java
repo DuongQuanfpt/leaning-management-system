@@ -17,7 +17,7 @@ import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.BaseEntity;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
-import swp490.g23.onlinelearningsystem.util.EnumEntity.StatusEnum;
+import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 
 @Entity
 @Getter
@@ -36,7 +36,7 @@ public class Classes extends BaseEntity{
 
     @Column
     @Enumerated(EnumType.STRING)
-    private StatusEnum status;
+    private Status status;
 
     @Column
     private String description;

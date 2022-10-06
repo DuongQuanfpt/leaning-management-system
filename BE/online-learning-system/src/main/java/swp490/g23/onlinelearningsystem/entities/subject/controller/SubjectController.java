@@ -29,12 +29,16 @@ public class SubjectController {
 	@GetMapping(value = "/subjects")
 	public ResponseEntity<SubjectResponsePaginateDTO> getSetting(
 			@RequestParam(name = "page", required = false) String currentPage,
-			@RequestParam(name = "limit", required = false) String requestLimit) {
+			@RequestParam(name = "limit", required = false) String requestLimit,
+			@RequestParam(name = "q", required = false) String keyword,
+			@RequestParam(name = "filterManager", required = false) String managerFilter,
+			@RequestParam(name = "filterExpert", required = false) String expertFilter,
+			@RequestParam(name = "filterStatus", required = false) String status) {
 
 		int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
 		int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
 
-		return service.getSubject(limit, page);
+		return service.getSubject2(limit, page, keyword, managerFilter, expertFilter, status);
 	}
 
 	@GetMapping(value = "/subjects/{id}")

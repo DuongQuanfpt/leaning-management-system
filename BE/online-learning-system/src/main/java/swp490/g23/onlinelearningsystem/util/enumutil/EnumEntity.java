@@ -1,14 +1,7 @@
-package swp490.g23.onlinelearningsystem.util;
+package swp490.g23.onlinelearningsystem.util.enumutil;
 
 public class EnumEntity {
     
-    public enum StatusEnum {
-        ACTIVE, INACTIVE;
-    }
-
-    public enum UserStatusEnum {
-        ACTIVE, INACTIVE, UNVERIFIED;
-    }
 
     public enum PermisionEnum {
         GET_ALL, DELETE, EDIT, ADD

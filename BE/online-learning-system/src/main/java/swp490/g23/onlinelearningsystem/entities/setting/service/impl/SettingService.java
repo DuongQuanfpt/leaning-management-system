@@ -1,6 +1,7 @@
 package swp490.g23.onlinelearningsystem.entities.setting.service.impl;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import javax.persistence.TypedQuery;
@@ -18,7 +19,8 @@ import swp490.g23.onlinelearningsystem.entities.setting.domain.response.TypeResp
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.criteria.SettingRepositoriesCriteria;
 import swp490.g23.onlinelearningsystem.entities.setting.service.ISettingService;
-import swp490.g23.onlinelearningsystem.util.EnumEntity.StatusEnum;
+import swp490.g23.onlinelearningsystem.util.enumutil.Status;
+import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
 
 @Service
 public class SettingService implements ISettingService {
@@ -31,21 +33,20 @@ public class SettingService implements ISettingService {
 
     @Override
     public ResponseEntity<SettingResponsePaginateDTO> displaySettings(int limit, int currentPage, String keyword,
-    String statusFilter, String typeFilter) {
+            String statusFilter, String typeFilter) {
 
         List<SettingResponseDTO> list = new ArrayList<>();
-        TypedQuery<Setting> queryResult= settingCriteria.displaySetting(keyword, typeFilter, statusFilter);
+        TypedQuery<Setting> queryResult = settingCriteria.displaySetting(keyword, typeFilter, statusFilter);
 
         int totalItem = queryResult.getResultList().size();
-        int totalPage ;
-        if(limit != 0){
-            queryResult.setFirstResult((currentPage-1)*limit);
+        int totalPage;
+        if (limit != 0) {
+            queryResult.setFirstResult((currentPage - 1) * limit);
             queryResult.setMaxResults(limit);
             totalPage = (int) Math.ceil((double) totalItem / limit);
-        }else{
+        } else {
             totalPage = 1;
         }
-      
 
         for (Setting setting : queryResult.getResultList()) {
             list.add(toDTO(setting));
@@ -56,7 +57,7 @@ public class SettingService implements ISettingService {
         dto.setTotalItem(totalItem);
         dto.setListResult(list);
         dto.setTotalPage(totalPage);
-        
+
         return ResponseEntity.ok(dto);
     }
 
@@ -72,9 +73,21 @@ public class SettingService implements ISettingService {
             return ResponseEntity.ok("Setting value already exist");
         }
         Setting setting = settingRepositories.findById(id).get();
-        setting.setSettingTitle(dto.getSettingTitle());
-        setting.setDisplayOrder(dto.getDisplayOrder());
-        setting.setDescription(dto.getDescription());
+        if (dto.getSettingTitle() != null) {
+            setting.setSettingTitle(dto.getSettingTitle());
+        }
+
+        if (dto.getDisplayOrder() != null) {
+            setting.setDisplayOrder(dto.getDisplayOrder());
+        }
+
+        if (dto.getDisplayOrder() != null) {
+            setting.setDescription(dto.getDescription());
+        }
+
+        if (dto.getStatus() != null) {
+            setting.setStatus(Status.getFromValue(Integer.parseInt(dto.getStatus())).get());
+        }
 
         settingRepositories.save(setting);
         return ResponseEntity.ok("Setting has been udated");
@@ -84,13 +97,19 @@ public class SettingService implements ISettingService {
     public ResponseEntity<SettingFilterDTO> getFilter() {
 
         List<TypeResponseDTO> list = new ArrayList<>();
+        List<StatusEntity> statuses = new ArrayList<>();
 
         for (Setting setting : settingRepositories.findAllType()) {
             list.add(new TypeResponseDTO(setting.getSettingTitle(), setting.getSettingValue()));
         }
 
+        for (Status status : new ArrayList<Status>(EnumSet.allOf(Status.class))) {
+            statuses.add(new StatusEntity(status));
+        }
+
         SettingFilterDTO filterDTO = new SettingFilterDTO();
-        filterDTO.setStatusFilter(List.of(StatusEnum.ACTIVE.toString(), StatusEnum.INACTIVE.toString()));
+
+        filterDTO.setStatusFilter(statuses);
         filterDTO.setTypeFilter(list);
 
         return ResponseEntity.ok(filterDTO);
@@ -100,18 +119,16 @@ public class SettingService implements ISettingService {
     public ResponseEntity<String> updateStatus(Long id) {
         Setting setting = settingRepositories.findById(id).get();
         if (setting.getType() != null) {
-            if (setting.getStatus() == StatusEnum.ACTIVE) {
-                setting.setStatus(StatusEnum.INACTIVE);
+            if (setting.getStatus() == Status.ACTIVE) {
+                setting.setStatus(Status.INACTIVE);
             } else {
-                setting.setStatus(StatusEnum.ACTIVE);
+                setting.setStatus(Status.ACTIVE);
             }
             settingRepositories.save(setting);
             return ResponseEntity.ok("Setting status updated");
         }
         return ResponseEntity.ok("Cant view this setting");
     }
-
-  
 
     // public Setting toEntity(Setting requestDTO) {
     // User entity = new User();
