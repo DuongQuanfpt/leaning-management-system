@@ -9,9 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
-
-public class UserSettingTypeDTO {
+public class UserTypeResponseDTO {
     String title;
     String value;
 }

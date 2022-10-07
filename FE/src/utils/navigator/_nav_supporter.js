@@ -1,6 +1,6 @@
 import React from 'react'
 import CIcon from '@coreui/icons-react'
-import { cilSettings, cilUser, cilHome } from '@coreui/icons'
+import { cilUser, cilHome } from '@coreui/icons'
 import { CNavItem, CNavTitle } from '@coreui/react'
 
 const _nav_supporter = [

@@ -83,7 +83,7 @@ const Login = () => {
           return
         }
         if (message === 'Incorect credentials') {
-          setError('You email or password is incorrect')
+          setError('Your email or password is incorrect')
           return
         }
       })
