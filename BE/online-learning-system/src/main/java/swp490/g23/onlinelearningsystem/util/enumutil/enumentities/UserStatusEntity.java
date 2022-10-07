@@ -14,8 +14,9 @@ public class UserStatusEntity {
     String name;
     String value;
 
-    public void convertUserStatus (UserStatus status){
+    public UserStatusEntity(UserStatus status) {
         this.name = status.toString();
         this.value = status.getValue();
-   }
+    }
+
 }

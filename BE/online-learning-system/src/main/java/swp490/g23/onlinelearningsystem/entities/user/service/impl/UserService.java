@@ -14,10 +14,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import io.jsonwebtoken.Claims;
 import net.bytebuddy.utility.RandomString;
 import swp490.g23.onlinelearningsystem.entities.email.EmailDetails;
 import swp490.g23.onlinelearningsystem.entities.email.service.impl.EmailService;
+import swp490.g23.onlinelearningsystem.entities.permission.domain.SettingPermission;
+import swp490.g23.onlinelearningsystem.entities.permission.domain.response.PermissionResponseDTO;
+import swp490.g23.onlinelearningsystem.entities.permission.repositories.criteria.PermissionCriteria;
 import swp490.g23.onlinelearningsystem.entities.s3amazon.service.impl.S3Service;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
@@ -32,7 +34,6 @@ import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository
 import swp490.g23.onlinelearningsystem.entities.user.repositories.criteria.UserRepositoriesCriteria;
 import swp490.g23.onlinelearningsystem.entities.user.service.IUserService;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoUserException;
-import swp490.g23.onlinelearningsystem.util.JwtTokenUtil;
 import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
 
 @Service
@@ -40,6 +41,10 @@ public class UserService implements IUserService {
 
     // Autowired
     // private AmazonS3Client ;
+
+     @Autowired
+    private PermissionCriteria permissionCriteria;
+
     @Autowired
     private SettingRepositories settingRepositories;
 
@@ -53,25 +58,23 @@ public class UserService implements IUserService {
     private UserRepository userRepository;
 
     @Autowired
-    private JwtTokenUtil jwtTokenUtil;
-
-    @Autowired
     private UserRepositoriesCriteria userCriteria;
 
     @Override
     public ResponseEntity<AuthenticatedResponseDTO> getAuthenticatedUser(Long id, List<Setting> roles) {
-        User user = userRepository.findUserById(id,UserStatus.ACTIVE);
+        User user = userRepository.findUserById(id, UserStatus.ACTIVE);
 
         if (user == null) {
             throw new NoUserException();
         }
-        return ResponseEntity.ok(toAuthenDTO(user, roles));
+        TypedQuery<SettingPermission> query = permissionCriteria.getScreenByRoles(roles);
+        return ResponseEntity.ok(toAuthenDTO(user, roles,query.getResultList()));
     }
 
     @Override
     public ResponseEntity<String> updatePassword(UserUpdatePassRequestDTO dto, Long id) {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
-        User user = userRepository.findUserById(id,UserStatus.ACTIVE);
+        User user = userRepository.findUserById(id, UserStatus.ACTIVE);
 
         if (user == null) {
             throw new NoUserException();
@@ -131,18 +134,18 @@ public class UserService implements IUserService {
     @Override
     public ResponseEntity<UserResponseDTO> updateUserProfile(String fullName, String bas64Avatar, String mobile,
             Long userId) {
-        if (!userRepository.findById(userId).isPresent()) {
+        User user = userRepository.findById(userId).get();
+        if (user == null) {
             throw new NoUserException();
         }
-        User user = userRepository.findById(userId).get();
+        // User user = userRepository.findById(userId).get();
         user.setMobile(mobile);
         user.setFullName(fullName);
 
-        if(bas64Avatar !=null){
-            String avatarUrl=s3Service.saveImg(bas64Avatar, user.getEmail().split("@")[0]);
+        if (bas64Avatar != null) {
+            String avatarUrl = s3Service.saveImg(bas64Avatar, user.getEmail().split("@")[0]);
             user.setAvatar_url(avatarUrl);
         }
-       
 
         userRepository.save(user);
 
@@ -174,39 +177,16 @@ public class UserService implements IUserService {
         }
     }
 
-    // get User from jwt token
-    public User getUserFromToken(String authoHeader) {
-
-        String token = authoHeader.split(" ")[1].trim();
-
-        Claims claims = jwtTokenUtil.parseClaims(token);
-
-        String claimsRole = (String) claims.get("roles");
-        claimsRole = claimsRole.replace("[", "").replace("]", "");
-        String[] roles = claimsRole.split(",");
-
-        String[] subjectArray = jwtTokenUtil.getSubject(token).split(",");
-        Long userID = Long.parseLong(subjectArray[0]);
-        if (!userRepository.findById(userID).isPresent()) {
-            return null;
-        }
-
-        User user = userRepository.findById(userID).get();
-        for (String role : roles) {
-            user.addRole(settingRepositories.findActiveSettingByValue(role));
-        }
-        return user;
-    }
-
     @Override
-    public ResponseEntity<UserListResponsePaginateDTO> displayUsers(int limit, int currentPage, String keyword, String filterRole, String filterStatus) {
+    public ResponseEntity<UserListResponsePaginateDTO> displayUsers(int limit, int currentPage, String keyword,
+            String filterRole, String filterStatus) {
         List<UserResponseDTO> users = new ArrayList<>();
-        TypedQuery<User> queryResult= userCriteria.displayUser(keyword, filterRole, filterStatus);
+        TypedQuery<User> queryResult = userCriteria.displayUser(keyword, filterRole, filterStatus);
 
         int totalItem = queryResult.getResultList().size();
-        int totalPage ;
-        if (limit != 0 ) {
-            queryResult.setFirstResult((currentPage-1)*limit);
+        int totalPage;
+        if (limit != 0) {
+            queryResult.setFirstResult((currentPage - 1) * limit);
             queryResult.setMaxResults(limit);
             totalPage = (int) Math.ceil((double) totalItem / limit);
         } else {
@@ -222,7 +202,7 @@ public class UserService implements IUserService {
         responseDTO.setTotalItem(totalItem);
         responseDTO.setListResult(users);
         responseDTO.setTotalPage(totalPage);
-        
+
         return ResponseEntity.ok(responseDTO);
     }
 
@@ -234,26 +214,24 @@ public class UserService implements IUserService {
 
     @Override
     public ResponseEntity<String> updateUser(UserRequestDTO dto, Long id) {
-        User user = userRepository.findById(id).get();
-        if (user == null) {
-            throw new NoUserException();
-        }
+        User user = userRepository.findById(id).orElseThrow(NoUserException :: new);
         List<Setting> settings = user.getSettings();
         user.setNote(dto.getNote());
+        
         if (!dto.getRoles().isEmpty()) {
-            for (String role : dto.getRoles()){
-            settings.add(settingRepositories.findBySettingValue(role));
+            for (String role : dto.getRoles()) {
+                settings.add(settingRepositories.findBySettingValue(role));
             }
             user.setSettings(settings);
         }
-        
+
         userRepository.save(user);
         return ResponseEntity.ok("User has been updated");
     }
 
     @Override
     public ResponseEntity<String> updateStatus(Long id) {
-        User user = userRepository.findById(id).get();
+        User user = userRepository.findById(id).orElseThrow(NoUserException :: new);
         if (user.getStatus() == UserStatus.ACTIVE) {
             user.setStatus(UserStatus.INACTIVE);
         } else {
@@ -263,22 +241,22 @@ public class UserService implements IUserService {
         return ResponseEntity.ok("User status updated");
     }
 
-    
     @Override
     public ResponseEntity<UserFIlterDTO> getFilter() {
         List<String> list = new ArrayList<>();
-        for (Setting setting : settingRepositories.roleList()) {
+        for (Setting setting : settingRepositories.findAllRole()) {
             list.add(setting.getSettingTitle());
         }
 
         UserFIlterDTO filterDTO = new UserFIlterDTO();
-        filterDTO.setStatusFilter(List.of(UserStatus.ACTIVE.toString(), UserStatus.INACTIVE.toString(), UserStatus.UNVERIFIED.toString()));
+        filterDTO.setStatusFilter(List.of(UserStatus.ACTIVE.toString(), UserStatus.INACTIVE.toString(),
+                UserStatus.UNVERIFIED.toString()));
         filterDTO.setRoleFilter(list);
-        
+
         return ResponseEntity.ok(filterDTO);
     }
 
-    public String uploadImageS3(String imgBase64){
+    public String uploadImageS3(String imgBase64) {
         return null;
     }
 
@@ -301,7 +279,7 @@ public class UserService implements IUserService {
         return responseDTO;
     }
 
-    public AuthenticatedResponseDTO toAuthenDTO(User entity, List<Setting> roles) {
+    public AuthenticatedResponseDTO toAuthenDTO(User entity, List<Setting> roles, List<SettingPermission> permissions) {
         AuthenticatedResponseDTO responseDTO = new AuthenticatedResponseDTO();
         responseDTO.setFullName(entity.getFullName());
         responseDTO.setEmail(entity.getEmail());
@@ -316,7 +294,14 @@ public class UserService implements IUserService {
             roleNames.add(setting.getSettingTitle());
         }
         responseDTO.setRoles(roleNames);
+
+        List<PermissionResponseDTO> permissionDTO = new ArrayList<>();
+        for(SettingPermission sp : permissions){
+            permissionDTO.add(new PermissionResponseDTO(null,sp.getScreen().getSettingTitle(), sp.getScreen().getSettingValue(),
+            sp.isCanGetAll(), sp.isCanEdit(), sp.isCanDelete(), sp.isCanAdd()));
+        }
+        responseDTO.setPermissions(permissionDTO);
         return responseDTO;
     }
-    
+
 }

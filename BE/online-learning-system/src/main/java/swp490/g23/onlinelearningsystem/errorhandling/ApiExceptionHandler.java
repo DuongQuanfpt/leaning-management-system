@@ -9,6 +9,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.DuplicateSubjectCodeException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.InvalidTokenException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoSettingException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoSubjectException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoUserException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.UnverifiedUserException;
@@ -60,6 +61,12 @@ public class ApiExceptionHandler {
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
     public ErrorMessage duplicateSubjectsException(Exception ex,  WebRequest request) {
         return new ErrorMessage(10106, "Subject code already exist");
+    }
+
+    @ExceptionHandler(NoSettingException.class)
+    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
+    public ErrorMessage noSettingException(Exception ex,  WebRequest request) {
+        return new ErrorMessage(10107, "Setting doesnt exist");
     }
 
 }

@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
 import swp490.g23.onlinelearningsystem.entities.subject.domain.filter.SubjectFilter;
@@ -105,17 +106,19 @@ public class SubjectService implements ISubjectService {
         }
 
         if (dto.getManagerEmail() != null) {
-            if (userRepository.findActiveUserByEmail(dto.getManagerEmail()) == null) {
+            User manager =userRepository.findActiveUserByEmail(dto.getManagerEmail());
+            if (manager == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There are no manager with that email");
             }
-            subject.setManager(userRepository.findActiveUserByEmail(dto.getManagerEmail()));
+            subject.setManager(manager);
         }
 
         if (dto.getExpertEmail() != null) {
-            if (userRepository.findActiveUserByEmail(dto.getExpertEmail()) == null) {
+            User expert =userRepository.findActiveUserByEmail(dto.getExpertEmail());
+            if ( expert == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There are no expert with that email");
             }
-            subject.setExpert(userRepository.findActiveUserByEmail(dto.getExpertEmail()));
+            subject.setExpert(expert);
         }
         subjectRepository.save(subject);
         return ResponseEntity.ok("Update Success");
@@ -143,10 +146,8 @@ public class SubjectService implements ISubjectService {
 
     @Override
     public ResponseEntity<String> editSubjectStatus(Long id) {
-        Subject subject = subjectRepository.findById(id).get();
-        if (subject == null) {
-            throw new NoSubjectException();
-        }
+        Subject subject = subjectRepository.findById(id).orElseThrow(NoSubjectException :: new);
+
         if (subject.getSubjectStatus() == Status.ACTIVE) {
             subject.setSubjectStatus(Status.INACTIVE);
         } else {
@@ -162,11 +163,15 @@ public class SubjectService implements ISubjectService {
         List<String> expert = new ArrayList<>();
         List<StatusEntity> statuses = new ArrayList<>();
 
-        for (User user : userRepository.findAll()) {
-            if (user.getSettings().contains(settingRepositories.findBySettingValue("ROLE_TRAINER"))) {
+        List<User> allUser = userRepository.findAll();
+        Setting managerSetting = settingRepositories.findBySettingValue("ROLE_TRAINER");
+        Setting expertSetting = settingRepositories.findBySettingValue("ROLE_SUPPORTER");
+
+        for (User user : allUser ) {
+            if (user.getSettings().contains(managerSetting)) {
                 manager.add(user.getEmail());
             }
-            if (user.getSettings().contains(settingRepositories.findBySettingValue("ROLE_SUPPORTER"))) {
+            if (user.getSettings().contains(expertSetting)) {
                 expert.add(user.getEmail());
             }
         }

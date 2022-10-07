@@ -1,6 +1,7 @@
 package swp490.g23.onlinelearningsystem.security.jwt;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,20 +61,21 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+        List<Setting> userRoles = getRoles(accessToken);
 
-        if (userAuthorization(accessToken, request.getRequestURI(), request.getMethod()) == false) {
+        if (userAuthorization(userRoles, request.getRequestURI(), request.getMethod()) == false) {
             ErrorMessage message = new ErrorMessage(10105, "Access denied");
             responseToClient(response, message, HttpServletResponse.SC_FORBIDDEN);
             return;
         }
 
-        setAuthenticationContext(accessToken, request);
+        setAuthenticationContext(accessToken, request, userRoles);
         filterChain.doFilter(request, response);
 
     }
 
-    private void setAuthenticationContext(String accessToken, HttpServletRequest request) {
-        UserDetails userDetails = getUserDetails(accessToken);
+    private void setAuthenticationContext(String accessToken, HttpServletRequest request, List<Setting> userRoles) {
+        UserDetails userDetails = getUserDetails(accessToken, userRoles);
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails,
                 null, userDetails.getAuthorities());
@@ -82,65 +84,56 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
 
-    private boolean userAuthorization(String accessToken, String url, String method) {
+    private boolean userAuthorization(List<Setting> roles, String url, String method) {
         User user = new User();
-
-        Claims claims = jwtTokenUtil.parseClaims(accessToken);
-
-        String claimsRole = (String) claims.get("roles");
-        System.out.println("claimroles : " + claimsRole);
-        claimsRole = claimsRole.replace("[", "").replace("]", "");
-        String[] roles = claimsRole.split(", ");
-
-        for (String role : roles) {
-            if (settingRepositories.findActiveSettingByValue(role) != null) {
-                user.addRole(settingRepositories.findActiveSettingByValue(role));
-            }
-        }
 
         if (url.matches("/api/.+")) {
             String route = url.split("[/]")[2];
-            System.out.println("rawURL" + route.toString());
+            System.out.println("rawURL : " + route.toString());
             url = Setting.API_PREFIX + "/" + route;
-            System.out.println("moddURL " + url.toString());
+            System.out.println("moddURL : " + url.toString());
         }
 
+        user.setSettings(roles);
+        Setting api = settingRepositories.findActiveSettingByValue(url);
+
         boolean canAccess = false;
-        if (!permissionRepositories.findByScreen(settingRepositories.findActiveSettingByValue(url)).isEmpty()) {
-            List<SettingPermission> list = permissionRepositories.findAll();
+        if (api != null) {
 
-            for (SettingPermission permission : list) {
-                for (Setting role : user.getSettings()) {
+            List<SettingPermission> list = permissionRepositories.findByScreen(api.getScreen());
+            if (!list.isEmpty()) {
+                for (SettingPermission permission : list) {
 
-                    if (permission.getRole().getSettingValue().equals(role.getSettingValue())
-                            && permission.getScreen().getSettingValue().equals(url)) {
+                    for (Setting role : user.getSettings()) {
 
-                        System.out.println(
-                                role.getSettingValue() + " claimsRole " + permission.getScreen().getSettingValue());
+                        if (permission.getRole().getSettingValue().equals(role.getSettingValue())
+                                && permission.getScreen().getSettingValue().equals(api.getScreen().getSettingValue())) {
+                
+                            if (method.equalsIgnoreCase("GET") && permission.isCanGetAll()) {
+                                canAccess = true;
+                                break;
+                            }
 
-                        if (method.equalsIgnoreCase("GET") && permission.isCanGetAll()) {
-                            canAccess = true;
-                            break;
-                        }
+                            if (method.equalsIgnoreCase("PUT") && permission.isCanEdit()) {
+                                canAccess = true;
+                                break;
+                            }
 
-                        if (method.equalsIgnoreCase("PUT") && permission.isCanEdit()) {
-                            canAccess = true;
-                            break;
-                        }
+                            if (method.equalsIgnoreCase("POST") && permission.isCanAdd()) {
+                                canAccess = true;
+                                break;
+                            }
 
-                        if (method.equalsIgnoreCase("POST") && permission.isCanAdd()) {
-                            canAccess = true;
-                            break;
-                        }
-
-                        if (method.equalsIgnoreCase("DELETE") && permission.isCanDelete()) {
-                            canAccess = true;
-                            break;
+                            if (method.equalsIgnoreCase("DELETE") && permission.isCanDelete()) {
+                                canAccess = true;
+                                break;
+                            }
                         }
                     }
-                }
 
+                }
             }
+
         } else {
             canAccess = true;
         }
@@ -148,26 +141,14 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         return canAccess;
     }
 
-    private UserDetails getUserDetails(String accessToken) {
+    private UserDetails getUserDetails(String accessToken, List<Setting> roles) {
         User user = new User();
-
-        Claims claims = jwtTokenUtil.parseClaims(accessToken);
-
-        String claimsRole = (String) claims.get("roles");
-        System.out.println("claimroles : " + claimsRole);
-        claimsRole = claimsRole.replace("[", "").replace("]", "");
-        String[] roles = claimsRole.split(", ");
-
-        for (String role : roles) {
-            if (settingRepositories.findActiveSettingByValue(role) != null) {
-                user.addRole(settingRepositories.findActiveSettingByValue(role));
-            }
-        }
 
         // String subject = (String) claims.get(Claims.SUBJECT);
         String[] subjectArray = jwtTokenUtil.getSubject(accessToken).split(",");
         user.setUserId(Long.parseLong(subjectArray[0]));
         user.setEmail(subjectArray[1]);
+        user.setSettings(roles);
 
         return user;
     }
@@ -187,6 +168,26 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         String token = header.split(" ")[1].trim();
         System.out.println("Access token: " + token);
         return token;
+    }
+
+    private List<Setting> getRoles(String accessToken) {
+        Claims claims = jwtTokenUtil.parseClaims(accessToken);
+
+        String claimsRole = (String) claims.get("roles");
+        System.out.println("claimroles : " + claimsRole);
+        claimsRole = claimsRole.replace("[", "").replace("]", "");
+        String[] roles = claimsRole.split(", ");
+
+        List<Setting> settings = settingRepositories.findAllRole();
+        List<Setting> result = new ArrayList<>();
+        for (String role : roles) {
+            for (Setting s : settings) {
+                if (s.getSettingValue().equals(role)) {
+                    result.add(s);
+                }
+            }
+        }
+        return result;
     }
 
     private void responseToClient(HttpServletResponse response, ErrorMessage customError, int httpStatus)

@@ -54,6 +54,13 @@ public class Setting extends BaseEntity {
     private String displayOrder;
 
     @ManyToOne
+    @JoinColumn(name = "screen_id")
+    private Setting screen;
+
+    @OneToMany(mappedBy = "screen")
+    private List<Setting> apis = new ArrayList<>();
+
+    @ManyToOne
     @JoinColumn(name = "type_id")
     private Setting type;
 
@@ -69,9 +76,11 @@ public class Setting extends BaseEntity {
     @OneToMany(mappedBy = "screen", cascade = CascadeType.ALL)
     private List<SettingPermission> roles;
 
-    @OneToMany(mappedBy = "role" ,cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
     private List<SettingPermission> screens;
 
+    // @OneToMany(mappedBy = "api" ,cascade = CascadeType.ALL)
+    // private List<SettingPermission> apis;
 
     public Setting(String settingTitle, String settingValue, String description) {
         this.settingTitle = settingTitle;
@@ -87,6 +96,17 @@ public class Setting extends BaseEntity {
         this.description = description;
         this.displayOrder = displayOrder;
         this.type = type;
+    }
+
+    public Setting(String settingTitle, String settingValue, Status status, String description,
+            String displayOrder, Setting type,Setting screen) {
+        this.settingTitle = settingTitle;
+        this.settingValue = settingValue;
+        this.status = status;
+        this.description = description;
+        this.displayOrder = displayOrder;
+        this.type = type;
+        this.screen=screen;
     }
 
     @Override

@@ -41,13 +41,13 @@ public class SubjectController {
 		return service.getSubject(limit, page, keyword, managerFilter, expertFilter, status);
 	}
 
-	@GetMapping(value = "/subjects/{id}")
+	@GetMapping(value = "/subjects-detail/{id}")
 	public ResponseEntity<SubjectResponseDTO> getSettingDetails(@PathVariable("id") Long id) {
 
 		return service.getSubjectDetail(id);
 	}
 
-	@PutMapping(value = "/subjects/{id}")
+	@PutMapping(value = "/subjects-detail/{id}")
 	public ResponseEntity<String> editSettingDetails(@PathVariable("id") Long id,
 			@RequestBody SubjectRequestDTO dto) {
 
