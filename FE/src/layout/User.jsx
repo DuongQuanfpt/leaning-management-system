@@ -9,8 +9,10 @@ import {
   userRoutes,
   commonRoutes,
 } from '~/routes'
-import '~/assets/scss/style.scss'
 import RequireAuth from '~/utils/RequireAuth'
+
+import '~/assets/scss/style.scss'
+import 'antd/dist/antd.min.css'
 
 const User = () => {
   return (

@@ -5,8 +5,6 @@ const RequireAuth = ({ allowedRoles }) => {
   const profile = useSelector((state) => state.profile)
   const location = useLocation()
 
-  console.log(profile?.roles?.find((role) => allowedRoles?.includes(role)))
-
   return profile?.roles?.find((role) => allowedRoles?.includes(role)) ? (
     <Outlet />
   ) : profile?.email ? (
