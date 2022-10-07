@@ -46,13 +46,13 @@ public class SettingController {
 	}
 
 	@GetMapping(value = "/setting/{id}")
-	public ResponseEntity<SettingResponseDTO> getSetting(@PathVariable("id") Long id) {
+	public ResponseEntity<SettingResponseDTO> getSettingDetails(@PathVariable("id") Long id) {
 
 		return settingService.viewSetting(id);
 	}
 
 	@PutMapping(value = "/setting/{id}")
-	public ResponseEntity<String> viewSetting(@PathVariable("id") Long id, @RequestBody SettingRequestDTO requestDTO) {
+	public ResponseEntity<String> editSetting(@PathVariable("id") Long id, @RequestBody SettingRequestDTO requestDTO) {
 		return settingService.updateSetting(requestDTO, id);
 	}
 

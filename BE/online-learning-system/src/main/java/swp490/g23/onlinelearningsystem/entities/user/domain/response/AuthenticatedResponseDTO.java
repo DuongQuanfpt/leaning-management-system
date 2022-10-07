@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import swp490.g23.onlinelearningsystem.util.EnumEntity.UserStatusEnum;
+import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class AuthenticatedResponseDTO {
@@ -20,7 +20,7 @@ public class AuthenticatedResponseDTO {
 
     private String avatar_url;
 
-    private UserStatusEnum status;
+    private UserStatus status;
 
     private String note;
 

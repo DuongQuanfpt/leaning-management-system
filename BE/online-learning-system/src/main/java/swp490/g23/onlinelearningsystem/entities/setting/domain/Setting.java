@@ -6,8 +6,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,7 +23,7 @@ import swp490.g23.onlinelearningsystem.entities.BaseEntity;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.permission.domain.SettingPermission;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
-import swp490.g23.onlinelearningsystem.util.EnumEntity.StatusEnum;
+import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 
 @Entity
 @Table(name = "setting")
@@ -46,8 +44,8 @@ public class Setting extends BaseEntity {
     private String settingValue;
 
     @Column
-    @Enumerated(EnumType.STRING)
-    private StatusEnum status;
+
+    private Status status;
 
     @Column
     private String description;
@@ -65,8 +63,11 @@ public class Setting extends BaseEntity {
     @ManyToMany(mappedBy = "settings")
     private List<User> users = new ArrayList<>();
 
-    @OneToMany(mappedBy = "setting")
-    private List<Classes> classes = new ArrayList<>();
+    @OneToMany(mappedBy = "settingTerm")
+    private List<Classes> classesTerm = new ArrayList<>();
+
+    @OneToMany(mappedBy = "settingBranch")
+    private List<Classes> classesBranch = new ArrayList<>();
 
     @OneToMany(mappedBy = "screen", cascade = CascadeType.ALL)
     private List<SettingPermission> roles;
@@ -81,7 +82,7 @@ public class Setting extends BaseEntity {
         this.description = description;
     }
 
-    public Setting(String settingTitle, String settingValue, StatusEnum status, String description,
+    public Setting(String settingTitle, String settingValue, Status status, String description,
             String displayOrder, Setting type) {
         this.settingTitle = settingTitle;
         this.settingValue = settingValue;

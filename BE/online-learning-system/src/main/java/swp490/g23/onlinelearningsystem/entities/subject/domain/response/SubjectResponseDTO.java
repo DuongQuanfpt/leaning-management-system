@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import swp490.g23.onlinelearningsystem.util.EnumEntity.StatusEnum;
+import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 
 @Getter
 @Setter
@@ -21,7 +21,7 @@ public class SubjectResponseDTO {
     private String subjectName;
 
     
-    private StatusEnum subjectStatus;
+    private Status subjectStatus;
 
     
     private String body;

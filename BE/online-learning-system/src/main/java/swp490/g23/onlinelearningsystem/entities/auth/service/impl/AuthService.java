@@ -34,10 +34,10 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.InvalidTokenException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.UnverifiedUserException;
-import swp490.g23.onlinelearningsystem.util.EnumEntity.RoleEnum;
-import swp490.g23.onlinelearningsystem.util.EnumEntity.UserStatusEnum;
 import swp490.g23.onlinelearningsystem.util.GoogleHelper;
 import swp490.g23.onlinelearningsystem.util.JwtTokenUtil;
+import swp490.g23.onlinelearningsystem.util.enumutil.EnumEntity.RoleEnum;
+import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
 
 @Service
 public class AuthService implements IAuthService {
@@ -69,7 +69,7 @@ public class AuthService implements IAuthService {
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         User user = (User) authentication.getPrincipal();
 
-        if (user.getStatus() == UserStatusEnum.UNVERIFIED) {
+        if (user.getStatus() == UserStatus.UNVERIFIED) {
             throw new UnverifiedUserException();
         }
 
@@ -90,7 +90,7 @@ public class AuthService implements IAuthService {
         user.setEmail(request.getEmail());
         user.setPassword(encoder.encode(password));
         user.addRole(settingRepositories.findBySettingValue(RoleEnum.ROLE_TRAINEE.toString()));
-        user.setStatus(UserStatusEnum.UNVERIFIED);
+        user.setStatus(UserStatus.UNVERIFIED);
         user.setMailToken(RandomString.make(30));
         userRepository.save(user);
         try {
@@ -114,7 +114,7 @@ public class AuthService implements IAuthService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User doesnt exist");
         }
         System.out.print(user.getEmail());
-        user.setStatus(UserStatusEnum.ACTIVE);
+        user.setStatus(UserStatus.ACTIVE);
         user.setMailToken(null);
         userRepository.save(user);
         return ResponseEntity.ok().body(user.getFullName() + " has been verified");
@@ -146,7 +146,7 @@ public class AuthService implements IAuthService {
             user.setFullName(name);
             user.setPassword(encoder.encode(pass));
             user.setAvatar_url(pictureUrl);
-            user.setStatus(UserStatusEnum.ACTIVE);
+            user.setStatus(UserStatus.ACTIVE);
             user.addRole(settingRepositories.findBySettingValue(RoleEnum.ROLE_TRAINEE.toString()));
 
             try {
@@ -158,8 +158,8 @@ public class AuthService implements IAuthService {
 
         } else {
             user = userRepository.findByEmail(email).get();
-            if (user.getStatus() == UserStatusEnum.UNVERIFIED) {
-                user.setStatus(UserStatusEnum.ACTIVE);
+            if (user.getStatus() == UserStatus.UNVERIFIED) {
+                user.setStatus(UserStatus.ACTIVE);
                 user.setMailToken(null);
             }
         }

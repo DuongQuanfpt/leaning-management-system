@@ -2,14 +2,13 @@ package swp490.g23.onlinelearningsystem.entities.user.service.impl;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import javax.mail.MessagingException;
+import javax.persistence.TypedQuery;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,11 +29,15 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserUpdatePa
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.AuthenticatedResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserListResponsePaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserResponseDTO;
+import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserTypeResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
+import swp490.g23.onlinelearningsystem.entities.user.repositories.criteria.UserRepositoriesCriteria;
 import swp490.g23.onlinelearningsystem.entities.user.service.IUserService;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoUserException;
 import swp490.g23.onlinelearningsystem.util.JwtTokenUtil;
-import swp490.g23.onlinelearningsystem.util.EnumEntity.UserStatusEnum;
+import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
+import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
+import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.UserStatusEntity;
 
 @Service
 public class UserService implements IUserService {
@@ -56,9 +59,12 @@ public class UserService implements IUserService {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
+    @Autowired
+    private UserRepositoriesCriteria userCriteria;
+
     @Override
     public ResponseEntity<AuthenticatedResponseDTO> getAuthenticatedUser(Long id, List<Setting> roles) {
-        User user = userRepository.findUserById(id);
+        User user = userRepository.findUserById(id,UserStatus.ACTIVE);
 
         if (user == null) {
             throw new NoUserException();
@@ -69,7 +75,7 @@ public class UserService implements IUserService {
     @Override
     public ResponseEntity<String> updatePassword(UserUpdatePassRequestDTO dto, Long id) {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
-        User user = userRepository.findUserById(id);
+        User user = userRepository.findUserById(id,UserStatus.ACTIVE);
 
         if (user == null) {
             throw new NoUserException();
@@ -197,30 +203,30 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponseEntity<UserListResponsePaginateDTO> displayUsers(int limit, int currentPage) {
-        List<User> users = new ArrayList<>();
-        if (limit == 0 ) {
-            users = userRepository.findAll();   
-        } else {
-            Pageable pageable = PageRequest.of(currentPage - 1, limit, Sort.by(Sort.Direction.ASC, "userId"));
-            users = userRepository.findAll(pageable).getContent();
-        }
-        List<UserResponseDTO> result = new ArrayList<>();
+    public ResponseEntity<UserListResponsePaginateDTO> displayUsers(int limit, int currentPage, String keyword, String filterRole, String filterStatus) {
+        List<UserResponseDTO> users = new ArrayList<>();
+        TypedQuery<User> queryResult= userCriteria.displayUser(keyword, filterRole, filterStatus);
 
-        for (User user : users) {
-            result.add(toDTO(user));
+        int totalItem = queryResult.getResultList().size();
+        int totalPage ;
+        if (limit != 0 ) {
+            queryResult.setFirstResult((currentPage-1)*limit);
+            queryResult.setMaxResults(limit);
+            totalPage = (int) Math.ceil((double) totalItem / limit);
+        } else {
+            totalPage = 1;
+        }
+
+        for (User user : queryResult.getResultList()) {
+            users.add(toDTO(user));
         }
 
         UserListResponsePaginateDTO responseDTO = new UserListResponsePaginateDTO();
         responseDTO.setPage(currentPage);
-        responseDTO.setListResult(result);
-        if (limit == 0) {
-            responseDTO.setTotalPage(0);
-        } else{
-            responseDTO.setTotalPage((int) Math.ceil((double) userRepository.count() / limit));
-        }
-
-        responseDTO.setTotalItem(userRepository.count());
+        responseDTO.setTotalItem(totalItem);
+        responseDTO.setListResult(users);
+        responseDTO.setTotalPage(totalPage);
+        
         return ResponseEntity.ok(responseDTO);
     }
 
@@ -233,14 +239,18 @@ public class UserService implements IUserService {
     @Override
     public ResponseEntity<String> updateUser(UserRequestDTO dto, Long id) {
         User user = userRepository.findById(id).get();
-        List<Setting> settings = new ArrayList<>();
-        user.setNote(dto.getNote());
-        for (String role : dto.getRoles()){
-            settings.add(settingRepositories.findBySettingValue(role));
+        if (user == null) {
+            throw new NoUserException();
         }
-        user.setSettings(settings);
-
-
+        user.setNote(dto.getNote());
+        if (!dto.getRoles().isEmpty()) {
+            List<Setting> settings = new ArrayList<>();
+            for (String role : dto.getRoles()){
+            settings.add(settingRepositories.findBySettingValue(role));
+            }
+            user.setSettings(settings);
+        }
+        
         userRepository.save(user);
         return ResponseEntity.ok("User has been updated");
     }
@@ -248,10 +258,13 @@ public class UserService implements IUserService {
     @Override
     public ResponseEntity<String> updateStatus(Long id) {
         User user = userRepository.findById(id).get();
-        if (user.getStatus() == UserStatusEnum.ACTIVE) {
-            user.setStatus(UserStatusEnum.INACTIVE);
+        if (user == null) {
+            throw new NoUserException();
+        }
+        if (user.getStatus() == UserStatus.ACTIVE) {
+            user.setStatus(UserStatus.INACTIVE);
         } else {
-            user.setStatus(UserStatusEnum.ACTIVE);
+            user.setStatus(UserStatus.ACTIVE);
         }
         userRepository.save(user);
         return ResponseEntity.ok("User status updated");
@@ -260,13 +273,19 @@ public class UserService implements IUserService {
     
     @Override
     public ResponseEntity<UserFIlterDTO> getFilter() {
-        List<String> list = new ArrayList<>();
+        List<UserTypeResponseDTO> list = new ArrayList<>();
+        List<UserStatusEntity> statuses = new ArrayList<>();
+        
         for (Setting setting : settingRepositories.roleList()) {
-            list.add(setting.getSettingTitle());
+            list.add(new UserTypeResponseDTO(setting.getSettingTitle(), setting.getSettingValue()));
+        }
+
+        for (UserStatus status : new ArrayList<UserStatus>(EnumSet.allOf(UserStatus.class))) {
+            statuses.add(new UserStatusEntity(status));
         }
 
         UserFIlterDTO filterDTO = new UserFIlterDTO();
-        filterDTO.setStatusFilter(List.of(UserStatusEnum.ACTIVE.toString(), UserStatusEnum.INACTIVE.toString(), UserStatusEnum.UNVERIFIED.toString()));
+        filterDTO.setStatusFilter(statuses);
         filterDTO.setRoleFilter(list);
         
         return ResponseEntity.ok(filterDTO);
@@ -312,5 +331,5 @@ public class UserService implements IUserService {
         responseDTO.setRoles(roleNames);
         return responseDTO;
     }
-
+    
 }

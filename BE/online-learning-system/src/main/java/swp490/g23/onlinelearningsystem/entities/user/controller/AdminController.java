@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
-import swp490.g23.onlinelearningsystem.entities.user.domain.filter.UserFIlterDTO;
+import swp490.g23.onlinelearningsystem.entities.user.domain.filter.UserFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserListResponsePaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserResponseDTO;
@@ -39,26 +39,29 @@ public class AdminController {
 	@GetMapping(value = "/user")
 	public ResponseEntity<UserListResponsePaginateDTO> adminUserList(
 			@RequestParam(name = "page", required = false) String currentPage,
-			@RequestParam(name = "limit", required = false) String requestLimit) {
+			@RequestParam(name = "limit", required = false) String requestLimit,
+			@RequestParam(name = "q", required = false) String keyword,
+			@RequestParam(name = "filterStatus", required = false) String statusFilter,
+			@RequestParam(name = "filterRole", required = false) String roleFilter) {
 
 		int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
 		int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
-		return userService.displayUsers(limit, page);
+		return userService.displayUsers(limit, page, keyword, roleFilter, statusFilter );
 	}
 
 	@GetMapping(value = "/user-filter")
-	public ResponseEntity<UserFIlterDTO> getUserFilter() {
+	public ResponseEntity<UserFilterDTO> getUserFilter() {
 
 		return userService.getFilter();
 	}
 
-	@GetMapping(value = "/user/{id}")
+	@GetMapping(value = "/user-detail/{id}")
 	public ResponseEntity<UserResponseDTO> getUser(@PathVariable("id") Long id) {
 
 		return userService.viewUser(id);
 	}
 
-	@PutMapping(value = "/user/{id}")
+	@PutMapping(value = "/user-detail/{id}")
 	public ResponseEntity<String> updateUser(@PathVariable("id") Long id, @RequestBody UserRequestDTO requestDTO) {
 
 		return userService.updateUser(requestDTO, id);

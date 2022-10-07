@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.DuplicateSubjectCodeException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.InvalidTokenException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoSubjectException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoUserException;
@@ -53,6 +54,12 @@ public class ApiExceptionHandler {
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
     public ErrorMessage noSubjectsException(Exception ex,  WebRequest request) {
         return new ErrorMessage(10105, "Subject doesnt exist");
+    }
+
+    @ExceptionHandler(DuplicateSubjectCodeException.class)
+    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
+    public ErrorMessage duplicateSubjectsException(Exception ex,  WebRequest request) {
+        return new ErrorMessage(10106, "Subject code already exist");
     }
 
 }
