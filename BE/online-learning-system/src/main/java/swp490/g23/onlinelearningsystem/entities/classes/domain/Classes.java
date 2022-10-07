@@ -46,7 +46,10 @@ public class Classes extends BaseEntity{
     private String description;
 
     @ManyToOne
-    private Setting setting;
+    private Setting settingTerm;
+
+    @ManyToOne
+    private Setting settingBranch;
 
     @ManyToOne
     private User userTrainer;

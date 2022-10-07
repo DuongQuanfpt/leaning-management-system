@@ -2,6 +2,7 @@ package swp490.g23.onlinelearningsystem.entities.user.service.impl;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import javax.mail.MessagingException;
@@ -28,12 +29,15 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserUpdatePa
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.AuthenticatedResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserListResponsePaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserResponseDTO;
+import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserSettingTypeDTO;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.criteria.UserRepositoriesCriteria;
 import swp490.g23.onlinelearningsystem.entities.user.service.IUserService;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoUserException;
 import swp490.g23.onlinelearningsystem.util.JwtTokenUtil;
 import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
+import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
+import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.UserStatusEntity;
 
 @Service
 public class UserService implements IUserService {
@@ -238,9 +242,9 @@ public class UserService implements IUserService {
         if (user == null) {
             throw new NoUserException();
         }
-        List<Setting> settings = user.getSettings();
         user.setNote(dto.getNote());
         if (!dto.getRoles().isEmpty()) {
+            List<Setting> settings = new ArrayList<>();
             for (String role : dto.getRoles()){
             settings.add(settingRepositories.findBySettingValue(role));
             }
@@ -254,6 +258,9 @@ public class UserService implements IUserService {
     @Override
     public ResponseEntity<String> updateStatus(Long id) {
         User user = userRepository.findById(id).get();
+        if (user == null) {
+            throw new NoUserException();
+        }
         if (user.getStatus() == UserStatus.ACTIVE) {
             user.setStatus(UserStatus.INACTIVE);
         } else {
@@ -266,13 +273,19 @@ public class UserService implements IUserService {
     
     @Override
     public ResponseEntity<UserFIlterDTO> getFilter() {
-        List<String> list = new ArrayList<>();
+        List<UserSettingTypeDTO> list = new ArrayList<>();
+        List<UserStatusEntity> statuses = new ArrayList<>();
+        
         for (Setting setting : settingRepositories.roleList()) {
-            list.add(setting.getSettingTitle());
+            list.add(new UserSettingTypeDTO(setting.getSettingTitle(), setting.getSettingValue()));
+        }
+
+        for (UserStatus status : new ArrayList<UserStatus>(EnumSet.allOf(UserStatus.class))) {
+            statuses.add(new UserStatusEntity(status));
         }
 
         UserFIlterDTO filterDTO = new UserFIlterDTO();
-        filterDTO.setStatusFilter(List.of(UserStatus.ACTIVE.toString(), UserStatus.INACTIVE.toString(), UserStatus.UNVERIFIED.toString()));
+        filterDTO.setStatusFilter(statuses);
         filterDTO.setRoleFilter(list);
         
         return ResponseEntity.ok(filterDTO);

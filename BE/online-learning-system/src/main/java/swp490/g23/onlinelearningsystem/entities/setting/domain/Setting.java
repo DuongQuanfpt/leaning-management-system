@@ -63,8 +63,11 @@ public class Setting extends BaseEntity {
     @ManyToMany(mappedBy = "settings")
     private List<User> users = new ArrayList<>();
 
-    @OneToMany(mappedBy = "setting")
-    private List<Classes> classes = new ArrayList<>();
+    @OneToMany(mappedBy = "settingTerm")
+    private List<Classes> classesTerm = new ArrayList<>();
+
+    @OneToMany(mappedBy = "settingBranch")
+    private List<Classes> classesBranch = new ArrayList<>();
 
     @OneToMany(mappedBy = "screen", cascade = CascadeType.ALL)
     private List<SettingPermission> roles;

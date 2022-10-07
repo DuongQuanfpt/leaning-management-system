@@ -21,6 +21,8 @@ public class ClassResponseDTO {
 
     private String term;
 
+    private String branch;
+
     private String description;
 
     private String trainer;

@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.classes.repositories.ClassRepositories;
+import swp490.g23.onlinelearningsystem.entities.packages.domain.Package;
+import swp490.g23.onlinelearningsystem.entities.packages.repositories.PackageRepositories;
 import swp490.g23.onlinelearningsystem.entities.permission.domain.SettingPermission;
 import swp490.g23.onlinelearningsystem.entities.permission.repositories.PermissionRepositories;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
@@ -41,6 +43,9 @@ public class DbInit {
         @Autowired
         private ClassRepositories classRepositories;
 
+        @Autowired
+        private PackageRepositories packageRepositories;
+
         @PostConstruct // Create User on app startup
         private void postConstruct() {
 
@@ -55,6 +60,9 @@ public class DbInit {
 
                 //loadClass
                 loadClass();
+
+                //LoadPackage
+                loadPackage();
 
         }
 
@@ -85,6 +93,14 @@ public class DbInit {
 
                 Setting typeScreen = new Setting("System Screen", "TYPE_SCREEN",
                                 "contain setting for each screen in system");
+                typeRole.setStatus(Status.ACTIVE);
+
+                Setting typeTerm = new Setting("Term", "TYPE_TERM",
+                                "term for classes");
+                typeRole.setStatus(Status.ACTIVE);
+
+                Setting typeBranch = new Setting("Branch", "TYPE_BRANCH",
+                                "branch of classes");
                 typeRole.setStatus(Status.ACTIVE);
 
                 // create screen setting
@@ -143,13 +159,28 @@ public class DbInit {
                                 "description for trainer", "1", typeRole);
                 Setting expertRole = new Setting("expert", "ROLE_EXPERT", Status.ACTIVE,
                                 "description for expert", "1", typeRole);
+
+                //create term setting
+                Setting termSpring = new Setting("Spring term", "TERM_SPRING", Status.ACTIVE, 
+                                "description for term spring", "4", typeTerm);
+                Setting termSummer= new Setting("Summer term", "TERM_SUMMER", Status.ACTIVE, 
+                                "description for term summer", "4", typeTerm);
+
+                //create branch setting
+                Setting branchHCM = new Setting("HCM", "BRANCH_HCM", Status.ACTIVE, 
+                                "description for branch HCM", "5", typeBranch);
+                Setting branchHN = new Setting("Ha Noi", "BRANCH_HN", Status.ACTIVE, 
+                                "description for branch Ha Noi", "5", typeBranch);
+
                 settingRepositories.saveAll(
-                                List.of(typeScreen, typeRole, adminRole, traineeRole, managerRole, supporterRole,
+                                List.of(typeScreen, typeRole, typeTest, typeTerm, typeBranch, 
+                                                adminRole, traineeRole, managerRole, supporterRole,
                                                 trainerRole, expertRole,
-                                                typeTest, setting, settingFilter, settingStatus, subjects,
+                                                setting, settingFilter, settingStatus, subjects,
                                                 subjectsStatus, user,
                                                 userFilter, userStatus, test3,
-                                                test4));
+                                                test4, termSpring, termSummer, branchHCM, branchHN));
+                                                
 
                 // create permission
                 SettingPermission adminSetting = new SettingPermission();
@@ -245,13 +276,23 @@ public class DbInit {
         }
 
         public void loadClass() {
+                // create classsssss
                 Classes defailtClass = new Classes((long) 1, "SWP390", Status.ACTIVE, "Web project",
-                                settingRepositories.findBySettingValue("TEST3"),
+                                settingRepositories.findBySettingValue("TERM_SPRING"),
+                                settingRepositories.findBySettingValue("BRANCH_HN"),
                                 userRepository.findByEmail("quan4@doivl.com").get(),
-                                userRepository.findByEmail("quan6@doivl.com").get(),
+                                userRepository.findByEmail("quan22@doivl.com").get(),
                                 null);
                 classRepositories.saveAll(List.of(defailtClass));
         }
-        // create classsssss
+       
+        public void loadPackage() {
+                // create Package
+                Package defaultPackage = new Package((long) 1, "Package 1", "desciption for package", 
+                                                        null, (long) 15.0, subjecRepository.findById((long) 1).get());
+                Package package1 = new Package((long) 2, "Package 2", "desciption for package", 
+                                                        null, (long) 10.0, subjecRepository.findById((long) 2).get());
+                packageRepositories.saveAll(List.of(defaultPackage, package1));
+        }
 
 }
