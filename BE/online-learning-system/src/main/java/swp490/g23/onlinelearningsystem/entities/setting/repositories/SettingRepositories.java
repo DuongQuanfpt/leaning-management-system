@@ -32,4 +32,9 @@ public interface SettingRepositories extends JpaRepository<Setting, Long> {
     @Query(value = "SELECT s FROM Setting s WHERE s.type IS NULL")
     List<Setting> findAllType();
 
+    @Query(value = "SELECT s FROM Setting s WHERE s.type.settingValue = 'TYPE_TERM'")
+    List<Setting> termList();
+
+    @Query(value = "SELECT s FROM Setting s WHERE s.type.settingValue = 'TYPE_BRANCH'")
+    List<Setting> branchList();
 }

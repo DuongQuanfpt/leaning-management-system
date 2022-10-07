@@ -55,13 +55,13 @@ public class AdminController {
 		return userService.getFilter();
 	}
 
-	@GetMapping(value = "/user/{id}")
+	@GetMapping(value = "/user-detail/{id}")
 	public ResponseEntity<UserResponseDTO> getUser(@PathVariable("id") Long id) {
 
 		return userService.viewUser(id);
 	}
 
-	@PutMapping(value = "/user/{id}")
+	@PutMapping(value = "/user-detail/{id}")
 	public ResponseEntity<String> updateUser(@PathVariable("id") Long id, @RequestBody UserRequestDTO requestDTO) {
 
 		return userService.updateUser(requestDTO, id);

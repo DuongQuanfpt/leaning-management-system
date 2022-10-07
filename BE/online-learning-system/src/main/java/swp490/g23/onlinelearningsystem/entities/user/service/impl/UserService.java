@@ -249,9 +249,9 @@ public class UserService implements IUserService {
         }
 
         UserFIlterDTO filterDTO = new UserFIlterDTO();
-        filterDTO.setStatusFilter(List.of(UserStatus.ACTIVE.toString(), UserStatus.INACTIVE.toString(),
-                UserStatus.UNVERIFIED.toString()));
-        filterDTO.setRoleFilter(list);
+        // filterDTO.setStatusFilter(List.of(UserStatus.ACTIVE.toString(), UserStatus.INACTIVE.toString(),
+        //         UserStatus.UNVERIFIED.toString()));
+        // filterDTO.setRoleFilter(list);
 
         return ResponseEntity.ok(filterDTO);
     }
@@ -297,7 +297,7 @@ public class UserService implements IUserService {
 
         List<PermissionResponseDTO> permissionDTO = new ArrayList<>();
         for(SettingPermission sp : permissions){
-            permissionDTO.add(new PermissionResponseDTO(null,sp.getScreen().getSettingTitle(), sp.getScreen().getSettingValue(),
+            permissionDTO.add(new PermissionResponseDTO(sp.getRole().getSettingTitle(),sp.getScreen().getSettingTitle(), sp.getScreen().getSettingValue(),
             sp.isCanGetAll(), sp.isCanEdit(), sp.isCanDelete(), sp.isCanAdd()));
         }
         responseDTO.setPermissions(permissionDTO);
