@@ -29,7 +29,7 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserUpdatePa
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.AuthenticatedResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserListResponsePaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserResponseDTO;
-import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserSettingTypeDTO;
+import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserTypeResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.criteria.UserRepositoriesCriteria;
 import swp490.g23.onlinelearningsystem.entities.user.service.IUserService;
@@ -273,11 +273,11 @@ public class UserService implements IUserService {
     
     @Override
     public ResponseEntity<UserFIlterDTO> getFilter() {
-        List<UserSettingTypeDTO> list = new ArrayList<>();
+        List<UserTypeResponseDTO> list = new ArrayList<>();
         List<UserStatusEntity> statuses = new ArrayList<>();
         
         for (Setting setting : settingRepositories.roleList()) {
-            list.add(new UserSettingTypeDTO(setting.getSettingTitle(), setting.getSettingValue()));
+            list.add(new UserTypeResponseDTO(setting.getSettingTitle(), setting.getSettingValue()));
         }
 
         for (UserStatus status : new ArrayList<UserStatus>(EnumSet.allOf(UserStatus.class))) {
