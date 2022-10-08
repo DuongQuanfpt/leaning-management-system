@@ -1,111 +1,206 @@
 import React, { useState, useEffect } from 'react'
-import ReactPaginate from 'react-paginate'
+import { useNavigate, Link } from 'react-router-dom'
+import { Table, Input, Button, Space, Tag, Breadcrumb } from 'antd'
+import { SearchOutlined } from '@ant-design/icons'
 
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 
-import {
-  CTable,
-  CTableHead,
-  CTableRow,
-  CTableHeaderCell,
-  CTableBody,
-  CTableDataCell,
-  CButton,
-  CDropdown,
-  CDropdownToggle,
-  CDropdownMenu,
-  CBadge,
-  CDropdownItem,
-} from '@coreui/react'
-
-import { cilReload, cilSearch } from '@coreui/icons'
-import CIcon from '@coreui/icons-react'
 import userListApi from '~/api/userListApi'
-import { useNavigate } from 'react-router-dom'
 
 const AdminUserList = () => {
-  const ITEM_PER_PAGE = 7
-  const columnHead = ['ID', 'Full name', 'Email', 'Mobile', 'Role', 'Status', 'Actions']
-
   const navigateTo = useNavigate()
 
-  const [listUserFetched, setListUserFetched] = useState([])
-  const [listUserDisplay, setListUserDisplay] = useState([])
-  const [listRole, setListRole] = useState([])
-  const [listStatus, setListStatus] = useState([])
-  const [totalPages, setTotalPages] = useState(1)
-  const [search, setSearch] = useState('')
+  const [listSetting, setListSetting] = useState([])
 
   useEffect(() => {
-    const params = { page: 1, limit: ITEM_PER_PAGE }
-
-    userListApi.getFirstPage(params).then((response) => {
-      setListUserFetched(response.listResult)
-      setListUserDisplay(response.listResult)
-      setTotalPages(response.totalPage)
+    userListApi.getAll().then((response) => {
+      loadData()
     })
-
-    userListApi.getFilter().then((response) => {
-      // setListRole(response.roleFilter)
-      setListStatus(response.statusFilter)
-    })
-
-    setListRole(['admin', 'manager', 'supporter', 'trainer', 'trainee'])
   }, [])
 
-  const handleSearch = async () => {
-    if (search === '') {
-      setSearch('')
-      setListUserDisplay(listUserFetched)
-      return
-    }
-    const query = search.toLowerCase()
-    setListUserDisplay(() =>
-      listUserFetched.filter((user) => {
+  const loadData = async () => {
+    await userListApi.getAll().then((response) => {
+      setListSetting(response.listResult)
+    })
+  }
+
+  const handleActive = async (id) => {
+    await userListApi.changeActive(id).then((response) => {
+      loadData()
+    })
+  }
+
+  const columns = [
+    {
+      title: 'ID',
+      dataIndex: 'userId',
+      sorter: (a, b) => a.userId - b.userId,
+      width: 80,
+    },
+    {
+      title: 'Fullname',
+      dataIndex: 'fullName',
+      sorter: (a, b) => a.fullName?.length - b.fullName?.length,
+      width: 180,
+    },
+    {
+      title: 'Email',
+      dataIndex: 'email',
+      sorter: (a, b) => a.email?.length - b.email?.length,
+      width: 220,
+      filterDropdown: ({ selectedKeys, setSelectedKeys, confirm, clearFilters }) => {
         return (
-          user.fullName?.toLowerCase().includes(query) ||
-          user.email?.toLowerCase().includes(query) ||
-          user.mobile?.toLowerCase().includes(query)
+          <>
+            <Input
+              autoFocus
+              placeholder="Searching by Manager"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : [])
+                confirm({ closeDropdown: false })
+              }}
+              onPressEnter={() => {
+                confirm()
+              }}
+              onBlur={() => {
+                confirm()
+              }}
+            ></Input>
+            <Button
+              type="primary"
+              onClick={() => {
+                confirm()
+              }}
+            >
+              Search
+            </Button>
+            <Button
+              type="danger"
+              onClick={() => {
+                clearFilters()
+                confirm()
+              }}
+            >
+              Clear
+            </Button>
+          </>
         )
-      }),
-    )
-  }
+      },
+      filterIcon: () => {
+        return <SearchOutlined />
+      },
+      onFilter: (value, record) => {
+        return record?.email.toLowerCase().includes(value.toLowerCase())
+      },
+    },
 
-  const handleReload = () => {
-    navigateTo(0)
-  }
-
-  const handleFilterStatus = (status) => {
-    setListUserDisplay(() => listUserFetched.filter((user) => user.status === status))
-  }
-
-  const handleFilterRole = (item) => {
-    // setListUserDisplay(() => listUserFetched.filter((user) => user.status === item))
-  }
-
-  const handleSortColumn = () => {}
-
-  const handleActive = async ({ userId }) => {
-    await userListApi.changeActive(userId).then((response) => {
-      navigateTo(0)
-    })
-  }
-
-  const handleView = ({ userId }) => {
-    navigateTo(`/user-detail/${userId}`)
-  }
-
-  const handlePageChange = async ({ selected }) => {
-    const params = { page: selected + 1, limit: ITEM_PER_PAGE }
-    await userListApi.getPage(params).then((response) => {
-      setListUserDisplay(response.listResult)
-    })
-  }
-
-  console.log(listStatus)
-  console.log(listRole)
+    {
+      title: 'Mobile',
+      dataIndex: 'mobile',
+      sorter: (a, b) => a.mobile?.length - b.mobile?.length,
+      width: 140,
+    },
+    {
+      title: 'Role',
+      dataIndex: 'roles',
+      sorter: (a, b) => a.roles.length - b.roles.length,
+      width: 150,
+      render: (_, { roles }) => (
+        <>
+          {roles.map((role) => {
+            let color
+            switch (role) {
+              case 'admin': {
+                color = 'volcano'
+                break
+              }
+              case 'manager': {
+                color = 'orange'
+                break
+              }
+              case 'supporter': {
+                color = 'gold'
+                break
+              }
+              case 'trainer': {
+                color = 'lime'
+                break
+              }
+              case 'trainee': {
+                color = 'green'
+                break
+              }
+              case 'expert': {
+                color = 'purple'
+                break
+              }
+              default: {
+                color = 'red'
+              }
+            }
+            return (
+              <Tag color={color} key={role}>
+                {role.toUpperCase()}
+              </Tag>
+            )
+          })}
+        </>
+      ),
+      filters: [
+        { text: 'admin', value: 'admin' },
+        { text: 'manager', value: 'manager' },
+        { text: 'supporter', value: 'supporter' },
+        { text: 'trainer', value: 'trainer' },
+        { text: 'trainee', value: 'trainee' },
+        { text: 'expert', value: 'expert' },
+      ],
+      onFilter: (value, record) => record?.roles?.includes(value),
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      sorter: (a, b) => a.status?.length - b.status?.length,
+      width: 120,
+      filters: [
+        { text: 'ACTIVE', value: 'ACTIVE' },
+        { text: 'INACTIVE', value: 'INACTIVE' },
+      ],
+      onFilter: (value, record) => record.status === value,
+      render: (_, { status }) => (
+        <Tag color={status === 'ACTIVE' ? 'blue' : 'red'} key={status}>
+          {status}
+        </Tag>
+      ),
+    },
+    {
+      title: 'Action',
+      dataIndex: 'action',
+      ellipsis: true,
+      width: 170,
+      render: (_, user) => (
+        <Space size="middle">
+          <Button
+            type={user.status === 'ACTIVE' ? 'danger' : 'primary'}
+            onClick={() => {
+              handleActive(user.userId)
+            }}
+          >
+            {user.status === 'ACTIVE' ? 'Deactive' : 'Reactive'}
+          </Button>
+          <Button
+            type="link"
+            onClick={() => {
+              navigateTo(`/user-detail/${user?.userId}`)
+            }}
+          >
+            View
+          </Button>
+        </Space>
+      ),
+    },
+  ]
 
   return (
     <div>
@@ -114,152 +209,16 @@ const AdminUserList = () => {
         <AdminHeader />
         <div className="body flex-grow-1 px-3">
           <div className="col-lg-12 m-b30">
-            <div className="row">
-              <div className="col-8 d-flex w-80">
-                <input
-                  type="search"
-                  id="form1"
-                  className="form-control"
-                  value={search}
-                  placeholder="Searching by name, email or mobile...."
-                  onChange={(e) => setSearch(e.target.value)}
-                />
-                <CButton color="primary" type="submit" className="text-light" onClick={handleSearch}>
-                  <CIcon icon={cilSearch} />
-                </CButton>
-              </div>
-              <div className="col-4 w-80">
-                <div className="d-flex justify-content-evenly">
-                  <h6 className="d-flex flex-column-reverse">Filter By: </h6>
-                  <CDropdown>
-                    <CDropdownToggle color="secondary">Select role</CDropdownToggle>
-                    <CDropdownMenu>
-                      {listRole.map((item) => (
-                        <CDropdownItem onClick={() => handleFilterRole(item)}>{item}</CDropdownItem>
-                      ))}
-                    </CDropdownMenu>
-                  </CDropdown>
-                  <CDropdown>
-                    <CDropdownToggle color="secondary">Select status</CDropdownToggle>
-                    <CDropdownMenu>
-                      {listStatus.map((status) => (
-                        <CDropdownItem onClick={() => handleFilterStatus(status)}>{status}</CDropdownItem>
-                      ))}
-                    </CDropdownMenu>
-                  </CDropdown>
-                  <CButton color="success" type="submit" className="text-light" onClick={handleReload}>
-                    <CIcon icon={cilReload} />
-                  </CButton>
-                </div>
-              </div>
-            </div>
+            <Breadcrumb>
+              <Breadcrumb.Item>
+                <Link to="/">Dashboard</Link>
+              </Breadcrumb.Item>
+              <Breadcrumb.Item>User List</Breadcrumb.Item>
+            </Breadcrumb>
           </div>
-          <CTable hover>
-            <CTableHead>
-              <CTableRow color="info">
-                {columnHead.map((column) => (
-                  <CTableHeaderCell scope="col" onClick={() => handleSortColumn(column)}>
-                    <div className="d-flex justify-content-evenly">{column}</div>
-                  </CTableHeaderCell>
-                ))}
-              </CTableRow>
-            </CTableHead>
-            <CTableBody>
-              {listUserDisplay.length === 0 ? (
-                <CTableRow color="info">
-                  <CTableDataCell></CTableDataCell>
-                  <CTableDataCell></CTableDataCell>
-                  <CTableDataCell></CTableDataCell>
-                  <CTableDataCell></CTableDataCell>
-                  <CTableDataCell>No data found</CTableDataCell>
-                  <CTableDataCell></CTableDataCell>
-                  <CTableDataCell></CTableDataCell>
-                </CTableRow>
-              ) : (
-                listUserDisplay.map((item) => (
-                  <>
-                    {console.log(item)}
-                    <CTableRow color="info">
-                      <CTableHeaderCell scope="row">
-                        <div className="d-flex justify-content-evenly">{item.userId}</div>
-                      </CTableHeaderCell>
-                      <CTableDataCell>
-                        <div className="d-flex justify-content-evenly">{item.fullName}</div>
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        <div className="d-flex justify-content-evenly">{item.email}</div>
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        <div className="d-flex justify-content-evenly">{item.mobile}</div>
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        <div className="d-flex justify-content-evenly">{item.roles.join('/')}</div>
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        <div className="d-flex justify-content-evenly">
-                          <CBadge
-                            color={
-                              item.status === 'ACTIVE' ? 'success' : item.status === 'INACTIVE' ? 'danger' : 'warning'
-                            }
-                          >
-                            {item.status}
-                          </CBadge>
-                        </div>
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        <div className="d-flex justify-content-evenly">
-                          {item.status === 'ACTIVE' ? (
-                            <CButton
-                              color="danger"
-                              type="submit"
-                              className="text-light"
-                              onClick={() => handleActive(item)}
-                            >
-                              Deactive
-                            </CButton>
-                          ) : item.status === 'INACTIVE' ? (
-                            <CButton
-                              color="success"
-                              type="submit"
-                              className="text-light"
-                              onClick={() => handleActive(item)}
-                            >
-                              Reactive
-                            </CButton>
-                          ) : (
-                            <CButton
-                              color="info"
-                              type="submit"
-                              className="text-light"
-                              onClick={() => handleActive(item)}
-                            >
-                              Verify
-                            </CButton>
-                          )}
-                          <CButton color="warning" type="reset" onClick={() => handleView(item)}>
-                            View
-                          </CButton>
-                        </div>
-                      </CTableDataCell>
-                    </CTableRow>
-                  </>
-                ))
-              )}
-            </CTableBody>
-          </CTable>
-          <ReactPaginate
-            previousLabel="Previous"
-            nextLabel="Next"
-            pageCount={totalPages}
-            onPageChange={handlePageChange}
-            pageRangeDisplayed={3}
-            containerClassName="r-pagination"
-            pageLinkClassName="r-p-btn"
-            previousLinkClassName="r-p-btn"
-            nextLinkClassName="r-p-btn"
-            disabledLinkClassName="r-p-disabled"
-            activeLinkClassName="r-p-active"
-          />
+          <div className="col-lg-12 m-b30">
+            <Table bordered dataSource={listSetting} columns={columns} />
+          </div>
         </div>
         <AdminFooter />
       </div>

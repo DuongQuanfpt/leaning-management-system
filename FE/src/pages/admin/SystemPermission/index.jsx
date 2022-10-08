@@ -4,32 +4,22 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Table, Input, Button, Space, Tag, Breadcrumb } from 'antd'
 import { SearchOutlined } from '@ant-design/icons'
 
-import classListApi from '~/api/classListApi'
-
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 
-const ClassList = () => {
+const SystemPermission = () => {
   const navigateTo = useNavigate()
 
-  const [listClass, setListClass] = useState([])
+  const [listPermission, setListPermission] = useState([])
 
   useEffect(() => {
     loadData()
   }, [])
 
-  const loadData = async () => {
-    await classListApi.getAll().then((response) => {
-      setListClass(response.listResult)
-    })
-  }
+  const loadData = async () => {}
 
-  const handleActive = async (id) => {
-    await classListApi.changeActive(id).then((response) => {
-      loadData()
-    })
-  }
+  const handleActive = async (id) => {}
 
   const columns = []
 
@@ -44,11 +34,11 @@ const ClassList = () => {
               <Breadcrumb.Item>
                 <Link to="/">Dashboard</Link>
               </Breadcrumb.Item>
-              <Breadcrumb.Item>Class List</Breadcrumb.Item>
+              <Breadcrumb.Item>System Permission</Breadcrumb.Item>
             </Breadcrumb>
           </div>
           <div className="col-lg-12 m-b30">
-            <Table bordered dataSource={listClass} columns={columns} />
+            <Table bordered dataSource={listPermission} columns={columns} />
           </div>
         </div>
         <AdminFooter />
@@ -57,4 +47,4 @@ const ClassList = () => {
   )
 }
 
-export default ClassList
+export default SystemPermission

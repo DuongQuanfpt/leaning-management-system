@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 
-import { Table, Input, Button, Space, Tag } from 'antd'
+import { Table, Input, Button, Space, Tag, Breadcrumb } from 'antd'
 import { SearchOutlined } from '@ant-design/icons'
 
 import settingListApi from '~/api/settingListApi'
@@ -140,7 +140,7 @@ const AdminSettingList = () => {
           <Button
             type="link"
             onClick={() => {
-              navigateTo(`/subject-detail/${setting?.subjectId}`)
+              navigateTo(`/setting-detail/${setting?.settingId}`)
             }}
           >
             View
@@ -156,6 +156,14 @@ const AdminSettingList = () => {
       <div className="wrapper d-flex flex-column min-vh-100 bg-light">
         <AdminHeader />
         <div className="body flex-grow-1 px-3">
+          <div className="col-lg-12 m-b30">
+            <Breadcrumb>
+              <Breadcrumb.Item>
+                <Link to="/">Dashboard</Link>
+              </Breadcrumb.Item>
+              <Breadcrumb.Item>Setting List</Breadcrumb.Item>
+            </Breadcrumb>
+          </div>
           <div className="col-lg-12 m-b30">
             <Table bordered dataSource={listSetting} columns={columns} />
           </div>
