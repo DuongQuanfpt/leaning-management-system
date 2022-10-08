@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
-import swp490.g23.onlinelearningsystem.entities.user.domain.filter.UserFIlterDTO;
+import swp490.g23.onlinelearningsystem.entities.user.domain.filter.UserFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserUpdatePassRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.AuthenticatedResponseDTO;
@@ -32,6 +32,6 @@ public interface IUserService {
 
     ResponseEntity<String> updateStatus(Long id);
 
-    ResponseEntity<UserFIlterDTO> getFilter();
+    ResponseEntity<UserFilterDTO> getFilter();
     
 }
