@@ -13,21 +13,25 @@ public interface SettingRepositories extends JpaRepository<Setting, Long> {
 
     Setting findBySettingValue(String settingValue);
 
-    @Query(value = "SELECT s FROM Setting s WHERE s.type IS NULL")
-    List<Setting> findAllType();
-
-    @Query(value = "SELECT s FROM Setting s WHERE s.settingValue = ?1 " +
-            "AND s.status = swp490.g23.onlinelearningsystem.util.enumutil.Status.ACTIVE")
-    Setting findActiveSettingByValue(String settingValue);
-
     Page<Setting> findByTypeNotNull(Pageable pageable);
 
     Long countByTypeNotNull();
 
     Setting findBySettingTitle(String name);
 
-    @Query(value = "SELECT s FROM Setting s WHERE s.type.settingValue = 'TYPE_ROLE' ")
-    List<Setting> roleList();
+    @Query(value = "SELECT s FROM Setting s WHERE s.type.settingValue = 'TYPE_ROLE' " +
+    "AND s.status = swp490.g23.onlinelearningsystem.util.enumutil.Status.ACTIVE")
+    List<Setting> findAllRole();
+
+    @Query(value = "SELECT s FROM Setting s WHERE s.type.settingValue = 'TYPE_SCREEN' ")
+    List<Setting> findAllScreen();
+
+    @Query(value = "SELECT s FROM Setting s WHERE s.settingValue = ?1 " +
+            "AND s.status = swp490.g23.onlinelearningsystem.util.enumutil.Status.ACTIVE")
+    Setting findActiveSettingByValue(String settingValue);
+
+    @Query(value = "SELECT s FROM Setting s WHERE s.type IS NULL")
+    List<Setting> findAllType();
 
     @Query(value = "SELECT s FROM Setting s WHERE s.type.settingValue = 'TYPE_TERM'")
     List<Setting> termList();

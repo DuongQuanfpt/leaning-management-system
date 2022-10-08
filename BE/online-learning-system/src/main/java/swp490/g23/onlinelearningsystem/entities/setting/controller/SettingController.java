@@ -45,13 +45,13 @@ public class SettingController {
 		return settingService.getFilter();
 	}
 
-	@GetMapping(value = "/setting/{id}")
+	@GetMapping(value = "/setting-detail/{id}")
 	public ResponseEntity<SettingResponseDTO> getSettingDetails(@PathVariable("id") Long id) {
 
 		return settingService.viewSetting(id);
 	}
 
-	@PutMapping(value = "/setting/{id}")
+	@PutMapping(value = "/setting-detail/{id}")
 	public ResponseEntity<String> editSetting(@PathVariable("id") Long id, @RequestBody SettingRequestDTO requestDTO) {
 		return settingService.updateSetting(requestDTO, id);
 	}

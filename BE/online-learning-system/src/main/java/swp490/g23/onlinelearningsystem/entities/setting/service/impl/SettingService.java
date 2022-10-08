@@ -19,6 +19,7 @@ import swp490.g23.onlinelearningsystem.entities.setting.domain.response.TypeResp
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.criteria.SettingRepositoriesCriteria;
 import swp490.g23.onlinelearningsystem.entities.setting.service.ISettingService;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoSettingException;
 import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
 
@@ -66,13 +67,12 @@ public class SettingService implements ISettingService {
         Setting setting = settingRepositories.findById(id).get();
         return ResponseEntity.ok(toDTO(setting));
     }
+    
 
     @Override
     public ResponseEntity<String> updateSetting(SettingRequestDTO dto, Long id) {
-        if (settingRepositories.findBySettingTitle(dto.getSettingValue()) != null) {
-            return ResponseEntity.ok("Setting value already exist");
-        }
-        Setting setting = settingRepositories.findById(id).get();
+        Setting setting = settingRepositories.findById(id).orElseThrow(NoSettingException::new);
+
         if (dto.getSettingTitle() != null) {
             setting.setSettingTitle(dto.getSettingTitle());
         }
@@ -98,8 +98,9 @@ public class SettingService implements ISettingService {
 
         List<TypeResponseDTO> list = new ArrayList<>();
         List<StatusEntity> statuses = new ArrayList<>();
+        List<Setting> allType = settingRepositories.findAllType();
 
-        for (Setting setting : settingRepositories.findAllType()) {
+        for (Setting setting :allType ) {
             list.add(new TypeResponseDTO(setting.getSettingTitle(), setting.getSettingValue()));
         }
 
@@ -113,6 +114,17 @@ public class SettingService implements ISettingService {
         filterDTO.setTypeFilter(list);
 
         return ResponseEntity.ok(filterDTO);
+    }
+
+    @Override
+    public ResponseEntity<List<SettingResponseDTO>> getScreen() {
+        List<Setting> list = settingRepositories.findAllScreen();
+        List<SettingResponseDTO> dto= new ArrayList<>();
+        for (Setting s : list) {
+            dto.add(toDTO(s));
+        }
+        
+        return ResponseEntity.ok(dto);
     }
 
     @Override

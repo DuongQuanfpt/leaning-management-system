@@ -12,5 +12,4 @@ import lombok.Setter;
 public class UserTypeResponseDTO {
     String title;
     String value;
- 
 }

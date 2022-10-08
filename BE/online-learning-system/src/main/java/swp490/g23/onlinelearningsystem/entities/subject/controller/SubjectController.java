@@ -38,16 +38,16 @@ public class SubjectController {
 		int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
 		int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
 
-		return service.getSubject2(limit, page, keyword, managerFilter, expertFilter, status);
+		return service.getSubject(limit, page, keyword, managerFilter, expertFilter, status);
 	}
 
-	@GetMapping(value = "/subjects/{id}")
+	@GetMapping(value = "/subjects-detail/{id}")
 	public ResponseEntity<SubjectResponseDTO> getSettingDetails(@PathVariable("id") Long id) {
 
 		return service.getSubjectDetail(id);
 	}
 
-	@PutMapping(value = "/subjects/{id}")
+	@PutMapping(value = "/subjects-detail/{id}")
 	public ResponseEntity<String> editSettingDetails(@PathVariable("id") Long id,
 			@RequestBody SubjectRequestDTO dto) {
 

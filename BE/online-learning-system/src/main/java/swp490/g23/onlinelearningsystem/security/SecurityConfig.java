@@ -66,6 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers("/auth/login").permitAll()
                 .antMatchers("/auth/login-google").permitAll()
                 .antMatchers("/user/forgot-pass").permitAll()
+                .antMatchers("/api/setting-screen").permitAll()
                 .antMatchers("/error").permitAll()
                 .antMatchers("/user/forgot-processing").permitAll()
                 // .antMatchers("/admin/setting/status/**").permitAll()

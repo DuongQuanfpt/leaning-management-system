@@ -17,5 +17,6 @@ public class UserStatusEntity {
     public UserStatusEntity (UserStatus status){
         this.name = status.toString();
         this.value = status.getValue();
-   }
+    }
+
 }
