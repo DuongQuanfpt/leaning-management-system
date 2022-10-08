@@ -212,7 +212,7 @@ public class UserService implements IUserService {
     @Override
     public ResponseEntity<String> updateUser(UserRequestDTO dto, Long id) {
         User user = userRepository.findById(id).orElseThrow(NoUserException :: new);
-        List<Setting> settings = user.getSettings();
+        List<Setting> settings = new ArrayList<>();
         user.setNote(dto.getNote());
         
         if (!dto.getRoles().isEmpty()) {
