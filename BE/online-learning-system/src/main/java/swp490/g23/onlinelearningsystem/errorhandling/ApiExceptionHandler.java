@@ -52,19 +52,19 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler(NoSubjectException.class)
-    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ErrorMessage noSubjectsException(Exception ex,  WebRequest request) {
         return new ErrorMessage(10105, "Subject doesnt exist");
     }
 
     @ExceptionHandler(DuplicateSubjectCodeException.class)
-    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ErrorMessage duplicateSubjectsException(Exception ex,  WebRequest request) {
         return new ErrorMessage(10106, "Subject code already exist");
     }
 
     @ExceptionHandler(NoSettingException.class)
-    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ErrorMessage noSettingException(Exception ex,  WebRequest request) {
         return new ErrorMessage(10107, "Setting doesnt exist");
     }

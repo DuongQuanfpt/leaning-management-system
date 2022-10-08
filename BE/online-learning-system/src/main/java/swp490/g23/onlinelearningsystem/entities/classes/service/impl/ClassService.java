@@ -2,16 +2,11 @@ package swp490.g23.onlinelearningsystem.entities.classes.service.impl;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.TypedQuery;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +24,7 @@ import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepo
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoClassException;
+import swp490.g23.onlinelearningsystem.util.enumutil.ClassStatus;
 import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
 
@@ -112,10 +108,10 @@ public class ClassService implements IClassService{
     @Override
     public ResponseEntity<String> updateStatus(Long id) {
         Classes clazz = classRepositories.findById(id).get();
-        if (clazz.getStatus() == Status.ACTIVE) {
-            clazz.setStatus(Status.INACTIVE);
+        if (clazz.getStatus() == ClassStatus.ACTIVE) {
+            clazz.setStatus(ClassStatus.INACTIVE);
         } else {
-            clazz.setStatus(Status.ACTIVE);
+            clazz.setStatus(ClassStatus.ACTIVE);
         }   
         classRepositories.save(clazz);
         return ResponseEntity.ok("Class status updated");
@@ -129,13 +125,15 @@ public class ClassService implements IClassService{
         List<ClassTypeResponseDTO> listBranch = new ArrayList<>();
         List<Setting> settingTerm = settingRepositories.termList();
         List<Setting> settingBranch = settingRepositories.branchList();
-         List<StatusEntity> statuses = new ArrayList<>();
+        Setting roleTrainer = settingRepositories.findBySettingValue("ROLE_TRAINER");
+        Setting roleSupporter = settingRepositories.findBySettingValue("ROLE_SUPPORTER");
+        List<StatusEntity> statuses = new ArrayList<>();
         List<User> users = userRepository.findAll();
         for(User user : users) {
-            if (user.getSettings().contains(settingRepositories.findBySettingValue("ROLE_TRAINER"))){
+            if (user.getSettings().contains(roleTrainer)) {
                 listTrainer.add(user.getEmail());
             }
-            if (user.getSettings().contains(settingRepositories.findBySettingValue("ROLE_SUPPORTER"))){
+            if (user.getSettings().contains(roleSupporter)){
                 listSupporter.add(user.getEmail());
             }
         }
