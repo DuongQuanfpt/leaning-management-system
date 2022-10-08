@@ -39,7 +39,6 @@ public class Classes extends BaseEntity{
     private String code;
 
     @Column
-    @Enumerated(EnumType.STRING)
     private Status status;
 
     @Column
