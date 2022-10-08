@@ -8,4 +8,6 @@ import swp490.g23.onlinelearningsystem.entities.permission.domain.response.Permi
 
 public interface IPermissionService {
     ResponseEntity<List<PermissionResponseDTO>> getPermission();
+
+    ResponseEntity<String> editPermission();
 }

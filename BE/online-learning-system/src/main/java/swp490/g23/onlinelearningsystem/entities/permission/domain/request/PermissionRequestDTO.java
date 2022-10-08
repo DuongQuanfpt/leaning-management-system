@@ -1,4 +1,4 @@
-package swp490.g23.onlinelearningsystem.entities.permission.domain.response;
+package swp490.g23.onlinelearningsystem.entities.permission.domain.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,10 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PermissionResponseDTO {
-    String role;
+public class PermissionRequestDTO {
     String roleValue;
-    String component;
     String url;
     boolean get;
     boolean edit;

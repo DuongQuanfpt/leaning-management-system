@@ -305,7 +305,7 @@ public class UserService implements IUserService {
 
         List<PermissionResponseDTO> permissionDTO = new ArrayList<>();
         for(SettingPermission sp : permissions){
-            permissionDTO.add(new PermissionResponseDTO(sp.getRole().getSettingTitle(),sp.getScreen().getSettingTitle(), sp.getScreen().getSettingValue(),
+            permissionDTO.add(new PermissionResponseDTO(sp.getRole().getSettingTitle(),sp.getRole().getSettingValue(),sp.getScreen().getSettingTitle(), sp.getScreen().getSettingValue(),
             sp.isCanGetAll(), sp.isCanEdit(), sp.isCanDelete(), sp.isCanAdd()));
         }
         responseDTO.setPermissions(permissionDTO);
