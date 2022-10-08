@@ -18,6 +18,7 @@ const SettingList = lazy(() => import('~/pages/admin/AdminSettingList'))
 const SettingDetail = lazy(() => import('~/pages/admin/AdminSettingDetail'))
 const UserList = lazy(() => import('~/pages/admin/AdminUserList'))
 const UserDetail = lazy(() => import('~/pages/admin/AdminUserDetail'))
+const SystemPermission = lazy(() => import('~/pages/admin/SystemPermission'))
 
 //Manager pages
 const SubjectList = lazy(() => import('~/pages/manager/SubjectList'))
@@ -54,6 +55,7 @@ const adminRoutes = [
   { path: '/setting-detail/:id', component: SettingDetail },
   { path: '/user-list', component: UserList },
   { path: '/user-detail/:id', component: UserDetail },
+  { path: '/system-permission', component: SystemPermission },
 ]
 
 // Manager routes

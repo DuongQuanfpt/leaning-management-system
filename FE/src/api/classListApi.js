@@ -6,37 +6,26 @@ const header = {
   headers: { Authorization: `Bearer ${currentAccessToken}` },
 }
 
-const settingListApi = {
+const classListApi = {
   getAll: () => {
-    const url = `/api/setting`
-    console.log(header)
-    return axiosClient.get(url, header)
-  },
-
-  getPage: (params) => {
-    const url = `/api/setting`
-    return axiosClient.get(url, { ...header, params })
-  },
-
-  getFilter: () => {
-    const url = `/api/setting-filter`
+    const url = `/api/class`
     return axiosClient.get(url, header)
   },
 
   changeActive: (id) => {
-    const url = `/api/setting-status/${id}`
+    const url = `/api/class/${id}`
     return axiosClient.put(url, {}, header)
   },
 
   getDetail: (id) => {
-    const url = `/api/setting-detail/${id}`
+    const url = `/api/class-detail/${id}`
     return axiosClient.get(url, header)
   },
 
   changeDetail: (id, params) => {
-    const url = `/api/setting-detail/${id}`
+    const url = `/api/class-detail/${id}`
     return axiosClient.put(url, params, header)
   },
 }
 
-export default settingListApi
+export default classListApi

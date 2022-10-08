@@ -1,5 +1,7 @@
 package swp490.g23.onlinelearningsystem.entities.user.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -37,7 +39,7 @@ public class AdminController {
 	}
 
 	@GetMapping(value = "/user")
-	public ResponseEntity<UserListResponsePaginateDTO> adminUserList(
+	public ResponseEntity<List<UserResponseDTO>> adminUserList(
 			@RequestParam(name = "page", required = false) String currentPage,
 			@RequestParam(name = "limit", required = false) String requestLimit,
 			@RequestParam(name = "q", required = false) String keyword,

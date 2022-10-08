@@ -41,6 +41,7 @@ const Profile = () => {
   const handleAvatar = () => {
     setIsAvatarMode(true)
     setPreview(null)
+    setError('')
   }
 
   const handleCropAvatar = (view) => {
@@ -72,6 +73,7 @@ const Profile = () => {
 
   const handleBackAvatar = () => {
     setIsAvatarMode(false)
+    setError('')
   }
 
   const handleSaveProfile = async () => {

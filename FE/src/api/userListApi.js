@@ -7,9 +7,9 @@ const header = {
 }
 
 const userListApi = {
-  getFirstPage: (params) => {
+  getAll: () => {
     const url = `/api/user`
-    return axiosClient.get(url, { ...header, params })
+    return axiosClient.get(url, header)
   },
 
   getPage: (params) => {
@@ -28,12 +28,12 @@ const userListApi = {
   },
 
   getDetail: (id) => {
-    const url = `/api/user/${id}`
+    const url = `/api/user-detail/${id}`
     return axiosClient.get(url, header)
   },
 
   changeDetail: (id, params) => {
-    const url = `/api/user/${id}`
+    const url = `/api/user-detail/${id}`
     return axiosClient.put(url, params, header)
   },
 }

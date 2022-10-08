@@ -181,32 +181,26 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponseEntity<UserListResponsePaginateDTO> displayUsers(int limit, int currentPage, String keyword,
+    public ResponseEntity<List<UserResponseDTO>> displayUsers(int limit, int currentPage, String keyword,
             String filterRole, String filterStatus) {
         List<UserResponseDTO> users = new ArrayList<>();
-        TypedQuery<User> queryResult = userCriteria.displayUser(keyword, filterRole, filterStatus);
+        // TypedQuery<User> queryResult = userCriteria.displayUser(keyword, filterRole, filterStatus);
 
-        int totalItem = queryResult.getResultList().size();
-        int totalPage;
-        if (limit != 0) {
-            queryResult.setFirstResult((currentPage - 1) * limit);
-            queryResult.setMaxResults(limit);
-            totalPage = (int) Math.ceil((double) totalItem / limit);
-        } else {
-            totalPage = 1;
-        }
+        // int totalItem = queryResult.getResultList().size();
+        // int totalPage;
+        // if (limit != 0) {
+        //     queryResult.setFirstResult((currentPage - 1) * limit);
+        //     queryResult.setMaxResults(limit);
+        //     totalPage = (int) Math.ceil((double) totalItem / limit);
+        // } else {
+        //     totalPage = 1;
+        // }
 
-        for (User user : queryResult.getResultList()) {
+        for (User user : userRepository.findAll()) {
             users.add(toDTO(user));
         }
 
-        UserListResponsePaginateDTO responseDTO = new UserListResponsePaginateDTO();
-        responseDTO.setPage(currentPage);
-        responseDTO.setTotalItem(totalItem);
-        responseDTO.setListResult(users);
-        responseDTO.setTotalPage(totalPage);
-
-        return ResponseEntity.ok(responseDTO);
+        return ResponseEntity.ok(users);
     }
 
     @Override
