@@ -51,6 +51,7 @@ public class PermissionService implements IPermissionService {
             permission.setCanEdit(requestPermission.isEdit());
             permission.setCanGetAll(requestPermission.isGet());                    
 
+            permissionRepositories.save(permission);
         }
         return ResponseEntity.ok("Permissions updated");
     }
