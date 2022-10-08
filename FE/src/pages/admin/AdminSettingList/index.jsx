@@ -140,7 +140,7 @@ const AdminSettingList = () => {
           <Button
             type="link"
             onClick={() => {
-              navigateTo(`/subject-detail/${setting?.subjectId}`)
+              navigateTo(`/setting-detail/${setting?.settingId}`)
             }}
           >
             View

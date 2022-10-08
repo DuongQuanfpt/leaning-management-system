@@ -24,17 +24,17 @@ const settingListApi = {
   },
 
   changeActive: (id) => {
-    const url = `/api/setting/status/${id}`
+    const url = `/api/setting-status/${id}`
     return axiosClient.put(url, {}, header)
   },
 
   getDetail: (id) => {
-    const url = `/api/setting/${id}`
+    const url = `/api/setting-detail/${id}`
     return axiosClient.get(url, header)
   },
 
   changeDetail: (id, params) => {
-    const url = `/api/setting/${id}`
+    const url = `/api/setting-detail/${id}`
     return axiosClient.put(url, params, header)
   },
 }
