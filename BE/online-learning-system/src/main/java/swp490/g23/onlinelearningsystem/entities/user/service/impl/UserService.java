@@ -273,9 +273,9 @@ public class UserService implements IUserService {
         responseDTO.setUserId(entity.getUserId());
         responseDTO.setAvatar_url(entity.getAvatar_url());
 
-        List<String> roleNames = new ArrayList<>();
+        List<UserTypeResponseDTO> roleNames = new ArrayList<>();
         for (Setting setting : entity.getSettings()) {
-            roleNames.add(setting.getSettingTitle());
+            roleNames.add(new UserTypeResponseDTO(setting.getSettingTitle(), setting.getSettingValue()));
         }
         responseDTO.setRoles(roleNames);
         return responseDTO;

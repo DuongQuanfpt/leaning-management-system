@@ -25,6 +25,6 @@ public class UserResponseDTO  {
 
     private String note;
 
-    private List<String> roles;
+    private List<UserTypeResponseDTO> roles;
     
 }

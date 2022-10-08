@@ -24,6 +24,7 @@ import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepo
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoClassException;
+import swp490.g23.onlinelearningsystem.util.enumutil.ClassStatus;
 import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
 
@@ -107,10 +108,10 @@ public class ClassService implements IClassService{
     @Override
     public ResponseEntity<String> updateStatus(Long id) {
         Classes clazz = classRepositories.findById(id).get();
-        if (clazz.getStatus() == Status.ACTIVE) {
-            clazz.setStatus(Status.INACTIVE);
+        if (clazz.getStatus() == ClassStatus.ACTIVE) {
+            clazz.setStatus(ClassStatus.INACTIVE);
         } else {
-            clazz.setStatus(Status.ACTIVE);
+            clazz.setStatus(ClassStatus.ACTIVE);
         }   
         classRepositories.save(clazz);
         return ResponseEntity.ok("Class status updated");
