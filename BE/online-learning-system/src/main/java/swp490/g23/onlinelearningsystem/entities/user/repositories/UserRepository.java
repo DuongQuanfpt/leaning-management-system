@@ -1,14 +1,8 @@
 package swp490.g23.onlinelearningsystem.entities.user.repositories;
-
-import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-
-import swp490.g23.onlinelearningsystem.entities.class_user.domain.ClassUser;
-import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
 

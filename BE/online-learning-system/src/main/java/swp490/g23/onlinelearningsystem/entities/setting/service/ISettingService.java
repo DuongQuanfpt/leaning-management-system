@@ -1,5 +1,7 @@
 package swp490.g23.onlinelearningsystem.entities.setting.service;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 
 import swp490.g23.onlinelearningsystem.entities.setting.domain.filter.SettingFilterDTO;
@@ -16,6 +18,8 @@ public interface ISettingService {
     ResponseEntity<String> updateStatus(Long id);
 
     ResponseEntity<SettingFilterDTO> getFilter();
+
+    ResponseEntity<List<SettingResponseDTO>> getScreen();
 
     ResponseEntity<SettingResponsePaginateDTO> displaySettings(int limit, int currentPage, String keyword,
             String statusFilter, String typeFilter);

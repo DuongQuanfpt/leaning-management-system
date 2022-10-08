@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import swp490.g23.onlinelearningsystem.entities.permission.repositories.PermissionRepositories;
-import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserUpdatePassRequestDTO;
@@ -30,19 +28,6 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
-
-	@Autowired
-	private PermissionRepositories permissionRepositories;
-
-	@Autowired
-    private SettingRepositories settingRepositories;
-
-	@GetMapping(value = "/authorities") // API to get info of the currently authenticated user
-	// @RolesAllowed({"ADD"})
-	public ResponseEntity<?> getAuthorities(@AuthenticationPrincipal User user) {
-
-		return ResponseEntity.ok(permissionRepositories.findByScreen(settingRepositories.findActiveSettingByValue("/admin/setting")));
-	}
 
 	/**
 	 * Get user info from the token sent from client
