@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
 import { CContainer, CRow, CCol, CForm, CButton } from '@coreui/react'
+import { Breadcrumb } from 'antd'
+
 import Multiselect from 'multiselect-react-dropdown'
 
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
@@ -19,15 +21,14 @@ const AdminUserDetail = () => {
 
   const [userDetail, setUserDetail] = useState({})
   const [isEditMode, setIsEditMode] = useState(false)
-  const [allRoles, setAllRoles] = useState([])
   const [roles, setRoles] = useState({})
+  const [allRoles, setAllRoles] = useState([])
   const [note, setNote] = useState('')
   const [error, setError] = useState('')
 
   useEffect(() => {
     // eslint-disable-next-line no-unused-vars
     userListApi.getDetail(id).then((response) => {
-      console.log(response)
       setUserDetail(response)
       setRoles(response.roles)
       setNote(response.note)
@@ -38,7 +39,7 @@ const AdminUserDetail = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  console.log(roles)
+  console.log(allRoles)
 
   const handleSave = async () => {
     if (note?.length === 0 || roles?.length === 0) {
@@ -83,10 +84,18 @@ const AdminUserDetail = () => {
                 <CForm action="" method="post">
                   <div className="row">
                     <div className="col-lg-12 m-b30">
+                      <Breadcrumb>
+                        <Breadcrumb.Item>
+                          <Link to="/">Dashboard</Link>
+                        </Breadcrumb.Item>
+                        <Breadcrumb.Item>
+                          <Link to="/user-list">User List</Link>
+                        </Breadcrumb.Item>
+                        <Breadcrumb.Item>User Detail</Breadcrumb.Item>
+                      </Breadcrumb>
+                    </div>
+                    <div className="col-lg-12 m-b30">
                       <div className="widget-box">
-                        <div className="wc-title">
-                          <h4>User Detail</h4>
-                        </div>
                         <div className="widget-inner">
                           <div className="row col-12 w-100">
                             <div className="row col-3 h-100">
@@ -124,15 +133,16 @@ const AdminUserDetail = () => {
                                 <label className="col-form-label">Role</label>
                                 <div>
                                   <Multiselect
-                                    isObject={false}
+                                    displayValue="title"
+                                    isObject={true}
                                     options={allRoles}
                                     placeholder={''}
                                     emptyRecordMsg={'No role available'}
                                     avoidHighlightFirstOption={true}
                                     showArrow={true}
-                                    selectedValues={roles}
-                                    onSelect={(e) => setRoles(e)}
-                                    onRemove={(e) => setRoles(e)}
+                                    // selectedValues={roles}
+                                    // onSelect={(e) => setRoles(e.value)}
+                                    // onRemove={(e) => setRoles(e.value)}
                                     showCheckbox
                                     disable={!isEditMode}
                                   />

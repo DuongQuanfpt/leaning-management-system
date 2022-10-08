@@ -6,36 +6,26 @@ const header = {
   headers: { Authorization: `Bearer ${currentAccessToken}` },
 }
 
-const userListApi = {
+const classListApi = {
   getAll: () => {
-    const url = `/api/user`
-    return axiosClient.get(url, header)
-  },
-
-  getPage: (params) => {
-    const url = `/api/user`
-    return axiosClient.get(url, { ...header, params })
-  },
-
-  getFilter: () => {
-    const url = `/api/user-filter`
+    const url = `/api/class`
     return axiosClient.get(url, header)
   },
 
   changeActive: (id) => {
-    const url = `/api/user-status/${id}`
+    const url = `/api/class/${id}`
     return axiosClient.put(url, {}, header)
   },
 
   getDetail: (id) => {
-    const url = `/api/user-detail/${id}`
+    const url = `/api/class-detail/${id}`
     return axiosClient.get(url, header)
   },
 
   changeDetail: (id, params) => {
-    const url = `/api/user-detail/${id}`
+    const url = `/api/class-detail/${id}`
     return axiosClient.put(url, params, header)
   },
 }
 
-export default userListApi
+export default classListApi

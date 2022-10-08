@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 
 import { CContainer, CRow, CCol, CForm, CButton } from '@coreui/react'
+import { Breadcrumb } from 'antd'
 
 import ErrorMsg from '~/components/Common/ErrorMsg'
 import settingListApi from '~/api/settingListApi'
@@ -69,6 +70,17 @@ const AdminSettingDetail = () => {
       <div className="wrapper d-flex flex-column min-vh-100 bg-light">
         <AdminHeader />
         <div className="body flex-grow-1 px-3">
+          <div className="col-lg-12 m-b30">
+            <Breadcrumb>
+              <Breadcrumb.Item>
+                <Link to="/">Dashboard</Link>
+              </Breadcrumb.Item>
+              <Breadcrumb.Item>
+                <Link to="/setting-list">Setting List</Link>
+              </Breadcrumb.Item>
+              <Breadcrumb.Item>Setting Detail</Breadcrumb.Item>
+            </Breadcrumb>
+          </div>
           <CContainer>
             <CRow>
               <CCol sm="12">

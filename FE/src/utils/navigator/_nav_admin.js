@@ -30,6 +30,12 @@ const _nav_admin = [
     to: '/setting-list',
     icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
   },
+  {
+    component: CNavItem,
+    name: 'System Permission',
+    to: '/system-permission',
+    icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+  },
 ]
 
 export default _nav_admin
