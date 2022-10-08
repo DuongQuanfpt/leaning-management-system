@@ -12,11 +12,6 @@ const userListApi = {
     return axiosClient.get(url, header)
   },
 
-  getPage: (params) => {
-    const url = `/api/user`
-    return axiosClient.get(url, { ...header, params })
-  },
-
   getFilter: () => {
     const url = `/api/user-filter`
     return axiosClient.get(url, header)

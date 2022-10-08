@@ -15,7 +15,6 @@ const AdminSettingDetail = () => {
 
   const [settingDetail, setSettingDetail] = useState({})
   const [isEditMode, setIsEditMode] = useState(false)
-  const [title, setTitle] = useState('')
   const [order, setOrder] = useState('')
   const [description, setDescription] = useState('')
   const [error, setError] = useState('')
@@ -25,7 +24,6 @@ const AdminSettingDetail = () => {
     settingListApi.getDetail(id).then((response) => {
       console.log(response)
       setSettingDetail(response)
-      setTitle(response.settingTitle)
       setOrder(response.displayOrder)
       setDescription(response.description)
     })
@@ -33,13 +31,12 @@ const AdminSettingDetail = () => {
   }, [])
 
   const handleSave = async () => {
-    if (title.length === 0 || order.length === 0) {
+    if (order.length === 0) {
       setError('Title and Display Order must not empty!')
       return
     }
     try {
       const data = {
-        settingTitle: title,
         displayOrder: order,
         description: description,
       }
@@ -53,7 +50,6 @@ const AdminSettingDetail = () => {
   }
 
   const handleCancel = () => {
-    setTitle(settingDetail.settingTitle)
     setOrder(settingDetail.displayOrder)
     setDescription(settingDetail.description)
     setError('')
@@ -105,9 +101,8 @@ const AdminSettingDetail = () => {
                                 <input
                                   className="form-control"
                                   type="text"
-                                  value={title}
-                                  onChange={(e) => setTitle(e.target.value)}
-                                  disabled={!isEditMode}
+                                  value={settingDetail.settingTitle}
+                                  disabled={true}
                                 />
                               </div>
                             </div>
