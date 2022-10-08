@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
-import swp490.g23.onlinelearningsystem.entities.user.domain.filter.UserFIlterDTO;
+import swp490.g23.onlinelearningsystem.entities.user.domain.filter.UserFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserListResponsePaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserResponseDTO;
@@ -50,7 +50,7 @@ public class AdminController {
 	}
 
 	@GetMapping(value = "/user-filter")
-	public ResponseEntity<UserFIlterDTO> getUserFilter() {
+	public ResponseEntity<UserFilterDTO> getUserFilter() {
 
 		return userService.getFilter();
 	}

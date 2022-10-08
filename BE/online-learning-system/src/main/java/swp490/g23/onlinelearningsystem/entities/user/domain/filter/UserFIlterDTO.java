@@ -11,7 +11,7 @@ import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.UserStatusEnti
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserFIlterDTO {
+public class UserFilterDTO {
     List <UserTypeResponseDTO> RoleFilter;
     List <UserStatusEntity> StatusFilter;
 }

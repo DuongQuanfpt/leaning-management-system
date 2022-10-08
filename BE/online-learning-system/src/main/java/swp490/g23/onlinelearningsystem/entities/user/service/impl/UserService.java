@@ -25,7 +25,7 @@ import swp490.g23.onlinelearningsystem.entities.s3amazon.service.impl.S3Service;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
-import swp490.g23.onlinelearningsystem.entities.user.domain.filter.UserFIlterDTO;
+import swp490.g23.onlinelearningsystem.entities.user.domain.filter.UserFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserUpdatePassRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.AuthenticatedResponseDTO;
@@ -245,7 +245,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponseEntity<UserFIlterDTO> getFilter() {
+    public ResponseEntity<UserFilterDTO> getFilter() {
         List<UserTypeResponseDTO> list = new ArrayList<>();
         List<UserStatusEntity> statuses = new ArrayList<>();
         
@@ -257,7 +257,7 @@ public class UserService implements IUserService {
             statuses.add(new UserStatusEntity(status));
         }
 
-        UserFIlterDTO filterDTO = new UserFIlterDTO();
+        UserFilterDTO filterDTO = new UserFilterDTO();
         filterDTO.setStatusFilter(statuses);
         filterDTO.setRoleFilter(list);
 

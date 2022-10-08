@@ -31,7 +31,7 @@ public class SettingPermissionController {
     }
 
     @PutMapping(value = "/permission")
-    public ResponseEntity<List<PermissionResponseDTO>> editPermission(@RequestBody List<PermissionRequestDTO> requestDTOs) {
+    public ResponseEntity<String> editPermission(@RequestBody List<PermissionRequestDTO> requestDTOs) {
 
         return permissionService.editPermission(requestDTOs);
     }
