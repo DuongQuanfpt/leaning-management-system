@@ -28,9 +28,7 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoClassException;
 import swp490.g23.onlinelearningsystem.util.enumutil.ClassStatus;
-import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.ClassStatusEntity;
-import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
 
 @Service
 public class ClassService implements IClassService{
@@ -94,23 +92,26 @@ public class ClassService implements IClassService{
         if (clazz.equals(null)) {
             throw new NoClassException();
         }
-        String trainerEmail = dto.getTrainer();
-        String supporterEmail = dto.getSupporter();
+        String trainerUsername = dto.getTrainer();
+        String supporterUsername= dto.getSupporter();
         String term = dto.getTerm();
         String branch = dto.getBranch();
-        User userTrainer = userRepository.findByEmail(trainerEmail).get();
-        User userSupportter = userRepository.findByEmail(supporterEmail).get();
+
+        User userTrainer = userRepository.findByAccountName(trainerUsername);
+        User userSupportter = userRepository.findByAccountName(supporterUsername);
         Setting settingTerm = settingRepositories.findBySettingTitle(term);
         Setting settingBranch = settingRepositories.findBySettingTitle(branch);
 
         clazz.setCode(dto.getCode());
+        clazz.setDescription(dto.getDescription());
         clazz.setUserSupporter(userSupportter);
         clazz.setUserTrainer(userTrainer);
         clazz.setSettingTerm(settingTerm);
         clazz.setSettingBranch(settingBranch);
+        // clazz.setClassUsers(null);
 
         classRepositories.save(clazz);
-        return ResponseEntity.ok("Class has been udated");
+        return ResponseEntity.ok("Class has been updated");
     }
 
     @Override
@@ -155,18 +156,6 @@ public class ClassService implements IClassService{
         for (ClassStatus status : new ArrayList<ClassStatus>(EnumSet.allOf(ClassStatus.class))) {
             statuses.add(new ClassStatusEntity(status));
         }
-        // for (Classes clazz : classes) {
-        //     listTerm.add(clazz.getSettingTerm().getSettingTitle());
-        //     listBranch.add(clazz.getSettingBranch().getSettingTitle());
-        // }
-        
-
-        // Set<Setting> settings = new HashSet<>();
-        // settings.add(settingRepositories.findBySettingTitle("trainer"));
-
-        // for (User user : userRepository.findAllBySettings(settings)) {
-        //     listTrainer.add(user.getFullName());
-        // }
 
         ClassFilterDTO filterDTO = new ClassFilterDTO();
         filterDTO.setStatusFilter(statuses);
