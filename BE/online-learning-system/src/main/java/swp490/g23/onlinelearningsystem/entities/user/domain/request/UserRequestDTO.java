@@ -16,6 +16,8 @@ public class UserRequestDTO  {
 
     private String fullName;
 
+    private String username;
+
     @Email
     private String email;
     
