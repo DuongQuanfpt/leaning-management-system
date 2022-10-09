@@ -128,13 +128,15 @@ public class ClassService implements IClassService {
         List<ClassTypeResponseDTO> listBranch = new ArrayList<>();
         List<Setting> settingTerm = settingRepositories.termList();
         List<Setting> settingBranch = settingRepositories.branchList();
+        Setting roleTrainer = settingRepositories.findBySettingValue("ROLE_TRAINER");
+        Setting roleSupporter = settingRepositories.findBySettingValue("ROLE_SUPPORTER");
         List<StatusEntity> statuses = new ArrayList<>();
         List<User> users = userRepository.findAll();
-        for (User user : users) {
-            if (user.getSettings().contains(settingRepositories.findBySettingValue("ROLE_TRAINER"))) {
+        for(User user : users) {
+            if (user.getSettings().contains(roleTrainer)) {
                 listTrainer.add(user.getEmail());
             }
-            if (user.getSettings().contains(settingRepositories.findBySettingValue("ROLE_SUPPORTER"))) {
+            if (user.getSettings().contains(roleSupporter)){
                 listSupporter.add(user.getEmail());
             }
         }

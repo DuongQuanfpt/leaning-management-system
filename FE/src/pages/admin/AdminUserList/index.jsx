@@ -12,17 +12,15 @@ import userListApi from '~/api/userListApi'
 const AdminUserList = () => {
   const navigateTo = useNavigate()
 
-  const [listSetting, setListSetting] = useState([])
+  const [listUser, setListUser] = useState([])
 
   useEffect(() => {
-    userListApi.getAll().then((response) => {
-      loadData()
-    })
+    loadData()
   }, [])
 
   const loadData = async () => {
     await userListApi.getAll().then((response) => {
-      setListSetting(response.listResult)
+      setListUser(response)
     })
   }
 
@@ -31,6 +29,8 @@ const AdminUserList = () => {
       loadData()
     })
   }
+
+  console.log(listUser)
 
   const columns = [
     {
@@ -111,7 +111,7 @@ const AdminUserList = () => {
         <>
           {roles.map((role) => {
             let color
-            switch (role) {
+            switch (role.title) {
               case 'admin': {
                 color = 'volcano'
                 break
@@ -142,7 +142,7 @@ const AdminUserList = () => {
             }
             return (
               <Tag color={color} key={role}>
-                {role.toUpperCase()}
+                {role.title.toUpperCase()}
               </Tag>
             )
           })}
@@ -217,7 +217,7 @@ const AdminUserList = () => {
             </Breadcrumb>
           </div>
           <div className="col-lg-12 m-b30">
-            <Table bordered dataSource={listSetting} columns={columns} />
+            <Table bordered dataSource={listUser} columns={columns} />
           </div>
         </div>
         <AdminFooter />
