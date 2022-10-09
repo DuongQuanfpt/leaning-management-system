@@ -266,6 +266,7 @@ public class UserService implements IUserService {
     public UserResponseDTO toDTO(User entity) {
         UserResponseDTO responseDTO = new UserResponseDTO();
         responseDTO.setFullName(entity.getFullName());
+        responseDTO.setUsername(entity.getUsername());
         responseDTO.setEmail(entity.getEmail());
         responseDTO.setMobile(entity.getMobile());
         responseDTO.setNote(entity.getNote());
@@ -284,6 +285,7 @@ public class UserService implements IUserService {
     public AuthenticatedResponseDTO toAuthenDTO(User entity, List<Setting> roles, List<SettingPermission> permissions) {
         AuthenticatedResponseDTO responseDTO = new AuthenticatedResponseDTO();
         responseDTO.setFullName(entity.getFullName());
+        responseDTO.setUsername(entity.getUsername());
         responseDTO.setEmail(entity.getEmail());
         responseDTO.setMobile(entity.getMobile());
         responseDTO.setNote(entity.getNote());
