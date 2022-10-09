@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { useSelector } from 'react-redux'
 
 import { CContainer, CRow, CCol, CForm, CButton } from '@coreui/react'
 import { Breadcrumb } from 'antd'
@@ -17,11 +16,10 @@ import avatar from '~/assets/images/profile/pic1.jpg'
 
 const AdminUserDetail = () => {
   const { id } = useParams()
-  const profileData = useSelector((state) => state.profile)
 
   const [userDetail, setUserDetail] = useState({})
   const [isEditMode, setIsEditMode] = useState(false)
-  const [roles, setRoles] = useState({})
+  const [roles, setRoles] = useState([])
   const [allRoles, setAllRoles] = useState([])
   const [note, setNote] = useState('')
   const [error, setError] = useState('')
@@ -39,16 +37,15 @@ const AdminUserDetail = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  console.log(allRoles)
-
   const handleSave = async () => {
     if (note?.length === 0 || roles?.length === 0) {
       setError('Roles and Note must not empty!')
       return
     }
     try {
+      const rolesData = roles.map((role) => role.value)
       const data = {
-        roles: [...roles],
+        roles: rolesData,
         note,
       }
       await userListApi.changeDetail(id, data).then((response) => {
@@ -101,7 +98,7 @@ const AdminUserDetail = () => {
                             <div className="row col-3 h-100">
                               <label className="col-form-label align-middle">Avatar</label>
                               <div>
-                                <img src={profileData.avatar_url ?? avatar} alt="" />
+                                <img src={userDetail.avatar_url ?? avatar} alt="" />
                               </div>
                             </div>
                             <div className="row col-9">
@@ -140,9 +137,9 @@ const AdminUserDetail = () => {
                                     emptyRecordMsg={'No role available'}
                                     avoidHighlightFirstOption={true}
                                     showArrow={true}
-                                    // selectedValues={roles}
-                                    // onSelect={(e) => setRoles(e.value)}
-                                    // onRemove={(e) => setRoles(e.value)}
+                                    selectedValues={roles}
+                                    onSelect={(e) => setRoles(e)}
+                                    onRemove={(e) => setRoles(e)}
                                     showCheckbox
                                     disable={!isEditMode}
                                   />
