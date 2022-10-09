@@ -61,32 +61,6 @@ INSERT INTO `class` VALUES (1,NULL,'2022-10-07 23:15:04',NULL,'2022-10-07 23:15:
 UNLOCK TABLES;
 
 --
--- Table structure for table `class_subject`
---
-
-DROP TABLE IF EXISTS `class_subject`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `class_subject` (
-  `class_id` bigint(20) NOT NULL,
-  `user_id` bigint(20) NOT NULL,
-  PRIMARY KEY (`class_id`,`user_id`),
-  KEY `FKoh1dji13cmi3fah0ybfk0hmwn` (`user_id`),
-  CONSTRAINT `FKno5smkktaps9904bebmh1bln5` FOREIGN KEY (`class_id`) REFERENCES `class` (`class_id`),
-  CONSTRAINT `FKoh1dji13cmi3fah0ybfk0hmwn` FOREIGN KEY (`user_id`) REFERENCES `subject` (`subject_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `class_subject`
---
-
-LOCK TABLES `class_subject` WRITE;
-/*!40000 ALTER TABLE `class_subject` DISABLE KEYS */;
-/*!40000 ALTER TABLE `class_subject` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `class_user`
 --
 
@@ -285,7 +259,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,NULL,'2022-10-07 23:15:04',NULL,'2022-10-09 06:53:01','https://g23-lms.s3.ap-southeast-1.amazonaws.com/xucxichbo','xucxichbo@doivl.com','Nguyen Van BABC',NULL,'0348648228','ỉuhewflasdvnbnvdtsry1231412','$2a$10$EaRMMJf70xsA8dr5fguwxOjMwMBzG5NMBFLGtWcYgdY.uvTwnopye','1','quandvv'),(2,NULL,'2022-10-07 23:15:04',NULL,'2022-10-09 08:35:41','https://g23-lms.s3.ap-southeast-1.amazonaws.com/quan1','quan1@doivl.com',NULL,NULL,NULL,'add note here abc','$2a$10$PRkuaL8bRCbKHc3eYO9wxeIWOqgkwzUCI8VOr8z0me1GnWg/9GxKe','1','quan1'),(3,NULL,'2022-10-07 23:15:04',NULL,'2022-10-07 23:15:04',NULL,'quan22@doivl.com',NULL,NULL,NULL,NULL,'$2a$10$V2knZSxoDgNhCFv9KSp/q.wQ5KWMITUduSCbCvmjrPinvJVncMI1O','1','quan22'),(4,NULL,'2022-10-07 23:15:04',NULL,'2022-10-09 06:45:51',NULL,'quan3@doivl.com',NULL,NULL,NULL,NULL,'$2a$10$sCybsiL5KbDTlNQ4uhvu5OLlFDhzpq2E6obsbjd1DjOkb6Keog8pS','1','quan3'),(5,NULL,'2022-10-07 23:15:04',NULL,'2022-10-09 06:46:12',NULL,'quan4@doivl.com',NULL,NULL,NULL,'abcccedfadsfasd','$2a$10$GcGHU7u/hxqASlTmjIVnyeznmq6H.ahh88U.v8NwOsqW4pQHEnGii','0','quan4'),(6,NULL,'2022-10-07 23:15:04',NULL,'2022-10-09 05:42:30',NULL,'hoangnhhe141380@fpt.edu.vn',NULL,NULL,NULL,NULL,'$2a$10$.lzyRua4zLzBfPUssazey.rBZFFFW6MdoNt7n32tZsMRFKECNu1JC','1','hoangnh'),(7,NULL,'2022-10-07 23:15:04',NULL,'2022-10-07 23:15:04',NULL,'quan6@doivl.com',NULL,NULL,NULL,NULL,'$2a$10$/hwQssrnlxDprjFKo9129e6Jpv31/GNnRTUEJ5NBp.AERD5eIx7xe','1','quan6'),(14,NULL,'2022-10-09 01:38:48',NULL,'2022-10-09 01:39:59',NULL,'gepiwe9397@dineroa.com','Duong Vu Viet Quan',NULL,NULL,NULL,'$2a$10$FEjJaaIG6Huzg3FSNXjxDuWj792xZvFwQcYAEYlVF4GGROZRh/C/G','1','gepiwqe'),(24,NULL,'2022-10-09 04:28:18',NULL,'2022-10-09 05:47:02','https://lh3.googleusercontent.com/a/ALm5wu3ZuZCBJPMKDMaoG4ZW8Dl5rCM1Qqf8sNKpSaQV=s96-c','vietnqhe140773@gmail.com','Việt Nguyễn','wY3JAv5h7z59VRbgQHubR87u1tpJmo',NULL,NULL,'$2a$10$Jk9iCGGvBq6zp0vsgaVcfeU.MdXplWwt1oabmtOiD1EZZs0/MkFry','1','vietnq'),(34,NULL,'2022-10-09 08:15:52',NULL,'2022-10-09 08:23:41','https://g23-lms.s3.ap-southeast-1.amazonaws.com/hoangdiudang3','hoangdiudang3@gmail.com',NULL,NULL,NULL,NULL,'$2a$10$ox8C3.znPezZo5Py1GgEeeJ53C0vXdeUvACatsR8TT/Y.hYN37LIm','1','hoang'),(44,NULL,'2022-10-09 08:32:09',NULL,'2022-10-09 08:32:09',NULL,'hoang131231235@gmail.com',NULL,'YVovlP9043DC997l84TftwGf44d44e',NULL,NULL,'$2a$10$FN94yEiUGrIXx2UlxMRZ8OwjnreFfmwcwp6bLYnMCW3ldI6fY5RoK','-1','hoang131');
+INSERT INTO `user` VALUES (1,NULL,'2022-10-07 23:15:04',NULL,'2022-10-09 15:53:49','https://g23-lms.s3.ap-southeast-1.amazonaws.com/xucxichbo','xucxichbo@doivl.com','Duong Vu Viet Quan2',NULL,'09024324352','ỉuhewflasdvnbnvdtsry1231412','$2a$10$EaRMMJf70xsA8dr5fguwxOjMwMBzG5NMBFLGtWcYgdY.uvTwnopye','1','QuanDVVHE'),(2,NULL,'2022-10-07 23:15:04',NULL,'2022-10-09 08:35:41','https://g23-lms.s3.ap-southeast-1.amazonaws.com/quan1','quan1@doivl.com',NULL,NULL,NULL,'add note here abc','$2a$10$PRkuaL8bRCbKHc3eYO9wxeIWOqgkwzUCI8VOr8z0me1GnWg/9GxKe','1','quan1'),(3,NULL,'2022-10-07 23:15:04',NULL,'2022-10-07 23:15:04',NULL,'quan22@doivl.com',NULL,NULL,NULL,NULL,'$2a$10$V2knZSxoDgNhCFv9KSp/q.wQ5KWMITUduSCbCvmjrPinvJVncMI1O','1','quan22'),(4,NULL,'2022-10-07 23:15:04',NULL,'2022-10-09 06:45:51',NULL,'quan3@doivl.com',NULL,NULL,NULL,NULL,'$2a$10$sCybsiL5KbDTlNQ4uhvu5OLlFDhzpq2E6obsbjd1DjOkb6Keog8pS','1','quan3'),(5,NULL,'2022-10-07 23:15:04',NULL,'2022-10-09 06:46:12',NULL,'quan4@doivl.com',NULL,NULL,NULL,'abcccedfadsfasd','$2a$10$GcGHU7u/hxqASlTmjIVnyeznmq6H.ahh88U.v8NwOsqW4pQHEnGii','0','quan4'),(6,NULL,'2022-10-07 23:15:04',NULL,'2022-10-09 05:42:30',NULL,'hoangnhhe141380@fpt.edu.vn',NULL,NULL,NULL,NULL,'$2a$10$.lzyRua4zLzBfPUssazey.rBZFFFW6MdoNt7n32tZsMRFKECNu1JC','1','hoangnh'),(7,NULL,'2022-10-07 23:15:04',NULL,'2022-10-07 23:15:04',NULL,'quan6@doivl.com',NULL,NULL,NULL,NULL,'$2a$10$/hwQssrnlxDprjFKo9129e6Jpv31/GNnRTUEJ5NBp.AERD5eIx7xe','1','quan6'),(14,NULL,'2022-10-09 01:38:48',NULL,'2022-10-09 01:39:59',NULL,'gepiwe9397@dineroa.com','Duong Vu Viet Quan',NULL,NULL,NULL,'$2a$10$FEjJaaIG6Huzg3FSNXjxDuWj792xZvFwQcYAEYlVF4GGROZRh/C/G','1','gepiwqe'),(24,NULL,'2022-10-09 04:28:18',NULL,'2022-10-09 05:47:02','https://lh3.googleusercontent.com/a/ALm5wu3ZuZCBJPMKDMaoG4ZW8Dl5rCM1Qqf8sNKpSaQV=s96-c','vietnqhe140773@gmail.com','Việt Nguyễn','wY3JAv5h7z59VRbgQHubR87u1tpJmo',NULL,NULL,'$2a$10$Jk9iCGGvBq6zp0vsgaVcfeU.MdXplWwt1oabmtOiD1EZZs0/MkFry','1','vietnq'),(34,NULL,'2022-10-09 08:15:52',NULL,'2022-10-09 08:23:41','https://g23-lms.s3.ap-southeast-1.amazonaws.com/hoangdiudang3','hoangdiudang3@gmail.com',NULL,NULL,NULL,NULL,'$2a$10$ox8C3.znPezZo5Py1GgEeeJ53C0vXdeUvACatsR8TT/Y.hYN37LIm','1','hoang'),(44,NULL,'2022-10-09 08:32:09',NULL,'2022-10-09 08:32:09',NULL,'hoang131231235@gmail.com',NULL,'YVovlP9043DC997l84TftwGf44d44e',NULL,NULL,'$2a$10$FN94yEiUGrIXx2UlxMRZ8OwjnreFfmwcwp6bLYnMCW3ldI6fY5RoK','-1','hoang131');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -364,4 +338,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-10-09 14:57:22
+-- Dump completed on 2022-10-09 19:09:15

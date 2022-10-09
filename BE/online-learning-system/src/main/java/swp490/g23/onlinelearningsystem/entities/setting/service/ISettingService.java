@@ -21,6 +21,8 @@ public interface ISettingService {
 
     ResponseEntity<List<SettingResponseDTO>> getScreen();
 
+    ResponseEntity<String> addSetting(SettingRequestDTO requestDTO);
+
     ResponseEntity<SettingResponsePaginateDTO> displaySettings(int limit, int currentPage, String keyword,
             String statusFilter, String typeFilter);
 }

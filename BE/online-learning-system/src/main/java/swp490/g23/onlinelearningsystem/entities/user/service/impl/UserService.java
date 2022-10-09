@@ -35,8 +35,8 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserTypeRes
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.criteria.UserRepositoriesCriteria;
 import swp490.g23.onlinelearningsystem.entities.user.service.IUserService;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoUserException;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.UsernameExistException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoObjectException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.ObjectDuplicateException;
 import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.UserStatusEntity;
 
@@ -66,7 +66,7 @@ public class UserService implements IUserService {
         User user = userRepository.findUserById(id, UserStatus.Active);
 
         if (user == null) {
-            throw new NoUserException();
+            throw new NoObjectException("User doesnt exist");
         }
         TypedQuery<SettingPermission> query = permissionCriteria.getScreenByRoles(roles);
         List<SettingPermission> result = query.getResultList();
@@ -91,7 +91,7 @@ public class UserService implements IUserService {
         User user = userRepository.findUserById(id, UserStatus.Active);
 
         if (user == null) {
-            throw new NoUserException();
+            throw new NoObjectException("User doesnt exist");
         }
 
         if (dto.getOldPassword() != null) {
@@ -137,7 +137,7 @@ public class UserService implements IUserService {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         User user = userRepository.findByMailToken(token);
         if (user == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User doesnt exist");
+            throw new NoObjectException("User doesnt exist");
         }
         user.setPassword(encoder.encode(newPassword));
         user.setMailToken(null);
@@ -147,8 +147,8 @@ public class UserService implements IUserService {
 
     @Override
     public ResponseEntity<UserResponseDTO> updateUserProfile(String fullName, String bas64Avatar, String mobile,
-            Long userId, String username) {
-        User user = userRepository.findById(userId).orElseThrow(NoUserException::new);
+            Long userId, String username ,String email) {
+        User user = userRepository.findById(userId).orElseThrow(NoObjectException::new);
         // User user = userRepository.findById(userId).get();
         if (mobile != null) {
             user.setMobile(mobile);
@@ -159,10 +159,11 @@ public class UserService implements IUserService {
         }
 
         if (username != null) {
-            if(userRepository.findByAccountName(username) == null){
+        
+            if(userRepository.findDupeAccountName(username,email).isEmpty()){
                 user.setAccountName(username);
             } else {
-                throw new UsernameExistException();
+                throw new ObjectDuplicateException("User name already exist");
             }
           
         }
@@ -239,7 +240,7 @@ public class UserService implements IUserService {
 
     @Override
     public ResponseEntity<String> updateUser(UserRequestDTO dto, Long id) {
-        User user = userRepository.findById(id).orElseThrow(NoUserException::new);
+        User user = userRepository.findById(id).orElseThrow(NoObjectException::new);
         List<Setting> settings = new ArrayList<>();
         user.setNote(dto.getNote());
 
@@ -256,7 +257,7 @@ public class UserService implements IUserService {
 
     @Override
     public ResponseEntity<String> updateStatus(Long id) {
-        User user = userRepository.findById(id).orElseThrow(NoUserException :: new);
+        User user = userRepository.findById(id).orElseThrow(NoObjectException :: new);
         if (user.getStatus() == UserStatus.Active) {
             user.setStatus(UserStatus.Inactive);
         } else {

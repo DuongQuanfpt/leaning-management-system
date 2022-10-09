@@ -32,11 +32,11 @@ public class ClassRepositoriesCriteria {
         }
 
         if( filterTrainer != null){
-            query.append("AND c.userTrainer.email = '" + filterTrainer + "'");
+            query.append("AND c.userTrainer.accountName = '" + filterTrainer + "'");
         }
 
         if( filterSupporter != null){
-            query.append("AND c.userSupporter.email = '" + filterSupporter + "'");
+            query.append("AND c.userSupporter.accountName = '" + filterSupporter + "'");
         }
         if( filterBranch != null){
             query.append("AND c.settingBranch.settingTitle = '" + filterBranch + "'");

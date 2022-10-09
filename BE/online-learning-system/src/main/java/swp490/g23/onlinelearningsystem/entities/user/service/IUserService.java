@@ -22,7 +22,7 @@ public interface IUserService {
 
     ResponseEntity<String> resetProcessing(String newPassword ,String token);//update password for user get from token
 
-    ResponseEntity<UserResponseDTO> updateUserProfile(String fullName,String bas64Avatar,String mobile,Long userId , String username);///update user profile
+    ResponseEntity<UserResponseDTO> updateUserProfile(String fullName,String bas64Avatar,String mobile,Long userId , String username ,String email);///update user profile
 
     ResponseEntity<UserListResponsePaginateDTO> displayUsers(int limit, int currentPage, String keyword, String filterRole, String filterStatus); 
 

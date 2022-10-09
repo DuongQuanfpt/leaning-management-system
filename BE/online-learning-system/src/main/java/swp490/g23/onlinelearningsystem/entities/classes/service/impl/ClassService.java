@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import swp490.g23.onlinelearningsystem.entities.class_subject.domain.ClassSubject;
+import swp490.g23.onlinelearningsystem.entities.class_subject.repositories.ClassSubjectRepositories;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.filter.ClassFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.request.ClassRequestDTO;
@@ -25,8 +27,7 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoClassException;
 import swp490.g23.onlinelearningsystem.util.enumutil.ClassStatus;
-import swp490.g23.onlinelearningsystem.util.enumutil.Status;
-import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
+import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.ClassStatusEntity;
 
 @Service
 public class ClassService implements IClassService {
@@ -40,8 +41,11 @@ public class ClassService implements IClassService {
     @Autowired
     private SettingRepositories settingRepositories;
 
+    @Autowired 
+    private ClassRepositoriesCriteria classCriteria;
+
     @Autowired
-    ClassRepositoriesCriteria classCriteria;
+    private ClassSubjectRepositories classSubjectRepositories;
 
     @Override
     public ResponseEntity<ClassResponsePaginateDTO> displayClasses(int limit, int currentPage, String keyword,
@@ -89,23 +93,26 @@ public class ClassService implements IClassService {
         if (clazz.equals(null)) {
             throw new NoClassException();
         }
-        String trainerEmail = dto.getTrainer();
-        String supporterEmail = dto.getSupporter();
+        String trainerUsername = dto.getTrainer();
+        String supporterUsername= dto.getSupporter();
         String term = dto.getTerm();
         String branch = dto.getBranch();
-        User userTrainer = userRepository.findByEmail(trainerEmail).get();
-        User userSupportter = userRepository.findByEmail(supporterEmail).get();
+
+        User userTrainer = userRepository.findByAccountName(trainerUsername);
+        User userSupportter = userRepository.findByAccountName(supporterUsername);
         Setting settingTerm = settingRepositories.findBySettingTitle(term);
         Setting settingBranch = settingRepositories.findBySettingTitle(branch);
 
         clazz.setCode(dto.getCode());
+        clazz.setDescription(dto.getDescription());
         clazz.setUserSupporter(userSupportter);
         clazz.setUserTrainer(userTrainer);
         clazz.setSettingTerm(settingTerm);
         clazz.setSettingBranch(settingBranch);
+        // clazz.setClassUsers(null);
 
         classRepositories.save(clazz);
-        return ResponseEntity.ok("Class has been udated");
+        return ResponseEntity.ok("Class has been updated");
     }
 
     @Override
@@ -130,14 +137,14 @@ public class ClassService implements IClassService {
         List<Setting> settingBranch = settingRepositories.branchList();
         Setting roleTrainer = settingRepositories.findBySettingValue("ROLE_TRAINER");
         Setting roleSupporter = settingRepositories.findBySettingValue("ROLE_SUPPORTER");
-        List<StatusEntity> statuses = new ArrayList<>();
-        List<User> users = userRepository.findAll();
+        List<ClassStatusEntity> statuses = new ArrayList<>();
+        List<User> users = userRepository.findTrainerAndSupporter();
         for(User user : users) {
             if (user.getSettings().contains(roleTrainer)) {
-                listTrainer.add(user.getEmail());
+                listTrainer.add(user.getAccountName());
             }
             if (user.getSettings().contains(roleSupporter)){
-                listSupporter.add(user.getEmail());
+                listSupporter.add(user.getAccountName());
             }
         }
         for (Setting setting : settingTerm) {
@@ -146,21 +153,10 @@ public class ClassService implements IClassService {
         for (Setting setting : settingBranch) {
             listBranch.add(new ClassTypeResponseDTO(setting.getSettingTitle(), setting.getSettingValue()));
         }
-
-        for (Status status : new ArrayList<Status>(EnumSet.allOf(Status.class))) {
-            statuses.add(new StatusEntity(status));
+        
+        for (ClassStatus status : new ArrayList<ClassStatus>(EnumSet.allOf(ClassStatus.class))) {
+            statuses.add(new ClassStatusEntity(status));
         }
-        // for (Classes clazz : classes) {
-        // listTerm.add(clazz.getSettingTerm().getSettingTitle());
-        // listBranch.add(clazz.getSettingBranch().getSettingTitle());
-        // }
-
-        // Set<Setting> settings = new HashSet<>();
-        // settings.add(settingRepositories.findBySettingTitle("trainer"));
-
-        // for (User user : userRepository.findAllBySettings(settings)) {
-        // listTrainer.add(user.getFullName());
-        // }
 
         ClassFilterDTO filterDTO = new ClassFilterDTO();
         filterDTO.setStatusFilter(statuses);
@@ -174,14 +170,21 @@ public class ClassService implements IClassService {
 
     public ClassResponseDTO toDTO(Classes entity) {
         ClassResponseDTO responseDTO = new ClassResponseDTO();
+        List<String> subjects = new ArrayList<>();
+        List<ClassSubject> classSubjects = classSubjectRepositories.findByClasses(entity);
+        for (ClassSubject classSubject : classSubjects) {
+            subjects.add(classSubject.getSubject().getSubjectName());
+        }
+        
         responseDTO.setClassId(entity.getClassId());
         responseDTO.setCode(entity.getCode());
         responseDTO.setDescription(entity.getDescription());
+        responseDTO.setSubject(subjects);
         responseDTO.setStatus(entity.getStatus());
         responseDTO.setTerm(entity.getSettingTerm().getSettingTitle());
         responseDTO.setBranch(entity.getSettingBranch().getSettingTitle());
-        responseDTO.setTrainer(entity.getUserTrainer().getUsername());
-        responseDTO.setSupporter(entity.getUserSupporter().getUsername());
+        responseDTO.setTrainer(entity.getUserTrainer().getAccountName());
+        responseDTO.setSupporter(entity.getUserSupporter().getAccountName());
         return responseDTO;
     }
 }

@@ -7,15 +7,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.DuplicateSubjectCodeException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.ObjectDuplicateException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.InvalidTokenException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoContactException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoSettingException;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoSubjectException;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoUserException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoObjectException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.UnverifiedUserException;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.UsernameExistException;
-
 @RestControllerAdvice
 public class ApiExceptionHandler {
    
@@ -47,22 +44,16 @@ public class ApiExceptionHandler {
         return new ErrorMessage(10103, "Incorect credentials");
     }
 
-    @ExceptionHandler(NoUserException.class)
+    @ExceptionHandler(NoObjectException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ErrorMessage noUserException(Exception ex,  WebRequest request) {
         return new ErrorMessage(10104, ex.getMessage());
     }
 
-    @ExceptionHandler(NoSubjectException.class)
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public ErrorMessage noSubjectsException(Exception ex,  WebRequest request) {
-        return new ErrorMessage(10105, "Subject doesnt exist");
-    }
-
-    @ExceptionHandler(DuplicateSubjectCodeException.class)
+    @ExceptionHandler(ObjectDuplicateException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ErrorMessage duplicateSubjectsException(Exception ex,  WebRequest request) {
-        return new ErrorMessage(10106, "Subject code already exist");
+        return new ErrorMessage(10106, ex.getMessage());
     }
 
     @ExceptionHandler(NoSettingException.class)
@@ -75,12 +66,6 @@ public class ApiExceptionHandler {
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ErrorMessage noContactException(Exception ex,  WebRequest request) {
         return new ErrorMessage(10108, "Contact doesnt exist");
-    }
-
-    @ExceptionHandler(UsernameExistException.class)
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public ErrorMessage usernameExist(Exception ex,  WebRequest request) {
-        return new ErrorMessage(10109, "User name already exist");
     }
 
 }

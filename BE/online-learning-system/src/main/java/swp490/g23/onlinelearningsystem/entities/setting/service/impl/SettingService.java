@@ -19,7 +19,9 @@ import swp490.g23.onlinelearningsystem.entities.setting.domain.response.TypeResp
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.criteria.SettingRepositoriesCriteria;
 import swp490.g23.onlinelearningsystem.entities.setting.service.ISettingService;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoObjectException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoSettingException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.ObjectDuplicateException;
 import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
 
@@ -67,7 +69,6 @@ public class SettingService implements ISettingService {
         Setting setting = settingRepositories.findById(id).get();
         return ResponseEntity.ok(toDTO(setting));
     }
-    
 
     @Override
     public ResponseEntity<String> updateSetting(SettingRequestDTO dto, Long id) {
@@ -100,7 +101,7 @@ public class SettingService implements ISettingService {
         List<StatusEntity> statuses = new ArrayList<>();
         List<Setting> allType = settingRepositories.findFilteredType();
 
-        for (Setting setting :allType ) {
+        for (Setting setting : allType) {
             list.add(new TypeResponseDTO(setting.getSettingTitle(), setting.getSettingValue()));
         }
 
@@ -119,11 +120,11 @@ public class SettingService implements ISettingService {
     @Override
     public ResponseEntity<List<SettingResponseDTO>> getScreen() {
         List<Setting> list = settingRepositories.findAllScreen();
-        List<SettingResponseDTO> dto= new ArrayList<>();
+        List<SettingResponseDTO> dto = new ArrayList<>();
         for (Setting s : list) {
             dto.add(toDTO(s));
         }
-        
+
         return ResponseEntity.ok(dto);
     }
 
@@ -140,6 +141,42 @@ public class SettingService implements ISettingService {
             return ResponseEntity.ok("Setting status updated");
         }
         return ResponseEntity.ok("Cant view this setting");
+    }
+
+    @Override
+    public ResponseEntity<String> addSetting(SettingRequestDTO requestDTO) {
+        Setting setting = new Setting();
+        if (requestDTO.getSettingTitle() != null) {
+            setting.setSettingTitle(requestDTO.getSettingTitle());
+        }
+
+        if (requestDTO.getSettingValue() != null) {
+            if(settingRepositories.findBySettingValue(requestDTO.getSettingValue()) == null){
+                setting.setSettingValue(requestDTO.getSettingValue());
+            } else {
+                throw new ObjectDuplicateException("Setting Value already exist");
+            }
+        }
+
+        Setting typeCheck = settingRepositories.findBySettingValue(requestDTO.getTypeValue());
+        if(typeCheck != null){
+            setting.setType(typeCheck);
+        }else{
+            throw new NoObjectException("Type doesnt exist");
+        }
+    
+        setting.setStatus(Status.getFromValue(Integer.parseInt(requestDTO.getStatus())).get());
+
+        if (requestDTO.getDisplayOrder() != null) {
+            setting.setDisplayOrder(requestDTO.getDisplayOrder());
+        }
+
+        if (requestDTO.getDescription() != null) {
+            setting.setDescription(requestDTO.getDescription());
+        }
+
+        settingRepositories.save(setting);
+        return ResponseEntity.ok("Setting added");
     }
 
     // public Setting toEntity(Setting requestDTO) {

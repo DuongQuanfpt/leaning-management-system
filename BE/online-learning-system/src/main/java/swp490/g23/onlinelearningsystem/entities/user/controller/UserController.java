@@ -93,6 +93,6 @@ public class UserController {
 	public ResponseEntity<?> updateProfile(@RequestBody UserRequestDTO requestDTO, @AuthenticationPrincipal User user) {
 
 		return userService.updateUserProfile(requestDTO.getFullName(), requestDTO.getAvatarBase64(),
-				requestDTO.getMobile(), user.getUserId() , requestDTO.getUsername());
+				requestDTO.getMobile(), user.getUserId() , requestDTO.getUsername(),user.getEmail());
 	}
 }
