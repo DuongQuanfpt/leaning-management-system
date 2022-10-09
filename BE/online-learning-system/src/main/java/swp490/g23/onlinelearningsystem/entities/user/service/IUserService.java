@@ -9,6 +9,7 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.filter.UserFilterDTO
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserUpdatePassRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.AuthenticatedResponseDTO;
+import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserListResponsePaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserResponseDTO;
 
 public interface IUserService {
@@ -23,7 +24,7 @@ public interface IUserService {
 
     ResponseEntity<UserResponseDTO> updateUserProfile(String fullName,String bas64Avatar,String mobile,Long userId);///update user profile
 
-    ResponseEntity<List<UserResponseDTO>> displayUsers(int limit, int currentPage, String keyword, String filterRole, String filterStatus); 
+    ResponseEntity<UserListResponsePaginateDTO> displayUsers(int limit, int currentPage, String keyword, String filterRole, String filterStatus); 
 
     ResponseEntity<UserResponseDTO> viewUser(long id);
 

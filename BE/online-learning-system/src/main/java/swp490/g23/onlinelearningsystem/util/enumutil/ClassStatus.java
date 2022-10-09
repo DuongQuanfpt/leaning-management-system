@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 public enum ClassStatus {
-    INACTIVE(0), ACTIVE(1), CLOSED(-1);
+    Inactive(0), Active(1), Closed(-1);
 
      ClassStatus(int value) {
         this.value = value;

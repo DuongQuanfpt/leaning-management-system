@@ -65,7 +65,7 @@ public class UserService implements IUserService {
 
     @Override
     public ResponseEntity<AuthenticatedResponseDTO> getAuthenticatedUser(Long id, List<Setting> roles) {
-        User user = userRepository.findUserById(id, UserStatus.ACTIVE);
+        User user = userRepository.findUserById(id, UserStatus.Active);
 
         if (user == null) {
             throw new NoUserException();
@@ -77,7 +77,7 @@ public class UserService implements IUserService {
     @Override
     public ResponseEntity<String> updatePassword(UserUpdatePassRequestDTO dto, Long id) {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
-        User user = userRepository.findUserById(id, UserStatus.ACTIVE);
+        User user = userRepository.findUserById(id, UserStatus.Active);
 
         if (user == null) {
             throw new NoUserException();
@@ -181,26 +181,32 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponseEntity<List<UserResponseDTO>> displayUsers(int limit, int currentPage, String keyword,
+    public ResponseEntity<UserListResponsePaginateDTO> displayUsers(int limit, int currentPage, String keyword,
             String filterRole, String filterStatus) {
         List<UserResponseDTO> users = new ArrayList<>();
-        // TypedQuery<User> queryResult = userCriteria.displayUser(keyword, filterRole, filterStatus);
+        TypedQuery<User> queryResult = userCriteria.displayUser(keyword, filterRole, filterStatus);
 
-        // int totalItem = queryResult.getResultList().size();
-        // int totalPage;
-        // if (limit != 0) {
-        //     queryResult.setFirstResult((currentPage - 1) * limit);
-        //     queryResult.setMaxResults(limit);
-        //     totalPage = (int) Math.ceil((double) totalItem / limit);
-        // } else {
-        //     totalPage = 1;
-        // }
+        int totalItem = queryResult.getResultList().size();
+        int totalPage;
+        if (limit != 0) {
+            queryResult.setFirstResult((currentPage - 1) * limit);
+            queryResult.setMaxResults(limit);
+            totalPage = (int) Math.ceil((double) totalItem / limit);
+        } else {
+            totalPage = 1;
+        }
 
-        for (User user : userRepository.findAll()) {
+        for (User user : queryResult.getResultList()) {
             users.add(toDTO(user));
         }
 
-        return ResponseEntity.ok(users);
+        UserListResponsePaginateDTO responseDTO = new UserListResponsePaginateDTO();
+        responseDTO.setPage(currentPage);
+        responseDTO.setTotalItem(totalItem);
+        responseDTO.setListResult(users);
+        responseDTO.setTotalPage(totalPage);
+
+        return ResponseEntity.ok(responseDTO);
     }
 
     @Override
@@ -229,10 +235,10 @@ public class UserService implements IUserService {
     @Override
     public ResponseEntity<String> updateStatus(Long id) {
         User user = userRepository.findById(id).orElseThrow(NoUserException :: new);
-        if (user.getStatus() == UserStatus.ACTIVE) {
-            user.setStatus(UserStatus.INACTIVE);
+        if (user.getStatus() == UserStatus.Active) {
+            user.setStatus(UserStatus.Inactive);
         } else {
-            user.setStatus(UserStatus.ACTIVE);
+            user.setStatus(UserStatus.Active);
         }
         userRepository.save(user);
         return ResponseEntity.ok("User status updated");
@@ -266,7 +272,7 @@ public class UserService implements IUserService {
     public UserResponseDTO toDTO(User entity) {
         UserResponseDTO responseDTO = new UserResponseDTO();
         responseDTO.setFullName(entity.getFullName());
-        responseDTO.setUsername(entity.getUsername());
+        responseDTO.setUsername(entity.getAccountName());
         responseDTO.setEmail(entity.getEmail());
         responseDTO.setMobile(entity.getMobile());
         responseDTO.setNote(entity.getNote());
@@ -285,7 +291,7 @@ public class UserService implements IUserService {
     public AuthenticatedResponseDTO toAuthenDTO(User entity, List<Setting> roles, List<SettingPermission> permissions) {
         AuthenticatedResponseDTO responseDTO = new AuthenticatedResponseDTO();
         responseDTO.setFullName(entity.getFullName());
-        responseDTO.setUsername(entity.getUsername());
+        responseDTO.setUsername(entity.getAccountName());
         responseDTO.setEmail(entity.getEmail());
         responseDTO.setMobile(entity.getMobile());
         responseDTO.setNote(entity.getNote());

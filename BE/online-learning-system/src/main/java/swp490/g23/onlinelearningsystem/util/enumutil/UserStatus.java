@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 public enum UserStatus {
-    INACTIVE(0), ACTIVE(1), UNVERIFIED(-1);
+    Inactive(0), Active(1), Unverified(-1);
 
      UserStatus(int value) {
         this.value = value;
