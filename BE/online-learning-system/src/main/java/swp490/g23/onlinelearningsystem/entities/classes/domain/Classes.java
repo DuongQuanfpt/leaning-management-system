@@ -7,7 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -20,7 +19,6 @@ import swp490.g23.onlinelearningsystem.entities.BaseEntity;
 import swp490.g23.onlinelearningsystem.entities.class_subject.domain.ClassSubject;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.ClassUser;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
-import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.util.enumutil.ClassStatus;
 
@@ -61,7 +59,7 @@ public class Classes extends BaseEntity{
     @OneToMany(mappedBy = "classes")
     private List<ClassUser> classUsers;
 
-    @OneToMany(mappedBy = "classes")
+    @OneToMany(mappedBy = "subject")
     private List<ClassSubject> classSubject;
 
 }

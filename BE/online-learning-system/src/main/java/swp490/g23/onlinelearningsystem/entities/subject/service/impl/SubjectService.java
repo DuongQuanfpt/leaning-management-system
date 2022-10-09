@@ -7,7 +7,6 @@ import java.util.List;
 import javax.persistence.TypedQuery;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -23,8 +22,8 @@ import swp490.g23.onlinelearningsystem.entities.subject.domain.response.SubjectR
 import swp490.g23.onlinelearningsystem.entities.subject.service.ISubjectService;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.DuplicateSubjectCodeException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoSubjectException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoUserException;
 import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
 
@@ -60,8 +59,8 @@ public class SubjectService implements ISubjectService {
             totalPage = 1;
         }
 
-        for (Subject setting : queryResult.getResultList()) {
-            list.add(toDTO(setting));
+        for (Subject subject : queryResult.getResultList()) {
+            list.add(toDTO(subject));
         }
 
         SubjectResponsePaginateDTO dto = new SubjectResponsePaginateDTO();
@@ -85,9 +84,6 @@ public class SubjectService implements ISubjectService {
     @Override
     public ResponseEntity<String> editSubject(Long id, SubjectRequestDTO dto) {
         Subject subject = subjectRepository.findById(id).get();
-        if (subjectRepository.findBySubjectCode(dto.getSubjectCode()) != null) {
-            throw new DuplicateSubjectCodeException();
-        }
 
         if (subject == null) {
             throw new NoSubjectException();
@@ -105,18 +101,18 @@ public class SubjectService implements ISubjectService {
             subject.setSubjectStatus(Status.getFromValue(Integer.parseInt(dto.getSubjectStatus())).get());
         }
 
-        if (dto.getManagerEmail() != null) {
-            User manager =userRepository.findActiveUserByEmail(dto.getManagerEmail());
+        if (dto.getManagerUsername() != null) {
+            User manager =userRepository.findActiveByAccountName(dto.getManagerUsername());
             if (manager == null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There are no manager with that email");
+                throw new NoUserException("There are no manager with that username");
             }
             subject.setManager(manager);
         }
 
-        if (dto.getExpertEmail() != null) {
-            User expert =userRepository.findActiveUserByEmail(dto.getExpertEmail());
+        if (dto.getExpertUsername() != null) {
+            User expert =userRepository.findActiveByAccountName(dto.getExpertUsername());
             if ( expert == null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There are no expert with that email");
+               throw new NoUserException("There are no expert with that username");
             }
             subject.setExpert(expert);
         }
@@ -131,11 +127,11 @@ public class SubjectService implements ISubjectService {
         responseDTO.setSubjectCode(entity.getSubjectCode());
         responseDTO.setSubjectName(entity.getSubjectName());
         if (entity.getExpert() != null) {
-            responseDTO.setExpertEmail(entity.getExpert().getEmail());
+            responseDTO.setExpertUsername(entity.getExpert().getAccountName());
         }
 
         if (entity.getManager() != null) {
-            responseDTO.setManagerEmail(entity.getManager().getEmail());
+            responseDTO.setManagerUsername(entity.getManager().getAccountName());
         }
 
         responseDTO.setSubjectStatus(entity.getSubjectStatus());
@@ -169,10 +165,10 @@ public class SubjectService implements ISubjectService {
 
         for (User user : allUser ) {
             if (user.getSettings().contains(managerSetting)) {
-                manager.add(user.getEmail());
+                manager.add(user.getAccountName());
             }
             if (user.getSettings().contains(expertSetting)) {
-                expert.add(user.getEmail());
+                expert.add(user.getAccountName());
             }
         }
 

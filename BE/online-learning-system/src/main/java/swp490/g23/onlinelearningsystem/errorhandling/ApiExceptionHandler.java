@@ -14,6 +14,7 @@ import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoSettingEx
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoSubjectException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoUserException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.UnverifiedUserException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.UsernameExistException;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
@@ -49,7 +50,7 @@ public class ApiExceptionHandler {
     @ExceptionHandler(NoUserException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ErrorMessage noUserException(Exception ex,  WebRequest request) {
-        return new ErrorMessage(10104, "User doesnt exist");
+        return new ErrorMessage(10104, ex.getMessage());
     }
 
     @ExceptionHandler(NoSubjectException.class)
@@ -74,6 +75,12 @@ public class ApiExceptionHandler {
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ErrorMessage noContactException(Exception ex,  WebRequest request) {
         return new ErrorMessage(10108, "Contact doesnt exist");
+    }
+
+    @ExceptionHandler(UsernameExistException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ErrorMessage usernameExist(Exception ex,  WebRequest request) {
+        return new ErrorMessage(10109, "User name already exist");
     }
 
 }

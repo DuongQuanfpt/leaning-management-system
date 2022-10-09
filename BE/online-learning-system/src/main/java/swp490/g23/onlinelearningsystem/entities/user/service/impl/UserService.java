@@ -36,6 +36,7 @@ import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository
 import swp490.g23.onlinelearningsystem.entities.user.repositories.criteria.UserRepositoriesCriteria;
 import swp490.g23.onlinelearningsystem.entities.user.service.IUserService;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoUserException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.UsernameExistException;
 import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.UserStatusEntity;
 
@@ -60,7 +61,6 @@ public class UserService implements IUserService {
     @Autowired
     private UserRepository userRepository;
 
-
     @Override
     public ResponseEntity<AuthenticatedResponseDTO> getAuthenticatedUser(Long id, List<Setting> roles) {
         User user = userRepository.findUserById(id, UserStatus.Active);
@@ -82,7 +82,7 @@ public class UserService implements IUserService {
 
         }
 
-        return ResponseEntity.ok(toAuthenDTO(user, roles,resultFiltered));
+        return ResponseEntity.ok(toAuthenDTO(user, roles, resultFiltered));
     }
 
     @Override
@@ -147,16 +147,25 @@ public class UserService implements IUserService {
 
     @Override
     public ResponseEntity<UserResponseDTO> updateUserProfile(String fullName, String bas64Avatar, String mobile,
-            Long userId , String username) {
-        User user = userRepository.findById(userId).orElseThrow(NoUserException :: new);
-        if (user == null) {
-            throw new NoUserException();
-        }
+            Long userId, String username) {
+        User user = userRepository.findById(userId).orElseThrow(NoUserException::new);
         // User user = userRepository.findById(userId).get();
-        user.setMobile(mobile);
-        user.setFullName(fullName);
-        user.setAccountName(username);
+        if (mobile != null) {
+            user.setMobile(mobile);
+        }
 
+        if (fullName != null) {
+            user.setFullName(fullName);
+        }
+
+        if (username != null) {
+            if(userRepository.findByAccountName(username) == null){
+                user.setAccountName(username);
+            } else {
+                throw new UsernameExistException();
+            }
+          
+        }
 
         if (bas64Avatar != null) {
             String avatarUrl = s3Service.saveImg(bas64Avatar, user.getEmail().split("@")[0]);

@@ -2,6 +2,8 @@ package swp490.g23.onlinelearningsystem.entities.class_subject.domain;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
@@ -21,7 +23,8 @@ import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
 public class ClassSubject {
 
     @EmbeddedId
-    private ClassSubjectKey id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private ClassSubjectKey id = new ClassSubjectKey(); 
 
     @ManyToOne
     @MapsId("subjectId")

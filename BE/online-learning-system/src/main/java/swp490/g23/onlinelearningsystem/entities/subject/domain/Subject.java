@@ -51,7 +51,7 @@ public class Subject {
 	@JoinColumn(name = "expert_id")
 	private User expert;
 
-    @OneToMany(mappedBy = "subject")
+    @OneToMany(mappedBy = "classes")
     private List<ClassSubject> classSubjects;
 
     public Subject(String subjectCode, String subjectName, Status subjectStatus, User manager) {

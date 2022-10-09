@@ -60,7 +60,7 @@ public class SubjectController {
 		return service.editSubjectStatus(id);
 	}
 
-	@PutMapping(value = "/subjects-filter")
+	@GetMapping(value = "/subjects-filter")
 	public ResponseEntity<SubjectFilter> editSettingDetails() {
 		
 		return service.subjectFilter();

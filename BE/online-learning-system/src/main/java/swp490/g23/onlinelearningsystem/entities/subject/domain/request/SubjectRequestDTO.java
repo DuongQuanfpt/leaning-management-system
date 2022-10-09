@@ -25,8 +25,8 @@ public class SubjectRequestDTO {
     private String body;
 
     
-	private String managerEmail;
+	private String managerUsername;
 
    
-	private String expertEmail;
+	private String expertUsername;
 }

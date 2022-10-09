@@ -12,16 +12,20 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findByMailToken(String mailToken);
 
+    User findByAccountName(String accountName);
+
     Optional<User> findByEmail(String email);
 
     @Query(value = "SELECT u FROM User u WHERE u.email= :email " +
-    "AND u.status = swp490.g23.onlinelearningsystem.util.enumutil.UserStatus.ACTIVE")
+    "AND u.status = swp490.g23.onlinelearningsystem.util.enumutil.UserStatus.Active")
     User findActiveUserByEmail(String email);
 
     @Query(value = "SELECT * FROM user WHERE email= ?1", nativeQuery = true)
     User findUserWithEmail(String email);
 
-    // List<User> findByClassUsers(List<ClassUser> classUsers);
+    @Query(value = "SELECT u FROM User u WHERE u.accountName = :accountName " +
+    "AND u.status = swp490.g23.onlinelearningsystem.util.enumutil.UserStatus.Active")
+    User findActiveByAccountName(String accountName);
 
     // List<User> findAllBySettings(Set<Setting> settings);
 }

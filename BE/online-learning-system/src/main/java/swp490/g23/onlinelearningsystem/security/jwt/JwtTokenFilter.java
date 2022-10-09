@@ -105,7 +105,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             if (!list.isEmpty()) {
                 for (SettingPermission permission : list) {
 
-                    if(permission.getScreen().getStatus() == Status.INACTIVE){
+                    if(permission.getScreen().getStatus() == Status.Inactive){
                         canAccess = false;
                         break;
                     }

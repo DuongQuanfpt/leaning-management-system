@@ -20,7 +20,7 @@ public interface SettingRepositories extends JpaRepository<Setting, Long> {
     Setting findBySettingTitle(String name);
 
     @Query(value = "SELECT s FROM Setting s WHERE s.type.settingValue = 'TYPE_ROLE' " +
-    "AND s.status = swp490.g23.onlinelearningsystem.util.enumutil.Status.ACTIVE")
+    "AND s.status = swp490.g23.onlinelearningsystem.util.enumutil.Status.Active")
     List<Setting> findAllRole();
 
     @Query(value = "SELECT s FROM Setting s WHERE s.type.settingValue = 'TYPE_SCREEN' ")
@@ -31,7 +31,7 @@ public interface SettingRepositories extends JpaRepository<Setting, Long> {
 
 
     @Query(value = "SELECT s FROM Setting s WHERE s.settingValue = ?1 " +
-            "AND s.status = swp490.g23.onlinelearningsystem.util.enumutil.Status.ACTIVE")
+            "AND s.status = swp490.g23.onlinelearningsystem.util.enumutil.Status.Active")
     Setting findActiveSettingByValue(String settingValue);
 
     @Query(value = "SELECT s FROM Setting s WHERE s.type IS NULL")

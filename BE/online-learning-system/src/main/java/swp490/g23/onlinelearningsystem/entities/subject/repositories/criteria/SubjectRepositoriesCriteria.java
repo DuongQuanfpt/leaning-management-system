@@ -26,11 +26,11 @@ public class SubjectRepositoriesCriteria {
         }
 
         if (filterManager != null) {
-            query.append(" AND s.manager.email = '" + filterManager + "'");
+            query.append(" AND s.manager.accountName = '" + filterManager + "'");
         }
 
         if (filterExpert != null) {
-            query.append(" AND s.expert.email = '" + filterExpert + "'");
+            query.append(" AND s.expert.accountName = '" + filterExpert + "'");
         }
 
         TypedQuery<Subject> typedQuery = em.createQuery(query.toString(), Subject.class);
