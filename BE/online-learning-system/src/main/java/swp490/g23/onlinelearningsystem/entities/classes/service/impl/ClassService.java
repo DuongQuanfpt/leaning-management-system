@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import swp490.g23.onlinelearningsystem.entities.class_subject.domain.ClassSubject;
+import swp490.g23.onlinelearningsystem.entities.class_subject.repositories.ClassSubjectRepositories;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.filter.ClassFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.request.ClassRequestDTO;
@@ -21,11 +23,13 @@ import swp490.g23.onlinelearningsystem.entities.classes.repositories.criteria.Cl
 import swp490.g23.onlinelearningsystem.entities.classes.service.IClassService;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
+import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoClassException;
 import swp490.g23.onlinelearningsystem.util.enumutil.ClassStatus;
 import swp490.g23.onlinelearningsystem.util.enumutil.Status;
+import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.ClassStatusEntity;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
 
 @Service
@@ -40,7 +44,11 @@ public class ClassService implements IClassService{
     @Autowired
     private SettingRepositories settingRepositories;
 
-    @Autowired ClassRepositoriesCriteria classCriteria;
+    @Autowired 
+    private ClassRepositoriesCriteria classCriteria;
+
+    @Autowired
+    private ClassSubjectRepositories classSubjectRepositories;
 
     @Override
     public ResponseEntity<ClassResponsePaginateDTO> displayClasses(int limit, int currentPage, String keyword, String filterTerm, String filterTrainer,
@@ -127,14 +135,14 @@ public class ClassService implements IClassService{
         List<Setting> settingBranch = settingRepositories.branchList();
         Setting roleTrainer = settingRepositories.findBySettingValue("ROLE_TRAINER");
         Setting roleSupporter = settingRepositories.findBySettingValue("ROLE_SUPPORTER");
-        List<StatusEntity> statuses = new ArrayList<>();
-        List<User> users = userRepository.findAll();
+        List<ClassStatusEntity> statuses = new ArrayList<>();
+        List<User> users = userRepository.findTrainerAndSupporter();
         for(User user : users) {
             if (user.getSettings().contains(roleTrainer)) {
-                listTrainer.add(user.getEmail());
+                listTrainer.add(user.getAccountName());
             }
             if (user.getSettings().contains(roleSupporter)){
-                listSupporter.add(user.getEmail());
+                listSupporter.add(user.getAccountName());
             }
         }
         for (Setting setting : settingTerm) {
@@ -144,8 +152,8 @@ public class ClassService implements IClassService{
             listBranch.add(new ClassTypeResponseDTO(setting.getSettingTitle(), setting.getSettingValue()));
         }
         
-        for (Status status : new ArrayList<Status>(EnumSet.allOf(Status.class))) {
-            statuses.add(new StatusEntity(status));
+        for (ClassStatus status : new ArrayList<ClassStatus>(EnumSet.allOf(ClassStatus.class))) {
+            statuses.add(new ClassStatusEntity(status));
         }
         // for (Classes clazz : classes) {
         //     listTerm.add(clazz.getSettingTerm().getSettingTitle());
@@ -172,9 +180,16 @@ public class ClassService implements IClassService{
     
     public ClassResponseDTO toDTO(Classes entity) {
         ClassResponseDTO responseDTO = new ClassResponseDTO();
+        List<String> subjects = new ArrayList<>();
+        List<ClassSubject> classSubjects = classSubjectRepositories.findByClasses(entity);
+        for (ClassSubject classSubject : classSubjects) {
+            subjects.add(classSubject.getSubject().getSubjectName());
+        }
+        
         responseDTO.setClassId(entity.getClassId());
         responseDTO.setCode(entity.getCode());
         responseDTO.setDescription(entity.getDescription());
+        responseDTO.setSubject(subjects);
         responseDTO.setStatus(entity.getStatus());
         responseDTO.setTerm(entity.getSettingTerm().getSettingTitle());
         responseDTO.setBranch(entity.getSettingBranch().getSettingTitle());

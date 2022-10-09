@@ -1,4 +1,5 @@
 package swp490.g23.onlinelearningsystem.entities.user.repositories;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,13 +16,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
 
     @Query(value = "SELECT u FROM User u WHERE u.email= :email " +
-    "AND u.status = swp490.g23.onlinelearningsystem.util.enumutil.UserStatus.ACTIVE")
+    "AND u.status = swp490.g23.onlinelearningsystem.util.enumutil.UserStatus.Active")
     User findActiveUserByEmail(String email);
 
     @Query(value = "SELECT * FROM user WHERE email= ?1", nativeQuery = true)
     User findUserWithEmail(String email);
 
-    // List<User> findByClassUsers(List<ClassUser> classUsers);
+    @Query(value = "SELECT DISTINCT u FROM User u INNER JOIN u.settings as s WHERE s.settingValue = 'ROLE_TRAINER' OR s.settingValue = 'ROLE_SUPPORTER'")
+    List<User> findTrainerAndSupporter();
 
     // List<User> findAllBySettings(Set<Setting> settings);
 }
