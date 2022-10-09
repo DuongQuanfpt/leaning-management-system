@@ -29,11 +29,9 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.filter.UserFilterDTO
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserUpdatePassRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.AuthenticatedResponseDTO;
-import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserListResponsePaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserTypeResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
-import swp490.g23.onlinelearningsystem.entities.user.repositories.criteria.UserRepositoriesCriteria;
 import swp490.g23.onlinelearningsystem.entities.user.service.IUserService;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoUserException;
 import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
@@ -45,7 +43,7 @@ public class UserService implements IUserService {
     // Autowired
     // private AmazonS3Client ;
 
-     @Autowired
+    @Autowired
     private PermissionCriteria permissionCriteria;
 
     @Autowired
@@ -60,8 +58,6 @@ public class UserService implements IUserService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private UserRepositoriesCriteria userCriteria;
 
     @Override
     public ResponseEntity<AuthenticatedResponseDTO> getAuthenticatedUser(Long id, List<Setting> roles) {
@@ -71,7 +67,20 @@ public class UserService implements IUserService {
             throw new NoUserException();
         }
         TypedQuery<SettingPermission> query = permissionCriteria.getScreenByRoles(roles);
-        return ResponseEntity.ok(toAuthenDTO(user, roles,query.getResultList()));
+        List<SettingPermission> result = query.getResultList();
+        List<SettingPermission> resultFiltered = new ArrayList<>();
+
+        for (SettingPermission sp : result) {
+            if (sp.isCanAdd() == false && sp.isCanDelete() == false && sp.isCanEdit() == false
+                    && sp.isCanGetAll() == false) {
+
+            } else {
+                resultFiltered.add(sp);
+            }
+
+        }
+
+        return ResponseEntity.ok(toAuthenDTO(user, roles,resultFiltered));
     }
 
     @Override
@@ -184,16 +193,17 @@ public class UserService implements IUserService {
     public ResponseEntity<List<UserResponseDTO>> displayUsers(int limit, int currentPage, String keyword,
             String filterRole, String filterStatus) {
         List<UserResponseDTO> users = new ArrayList<>();
-        // TypedQuery<User> queryResult = userCriteria.displayUser(keyword, filterRole, filterStatus);
+        // TypedQuery<User> queryResult = userCriteria.displayUser(keyword, filterRole,
+        // filterStatus);
 
         // int totalItem = queryResult.getResultList().size();
         // int totalPage;
         // if (limit != 0) {
-        //     queryResult.setFirstResult((currentPage - 1) * limit);
-        //     queryResult.setMaxResults(limit);
-        //     totalPage = (int) Math.ceil((double) totalItem / limit);
+        // queryResult.setFirstResult((currentPage - 1) * limit);
+        // queryResult.setMaxResults(limit);
+        // totalPage = (int) Math.ceil((double) totalItem / limit);
         // } else {
-        //     totalPage = 1;
+        // totalPage = 1;
         // }
 
         for (User user : userRepository.findAll()) {
@@ -211,10 +221,10 @@ public class UserService implements IUserService {
 
     @Override
     public ResponseEntity<String> updateUser(UserRequestDTO dto, Long id) {
-        User user = userRepository.findById(id).orElseThrow(NoUserException :: new);
+        User user = userRepository.findById(id).orElseThrow(NoUserException::new);
         List<Setting> settings = new ArrayList<>();
         user.setNote(dto.getNote());
-        
+
         if (!dto.getRoles().isEmpty()) {
             for (String role : dto.getRoles()) {
                 settings.add(settingRepositories.findBySettingValue(role));
@@ -228,7 +238,7 @@ public class UserService implements IUserService {
 
     @Override
     public ResponseEntity<String> updateStatus(Long id) {
-        User user = userRepository.findById(id).orElseThrow(NoUserException :: new);
+        User user = userRepository.findById(id).orElseThrow(NoUserException::new);
         if (user.getStatus() == UserStatus.ACTIVE) {
             user.setStatus(UserStatus.INACTIVE);
         } else {
@@ -242,7 +252,7 @@ public class UserService implements IUserService {
     public ResponseEntity<UserFilterDTO> getFilter() {
         List<UserTypeResponseDTO> list = new ArrayList<>();
         List<UserStatusEntity> statuses = new ArrayList<>();
-        
+
         for (Setting setting : settingRepositories.findAllRole()) {
             list.add(new UserTypeResponseDTO(setting.getSettingTitle(), setting.getSettingValue()));
         }
@@ -298,9 +308,10 @@ public class UserService implements IUserService {
         responseDTO.setRoles(roleNames);
 
         List<PermissionResponseDTO> permissionDTO = new ArrayList<>();
-        for(SettingPermission sp : permissions){
-            permissionDTO.add(new PermissionResponseDTO(sp.getRole().getSettingTitle(),sp.getRole().getSettingValue(),sp.getScreen().getSettingTitle(), sp.getScreen().getSettingValue(),
-            sp.isCanGetAll(), sp.isCanEdit(), sp.isCanDelete(), sp.isCanAdd()));
+        for (SettingPermission sp : permissions) {
+            permissionDTO.add(new PermissionResponseDTO(sp.getRole().getSettingTitle(), sp.getRole().getSettingValue(),
+                    sp.getScreen().getSettingTitle(), sp.getScreen().getSettingValue(),
+                    sp.isCanGetAll(), sp.isCanEdit(), sp.isCanDelete(), sp.isCanAdd()));
         }
         responseDTO.setPermissions(permissionDTO);
         return responseDTO;

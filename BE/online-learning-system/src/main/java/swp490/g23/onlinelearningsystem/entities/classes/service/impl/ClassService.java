@@ -29,7 +29,7 @@ import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
 
 @Service
-public class ClassService implements IClassService{
+public class ClassService implements IClassService {
 
     @Autowired
     private ClassRepositories classRepositories;
@@ -40,25 +40,28 @@ public class ClassService implements IClassService{
     @Autowired
     private SettingRepositories settingRepositories;
 
-    @Autowired ClassRepositoriesCriteria classCriteria;
+    @Autowired
+    ClassRepositoriesCriteria classCriteria;
 
     @Override
-    public ResponseEntity<ClassResponsePaginateDTO> displayClasses(int limit, int currentPage, String keyword, String filterTerm, String filterTrainer,
-                                                                    String filterSupporter, String filterBranch, String filterStatus) {
+    public ResponseEntity<ClassResponsePaginateDTO> displayClasses(int limit, int currentPage, String keyword,
+            String filterTerm, String filterTrainer,
+            String filterSupporter, String filterBranch, String filterStatus) {
         List<ClassResponseDTO> classes = new ArrayList<>();
-        TypedQuery<Classes> queryResult= classCriteria.displayClass(keyword, filterTerm, filterTrainer, filterSupporter, filterBranch, filterStatus);
+        TypedQuery<Classes> queryResult = classCriteria.displayClass(keyword, filterTerm, filterTrainer,
+                filterSupporter, filterBranch, filterStatus);
 
         int totalItem = queryResult.getResultList().size();
-        int totalPage ;
-        if (limit != 0 ) {
-            queryResult.setFirstResult((currentPage-1)*limit);
+        int totalPage;
+        if (limit != 0) {
+            queryResult.setFirstResult((currentPage - 1) * limit);
             queryResult.setMaxResults(limit);
             totalPage = (int) Math.ceil((double) totalItem / limit);
         } else {
             totalPage = 1;
         }
-        
-       for (Classes clazz : queryResult.getResultList()) {
+
+        for (Classes clazz : queryResult.getResultList()) {
             classes.add(toDTO(clazz));
         }
 
@@ -112,7 +115,7 @@ public class ClassService implements IClassService{
             clazz.setStatus(ClassStatus.INACTIVE);
         } else {
             clazz.setStatus(ClassStatus.ACTIVE);
-        }   
+        }
         classRepositories.save(clazz);
         return ResponseEntity.ok("Class status updated");
     }
@@ -125,13 +128,13 @@ public class ClassService implements IClassService{
         List<ClassTypeResponseDTO> listBranch = new ArrayList<>();
         List<Setting> settingTerm = settingRepositories.termList();
         List<Setting> settingBranch = settingRepositories.branchList();
-         List<StatusEntity> statuses = new ArrayList<>();
+        List<StatusEntity> statuses = new ArrayList<>();
         List<User> users = userRepository.findAll();
-        for(User user : users) {
-            if (user.getSettings().contains(settingRepositories.findBySettingValue("ROLE_TRAINER"))){
+        for (User user : users) {
+            if (user.getSettings().contains(settingRepositories.findBySettingValue("ROLE_TRAINER"))) {
                 listTrainer.add(user.getEmail());
             }
-            if (user.getSettings().contains(settingRepositories.findBySettingValue("ROLE_SUPPORTER"))){
+            if (user.getSettings().contains(settingRepositories.findBySettingValue("ROLE_SUPPORTER"))) {
                 listSupporter.add(user.getEmail());
             }
         }
@@ -141,21 +144,20 @@ public class ClassService implements IClassService{
         for (Setting setting : settingBranch) {
             listBranch.add(new ClassTypeResponseDTO(setting.getSettingTitle(), setting.getSettingValue()));
         }
-        
+
         for (Status status : new ArrayList<Status>(EnumSet.allOf(Status.class))) {
             statuses.add(new StatusEntity(status));
         }
         // for (Classes clazz : classes) {
-        //     listTerm.add(clazz.getSettingTerm().getSettingTitle());
-        //     listBranch.add(clazz.getSettingBranch().getSettingTitle());
+        // listTerm.add(clazz.getSettingTerm().getSettingTitle());
+        // listBranch.add(clazz.getSettingBranch().getSettingTitle());
         // }
-        
 
         // Set<Setting> settings = new HashSet<>();
         // settings.add(settingRepositories.findBySettingTitle("trainer"));
 
         // for (User user : userRepository.findAllBySettings(settings)) {
-        //     listTrainer.add(user.getFullName());
+        // listTrainer.add(user.getFullName());
         // }
 
         ClassFilterDTO filterDTO = new ClassFilterDTO();
@@ -164,10 +166,10 @@ public class ClassService implements IClassService{
         filterDTO.setSupporterFilter(listSupporter);
         filterDTO.setTerms(listTerm);
         filterDTO.setBranches(listBranch);
-        
+
         return ResponseEntity.ok(filterDTO);
     }
-    
+
     public ClassResponseDTO toDTO(Classes entity) {
         ClassResponseDTO responseDTO = new ClassResponseDTO();
         responseDTO.setClassId(entity.getClassId());

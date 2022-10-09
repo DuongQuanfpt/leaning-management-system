@@ -21,6 +21,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.BaseEntity;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
+import swp490.g23.onlinelearningsystem.entities.contact.domain.WebContact;
 import swp490.g23.onlinelearningsystem.entities.permission.domain.SettingPermission;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.util.enumutil.Status;
@@ -81,6 +82,9 @@ public class Setting extends BaseEntity {
 
     @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
     private List<SettingPermission> screens;
+
+    @OneToMany(mappedBy = "category")
+	private List<WebContact> webContact = new ArrayList<>();
 
     // @OneToMany(mappedBy = "api" ,cascade = CascadeType.ALL)
     // private List<SettingPermission> apis;

@@ -9,6 +9,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.DuplicateSubjectCodeException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.InvalidTokenException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoContactException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoSettingException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoSubjectException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoUserException;
@@ -67,6 +68,12 @@ public class ApiExceptionHandler {
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ErrorMessage noSettingException(Exception ex,  WebRequest request) {
         return new ErrorMessage(10107, "Setting doesnt exist");
+    }
+
+    @ExceptionHandler(NoContactException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ErrorMessage noContactException(Exception ex,  WebRequest request) {
+        return new ErrorMessage(10108, "Contact doesnt exist");
     }
 
 }
