@@ -193,8 +193,8 @@ public class ClassService implements IClassService{
         responseDTO.setStatus(entity.getStatus());
         responseDTO.setTerm(entity.getSettingTerm().getSettingTitle());
         responseDTO.setBranch(entity.getSettingBranch().getSettingTitle());
-        responseDTO.setTrainer(entity.getUserTrainer().getUsername());
-        responseDTO.setSupporter(entity.getUserSupporter().getUsername());
+        responseDTO.setTrainer(entity.getUserTrainer().getAccountName());
+        responseDTO.setSupporter(entity.getUserSupporter().getAccountName());
         return responseDTO;
     }
 }
