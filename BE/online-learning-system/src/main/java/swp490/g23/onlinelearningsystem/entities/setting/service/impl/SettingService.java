@@ -131,10 +131,10 @@ public class SettingService implements ISettingService {
     public ResponseEntity<String> updateStatus(Long id) {
         Setting setting = settingRepositories.findById(id).get();
         if (setting.getType() != null) {
-            if (setting.getStatus() == Status.ACTIVE) {
-                setting.setStatus(Status.INACTIVE);
+            if (setting.getStatus() == Status.Active) {
+                setting.setStatus(Status.Inactive);
             } else {
-                setting.setStatus(Status.ACTIVE);
+                setting.setStatus(Status.Active);
             }
             settingRepositories.save(setting);
             return ResponseEntity.ok("Setting status updated");

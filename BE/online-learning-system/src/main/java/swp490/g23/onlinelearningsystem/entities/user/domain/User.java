@@ -44,7 +44,7 @@ public class User extends BaseEntity implements UserDetails {
     private String fullName;
 
     @Column(name= "username", unique = true)
-    private String username;
+    private String accountName;
 
     @Column(name = "email", length = 40, unique = true)
     private String email;
@@ -99,7 +99,7 @@ public class User extends BaseEntity implements UserDetails {
         this.email = email;
         this.password = password;
         this.addRole(settings);
-        this.setStatus(UserStatus.ACTIVE);
+        this.setStatus(UserStatus.Active);
     }
 
     public void addRole(Setting role) {

@@ -148,10 +148,10 @@ public class SubjectService implements ISubjectService {
     public ResponseEntity<String> editSubjectStatus(Long id) {
         Subject subject = subjectRepository.findById(id).orElseThrow(NoSubjectException :: new);
 
-        if (subject.getSubjectStatus() == Status.ACTIVE) {
-            subject.setSubjectStatus(Status.INACTIVE);
+        if (subject.getSubjectStatus() == Status.Active) {
+            subject.setSubjectStatus(Status.Inactive);
         } else {
-            subject.setSubjectStatus(Status.ACTIVE);
+            subject.setSubjectStatus(Status.Active);
         }
         subjectRepository.save(subject);
         return ResponseEntity.ok(" Status update success");

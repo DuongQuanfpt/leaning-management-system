@@ -111,11 +111,11 @@ public class ClassService implements IClassService {
     @Override
     public ResponseEntity<String> updateStatus(Long id) {
         Classes clazz = classRepositories.findById(id).get();
-        if (clazz.getStatus() == ClassStatus.ACTIVE) {
-            clazz.setStatus(ClassStatus.INACTIVE);
+        if (clazz.getStatus() == ClassStatus.Active) {
+            clazz.setStatus(ClassStatus.Inactive);
         } else {
-            clazz.setStatus(ClassStatus.ACTIVE);
-        }
+            clazz.setStatus(ClassStatus.Active);
+        }   
         classRepositories.save(clazz);
         return ResponseEntity.ok("Class status updated");
     }

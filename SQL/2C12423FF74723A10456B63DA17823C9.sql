@@ -56,8 +56,38 @@ CREATE TABLE `class` (
 
 LOCK TABLES `class` WRITE;
 /*!40000 ALTER TABLE `class` DISABLE KEYS */;
+<<<<<<< HEAD:SQL/2C12423FF74723A10456B63DA17823C9.sql
 INSERT INTO `class` VALUES (1,NULL,'2022-10-07 23:15:04',NULL,'2022-10-07 23:15:04','SE1208','Lop SE1208','1',19,7,5,84,44),(4,NULL,NULL,NULL,NULL,'SE1220','Lop SE1220','0',NULL,7,5,74,54),(14,NULL,NULL,NULL,NULL,'SE1231','Lop SE1231','1',NULL,7,5,94,64);
+=======
+INSERT INTO `class` VALUES (1,NULL,'2022-10-07 23:15:04',NULL,'2022-10-07 23:15:04','SE1208','Lop SE1208','1',19,7,5,84,44),(4,NULL,NULL,NULL,'2022-10-09 07:30:36','SE1220','Lop SE1220','1',NULL,7,5,74,54),(14,NULL,NULL,NULL,NULL,'SE1231','Lop SE1231','1',NULL,7,5,94,64);
+>>>>>>> 721a58c3adc9371b88e035c59185ccb567b18d62:SQL/BackupDB.sql
 /*!40000 ALTER TABLE `class` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `class_subject`
+--
+
+DROP TABLE IF EXISTS `class_subject`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `class_subject` (
+  `class_id` bigint(20) NOT NULL,
+  `user_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`class_id`,`user_id`),
+  KEY `FKoh1dji13cmi3fah0ybfk0hmwn` (`user_id`),
+  CONSTRAINT `FKno5smkktaps9904bebmh1bln5` FOREIGN KEY (`class_id`) REFERENCES `class` (`class_id`),
+  CONSTRAINT `FKoh1dji13cmi3fah0ybfk0hmwn` FOREIGN KEY (`user_id`) REFERENCES `subject` (`subject_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `class_subject`
+--
+
+LOCK TABLES `class_subject` WRITE;
+/*!40000 ALTER TABLE `class_subject` DISABLE KEYS */;
+/*!40000 ALTER TABLE `class_subject` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -148,7 +178,11 @@ CREATE TABLE `permission` (
 
 LOCK TABLES `permission` WRITE;
 /*!40000 ALTER TABLE `permission` DISABLE KEYS */;
+<<<<<<< HEAD:SQL/2C12423FF74723A10456B63DA17823C9.sql
 INSERT INTO `permission` VALUES (4,24,'\0','\0','',''),(4,25,'\0','\0','',''),(4,26,'\0','\0','',''),(4,27,'\0','\0','',''),(4,28,'\0','\0','',''),(4,29,'\0','\0','',''),(5,24,'\0','\0','\0','\0'),(5,25,'\0','\0','\0','\0'),(5,26,'\0','\0','\0','\0'),(5,27,'\0','\0','\0','\0'),(5,28,'\0','\0','\0','\0'),(6,24,'\0','\0','\0','\0'),(6,25,'\0','\0','\0','\0'),(6,26,'\0','\0','\0','\0'),(6,27,'\0','\0','\0','\0'),(6,28,'\0','\0','',''),(6,29,'\0','\0','',''),(6,30,'\0','\0','',''),(6,31,'\0','\0','','\0'),(7,24,'\0','\0','\0','\0'),(7,25,'\0','\0','\0','\0'),(7,26,'\0','\0','\0','\0'),(7,27,'\0','\0','\0','\0'),(7,28,'\0','\0','\0','\0'),(8,24,'\0','\0','\0','\0'),(8,25,'\0','\0','\0','\0'),(8,26,'\0','\0','\0','\0'),(8,27,'\0','\0','\0','\0'),(8,28,'\0','\0','\0','\0');
+=======
+INSERT INTO `permission` VALUES (4,24,'\0','\0','',''),(4,25,'\0','\0','',''),(4,26,'\0','\0','',''),(4,27,'\0','\0','',''),(4,28,'\0','\0','',''),(4,29,'\0','\0','',''),(5,24,'\0','\0','\0','\0'),(5,25,'\0','\0','\0','\0'),(5,26,'\0','\0','\0','\0'),(5,27,'\0','\0','\0','\0'),(5,28,'\0','\0','\0','\0'),(6,24,'\0','\0','\0','\0'),(6,25,'\0','\0','\0','\0'),(6,26,'\0','\0','\0','\0'),(6,27,'\0','\0','\0','\0'),(6,28,'\0','\0','',''),(6,29,'\0','\0','',''),(6,30,'\0','\0','',''),(6,31,'\0','\0','',''),(7,24,'\0','\0','\0','\0'),(7,25,'\0','\0','\0','\0'),(7,26,'\0','\0','\0','\0'),(7,27,'\0','\0','\0','\0'),(7,28,'\0','\0','\0','\0'),(8,24,'\0','\0','\0','\0'),(8,25,'\0','\0','\0','\0'),(8,26,'\0','\0','\0','\0'),(8,27,'\0','\0','\0','\0'),(8,28,'\0','\0','\0','\0');
+>>>>>>> 721a58c3adc9371b88e035c59185ccb567b18d62:SQL/BackupDB.sql
 /*!40000 ALTER TABLE `permission` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -187,7 +221,11 @@ CREATE TABLE `setting` (
 
 LOCK TABLES `setting` WRITE;
 /*!40000 ALTER TABLE `setting` DISABLE KEYS */;
+<<<<<<< HEAD:SQL/2C12423FF74723A10456B63DA17823C9.sql
 INSERT INTO `setting` VALUES (1,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','contain setting for each screen in system',NULL,'System Screen','TYPE_SCREEN',NULL,NULL,NULL),(2,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','contain api link',NULL,'API','TYPE_API',NULL,NULL,NULL),(3,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','contain settings relate to user role',NULL,'User Role','TYPE_ROLE',NULL,NULL,NULL),(4,NULL,'2022-10-07 23:15:03',NULL,'2022-10-08 14:31:13','admin12','2','admin','ROLE_ADMIN','1',NULL,3),(5,NULL,'2022-10-07 23:15:03',NULL,'2022-10-08 05:40:36','description for trainee','1','trainee','ROLE_TRAINEE','1',NULL,3),(6,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description for manager','1','manager','ROLE_MANAGER','1',NULL,3),(7,NULL,'2022-10-07 23:15:03',NULL,'2022-10-08 14:29:14','description for supporter','1','supporter','ROLE_SUPPORTER','1',NULL,3),(8,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description for trainer','1','trainer','ROLE_TRAINER','1',NULL,3),(9,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description for expert','1','expert','ROLE_EXPERT','1',NULL,3),(10,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','type for test',NULL,'Test','TYPE_TEST',NULL,NULL,NULL),(11,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description','1','Setting List ','/api/setting','1',24,2),(12,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description ','1','Setting Filter','/api/setting-filter','1',24,2),(13,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description ','1','Setting Status','/api/setting-status','1',24,2),(14,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description ','1','Subject List','/api/subjects','1',28,2),(15,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description ','1','Subject Status','/api/subjects-status','1',28,2),(16,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description ','1','User List','/api/user','1',27,2),(17,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description ','1','User Filter','/api/user-filter','1',27,2),(18,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description ','1','User Status','/api/user-status','1',27,2),(19,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description for test','2','test3','TEST3','0',NULL,10),(20,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:58:31','dfsfdfsfs','2','GRRRR 3','TEST4','0',NULL,10),(21,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description','1','Dashboard ','/dashboard','1',NULL,1),(22,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description','1','Profile  ','/profile','1',NULL,1),(23,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description','1','ChangePassword   ','/change-password','1',NULL,1),(24,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description','1','SettingList ','/setting-list','1',NULL,1),(25,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description','1','SettingDetail','/setting-detail/:id','1',NULL,1),(26,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description','1','UserDetail ','/user-detail/:id','1',NULL,1),(27,NULL,'2022-10-07 23:15:03',NULL,'2022-10-08 14:45:23','description','1','UserList','/user-list','1',NULL,1),(28,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description','1','SubjectList','/subject-list','1',NULL,1),(29,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description','1','SubjectDetail','/subject-detail/:id','1',NULL,1),(30,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description','1','ClassList','/class-list','1',NULL,1),(31,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description','1','ClassDetail','/class-detail/:id','1',NULL,1),(32,NULL,NULL,NULL,NULL,'API setting details','1','ApiSettingDetails','/api/setting-detail','1',25,2),(33,NULL,NULL,NULL,NULL,'API subject details','1','ApiSubjectDetail','/api/subjects-detail','1',29,2),(34,NULL,NULL,NULL,NULL,'API for user detail','1','ApiUserDetail','/api/user-detail','1',26,2),(35,NULL,NULL,NULL,NULL,'API for class','1','APIClasslist','/api/class','1',30,2),(36,NULL,NULL,NULL,NULL,'API for class detail','1','APIClassDetail','/api/class-detail','1',31,2),(37,NULL,NULL,NULL,NULL,'API for class-status','1','API class status','/api/class-status','1',30,2),(38,NULL,NULL,NULL,NULL,'term for classes','1','Term','TYPE_TERM','1',NULL,NULL),(39,NULL,NULL,NULL,NULL,'branch of classes','1','Branch','TYPE_BRANCH','1',NULL,NULL),(40,NULL,NULL,NULL,NULL,'contain different type of web contact','1','Contact Category','TYPE_CONTACT','1',NULL,NULL),(44,NULL,NULL,NULL,NULL,'term spring','3','Spring','TERM_SPRING','1',NULL,38),(54,NULL,NULL,NULL,NULL,'term summer','3','Summer','TERM_SUMMER','1',NULL,38),(64,NULL,NULL,NULL,NULL,'term fall','3','Fall','TERM_FALL','1',NULL,38),(74,NULL,NULL,NULL,NULL,'branch Ho Chi Minh','4','HCM','BRANCH_HCM','1',NULL,39),(84,NULL,NULL,NULL,NULL,'branch Ha Noi','4','Ha Noi','BRANCH_HN','1',NULL,39),(94,NULL,NULL,NULL,NULL,'branch Da Nang','4','Da Nang','BRANCH_DN','1',NULL,39),(104,NULL,NULL,NULL,NULL,'question about account','1','Account and billing','CONTACT_ACCOUNT','1',NULL,40),(114,NULL,NULL,NULL,NULL,'general question','1','General','CONTACT_GENERAL','1',NULL,40),(124,NULL,NULL,NULL,NULL,'report a bug , problem','1','Report a problem, bugs','CONTACT_PROBLEM','1',NULL,40);
+=======
+INSERT INTO `setting` VALUES (1,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','contain setting for each screen in system',NULL,'System Screen','TYPE_SCREEN',NULL,NULL,NULL),(2,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','contain api link',NULL,'API','TYPE_API',NULL,NULL,NULL),(3,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','contain settings relate to user role',NULL,'User Role','TYPE_ROLE',NULL,NULL,NULL),(4,NULL,'2022-10-07 23:15:03',NULL,'2022-10-09 05:25:19','admin12','2','admin','ROLE_ADMIN','1',NULL,3),(5,NULL,'2022-10-07 23:15:03',NULL,'2022-10-09 05:52:04','trainee','1000000000000000000000000000000000000000000000000','trainee','ROLE_TRAINEE','1',NULL,3),(6,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description for manager','1','manager','ROLE_MANAGER','1',NULL,3),(7,NULL,'2022-10-07 23:15:03',NULL,'2022-10-08 14:29:14','description for supporter','1','supporter','ROLE_SUPPORTER','1',NULL,3),(8,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description for trainer','1','trainer','ROLE_TRAINER','1',NULL,3),(9,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description for expert','1','expert','ROLE_EXPERT','1',NULL,3),(10,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','type for test',NULL,'Test','TYPE_TEST',NULL,NULL,NULL),(11,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description','1','Setting List ','/api/setting','1',24,2),(12,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description ','1','Setting Filter','/api/setting-filter','1',24,2),(13,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description ','1','Setting Status','/api/setting-status','1',24,2),(14,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description ','1','Subject List','/api/subjects','1',28,2),(15,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description ','1','Subject Status','/api/subjects-status','1',28,2),(16,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description ','1','User List','/api/user','1',27,2),(17,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description ','1','User Filter','/api/user-filter','1',27,2),(18,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description ','1','User Status','/api/user-status','1',27,2),(19,NULL,'2022-10-07 23:15:03',NULL,'2022-10-09 08:50:29','description for test','2','test3','TEST3','1',NULL,10),(20,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:58:31','dfsfdfsfs','2','GRRRR 3','TEST4','0',NULL,10),(21,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description','1','Dashboard ','/dashboard','1',NULL,1),(22,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description','1','Profile  ','/profile','1',NULL,1),(23,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description','1','ChangePassword   ','/change-password','1',NULL,1),(24,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description','1','SettingList ','/setting-list','1',NULL,1),(25,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description','1','SettingDetail','/setting-detail/:id','1',NULL,1),(26,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description','1','UserDetail ','/user-detail/:id','1',NULL,1),(27,NULL,'2022-10-07 23:15:03',NULL,'2022-10-08 14:45:23','description','1','UserList','/user-list','1',NULL,1),(28,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description','1','SubjectList','/subject-list','1',NULL,1),(29,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description','1','SubjectDetail','/subject-detail/:id','1',NULL,1),(30,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description','1','ClassList','/class-list','1',NULL,1),(31,NULL,'2022-10-07 23:15:03',NULL,'2022-10-07 23:15:03','description','1','ClassDetail','/class-detail/:id','1',NULL,1),(32,NULL,NULL,NULL,NULL,'API setting details','1','ApiSettingDetails','/api/setting-detail','1',25,2),(33,NULL,NULL,NULL,NULL,'API subject details','1','ApiSubjectDetail','/api/subjects-detail','1',29,2),(34,NULL,NULL,NULL,NULL,'API for user detail','1','ApiUserDetail','/api/user-detail','1',26,2),(35,NULL,NULL,NULL,NULL,'API for class','1','APIClasslist','/api/class','1',30,2),(36,NULL,NULL,NULL,NULL,'API for class detail','1','APIClassDetail','/api/class-detail','1',31,2),(37,NULL,NULL,NULL,NULL,'API for class-status','1','API class status','/api/class-status','1',30,2),(38,NULL,NULL,NULL,NULL,'term for classes','1','Term','TYPE_TERM','1',NULL,NULL),(39,NULL,NULL,NULL,NULL,'branch of classes','1','Branch','TYPE_BRANCH','1',NULL,NULL),(40,NULL,NULL,NULL,NULL,'contain different type of web contact','1','Contact Category','TYPE_CONTACT','1',NULL,NULL),(44,NULL,NULL,NULL,NULL,'term spring','3','Spring','TERM_SPRING','1',NULL,38),(54,NULL,NULL,NULL,NULL,'term summer','3','Summer','TERM_SUMMER','1',NULL,38),(64,NULL,NULL,NULL,NULL,'term fall','3','Fall','TERM_FALL','1',NULL,38),(74,NULL,NULL,NULL,NULL,'branch Ho Chi Minh','4','HCM','BRANCH_HCM','1',NULL,39),(84,NULL,NULL,NULL,NULL,'branch Ha Noi','4','Ha Noi','BRANCH_HN','1',NULL,39),(94,NULL,NULL,NULL,'2022-10-09 07:25:00','','1','Da Nang','BRANCH_DN','1',NULL,39),(104,NULL,NULL,NULL,NULL,'question about account','1','Account and billing','CONTACT_ACCOUNT','1',NULL,40),(114,NULL,NULL,NULL,NULL,'general question','1','General','CONTACT_GENERAL','1',NULL,40),(124,NULL,NULL,NULL,NULL,'report a bug , problem','1','Report a problem, bugs','CONTACT_PROBLEM','1',NULL,40);
+>>>>>>> 721a58c3adc9371b88e035c59185ccb567b18d62:SQL/BackupDB.sql
 /*!40000 ALTER TABLE `setting` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -246,9 +284,16 @@ CREATE TABLE `user` (
   `note` varchar(255) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL,
+  `username` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`user_id`),
+<<<<<<< HEAD:SQL/2C12423FF74723A10456B63DA17823C9.sql
   UNIQUE KEY `UK_ob8kqyqqgmefl0aco34akdtpe` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+=======
+  UNIQUE KEY `UK_ob8kqyqqgmefl0aco34akdtpe` (`email`),
+  UNIQUE KEY `UK_sb8bbouer5wak8vyiiy4pf2bx` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8;
+>>>>>>> 721a58c3adc9371b88e035c59185ccb567b18d62:SQL/BackupDB.sql
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -257,7 +302,11 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
+<<<<<<< HEAD:SQL/2C12423FF74723A10456B63DA17823C9.sql
 INSERT INTO `user` VALUES (1,NULL,'2022-10-07 23:15:04',NULL,'2022-10-08 20:10:04','https://g23-lms.s3.ap-southeast-1.amazonaws.com/xucxichbo','xucxichbo@doivl.com',NULL,NULL,NULL,'aaaa','$2a$10$G9Ju2dnNxBD.en./j1C7Vu0bcyhFcB.G7mQ.bkIn8jtsvWXj/oNHi','1'),(2,NULL,'2022-10-07 23:15:04',NULL,'2022-10-08 20:49:17','https://g23-lms.s3.ap-southeast-1.amazonaws.com/quan1','quan1@doivl.com',NULL,NULL,NULL,'add note here abc','$2a$10$vKy59vg6SIktVAnlxoX9OuBNbZiOP0lWJJeFACxwK3KM2rnRLAPIK','0'),(3,NULL,'2022-10-07 23:15:04',NULL,'2022-10-07 23:15:04',NULL,'quan22@doivl.com',NULL,NULL,NULL,NULL,'$2a$10$V2knZSxoDgNhCFv9KSp/q.wQ5KWMITUduSCbCvmjrPinvJVncMI1O','1'),(4,NULL,'2022-10-07 23:15:04',NULL,'2022-10-07 23:15:04',NULL,'quan3@doivl.com',NULL,NULL,NULL,NULL,'$2a$10$sCybsiL5KbDTlNQ4uhvu5OLlFDhzpq2E6obsbjd1DjOkb6Keog8pS','1'),(5,NULL,'2022-10-07 23:15:04',NULL,'2022-10-08 16:36:00',NULL,'quan4@doivl.com',NULL,NULL,NULL,'abcccedfadsfasd','$2a$10$GcGHU7u/hxqASlTmjIVnyeznmq6H.ahh88U.v8NwOsqW4pQHEnGii','1'),(6,NULL,'2022-10-07 23:15:04',NULL,'2022-10-08 13:28:53',NULL,'hoangnhhe141380@fpt.edu.vn',NULL,NULL,NULL,NULL,'$2a$10$.lzyRua4zLzBfPUssazey.rBZFFFW6MdoNt7n32tZsMRFKECNu1JC','1'),(7,NULL,'2022-10-07 23:15:04',NULL,'2022-10-07 23:15:04',NULL,'quan6@doivl.com',NULL,NULL,NULL,NULL,'$2a$10$/hwQssrnlxDprjFKo9129e6Jpv31/GNnRTUEJ5NBp.AERD5eIx7xe','1');
+=======
+INSERT INTO `user` VALUES (1,NULL,'2022-10-07 23:15:04',NULL,'2022-10-09 06:53:01','https://g23-lms.s3.ap-southeast-1.amazonaws.com/xucxichbo','xucxichbo@doivl.com','Nguyen Van BABC',NULL,'0348648228','ỉuhewflasdvnbnvdtsry1231412','$2a$10$EaRMMJf70xsA8dr5fguwxOjMwMBzG5NMBFLGtWcYgdY.uvTwnopye','1','quandvv'),(2,NULL,'2022-10-07 23:15:04',NULL,'2022-10-09 08:35:41','https://g23-lms.s3.ap-southeast-1.amazonaws.com/quan1','quan1@doivl.com',NULL,NULL,NULL,'add note here abc','$2a$10$PRkuaL8bRCbKHc3eYO9wxeIWOqgkwzUCI8VOr8z0me1GnWg/9GxKe','1','quan1'),(3,NULL,'2022-10-07 23:15:04',NULL,'2022-10-07 23:15:04',NULL,'quan22@doivl.com',NULL,NULL,NULL,NULL,'$2a$10$V2knZSxoDgNhCFv9KSp/q.wQ5KWMITUduSCbCvmjrPinvJVncMI1O','1','quan22'),(4,NULL,'2022-10-07 23:15:04',NULL,'2022-10-09 06:45:51',NULL,'quan3@doivl.com',NULL,NULL,NULL,NULL,'$2a$10$sCybsiL5KbDTlNQ4uhvu5OLlFDhzpq2E6obsbjd1DjOkb6Keog8pS','1','quan3'),(5,NULL,'2022-10-07 23:15:04',NULL,'2022-10-09 06:46:12',NULL,'quan4@doivl.com',NULL,NULL,NULL,'abcccedfadsfasd','$2a$10$GcGHU7u/hxqASlTmjIVnyeznmq6H.ahh88U.v8NwOsqW4pQHEnGii','0','quan4'),(6,NULL,'2022-10-07 23:15:04',NULL,'2022-10-09 05:42:30',NULL,'hoangnhhe141380@fpt.edu.vn',NULL,NULL,NULL,NULL,'$2a$10$.lzyRua4zLzBfPUssazey.rBZFFFW6MdoNt7n32tZsMRFKECNu1JC','1','hoangnh'),(7,NULL,'2022-10-07 23:15:04',NULL,'2022-10-07 23:15:04',NULL,'quan6@doivl.com',NULL,NULL,NULL,NULL,'$2a$10$/hwQssrnlxDprjFKo9129e6Jpv31/GNnRTUEJ5NBp.AERD5eIx7xe','1','quan6'),(14,NULL,'2022-10-09 01:38:48',NULL,'2022-10-09 01:39:59',NULL,'gepiwe9397@dineroa.com','Duong Vu Viet Quan',NULL,NULL,NULL,'$2a$10$FEjJaaIG6Huzg3FSNXjxDuWj792xZvFwQcYAEYlVF4GGROZRh/C/G','1','gepiwqe'),(24,NULL,'2022-10-09 04:28:18',NULL,'2022-10-09 05:47:02','https://lh3.googleusercontent.com/a/ALm5wu3ZuZCBJPMKDMaoG4ZW8Dl5rCM1Qqf8sNKpSaQV=s96-c','vietnqhe140773@gmail.com','Việt Nguyễn','wY3JAv5h7z59VRbgQHubR87u1tpJmo',NULL,NULL,'$2a$10$Jk9iCGGvBq6zp0vsgaVcfeU.MdXplWwt1oabmtOiD1EZZs0/MkFry','1','vietnq'),(34,NULL,'2022-10-09 08:15:52',NULL,'2022-10-09 08:23:41','https://g23-lms.s3.ap-southeast-1.amazonaws.com/hoangdiudang3','hoangdiudang3@gmail.com',NULL,NULL,NULL,NULL,'$2a$10$ox8C3.znPezZo5Py1GgEeeJ53C0vXdeUvACatsR8TT/Y.hYN37LIm','1','hoang'),(44,NULL,'2022-10-09 08:32:09',NULL,'2022-10-09 08:32:09',NULL,'hoang131231235@gmail.com',NULL,'YVovlP9043DC997l84TftwGf44d44e',NULL,NULL,'$2a$10$FN94yEiUGrIXx2UlxMRZ8OwjnreFfmwcwp6bLYnMCW3ldI6fY5RoK','-1','hoang131');
+>>>>>>> 721a58c3adc9371b88e035c59185ccb567b18d62:SQL/BackupDB.sql
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -284,7 +333,11 @@ CREATE TABLE `user_roles` (
 
 LOCK TABLES `user_roles` WRITE;
 /*!40000 ALTER TABLE `user_roles` DISABLE KEYS */;
+<<<<<<< HEAD:SQL/2C12423FF74723A10456B63DA17823C9.sql
 INSERT INTO `user_roles` VALUES (3,7),(4,5),(6,4),(6,6),(6,7),(6,8),(6,8),(7,9),(5,8),(5,4),(5,5),(5,6),(5,4),(5,5),(5,6),(5,7),(2,6),(2,7),(2,4),(1,4),(1,5),(1,6),(1,7),(1,8),(1,9);
+=======
+INSERT INTO `user_roles` VALUES (3,7),(7,9),(14,5),(5,8),(6,4),(6,5),(6,6),(6,7),(6,8),(6,9),(24,5),(24,4),(24,6),(24,7),(24,8),(24,9),(2,7),(2,6),(2,4),(4,5),(4,6),(1,4),(1,5),(1,6),(1,7),(1,8),(1,9),(34,5),(44,5);
+>>>>>>> 721a58c3adc9371b88e035c59185ccb567b18d62:SQL/BackupDB.sql
 /*!40000 ALTER TABLE `user_roles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -310,7 +363,11 @@ CREATE TABLE `web_contact` (
   KEY `FK75it2sei0l4vtj7cobflr7q4h` (`staff_id`),
   CONSTRAINT `FK5vib470hmeexgdgrm8hpi1sqn` FOREIGN KEY (`category_id`) REFERENCES `setting` (`setting_id`),
   CONSTRAINT `FK75it2sei0l4vtj7cobflr7q4h` FOREIGN KEY (`staff_id`) REFERENCES `user` (`user_id`)
+<<<<<<< HEAD:SQL/2C12423FF74723A10456B63DA17823C9.sql
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+=======
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8;
+>>>>>>> 721a58c3adc9371b88e035c59185ccb567b18d62:SQL/BackupDB.sql
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -319,7 +376,11 @@ CREATE TABLE `web_contact` (
 
 LOCK TABLES `web_contact` WRITE;
 /*!40000 ALTER TABLE `web_contact` DISABLE KEYS */;
+<<<<<<< HEAD:SQL/2C12423FF74723A10456B63DA17823C9.sql
 INSERT INTO `web_contact` VALUES (4,'random123@gmail.com','Viet Quan','Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nec nisl in libero posuere dapibus eget nec neque. Maecenas venenatis elit sed nunc volutpat efficitur. Donec at iaculis sapien. Nam eget turpis pulvinar','0123456789',NULL,NULL,114,6);
+=======
+INSERT INTO `web_contact` VALUES (4,'random123@gmail.com','Viet Quan','Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nec nisl in libero posuere dapibus eget nec neque. Maecenas venenatis elit sed nunc volutpat efficitur. Donec at iaculis sapien. Nam eget turpis pulvinar','0123456789',NULL,NULL,114,6),(14,'random123@gmail.com','Viet Quan','Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nec nisl in libero posuere dapibus eget nec neque. Maecenas venenatis elit sed nunc volutpat efficitur. Donec at iaculis sapien. Nam eget turpis pulvinar','0123456789',NULL,'1',114,NULL),(24,'random123@gmail.com','Viet Anh','Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nec nisl in libero posuere dapibus eget nec neque. Maecenas venenatis elit sed nunc volutpat efficitur. Donec at iaculis sapien. Nam eget turpis pulvinar','0123456789',NULL,'1',NULL,NULL),(34,'random123@gmail.com','Viet Anh','Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nec nisl in libero posuere dapibus eget nec neque. Maecenas venenatis elit sed nunc volutpat efficitur. Donec at iaculis sapien. Nam eget turpis pulvinar','0123456789',NULL,'1',104,NULL);
+>>>>>>> 721a58c3adc9371b88e035c59185ccb567b18d62:SQL/BackupDB.sql
 /*!40000 ALTER TABLE `web_contact` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -336,4 +397,8 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
+<<<<<<< HEAD:SQL/2C12423FF74723A10456B63DA17823C9.sql
 -- Dump completed on 2022-10-09  0:32:06
+=======
+-- Dump completed on 2022-10-09 14:57:22
+>>>>>>> 721a58c3adc9371b88e035c59185ccb567b18d62:SQL/BackupDB.sql
