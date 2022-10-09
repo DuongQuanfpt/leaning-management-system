@@ -25,7 +25,7 @@ public class ClassSubject {
 
     @ManyToOne
     @MapsId("subjectId")
-    @JoinColumn(name = "user_Id")
+    @JoinColumn(name = "subject_Id")
     private Subject subject;
 
     @ManyToOne
