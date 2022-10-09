@@ -98,7 +98,7 @@ public class SettingService implements ISettingService {
 
         List<TypeResponseDTO> list = new ArrayList<>();
         List<StatusEntity> statuses = new ArrayList<>();
-        List<Setting> allType = settingRepositories.findAllType();
+        List<Setting> allType = settingRepositories.findFilteredType();
 
         for (Setting setting :allType ) {
             list.add(new TypeResponseDTO(setting.getSettingTitle(), setting.getSettingValue()));

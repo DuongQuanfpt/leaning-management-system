@@ -37,6 +37,11 @@ public interface SettingRepositories extends JpaRepository<Setting, Long> {
     @Query(value = "SELECT s FROM Setting s WHERE s.type IS NULL")
     List<Setting> findAllType();
 
+    @Query(value = "SELECT s FROM Setting s WHERE s.type IS NULL " +
+    "AND s.settingValue != 'TYPE_ROLE' AND s.settingValue != 'TYPE_API' "+
+    "AND s.settingValue != 'TYPE_SCREEN'")
+    List<Setting> findFilteredType();
+
     @Query(value = "SELECT s FROM Setting s WHERE s.type.settingValue = 'TYPE_TERM'")
     List<Setting> termList();
 

@@ -145,14 +145,16 @@ public class UserService implements IUserService {
 
     @Override
     public ResponseEntity<UserResponseDTO> updateUserProfile(String fullName, String bas64Avatar, String mobile,
-            Long userId) {
-        User user = userRepository.findById(userId).get();
+            Long userId , String username) {
+        User user = userRepository.findById(userId).orElseThrow(NoUserException :: new);
         if (user == null) {
             throw new NoUserException();
         }
         // User user = userRepository.findById(userId).get();
         user.setMobile(mobile);
         user.setFullName(fullName);
+        user.setUsername(username);
+
 
         if (bas64Avatar != null) {
             String avatarUrl = s3Service.saveImg(bas64Avatar, user.getEmail().split("@")[0]);
