@@ -16,10 +16,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.BaseEntity;
+import swp490.g23.onlinelearningsystem.entities.class_subject.domain.ClassSubject;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.ClassUser;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.util.enumutil.ClassStatus;
+
 
 @Entity
 @Getter
@@ -56,4 +58,8 @@ public class Classes extends BaseEntity{
 
     @OneToMany(mappedBy = "classes")
     private List<ClassUser> classUsers;
+
+    @OneToMany(mappedBy = "subject")
+    private List<ClassSubject> classSubject;
+
 }

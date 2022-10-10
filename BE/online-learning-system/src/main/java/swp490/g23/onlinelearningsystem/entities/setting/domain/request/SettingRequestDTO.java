@@ -21,5 +21,5 @@ public class SettingRequestDTO {
 
     private String displayOrder;
 
-    private String typeName;
+    private String typeValue;
 }

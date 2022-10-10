@@ -32,6 +32,7 @@ import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepo
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.errorhandling.ErrorMessage;
 import swp490.g23.onlinelearningsystem.util.JwtTokenUtil;
+import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
@@ -104,11 +105,16 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             if (!list.isEmpty()) {
                 for (SettingPermission permission : list) {
 
+                    if(permission.getScreen().getStatus() == Status.Inactive){
+                        canAccess = false;
+                        break;
+                    }
+                    
                     for (Setting role : user.getSettings()) {
 
                         if (permission.getRole().getSettingValue().equals(role.getSettingValue())
                                 && permission.getScreen().getSettingValue().equals(api.getScreen().getSettingValue())) {
-                
+                                    
                             if (method.equalsIgnoreCase("GET") && permission.isCanGetAll()) {
                                 canAccess = true;
                                 break;

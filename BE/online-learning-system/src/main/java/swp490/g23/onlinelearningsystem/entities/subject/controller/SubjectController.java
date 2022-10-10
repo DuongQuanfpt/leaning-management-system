@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +28,7 @@ public class SubjectController {
 	SubjectService service;
 
 	@GetMapping(value = "/subjects")
-	public ResponseEntity<SubjectResponsePaginateDTO> getSetting(
+	public ResponseEntity<SubjectResponsePaginateDTO> getSubject(
 			@RequestParam(name = "page", required = false) String currentPage,
 			@RequestParam(name = "limit", required = false) String requestLimit,
 			@RequestParam(name = "q", required = false) String keyword,
@@ -42,28 +43,34 @@ public class SubjectController {
 	}
 
 	@GetMapping(value = "/subjects-detail/{id}")
-	public ResponseEntity<SubjectResponseDTO> getSettingDetails(@PathVariable("id") Long id) {
+	public ResponseEntity<SubjectResponseDTO> getSubjectDetails(@PathVariable("id") Long id) {
 
 		return service.getSubjectDetail(id);
 	}
 
 	@PutMapping(value = "/subjects-detail/{id}")
-	public ResponseEntity<String> editSettingDetails(@PathVariable("id") Long id,
+	public ResponseEntity<String> editSubjectDetails(@PathVariable("id") Long id,
 			@RequestBody SubjectRequestDTO dto) {
 
 		return service.editSubject(id, dto);
 	}
 
 	@PutMapping(value = "/subjects-status/{id}")
-	public ResponseEntity<String> editSettingDetails(@PathVariable("id") Long id) {
+	public ResponseEntity<String> editSubjectStatus(@PathVariable("id") Long id) {
 
 		return service.editSubjectStatus(id);
 	}
 
-	@PutMapping(value = "/subjects-filter")
-	public ResponseEntity<SubjectFilter> editSettingDetails() {
+	@GetMapping(value = "/subjects-filter")
+	public ResponseEntity<SubjectFilter> getSubjectFilter() {
 		
 		return service.subjectFilter();
+	}
+
+	@PostMapping(value = "/subjects-add")
+	public ResponseEntity<String> addSubject(@RequestBody SubjectRequestDTO dto) {
+
+		return service.addSubject(dto);
 	}
 
 }

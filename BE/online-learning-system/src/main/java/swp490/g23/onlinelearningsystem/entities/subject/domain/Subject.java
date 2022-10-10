@@ -16,7 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import swp490.g23.onlinelearningsystem.entities.packages.domain.Package;
+import swp490.g23.onlinelearningsystem.entities.class_subject.domain.ClassSubject;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 
@@ -51,8 +51,8 @@ public class Subject {
 	@JoinColumn(name = "expert_id")
 	private User expert;
 
-    @OneToMany(mappedBy = "subject")
-    private List<Package> packages;
+    @OneToMany(mappedBy = "classes")
+    private List<ClassSubject> classSubjects;
 
     public Subject(String subjectCode, String subjectName, Status subjectStatus, User manager) {
         this.subjectCode = subjectCode;

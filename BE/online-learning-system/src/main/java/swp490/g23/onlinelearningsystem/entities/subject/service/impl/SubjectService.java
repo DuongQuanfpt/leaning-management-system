@@ -7,7 +7,6 @@ import java.util.List;
 import javax.persistence.TypedQuery;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -23,8 +22,8 @@ import swp490.g23.onlinelearningsystem.entities.subject.domain.response.SubjectR
 import swp490.g23.onlinelearningsystem.entities.subject.service.ISubjectService;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.DuplicateSubjectCodeException;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoSubjectException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoObjectException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.ObjectDuplicateException;
 import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
 
@@ -60,8 +59,8 @@ public class SubjectService implements ISubjectService {
             totalPage = 1;
         }
 
-        for (Subject setting : queryResult.getResultList()) {
-            list.add(toDTO(setting));
+        for (Subject subject : queryResult.getResultList()) {
+            list.add(toDTO(subject));
         }
 
         SubjectResponsePaginateDTO dto = new SubjectResponsePaginateDTO();
@@ -74,10 +73,53 @@ public class SubjectService implements ISubjectService {
     }
 
     @Override
+    public ResponseEntity<String> addSubject(SubjectRequestDTO dto) {
+        Subject subject = new Subject();
+
+        if (dto.getSubjectName() != null) {
+            subject.setSubjectName(dto.getSubjectName());
+        }
+
+        if (dto.getBody() != null) {
+            subject.setSubjectName(dto.getBody());
+        }
+
+        if (dto.getExpertUsername() != null) {
+            User expert = userRepository.findActiveByAccountName(dto.getExpertUsername());
+            if (expert != null) {
+                subject.setExpert(expert);
+            } else {
+                throw new NoObjectException("Expert " + dto.getExpertUsername() + " doesnt exist");
+            }
+        }
+
+        if (dto.getManagerUsername() != null) {
+            User manager = userRepository.findActiveByAccountName(dto.getManagerUsername());
+            if (manager != null) {
+                subject.setExpert(manager);
+            } else {
+                throw new NoObjectException("Manager " + dto.getManagerUsername() + " doesnt exist");
+            }
+        }
+
+        if (dto.getSubjectCode() != null) {
+            if (subjectRepository.findBySubjectCode(dto.getSubjectCode()) == null) {
+                subject.setSubjectCode(dto.getSubjectCode());
+            } else {
+                throw new ObjectDuplicateException("Subject code already exist");
+            }
+        }
+        subject.setSubjectStatus(Status.getFromValue(Integer.parseInt(dto.getSubjectStatus())).get());
+
+        subjectRepository.save(subject);
+        return ResponseEntity.ok("Subject added");
+    }
+
+    @Override
     public ResponseEntity<SubjectResponseDTO> getSubjectDetail(Long id) {
         Subject subject = subjectRepository.findById(id).get();
         if (subject == null) {
-            throw new NoSubjectException();
+            throw new NoObjectException("Subject doesnt exist");
         }
         return ResponseEntity.ok(toDTO(subject));
     }
@@ -85,12 +127,9 @@ public class SubjectService implements ISubjectService {
     @Override
     public ResponseEntity<String> editSubject(Long id, SubjectRequestDTO dto) {
         Subject subject = subjectRepository.findById(id).get();
-        if (subjectRepository.findBySubjectCode(dto.getSubjectCode()) != null) {
-            throw new DuplicateSubjectCodeException();
-        }
 
         if (subject == null) {
-            throw new NoSubjectException();
+            throw new NoObjectException("Subject doesnt exist");
         }
         if (dto.getSubjectCode() != null) {
             subject.setSubjectCode(dto.getSubjectCode());
@@ -105,18 +144,18 @@ public class SubjectService implements ISubjectService {
             subject.setSubjectStatus(Status.getFromValue(Integer.parseInt(dto.getSubjectStatus())).get());
         }
 
-        if (dto.getManagerEmail() != null) {
-            User manager =userRepository.findActiveUserByEmail(dto.getManagerEmail());
+        if (dto.getManagerUsername() != null) {
+            User manager = userRepository.findActiveByAccountName(dto.getManagerUsername());
             if (manager == null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There are no manager with that email");
+                throw new NoObjectException("There are no manager with that username");
             }
             subject.setManager(manager);
         }
 
-        if (dto.getExpertEmail() != null) {
-            User expert =userRepository.findActiveUserByEmail(dto.getExpertEmail());
-            if ( expert == null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There are no expert with that email");
+        if (dto.getExpertUsername() != null) {
+            User expert = userRepository.findActiveByAccountName(dto.getExpertUsername());
+            if (expert == null) {
+                throw new NoObjectException("There are no expert with that username");
             }
             subject.setExpert(expert);
         }
@@ -131,11 +170,11 @@ public class SubjectService implements ISubjectService {
         responseDTO.setSubjectCode(entity.getSubjectCode());
         responseDTO.setSubjectName(entity.getSubjectName());
         if (entity.getExpert() != null) {
-            responseDTO.setExpertEmail(entity.getExpert().getEmail());
+            responseDTO.setExpertUsername(entity.getExpert().getAccountName());
         }
 
         if (entity.getManager() != null) {
-            responseDTO.setManagerEmail(entity.getManager().getEmail());
+            responseDTO.setManagerUsername(entity.getManager().getAccountName());
         }
 
         responseDTO.setSubjectStatus(entity.getSubjectStatus());
@@ -146,12 +185,13 @@ public class SubjectService implements ISubjectService {
 
     @Override
     public ResponseEntity<String> editSubjectStatus(Long id) {
-        Subject subject = subjectRepository.findById(id).orElseThrow(NoSubjectException :: new);
+        Subject subject = subjectRepository.findById(id)
+                .orElseThrow(() -> new NoObjectException("Subject doesnt exist"));
 
-        if (subject.getSubjectStatus() == Status.ACTIVE) {
-            subject.setSubjectStatus(Status.INACTIVE);
+        if (subject.getSubjectStatus() == Status.Active) {
+            subject.setSubjectStatus(Status.Inactive);
         } else {
-            subject.setSubjectStatus(Status.ACTIVE);
+            subject.setSubjectStatus(Status.Active);
         }
         subjectRepository.save(subject);
         return ResponseEntity.ok(" Status update success");
@@ -167,12 +207,12 @@ public class SubjectService implements ISubjectService {
         Setting managerSetting = settingRepositories.findBySettingValue("ROLE_TRAINER");
         Setting expertSetting = settingRepositories.findBySettingValue("ROLE_SUPPORTER");
 
-        for (User user : allUser ) {
+        for (User user : allUser) {
             if (user.getSettings().contains(managerSetting)) {
-                manager.add(user.getEmail());
+                manager.add(user.getAccountName());
             }
             if (user.getSettings().contains(expertSetting)) {
-                expert.add(user.getEmail());
+                expert.add(user.getAccountName());
             }
         }
 

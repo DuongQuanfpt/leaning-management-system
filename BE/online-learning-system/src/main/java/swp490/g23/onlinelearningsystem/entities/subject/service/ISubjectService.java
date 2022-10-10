@@ -17,5 +17,7 @@ public interface ISubjectService {
 
    ResponseEntity<String> editSubjectStatus(Long id);
 
+   ResponseEntity<String> addSubject(SubjectRequestDTO dto);
+
    ResponseEntity<SubjectFilter> subjectFilter();
 }
