@@ -20,6 +20,7 @@ const Profile = () => {
   const profileData = useSelector((state) => state.profile)
 
   const [isEditMode, setIsEditMode] = useState(false)
+  const [userName, setUserName] = useState('')
   const [name, setName] = useState('')
   const [mobile, setMobile] = useState('')
   const [error, setError] = useState('')
@@ -33,6 +34,7 @@ const Profile = () => {
   const currentProfile = useSelector((state) => state.profile)
 
   useEffect(() => {
+    setUserName(profileData.username)
     setName(profileData.fullName)
     setMobile(profileData.mobile)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -77,8 +79,12 @@ const Profile = () => {
   }
 
   const handleSaveProfile = async () => {
+    if (userName?.length < 3) {
+      setError('Your user name must longer than 3 characters')
+      return
+    }
     if (name?.length < 3) {
-      setError('Your name must longer than 3 characters')
+      setError('Your full name must longer than 3 characters')
       return
     }
     if (mobile?.length < 9 || mobile?.length > 11) {
@@ -86,6 +92,7 @@ const Profile = () => {
       return
     }
     const data = {
+      username: userName,
       fullName: name,
       mobile,
     }
@@ -107,15 +114,14 @@ const Profile = () => {
   }
 
   const handleReset = () => {
+    setUserName(profileData.username)
     setName(profileData.fullName)
     setMobile(profileData.mobile)
     setError('')
   }
 
   const handleCancel = () => {
-    setName(profileData.fullName)
-    setMobile(profileData.mobile)
-    setError('')
+    handleReset()
     setIsEditMode(false)
   }
 
@@ -138,7 +144,7 @@ const Profile = () => {
                     <div className="col-lg-12 m-b30">
                       <div className="widget-box">
                         <div className="wc-title">
-                          <h4>Profile</h4>
+                          <h4>User Profile</h4>
                         </div>
                         <div className="widget-inner">
                           <div className="row col-12 w-100">
@@ -183,7 +189,7 @@ const Profile = () => {
                                 <Avatar
                                   width={900}
                                   height={500}
-                                  imageWidth={900}
+                                  imageHeight={500}
                                   onCrop={handleCropAvatar}
                                   onClose={handleCloseAvatar}
                                   src={src}
@@ -193,18 +199,19 @@ const Profile = () => {
                             ) : (
                               <div className="row col-9">
                                 <div className="form-group col-6">
-                                  <label className="col-form-label">ID</label>
+                                  <label className="col-form-label">Username</label>
                                   <div>
                                     <input
                                       className="form-control"
                                       type="text"
-                                      value={profileData.userId}
-                                      disabled={true}
+                                      value={userName}
+                                      onChange={(e) => setUserName(e.target.value)}
+                                      disabled={!isEditMode}
                                     />
                                   </div>
                                 </div>
                                 <div className="form-group col-6">
-                                  <label className="col-form-label">Full name</label>
+                                  <label className="col-form-label">Fullname</label>
                                   <div>
                                     <input
                                       className="form-control"
@@ -238,7 +245,7 @@ const Profile = () => {
                                     />
                                   </div>
                                 </div>
-                                <div className="form-group col-6">
+                                <div className="form-group col-12">
                                   <label className="col-form-label">Role</label>
                                   <div>
                                     <input
@@ -249,49 +256,27 @@ const Profile = () => {
                                     />
                                   </div>
                                 </div>
-                                <div className="form-group col-6">
-                                  <label className="col-form-label">Status</label>
-                                  <div>
-                                    <input
-                                      className="form-control"
-                                      type="text"
-                                      value={profileData.status}
-                                      disabled={true}
-                                    />
-                                  </div>
-                                </div>
-                                <div className="form-group col-12">
-                                  <label className="col-form-label">Note</label>
-                                  <div>
-                                    <textarea
-                                      className="form-control"
-                                      type="text"
-                                      value={profileData.note}
-                                      disabled={true}
-                                    />
-                                  </div>
-                                </div>
                                 <ErrorMsg errorMsg={error} />
-                                <div className="d-flex justify-content-evenly">
+                                <div className="d-flex">
                                   {isEditMode ? (
                                     <>
-                                      <CButton size="md" color="warning" onClick={handleSaveProfile}>
+                                      <CButton size="md" className="mr-3" color="warning" onClick={handleSaveProfile}>
                                         Save
                                       </CButton>
-                                      <CButton size="md" color="warning" onClick={handleReset}>
+                                      <CButton size="md" className="mr-3" color="warning" onClick={handleReset}>
                                         Reset
                                       </CButton>
-                                      <CButton size="md" color="warning" onClick={handleCancel}>
+                                      <CButton size="md" className="mr-3" color="warning" onClick={handleCancel}>
                                         Cancel
                                       </CButton>
                                     </>
                                   ) : (
                                     <>
-                                      <CButton size="md" color="warning" onClick={handleEdit}>
+                                      <CButton size="md" className="mr-3" color="warning" onClick={handleEdit}>
                                         Edit profile
                                       </CButton>
                                       <Link to="/change-password">
-                                        <CButton size="md" color="danger">
+                                        <CButton size="md" className="mr-3" color="danger">
                                           Change Password
                                         </CButton>
                                       </Link>
