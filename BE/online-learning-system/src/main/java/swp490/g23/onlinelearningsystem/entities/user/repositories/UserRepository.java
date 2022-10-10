@@ -24,6 +24,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = "SELECT * FROM user WHERE email= ?1", nativeQuery = true)
     User findUserWithEmail(String email);
 
+<<<<<<< HEAD
     @Query(value = "SELECT u FROM User u WHERE u.accountName = :accountName " +
     "AND u.status = swp490.g23.onlinelearningsystem.util.enumutil.UserStatus.Active")
     User findActiveByAccountName(String accountName);
@@ -34,4 +35,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = "SELECT u FROM User u WHERE u.accountName = :accountName AND u.email <> :email")
     List<User> findDupeAccountName(String accountName , String email);
 
+=======
+    @Query(value = "SELECT DISTINCT u FROM User u INNER JOIN u.settings as s WHERE s.settingValue = 'ROLE_TRAINER' OR s.settingValue = 'ROLE_SUPPORTER'")
+    List<User> findTrainerAndSupporter();
+
+    @Query(value = "SELECT u FROM User u WHERE accountName= ?1")
+    User findByAccountName(String accountName);
+>>>>>>> 48ecfa955e9748ee5ea9c21eb8f2ec9459c15fdf
 }
