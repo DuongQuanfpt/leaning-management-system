@@ -39,15 +39,15 @@ const ClassList = () => {
       width: 80,
     },
     {
-      title: 'Package',
-      dataIndex: 'package',
-      sorter: (a, b) => a.package?.length - b.package?.length,
+      title: 'Name',
+      dataIndex: 'name',
+      sorter: (a, b) => a.name?.length - b.name?.length,
       ellipsis: true,
     },
     {
-      title: 'Code',
-      dataIndex: 'code',
-      sorter: (a, b) => a.code?.length - b.code?.length,
+      title: 'Subject',
+      dataIndex: 'subject',
+      sorter: (a, b) => a.subject?.length - b.subject?.length,
       ellipsis: true,
     },
     {
@@ -55,212 +55,29 @@ const ClassList = () => {
       dataIndex: 'term',
       sorter: (a, b) => a.term - b.term,
       width: 150,
-      filterDropdown: ({ selectedKeys, setSelectedKeys, confirm, clearFilters }) => {
-        return (
-          <>
-            <Input
-              autoFocus
-              placeholder="Searching by Term"
-              value={selectedKeys[0]}
-              onChange={(e) => {
-                setSelectedKeys(e.target.value ? [e.target.value] : [])
-                confirm({ closeDropdown: false })
-              }}
-              onPressEnter={() => {
-                confirm()
-              }}
-              onBlur={() => {
-                confirm()
-              }}
-            ></Input>
-            <Button
-              type="primary"
-              onClick={() => {
-                confirm()
-              }}
-            >
-              Search
-            </Button>
-            <Button
-              type="danger"
-              onClick={() => {
-                clearFilters()
-                confirm()
-              }}
-            >
-              Clear
-            </Button>
-          </>
-        )
-      },
-      filterIcon: () => {
-        return <SearchOutlined />
-      },
-      onFilter: (value, record) => {
-        return record?.term.toLowerCase().includes(value.toLowerCase())
-      },
     },
     {
       title: 'Branch',
       dataIndex: 'branch',
       sorter: (a, b) => a.branch?.length - b.branch?.length,
       width: 150,
-      filterDropdown: ({ selectedKeys, setSelectedKeys, confirm, clearFilters }) => {
-        return (
-          <>
-            <Input
-              autoFocus
-              placeholder="Searching by Branch"
-              value={selectedKeys[0]}
-              onChange={(e) => {
-                setSelectedKeys(e.target.value ? [e.target.value] : [])
-                confirm({ closeDropdown: false })
-              }}
-              onPressEnter={() => {
-                confirm()
-              }}
-              onBlur={() => {
-                confirm()
-              }}
-            ></Input>
-            <Button
-              type="primary"
-              onClick={() => {
-                confirm()
-              }}
-            >
-              Search
-            </Button>
-            <Button
-              type="danger"
-              onClick={() => {
-                clearFilters()
-                confirm()
-              }}
-            >
-              Clear
-            </Button>
-          </>
-        )
-      },
-      filterIcon: () => {
-        return <SearchOutlined />
-      },
-      onFilter: (value, record) => {
-        return record?.branch.toLowerCase().includes(value.toLowerCase())
-      },
     },
     {
       title: 'Trainer',
       dataIndex: 'trainer',
       sorter: (a, b) => a.trainer?.length - b.trainer?.length,
       width: 180,
-      filterDropdown: ({ selectedKeys, setSelectedKeys, confirm, clearFilters }) => {
-        return (
-          <>
-            <Input
-              autoFocus
-              placeholder="Searching by Trainer"
-              value={selectedKeys[0]}
-              onChange={(e) => {
-                setSelectedKeys(e.target.value ? [e.target.value] : [])
-                confirm({ closeDropdown: false })
-              }}
-              onPressEnter={() => {
-                confirm()
-              }}
-              onBlur={() => {
-                confirm()
-              }}
-            ></Input>
-            <Button
-              type="primary"
-              onClick={() => {
-                confirm()
-              }}
-            >
-              Search
-            </Button>
-            <Button
-              type="danger"
-              onClick={() => {
-                clearFilters()
-                confirm()
-              }}
-            >
-              Clear
-            </Button>
-          </>
-        )
-      },
-      filterIcon: () => {
-        return <SearchOutlined />
-      },
-      onFilter: (value, record) => {
-        return record?.trainer.toLowerCase().includes(value.toLowerCase())
-      },
     },
     {
       title: 'Supporter',
       dataIndex: 'supporter',
       sorter: (a, b) => a.supporter?.length - b.supporter?.length,
       width: 180,
-      filterDropdown: ({ selectedKeys, setSelectedKeys, confirm, clearFilters }) => {
-        return (
-          <>
-            <Input
-              autoFocus
-              placeholder="Searching by Supporter"
-              value={selectedKeys[0]}
-              onChange={(e) => {
-                setSelectedKeys(e.target.value ? [e.target.value] : [])
-                confirm({ closeDropdown: false })
-              }}
-              onPressEnter={() => {
-                confirm()
-              }}
-              onBlur={() => {
-                confirm()
-              }}
-            ></Input>
-            <Button
-              type="primary"
-              onClick={() => {
-                confirm()
-              }}
-            >
-              Search
-            </Button>
-            <Button
-              type="danger"
-              onClick={() => {
-                clearFilters()
-                confirm()
-              }}
-            >
-              Clear
-            </Button>
-          </>
-        )
-      },
-      filterIcon: () => {
-        return <SearchOutlined />
-      },
-      onFilter: (value, record) => {
-        return record?.supporter.toLowerCase().includes(value.toLowerCase())
-      },
     },
     {
       title: 'Status',
       dataIndex: 'status',
       sorter: (a, b) => a.status?.length - b.status?.length,
-      ellipsis: true,
-      filters: [
-        { text: 'ACTIVE', value: 'ACTIVE' },
-        { text: 'INACTIVE', value: 'INACTIVE' },
-        { text: 'CLOSED', value: 'CLOSED' },
-      ],
-      onFilter: (value, record) => record.status === value,
       render: (_, { status }) => (
         <Tag color={status === 'ACTIVE' ? 'green' : status === 'INACTIVE' ? 'red' : 'primary'} key={status}>
           {status}

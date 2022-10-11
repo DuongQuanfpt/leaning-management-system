@@ -37,6 +37,11 @@ const settingListApi = {
     const url = `/api/setting-detail/${id}`
     return axiosClient.put(url, params, header)
   },
+
+  addSetting: (params) => {
+    const url = `/api/setting-add`
+    return axiosClient.post(url, params, header)
+  },
 }
 
 export default settingListApi

@@ -56,7 +56,6 @@ const AdminChangePassword = () => {
         setError('Check your password again please')
         return
       }
-      console.error('Failed to fetch change password at Change Password', error)
     }
   }
 
@@ -101,7 +100,7 @@ const AdminChangePassword = () => {
                               </div>
                             </div>
                             <div className="form-group col-12">
-                              <label className="col-form-label">Verify New Password</label>
+                              <label className="col-form-label">Verify</label>
                               <div>
                                 <input
                                   className="form-control"
@@ -112,8 +111,8 @@ const AdminChangePassword = () => {
                               </div>
                             </div>
                             <ErrorMsg errorMsg={error} />
-                            <div className="d-flex justify-content-evenly">
-                              <CButton size="md" color="warning" onClick={handleSubmit}>
+                            <div className="d-flex justify-content-start">
+                              <CButton size="md" color="warning" onClick={handleSubmit} className="mr-3">
                                 Submit
                               </CButton>
                               <CButton size="md" color="warning" onClick={handleReset}>

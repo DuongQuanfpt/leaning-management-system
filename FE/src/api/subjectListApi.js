@@ -7,14 +7,19 @@ const header = {
 }
 
 const subjectListApi = {
-  getAll: () => {
+  getPage: (params) => {
     const url = `/api/subjects`
-    return axiosClient.get(url, header)
+    return axiosClient.get(url, { ...header, params })
   },
 
   changeActive: (id) => {
     const url = `/api/subjects-status/${id}`
     return axiosClient.put(url, {}, header)
+  },
+
+  getFilter: () => {
+    const url = `/api/subjects-filter`
+    return axiosClient.get(url, header)
   },
 
   // getDetail: (id) => {

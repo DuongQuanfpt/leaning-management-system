@@ -14,7 +14,7 @@ import userListApi from '~/api/userListApi'
 
 import avatar from '~/assets/images/profile/pic1.jpg'
 
-const AdminUserDetail = () => {
+const AdminUserAdd = () => {
   const { id } = useParams()
 
   const [userDetail, setUserDetail] = useState({})
@@ -57,7 +57,6 @@ const AdminUserDetail = () => {
         fullName: fullName,
         mobile: mobile,
         roles: rolesData,
-        status: status,
         note,
       }
       await userListApi.changeDetail(id, data).then((response) => {
@@ -115,13 +114,7 @@ const AdminUserDetail = () => {
                       <div className="widget-box">
                         <div className="widget-inner">
                           <div className="row col-12 w-100">
-                            <div className="row col-3 h-100">
-                              <label className="col-form-label align-middle">Avatar</label>
-                              <div>
-                                <img src={userDetail.avatar_url ?? avatar} alt="" />
-                              </div>
-                            </div>
-                            <div className="row col-9">
+                            <div className="row col-12">
                               <div className="form-group col-6">
                                 <label className="col-form-label">Username</label>
                                 <div>
@@ -245,4 +238,4 @@ const AdminUserDetail = () => {
   )
 }
 
-export default AdminUserDetail
+export default AdminUserAdd
