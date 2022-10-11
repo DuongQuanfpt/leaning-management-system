@@ -32,7 +32,6 @@ public class UserRepositoriesCriteria {
         }
 
         if( filterRole != null){
-            // Setting setting = (settingRepositories.findBySettingTitle(filterRole));
             query.append("AND s.settingTitle = '" + filterRole + "'");
         }
 

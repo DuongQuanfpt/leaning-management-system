@@ -78,6 +78,14 @@ public class SettingService implements ISettingService {
             setting.setSettingTitle(dto.getSettingTitle());
         }
 
+        if (dto.getSettingValue() != null) {
+            if(settingRepositories.findBySettingValue(dto.getSettingValue()) == null){
+                setting.setSettingValue(dto.getSettingValue());
+            } else {
+                throw new ObjectDuplicateException("Setting Value already exist");
+            }
+        }
+
         if (dto.getDisplayOrder() != null) {
             setting.setDisplayOrder(dto.getDisplayOrder());
         }

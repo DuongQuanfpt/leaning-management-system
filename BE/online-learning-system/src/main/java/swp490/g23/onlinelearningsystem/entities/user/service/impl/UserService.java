@@ -242,10 +242,22 @@ public class UserService implements IUserService {
     public ResponseEntity<String> updateUser(UserRequestDTO dto, Long id) {
         User user = userRepository.findById(id).orElseThrow(NoObjectException::new);
         List<Setting> settings = new ArrayList<>();
+        String username = dto.getUsername();
+        if (username != null) {
+          if(userRepository.findByAccountName(username) == null){
+                user.setAccountName(username);
+            } else {
+                throw new ObjectDuplicateException("Username already exist");
+            }  
+        }
         user.setAccountName(dto.getUsername());
         user.setFullName(dto.getFullName());
         user.setMobile(dto.getMobile());
         user.setNote(dto.getNote());
+
+        if (dto.getStatus() != null) {
+            user.setStatus(UserStatus.getFromValue(Integer.parseInt(dto.getStatus())).get());
+        }
 
         if (!dto.getRoles().isEmpty()) {
             for (String role : dto.getRoles()) {
