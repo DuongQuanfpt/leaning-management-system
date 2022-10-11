@@ -6,7 +6,7 @@ import java.util.Optional;
 public enum UserStatus {
     Inactive(0), Active(1), Unverified(-1);
 
-     UserStatus(int value) {
+    UserStatus(int value) {
         this.value = value;
     }
 

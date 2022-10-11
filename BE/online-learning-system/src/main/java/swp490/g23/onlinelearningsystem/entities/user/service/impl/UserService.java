@@ -242,6 +242,9 @@ public class UserService implements IUserService {
     public ResponseEntity<String> updateUser(UserRequestDTO dto, Long id) {
         User user = userRepository.findById(id).orElseThrow(NoObjectException::new);
         List<Setting> settings = new ArrayList<>();
+        user.setAccountName(dto.getUsername());
+        user.setFullName(dto.getFullName());
+        user.setMobile(dto.getMobile());
         user.setNote(dto.getNote());
 
         if (!dto.getRoles().isEmpty()) {
@@ -287,7 +290,66 @@ public class UserService implements IUserService {
         return ResponseEntity.ok(filterDTO);
     }
 
+    
+    @Override
+    public ResponseEntity<String> addUser(UserRequestDTO requestDTO) {
+        User user = new User();
+        List<Setting> settings = new ArrayList<>();
+        List<String> roles = requestDTO.getRoles();
+
+        if (requestDTO.getEmail() != null) {
+            if(userRepository.findByEmail(requestDTO.getEmail()) == null){
+                user.setEmail(requestDTO.getEmail());
+            } else {
+                throw new ObjectDuplicateException("Email already exist");
+            }
+        }
+
+        if (requestDTO.getUsername() != null) {
+            if(userRepository.findByAccountName(requestDTO.getUsername()) == null){
+                user.setAccountName(requestDTO.getUsername());
+            } else {
+                throw new ObjectDuplicateException("Username already exist");
+            }
+        }
+    
+        user.setStatus(UserStatus.getFromValue(Integer.parseInt(requestDTO.getStatus())).get());
+
+        if (requestDTO.getFullName() != null) {
+            user.setFullName(requestDTO.getFullName());
+        }
+
+        if (requestDTO.getMobile() != null) {
+            user.setMobile(requestDTO.getMobile());
+        }
+
+        if (requestDTO.getRoles() != null) {
+            for (Setting setting : settingRepositories.findAllRole()) {
+                for (String role : roles) {
+                    if (setting.getRoleName().equals(role)) {
+                        settings.add(setting);
+                    }
+                }
+            }
+            user.setSettings(settings);
+        }
+
+        if (requestDTO.getNote() != null) {
+            user.setNote(requestDTO.getNote());
+        }
+
+        userRepository.save(user);
+        return ResponseEntity.ok("User added");
+    }
+
     public String uploadImageS3(String imgBase64) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<UserListResponsePaginateDTO> displayTrainee(int limit, int currentPage, String keyword,
+            String filterClass, String filterStatus) {
+        // TODO Auto-generated method stub
         return null;
     }
 
@@ -337,5 +399,6 @@ public class UserService implements IUserService {
         responseDTO.setPermissions(permissionDTO);
         return responseDTO;
     }
+
 
 }
