@@ -23,7 +23,6 @@ import swp490.g23.onlinelearningsystem.entities.classes.repositories.criteria.Cl
 import swp490.g23.onlinelearningsystem.entities.classes.service.IClassService;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
-import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoClassException;

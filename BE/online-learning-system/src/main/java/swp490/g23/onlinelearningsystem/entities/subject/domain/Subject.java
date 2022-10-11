@@ -21,11 +21,11 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 
 @Entity
+@Table(name = "subject")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "subject")
 public class Subject {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
