@@ -27,6 +27,7 @@ import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoClassException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.ObjectDuplicateException;
 import swp490.g23.onlinelearningsystem.util.enumutil.ClassStatus;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.ClassStatusEntity;
 
@@ -53,10 +54,25 @@ public class ClassService implements IClassService {
             String filterTerm, String filterTrainer,
             String filterSupporter, String filterBranch, String filterStatus) {
         List<ClassResponseDTO> classes = new ArrayList<>();
+        List<ClassSubject> classSubjects = new ArrayList<>();
+        List<Classes> searcheList = new ArrayList<>();
+
         TypedQuery<Classes> queryResult = classCriteria.displayClass(keyword, filterTerm, filterTrainer,
                 filterSupporter, filterBranch, filterStatus);
+        
+        List<Classes> resultList = queryResult.getResultList();
 
-        int totalItem = queryResult.getResultList().size();
+        for (Classes clazz : resultList) {
+            classSubjects = classSubjectRepositories.findByClasses(clazz);
+            for (ClassSubject classSubject : classSubjects) {
+                if (classSubject.getSubject().getSubjectName().equals(keyword)) {
+                    searcheList.add(clazz);
+                }
+            }
+        }
+        
+        
+        int totalItem = resultList.size();
         int totalPage;
         if (limit != 0) {
             queryResult.setFirstResult((currentPage - 1) * limit);
@@ -66,7 +82,7 @@ public class ClassService implements IClassService {
             totalPage = 1;
         }
 
-        for (Classes clazz : queryResult.getResultList()) {
+        for (Classes clazz : resultList) {
             classes.add(toDTO(clazz));
         }
 
@@ -103,6 +119,14 @@ public class ClassService implements IClassService {
         User userSupportter = userRepository.findByAccountName(supporterUsername);
         Setting settingTerm = settingRepositories.findBySettingTitle(term);
         Setting settingBranch = settingRepositories.findBySettingTitle(branch);
+        List<ClassSubject> classSubjects = classSubjectRepositories.findByClasses(clazz);
+
+        for (ClassSubject classSubject : classSubjects) {
+            for (String subjectName : dto.getSubject()) {
+                
+                // classSubject.setSubject();
+            }
+        }
 
         clazz.setCode(dto.getCode());
         clazz.setDescription(dto.getDescription());
@@ -169,6 +193,41 @@ public class ClassService implements IClassService {
         return ResponseEntity.ok(filterDTO);
     }
 
+    @Override
+    public ResponseEntity<String> addClass(ClassRequestDTO requestDTO) {
+        Classes clazz = new Classes();
+        List<User> list = userRepository.findTrainerAndSupporter();
+
+
+        if (requestDTO.getCode() != null) {
+            if(userRepository.findByEmail(requestDTO.getCode()) == null){
+                clazz.setCode((requestDTO.getCode()));
+            } else {
+                throw new ObjectDuplicateException("Class name already exist");
+            }
+        }
+    
+        clazz.setStatus(ClassStatus.getFromValue(Integer.parseInt(requestDTO.getStatus())).get());
+
+        if (requestDTO.getDescription() != null) {
+            clazz.setDescription(requestDTO.getDescription());
+        }
+
+        if (requestDTO.getTrainer() != null && requestDTO.getSupporter() != null) {
+            for (User user : list) {
+                if (user.getAccountName().equals(requestDTO.getTrainer())) {
+                    clazz.setUserTrainer(user);
+                }
+                if (user.getAccountName().equals(requestDTO.getSupporter())) {
+                    clazz.setUserSupporter(user);
+                }
+            }
+        }
+
+        classRepositories.save(clazz);
+        return ResponseEntity.ok("Class added");
+    }
+
     public ClassResponseDTO toDTO(Classes entity) {
         ClassResponseDTO responseDTO = new ClassResponseDTO();
         List<String> subjects = new ArrayList<>();
@@ -188,4 +247,6 @@ public class ClassService implements IClassService {
         responseDTO.setSupporter(entity.getUserSupporter().getAccountName());
         return responseDTO;
     }
+
+    
 }

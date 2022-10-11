@@ -33,5 +33,8 @@ public interface IUserService {
     ResponseEntity<String> updateStatus(Long id);
 
     ResponseEntity<UserFilterDTO> getFilter();
+
+    ResponseEntity<String> addUser(UserRequestDTO requestDTO);
     
+    ResponseEntity<UserListResponsePaginateDTO> displayTrainee(int limit, int currentPage, String keyword, String filterClass, String filterStatus);
 }

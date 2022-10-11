@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import swp490.g23.onlinelearningsystem.util.enumutil.ClassStatus;
 
 @Getter
 @Setter
@@ -17,7 +16,7 @@ public class ClassRequestDTO {
 
     private String code;
 
-    private ClassStatus status;
+    private String status;
 
     private List<String> subject;
 

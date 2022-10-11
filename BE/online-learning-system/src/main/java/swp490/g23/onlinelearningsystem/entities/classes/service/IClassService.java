@@ -14,4 +14,5 @@ public interface IClassService {
     ResponseEntity<String> updateClass(ClassRequestDTO dto , Long id);
     ResponseEntity<String> updateStatus(Long id);
     ResponseEntity<ClassFilterDTO> getFilter();
+    ResponseEntity<String> addClass(ClassRequestDTO requestDTO);
 }
