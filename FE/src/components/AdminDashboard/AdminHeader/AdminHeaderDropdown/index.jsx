@@ -29,7 +29,7 @@ const AdminHeaderDropdown = () => {
         </CDropdownItem>
         <CDropdownItem href="/profile">
           <CIcon icon={cilSettings} className="me-2" />
-          Profile
+          User Profile
         </CDropdownItem>
         <CDropdownItem href="/change-password">
           <CIcon icon={cilSettings} className="me-2" />
