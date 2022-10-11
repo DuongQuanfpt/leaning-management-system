@@ -22,11 +22,11 @@ import lombok.Setter;
 public class BaseEntity {
     @Column
 	@CreatedBy
-	private Long createdBy;
+	private String createdBy;
 	
 	@Column
 	@LastModifiedBy
-	private Long modifiedBy;
+	private String modifiedBy;
 	
 	@Column
 	@CreatedDate

@@ -67,10 +67,10 @@ public class SettingService implements ISettingService {
     @Override
     public ResponseEntity<SettingResponseDTO> viewSetting(long id) {
         Setting setting = settingRepositories.findById(id).get();
-        System.out.print("ACVVVVV : " +setting.getType().getSettingValue());
-        if (setting.getType() == null || setting.getType().getSettingValue() == "TYPE_ROLE"
-                || setting.getType().getSettingValue() == "TYPE_API"
-                || setting.getType().getSettingValue() == "TYPE_SCREEN") {
+        System.out.print("ACVVVVV : " + setting.getType().getSettingValue());
+        if (setting.getType() == null || setting.getType().getSettingValue().equals("TYPE_ROLE")
+                || setting.getType().getSettingValue().equals("TYPE_API")
+                || setting.getType().getSettingValue().equals("TYPE_SCREEN")) {
             throw new NoObjectException("this setting cant be view");
         }
 
@@ -81,12 +81,12 @@ public class SettingService implements ISettingService {
     public ResponseEntity<String> updateSetting(SettingRequestDTO dto, Long id) {
         Setting setting = settingRepositories.findById(id).orElseThrow(NoSettingException::new);
 
-        if (setting.getType() == null || setting.getType().getSettingValue() == "TYPE_ROLE"
-                || setting.getType().getSettingValue() == "TYPE_API"
-                || setting.getType().getSettingValue() == "TYPE_SCREEN") {
-            throw new NoObjectException("this setting cant be changed");
+        if (setting.getType() == null || setting.getType().getSettingValue().equals("TYPE_ROLE")
+                || setting.getType().getSettingValue().equals("TYPE_API")
+                || setting.getType().getSettingValue().equals("TYPE_SCREEN")) {
+            throw new NoObjectException("this setting cant be view");
         }
-
+        
         if (dto.getSettingTitle() != null) {
             setting.setSettingTitle(dto.getSettingTitle());
         }

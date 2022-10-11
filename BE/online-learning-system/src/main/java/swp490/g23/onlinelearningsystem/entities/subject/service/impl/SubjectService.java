@@ -96,7 +96,7 @@ public class SubjectService implements ISubjectService {
         if (dto.getManagerUsername() != null) {
             User manager = userRepository.findActiveByAccountName(dto.getManagerUsername());
             if (manager != null) {
-                subject.setExpert(manager);
+                subject.setManager(manager);
             } else {
                 throw new NoObjectException("Manager " + dto.getManagerUsername() + " doesnt exist");
             }

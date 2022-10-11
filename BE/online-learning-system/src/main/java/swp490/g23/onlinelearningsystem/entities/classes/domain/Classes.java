@@ -62,4 +62,6 @@ public class Classes extends BaseEntity{
     @OneToMany(mappedBy = "subject")
     private List<ClassSubject> classSubject;
 
+    
+
 }
