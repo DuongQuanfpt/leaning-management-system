@@ -208,7 +208,7 @@ const AdminSettingList = () => {
                   id="form1"
                   className="form-control"
                   placeholder="Searching by title...."
-                  value={filter.q}
+                  value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
                 <CButton color="primary" type="submit" className="text-light ml-10" onClick={handleSearch}>

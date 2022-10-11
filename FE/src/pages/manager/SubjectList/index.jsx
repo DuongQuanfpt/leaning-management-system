@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
-import { Table, Input, Button, Space, Tag, Breadcrumb } from 'antd'
-import { SearchOutlined } from '@ant-design/icons'
+import { CButton, CDropdown, CDropdownToggle, CDropdownMenu, CDropdownItem } from '@coreui/react'
+import CIcon from '@coreui/icons-react'
+import { cilPlus, cilSearch, cilSync } from '@coreui/icons'
+
+import { Table, Button, Space, Tag, Breadcrumb, Tooltip, Modal, Pagination } from 'antd'
+import { ExclamationCircleOutlined, CloseOutlined, CheckOutlined, EyeOutlined } from '@ant-design/icons'
 
 import subjectListApi from '~/api/subjectListApi'
 
@@ -11,16 +15,60 @@ import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 
 const SubjectList = () => {
+  const ITEM_PER_PAGE = 10
   const navigateTo = useNavigate()
 
   const [listSubject, setListSubject] = useState([])
+  const [listManager, setListManager] = useState([])
+  const [listExpert, setListExpert] = useState([])
+  const [listStatus, setListStatus] = useState([])
+
+  const [totalItem, setTotalItem] = useState(1)
+  // eslint-disable-next-line no-unused-vars
+  const [currentPage, setCurrentPage] = useState(1)
+
+  const [search, setSearch] = useState('')
+  const [manager, setManager] = useState('All Manager')
+  const [expert, setExpert] = useState('All Expert')
+  const [status, setStatus] = useState('All Status')
+  const [filter, setFilter] = useState({
+    managerUsername: '',
+    expertUsername: '',
+    subjectStatus: '',
+  })
 
   useEffect(() => {
-    loadData()
+    subjectListApi.getFilter().then((response) => {
+      console.log(response)
+      setListManager(response.managerFilter)
+      setListExpert(response.expertFilter)
+      setListStatus(response.statusFilter)
+    })
   }, [])
 
-  const loadData = async () => {
-    await subjectListApi.getAll().then((response) => {
+  useEffect(() => {
+    loadData(1, filter)
+  }, [filter])
+
+  const loadData = async (page, filter, q = '') => {
+    const params = {
+      limit: ITEM_PER_PAGE,
+      page: page,
+    }
+    if (q !== '') {
+      params.q = q
+    }
+    if (filter.managerUsername !== '') {
+      params.filterManager = filter.managerUsername
+    }
+    if (filter.expertUsername !== '') {
+      params.filterExpert = filter.expertUsername
+    }
+    if (filter.subjectStatus !== '') {
+      params.filterStatus = filter.subjectStatus
+    }
+    await subjectListApi.getPage(params).then((response) => {
+      setTotalItem(response.totalItem)
       setListSubject(response.listResult)
     })
   }
@@ -31,304 +79,85 @@ const SubjectList = () => {
     })
   }
 
+  const handleSearch = () => {
+    loadData(1, filter, search)
+  }
+  const handleFilterManager = (manager) => {
+    setFilter({ ...filter, managerUsername: manager })
+    setManager(manager)
+  }
+  const handleFilterExpert = (expert) => {
+    setFilter({ ...filter, expertUsername: expert })
+    setExpert(expert)
+  }
+  const handleFilterStatus = (status) => {
+    setFilter({ ...filter, subjectStatus: status.value })
+    setStatus(status.name)
+  }
+  const handleReload = () => {
+    setFilter({ managerUsername: '', expertUsername: '', subjectStatus: '' })
+    setManager('All Manager')
+    setExpert('All Expert')
+    setStatus('All Status')
+    setSearch('')
+  }
+  const handleAdd = () => {
+    navigateTo('/subject-add')
+  }
+
+  const handleChangePage = (pageNumber) => {
+    loadData(pageNumber, filter)
+  }
+
+  const modalConfirm = (subject) => {
+    Modal.confirm({
+      title: `Are you want to ${subject.subjectStatus === 'Active' ? 'deactivate' : 'reactivate'} "${
+        subject.subjectName
+      }"?`,
+      icon: <ExclamationCircleOutlined />,
+      okText: 'OK',
+      cancelText: 'Cancel',
+      okType: 'danger',
+      onOk() {
+        handleActive(subject.subjectStatus)
+      },
+      onCancel() {},
+    })
+  }
+
   const columns = [
     {
       title: 'ID',
       dataIndex: 'subjectId',
       sorter: (a, b) => a.subjectId - b.subjectId,
-      filterDropdown: ({ selectedKeys, setSelectedKeys, confirm, clearFilters }) => {
-        return (
-          <>
-            <Input
-              autoFocus
-              placeholder="Searching by ID"
-              value={selectedKeys[0]}
-              onChange={(e) => {
-                setSelectedKeys(e.target.value ? [e.target.value] : [])
-                confirm({ closeDropdown: false })
-              }}
-              onPressEnter={() => {
-                confirm()
-              }}
-              onBlur={() => {
-                confirm()
-              }}
-            ></Input>
-            <Button
-              type="primary"
-              onClick={() => {
-                confirm()
-              }}
-            >
-              Search
-            </Button>
-            <Button
-              type="danger"
-              onClick={() => {
-                clearFilters()
-                confirm()
-              }}
-            >
-              Clear
-            </Button>
-          </>
-        )
-      },
-      filterIcon: () => {
-        return <SearchOutlined />
-      },
-      onFilter: (value, record) => {
-        return record?.subjectId.toString().toLowerCase().includes(value.toLowerCase())
-      },
+      width: 80,
     },
     {
       title: 'Code',
       dataIndex: 'subjectCode',
       sorter: (a, b) => a.subjectCode?.length - b.subjectCode?.length,
-      filterDropdown: ({ selectedKeys, setSelectedKeys, confirm, clearFilters }) => {
-        return (
-          <>
-            <Input
-              autoFocus
-              placeholder="Searching by Code"
-              value={selectedKeys[0]}
-              onChange={(e) => {
-                setSelectedKeys(e.target.value ? [e.target.value] : [])
-                confirm({ closeDropdown: false })
-              }}
-              onPressEnter={() => {
-                confirm()
-              }}
-              onBlur={() => {
-                confirm()
-              }}
-            ></Input>
-            <Button
-              type="primary"
-              onClick={() => {
-                confirm()
-              }}
-            >
-              Search
-            </Button>
-            <Button
-              type="danger"
-              onClick={() => {
-                clearFilters()
-                confirm()
-              }}
-            >
-              Clear
-            </Button>
-          </>
-        )
-      },
-      filterIcon: () => {
-        return <SearchOutlined />
-      },
-      onFilter: (value, record) => {
-        return record?.subjectCode?.toLowerCase().includes(value.toLowerCase())
-      },
     },
     {
       title: 'Name',
       dataIndex: 'subjectName',
       sorter: (a, b) => a.subjectName?.length - b.subjectName?.length,
-      filterDropdown: ({ selectedKeys, setSelectedKeys, confirm, clearFilters }) => {
-        return (
-          <>
-            <Input
-              autoFocus
-              placeholder="Searching by Name"
-              value={selectedKeys[0]}
-              onChange={(e) => {
-                setSelectedKeys(e.target.value ? [e.target.value] : [])
-                confirm({ closeDropdown: false })
-              }}
-              onPressEnter={() => {
-                confirm()
-              }}
-              onBlur={() => {
-                confirm()
-              }}
-            ></Input>
-            <Button
-              type="primary"
-              onClick={() => {
-                confirm()
-              }}
-            >
-              Search
-            </Button>
-            <Button
-              type="danger"
-              onClick={() => {
-                clearFilters()
-                confirm()
-              }}
-            >
-              Clear
-            </Button>
-          </>
-        )
-      },
-      filterIcon: () => {
-        return <SearchOutlined />
-      },
-      onFilter: (value, record) => {
-        return record?.subjectName?.toLowerCase().includes(value.toLowerCase())
-      },
     },
     {
       title: 'Manager',
-      dataIndex: 'managerEmail',
-      sorter: (a, b) => a.managerEmail?.length - b.managerEmail?.length,
-
-      filterDropdown: ({ selectedKeys, setSelectedKeys, confirm, clearFilters }) => {
-        return (
-          <>
-            <Input
-              autoFocus
-              placeholder="Searching by Manager"
-              value={selectedKeys[0]}
-              onChange={(e) => {
-                setSelectedKeys(e.target.value ? [e.target.value] : [])
-                confirm({ closeDropdown: false })
-              }}
-              onPressEnter={() => {
-                confirm()
-              }}
-              onBlur={() => {
-                confirm()
-              }}
-            ></Input>
-            <Button
-              type="primary"
-              onClick={() => {
-                confirm()
-              }}
-            >
-              Search
-            </Button>
-            <Button
-              type="danger"
-              onClick={() => {
-                clearFilters()
-                confirm()
-              }}
-            >
-              Clear
-            </Button>
-          </>
-        )
-      },
-      filterIcon: () => {
-        return <SearchOutlined />
-      },
-      onFilter: (value, record) => {
-        return record?.managerEmail?.toLowerCase().includes(value.toLowerCase())
-      },
+      dataIndex: 'managerUsername',
+      sorter: (a, b) => a.managerUsername?.length - b.managerUsername?.length,
     },
     {
       title: 'Expert',
-      dataIndex: 'expertEmail',
-      sorter: (a, b) => a.expertEmail?.length - b.expertEmail?.length,
-
-      filterDropdown: ({ selectedKeys, setSelectedKeys, confirm, clearFilters }) => {
-        return (
-          <>
-            <Input
-              autoFocus
-              placeholder="Searching by Expert"
-              value={selectedKeys[0]}
-              onChange={(e) => {
-                setSelectedKeys(e.target.value ? [e.target.value] : [])
-                confirm({ closeDropdown: false })
-              }}
-              onPressEnter={() => {
-                confirm()
-              }}
-              onBlur={() => {
-                confirm()
-              }}
-            ></Input>
-            <Button
-              type="primary"
-              onClick={() => {
-                confirm()
-              }}
-            >
-              Search
-            </Button>
-            <Button
-              type="danger"
-              onClick={() => {
-                clearFilters()
-                confirm()
-              }}
-            >
-              Clear
-            </Button>
-          </>
-        )
-      },
-      filterIcon: () => {
-        return <SearchOutlined />
-      },
-      onFilter: (value, record) => {
-        return record?.expertEmail?.toLowerCase().includes(value.toLowerCase())
-      },
+      dataIndex: 'expertUsername',
+      sorter: (a, b) => a.expertUsername?.length - b.expertUsername?.length,
     },
     {
       title: 'Status',
       dataIndex: 'subjectStatus',
-      sorter: (a, b) => a.subjectStatus?.length - b.subjectStatus?.length,
-      filterDropdown: ({ selectedKeys, setSelectedKeys, confirm, clearFilters }) => {
-        return (
-          <>
-            <Input
-              autoFocus
-              placeholder="Searching by Status"
-              value={selectedKeys[0]}
-              onChange={(e) => {
-                setSelectedKeys(e.target.value ? [e.target.value] : [])
-                confirm({ closeDropdown: false })
-              }}
-              onPressEnter={() => {
-                confirm()
-              }}
-              onBlur={() => {
-                confirm()
-              }}
-            ></Input>
-            <Button
-              type="primary"
-              onClick={() => {
-                confirm()
-              }}
-            >
-              Search
-            </Button>
-            <Button
-              type="danger"
-              onClick={() => {
-                clearFilters()
-                confirm()
-              }}
-            >
-              Clear
-            </Button>
-          </>
-        )
-      },
-      filterIcon: () => {
-        return <SearchOutlined />
-      },
-      onFilter: (value, record) => {
-        return record?.subjectStatus?.toLowerCase().includes(value.toLowerCase())
-      },
+      width: 90,
       render: (_, { subjectStatus }) => (
-        <Tag color={subjectStatus === 'ACTIVE' ? 'blue' : 'red'} key={subjectStatus}>
+        <Tag color={subjectStatus === 'Active' ? 'blue' : 'red'} key={subjectStatus}>
           {subjectStatus}
         </Tag>
       ),
@@ -336,24 +165,28 @@ const SubjectList = () => {
     {
       title: 'Action',
       dataIndex: 'action',
+      width: 120,
       render: (_, subject) => (
         <Space size="middle">
-          <Button
-            type={subject.subjectStatus === 'ACTIVE' ? 'danger' : 'primary'}
-            onClick={() => {
-              handleActive(subject.subjectId)
-            }}
-          >
-            {subject.subjectStatus === 'ACTIVE' ? 'Deactive' : 'Reactive'}
-          </Button>
-          <Button
-            type="primary"
-            onClick={() => {
-              navigateTo(`/subject-detail/${subject?.subjectId}`)
-            }}
-          >
-            View
-          </Button>
+          <Tooltip title={subject.subjectStatus === 'Active' ? 'Deactivate' : 'Reactivate'} placement="top">
+            <Button
+              type={subject.subjectStatus === 'Active' ? 'danger' : 'primary'}
+              shape="circle"
+              icon={subject.subjectStatus === 'Active' ? <CloseOutlined /> : <CheckOutlined />}
+              onClick={() => {
+                modalConfirm(subject)
+              }}
+            ></Button>
+          </Tooltip>
+          <Tooltip title="View" placement="top">
+            <Button
+              shape="circle"
+              icon={<EyeOutlined />}
+              onClick={() => {
+                navigateTo(`/subject-detail/${subject?.subjectId}`)
+              }}
+            ></Button>
+          </Tooltip>
         </Space>
       ),
     },
@@ -366,15 +199,67 @@ const SubjectList = () => {
         <AdminHeader />
         <div className="body flex-grow-1 px-3">
           <div className="col-lg-12 m-b30">
-            <Breadcrumb>
-              <Breadcrumb.Item>
-                <Link to="/">Dashboard</Link>
-              </Breadcrumb.Item>
-              <Breadcrumb.Item>Subject List</Breadcrumb.Item>
-            </Breadcrumb>
+            <div className="row">
+              <div className="col-2 d-flex align-items-center">
+                <Breadcrumb>
+                  <Breadcrumb.Item>
+                    <Link to="/dashboard">Dashboard</Link>
+                  </Breadcrumb.Item>
+                  <Breadcrumb.Item>Setting List</Breadcrumb.Item>
+                </Breadcrumb>
+              </div>
+              <div className="col-5 d-flex w-80">
+                <input
+                  type="search"
+                  id="form1"
+                  className="form-control"
+                  placeholder="Searching by Code or Name...."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+                <CButton color="primary" type="submit" className="text-light ml-10" onClick={handleSearch}>
+                  <CIcon icon={cilSearch} />
+                </CButton>
+              </div>
+              <div className="col-5 d-flex justify-content-end">
+                <CDropdown className="ml-4">
+                  <CDropdownToggle color="secondary">{manager}</CDropdownToggle>
+                  <CDropdownMenu>
+                    {listManager.map((manager) => (
+                      <CDropdownItem onClick={() => handleFilterManager(manager)}>{manager}</CDropdownItem>
+                    ))}
+                  </CDropdownMenu>
+                </CDropdown>
+                <CDropdown className="ml-4">
+                  <CDropdownToggle color="secondary">{expert}</CDropdownToggle>
+                  <CDropdownMenu>
+                    {listExpert.map((expert) => (
+                      <CDropdownItem onClick={() => handleFilterExpert(expert)}>{expert}</CDropdownItem>
+                    ))}
+                  </CDropdownMenu>
+                </CDropdown>
+                <CDropdown className="ml-4">
+                  <CDropdownToggle color="secondary">{status}</CDropdownToggle>
+                  <CDropdownMenu>
+                    {listStatus.map((status) => (
+                      <CDropdownItem onClick={() => handleFilterStatus(status)}>{status.name}</CDropdownItem>
+                    ))}
+                  </CDropdownMenu>
+                </CDropdown>
+                <CButton color="success" type="submit" className="text-light ml-4" onClick={handleReload}>
+                  <CIcon icon={cilSync} />
+                </CButton>
+                <CButton color="danger" type="submit" className="text-light ml-4" onClick={handleAdd}>
+                  <CIcon icon={cilPlus} />
+                </CButton>
+              </div>
+            </div>
           </div>
-          <div className="col-lg-12 m-b30">
-            <Table bordered dataSource={listSubject} columns={columns} />
+          <div className="col-lg-12">
+            <Table bordered dataSource={listSubject} columns={columns} pagination={false} />
+          </div>
+          <div className="col-lg-12 d-flex justify-content-end">
+            <Pagination defaultCurrent={currentPage} total={totalItem} onChange={handleChangePage} />;
           </div>
         </div>
         <AdminFooter />

@@ -1,93 +1,187 @@
-import { CButton } from '@coreui/react'
-import React from 'react'
+import { CButton, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
+import React, { useState, useEffect } from 'react'
+import contactUsApi from '~/api/contactUsApi'
+import webContactApi from '~/api/webContactApi'
+import ErrorMsg from '~/components/Common/ErrorMsg'
 
 const ContactUs = () => {
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
+  const [subject, setSubject] = useState({ title: 'Choose your subject', value: '' })
+  const [message, setMessage] = useState('')
+  const [error, setError] = useState('')
+
+  const [listSubject, setListSubject] = useState([])
+
+  useEffect(() => {
+    loadData()
+  }, [])
+
+  const loadData = async () => {
+    await contactUsApi.getSubject().then((response) => setListSubject(response))
+  }
+
+  const handleChangeSubject = (subject) => {
+    setSubject(subject)
+  }
+  console.log(subject)
+
+  const handleSubmit = async () => {
+    if (firstName === '' || lastName === '') {
+      setError('Your name must not empty')
+      return
+    }
+    if (email === '') {
+      setError('Your email must not empty')
+      return
+    }
+    if (
+      !email.match(
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+      )
+    ) {
+      setError('Your email is not valid')
+      return
+    }
+    if (phone === '') {
+      setError('Your phone number must not empty')
+      return
+    }
+    if (phone.length < 9 || phone.length > 11) {
+      setError('Your phone must 9-10 characters')
+      return
+    }
+    if (message === '') {
+      setError('Your message must not empty')
+      return
+    }
+    const params = {
+      firstname: firstName,
+      lastname: lastName,
+      subject: subject.value,
+      description: message,
+      mobile: phone,
+      email: email,
+    }
+
+    await webContactApi.addContact(params).then((response) => setError('Your contact added successfully'))
+  }
+
   return (
     <>
       <div className="section-area section-sp1">
         <div className="container">
           <div className="d-flex align-items-center justify-content-center pt-10">
             <div className="col-lg-7 col-md-7">
-              <form
-                className="contact-bx ajax-form"
-                action="http://educhamp.themetrades.com/demo/assets/script/contact.php"
-              >
-                <div className="ajax-message"></div>
-                <div className="heading-bx left">
-                  <h2 className="title-head">
-                    Contact <span>Us</span>
-                  </h2>
-                  <p>
-                    It is a long established fact that a reader will be distracted by the readable content of a page
-                  </p>
-                </div>
-                <div className="row placeani">
-                  <div className="col-lg-6">
-                    <div className="form-group">
-                      <div className="input-group">
-                        <input
-                          name="name"
-                          type="text"
-                          placeholder="Your name"
-                          required
-                          className="form-control valid-character"
-                        />
-                      </div>
+              <div className="ajax-message"></div>
+              <div className="heading-bx left">
+                <h2 className="title-head">
+                  Contact <span>Us</span>
+                </h2>
+                <p>It is a long established fact that a reader will be distracted by the readable content of a page</p>
+              </div>
+              <div className="row placeani">
+                <div className="col-lg-6">
+                  <div className="form-group">
+                    <div className="input-group">
+                      <input
+                        name="name"
+                        type="text"
+                        placeholder="Your first name"
+                        required
+                        className="form-control valid-character"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                      />
                     </div>
-                  </div>
-                  <div className="col-lg-6">
-                    <div className="form-group">
-                      <div className="input-group">
-                        <input name="email" type="email" placeholder="Your email" className="form-control" required />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-lg-6">
-                    <div className="form-group">
-                      <div className="input-group">
-                        <input
-                          name="phone"
-                          type="text"
-                          placeholder="Your phone number"
-                          required
-                          className="form-control int-value"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-lg-6">
-                    <div className="form-group">
-                      <div className="input-group">
-                        <input
-                          name="subject"
-                          type="text"
-                          placeholder="Your subject"
-                          required
-                          className="form-control"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-lg-12">
-                    <div className="form-group">
-                      <div className="input-group">
-                        <textarea
-                          name="message"
-                          rows="4"
-                          placeholder="Your message"
-                          className="form-control"
-                          required
-                        ></textarea>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-lg-12">
-                    <CButton name="submit" type="submit" value="Submit" className="btn button-md m-t15" color="warning">
-                      Send Message
-                    </CButton>
                   </div>
                 </div>
-              </form>
+                <div className="col-lg-6">
+                  <div className="form-group">
+                    <div className="input-group">
+                      <input
+                        name="name"
+                        type="text"
+                        placeholder="Your last name"
+                        required
+                        className="form-control valid-character"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="col-lg-6">
+                  <div className="form-group">
+                    <div className="input-group">
+                      <input
+                        name="email"
+                        type="email"
+                        placeholder="Your email"
+                        className="form-control"
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="col-lg-6">
+                  <div className="form-group">
+                    <div className="input-group">
+                      <input
+                        name="phone"
+                        type="number"
+                        placeholder="Your phone number"
+                        required
+                        className="form-control int-value"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="col-lg-12 mb-5">
+                  <CDropdown className="w-100">
+                    <CDropdownToggle color="warning">{subject.title}</CDropdownToggle>
+                    <CDropdownMenu className="w-100">
+                      {listSubject.map((subject) => (
+                        <CDropdownItem onClick={() => handleChangeSubject(subject)}>{subject.title}</CDropdownItem>
+                      ))}
+                    </CDropdownMenu>
+                  </CDropdown>
+                </div>
+                <div className="col-lg-12">
+                  <div className="form-group">
+                    <div className="input-group">
+                      <textarea
+                        name="message"
+                        rows="4"
+                        placeholder="Your message"
+                        className="form-control"
+                        required
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-lg-12">
+                  <ErrorMsg errorMsg={error} />
+                  <CButton
+                    name="submit"
+                    type="submit"
+                    value="Submit"
+                    className="btn button-md m-t15"
+                    color="warning"
+                    onClick={handleSubmit}
+                  >
+                    Send Contact
+                  </CButton>
+                </div>
+              </div>
             </div>
           </div>
         </div>
