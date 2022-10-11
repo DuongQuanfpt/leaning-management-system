@@ -54,22 +54,22 @@ public class ClassService implements IClassService {
             String filterTerm, String filterTrainer,
             String filterSupporter, String filterBranch, String filterStatus) {
         List<ClassResponseDTO> classes = new ArrayList<>();
-        List<ClassSubject> classSubjects = new ArrayList<>();
-        List<Classes> searcheList = new ArrayList<>();
+        // List<ClassSubject> classSubjects = new ArrayList<>();
+        // List<Classes> searcheList = new ArrayList<>();
 
         TypedQuery<Classes> queryResult = classCriteria.displayClass(keyword, filterTerm, filterTrainer,
                 filterSupporter, filterBranch, filterStatus);
         
         List<Classes> resultList = queryResult.getResultList();
 
-        for (Classes clazz : resultList) {
-            classSubjects = classSubjectRepositories.findByClasses(clazz);
-            for (ClassSubject classSubject : classSubjects) {
-                if (classSubject.getSubject().getSubjectName().equals(keyword)) {
-                    searcheList.add(clazz);
-                }
-            }
-        }
+        // for (Classes clazz : resultList) {
+        //     classSubjects = classSubjectRepositories.findByClasses(clazz);
+        //     for (ClassSubject classSubject : classSubjects) {
+        //         if (classSubject.getSubject().getSubjectName().equals(keyword)) {
+        //             searcheList.add(clazz);
+        //         }
+        //     }
+        // }
         
         
         int totalItem = resultList.size();
