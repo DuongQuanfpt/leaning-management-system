@@ -8,6 +8,7 @@ import {
   traineeRoutes,
   userRoutes,
   commonRoutes,
+  adminAndManagerRoutes,
 } from '~/routes'
 import RequireAuth from '~/utils/RequireAuth'
 
@@ -61,6 +62,13 @@ const User = () => {
           {/* Only users with trainee role can access */}
           <Route element={<RequireAuth allowedRoles={['trainee']} />}>
             {traineeRoutes.map((route, index) => {
+              const Page = route.component
+              return <Route key={index} path={route.path} element={<Page />} />
+            })}
+          </Route>
+          {/* Both admin and manager role can access */}
+          <Route element={<RequireAuth allowedRoles={['admin', 'manager']} />}>
+            {adminAndManagerRoutes.map((route, index) => {
               const Page = route.component
               return <Route key={index} path={route.path} element={<Page />} />
             })}

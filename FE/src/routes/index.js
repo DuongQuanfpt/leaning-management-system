@@ -66,16 +66,10 @@ const adminRoutes = [
   { path: '/user-detail/:id', component: UserDetail },
   { path: '/user-add', component: UserAdd },
   { path: '/system-permission', component: SystemPermission },
-  // { path: '/subject-list', component: SubjectList },
-  // { path: '/subject-detail/:id', component: SubjectDetail },
-  // { path: '/subject-add', component: SubjectAdd },
 ]
 
 // Manager routes
 const managerRoutes = [
-  { path: '/subject-list', component: SubjectList },
-  { path: '/subject-detail/:id', component: SubjectDetail },
-  { path: '/subject-add', component: SubjectAdd },
   { path: '/class-list', component: ClassList },
   { path: '/class-detail/:id', component: ClassDetail },
   { path: '/class-add', component: ClassAdd },
@@ -93,4 +87,20 @@ const trainerRoutes = []
 // Trainee routes
 const traineeRoutes = []
 
-export { commonRoutes, userRoutes, adminRoutes, managerRoutes, supporterRoutes, trainerRoutes, traineeRoutes }
+//Admin and manager routes
+const adminAndManagerRoutes = [
+  { path: '/subject-list', component: SubjectList },
+  { path: '/subject-detail/:id', component: SubjectDetail },
+  { path: '/subject-add', component: SubjectAdd },
+]
+
+export {
+  commonRoutes,
+  userRoutes,
+  adminRoutes,
+  managerRoutes,
+  supporterRoutes,
+  trainerRoutes,
+  traineeRoutes,
+  adminAndManagerRoutes,
+}
