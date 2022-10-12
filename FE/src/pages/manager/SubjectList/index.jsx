@@ -72,9 +72,9 @@ const SubjectList = () => {
     })
   }
 
-  const handleActive = async (id) => {
-    await subjectListApi.changeActive(id).then((response) => {
-      loadData()
+  const handleActive = async (status) => {
+    await subjectListApi.changeActive(status.subjectId).then((response) => {
+      loadData(1, filter, search)
     })
   }
 
@@ -118,7 +118,7 @@ const SubjectList = () => {
       cancelText: 'Cancel',
       okType: 'danger',
       onOk() {
-        handleActive(subject.subjectStatus)
+        handleActive(subject)
       },
       onCancel() {},
     })
@@ -204,7 +204,7 @@ const SubjectList = () => {
                   <Breadcrumb.Item>
                     <Link to="/dashboard">Dashboard</Link>
                   </Breadcrumb.Item>
-                  <Breadcrumb.Item>Setting List</Breadcrumb.Item>
+                  <Breadcrumb.Item>Subject List</Breadcrumb.Item>
                 </Breadcrumb>
               </div>
               <div className="col-5 d-flex w-80">

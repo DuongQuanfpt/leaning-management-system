@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
@@ -15,21 +15,14 @@ import {
   CDropdownMenu,
   CDropdownItem,
 } from '@coreui/react'
-import { Breadcrumb, Radio } from 'antd'
+import { Breadcrumb, Radio, Modal } from 'antd'
+import { ExclamationCircleOutlined } from '@ant-design/icons'
 
 import ErrorMsg from '~/components/Common/ErrorMsg'
 import subjectListApi from '~/api/subjectListApi'
 import { useSelector } from 'react-redux'
 
-const SubjectDetail = () => {
-  const { id } = useParams()
-
-  // eslint-disable-next-line no-unused-vars
-  const [subjectDetail, setSubjectDetail] = useState({})
-  const [isEditMode, setIsEditMode] = useState(false)
-  const [isAdmin, setIsAdmin] = useState(false)
-  const [isManager, setIsManager] = useState(false)
-
+const SubjectAdd = () => {
   const [listManager, setListManager] = useState([])
   const [listExpert, setListExpert] = useState([])
 
@@ -45,16 +38,8 @@ const SubjectDetail = () => {
 
   useEffect(() => {
     loadData()
-    if (roles.includes('admin')) {
-      setIsAdmin(true)
-    }
-    if (roles.includes('manager')) {
-      setIsManager(true)
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  console.log(!isEditMode && isAdmin)
 
   const loadData = async () => {
     subjectListApi
@@ -64,23 +49,9 @@ const SubjectDetail = () => {
         setListExpert(response.expertFilter)
       })
       .catch((error) => setError('Something went wrong, please try again'))
-
-    subjectListApi
-      .getDetail(id)
-      .then((response) => {
-        console.log(response)
-        setSubjectDetail(response)
-        setCode(response.subjectCode)
-        setName(response.subjectName)
-        setStatus(response.status === 'Active' ? 1 : 0)
-        setManager(response.managerUsername)
-        setExpert(response.expertUsername)
-        setBody(response.body)
-      })
-      .catch((error) => setError('Something went wrong, please try again'))
   }
 
-  const handleSave = async () => {
+  const handleAdd = async () => {
     const params = {
       subjectCode: code,
       subjectName: name,
@@ -91,31 +62,32 @@ const SubjectDetail = () => {
     }
 
     await subjectListApi
-      .changeDetail(id, params)
+      .addSubject(params)
       .then((response) => {
-        setIsEditMode(false)
-        setError('You have successfully changed your subject detail')
+        setError('You have successfully add new subject')
       })
       .catch((error) => {
         setError('Something went wrong, please try again')
       })
   }
 
-  const handleCancel = () => {
-    setError('')
-    setIsAdmin(!isAdmin)
-    setIsManager(!isManager)
-    setIsEditMode(false)
-  }
-  const handleEdit = () => {
-    setError('')
-    setIsAdmin(!isAdmin)
-    setIsManager(!isManager)
-    setIsEditMode(true)
-  }
-
   const handleChangeStatus = (e) => {
     setStatus(e.target.value)
+  }
+
+  const modalConfirm = () => {
+    setError('')
+    Modal.confirm({
+      title: `Are you want to add new Subject?`,
+      icon: <ExclamationCircleOutlined />,
+      okText: 'OK',
+      cancelText: 'Cancel',
+      okType: 'danger',
+      onOk() {
+        handleAdd()
+      },
+      onCancel() {},
+    })
   }
 
   return (
@@ -152,7 +124,6 @@ const SubjectDetail = () => {
                                   type="text"
                                   value={code}
                                   onChange={(e) => setCode(e.target.value)}
-                                  disabled={!isEditMode}
                                 />
                               </div>
                             </div>
@@ -164,16 +135,13 @@ const SubjectDetail = () => {
                                   type="text"
                                   value={name}
                                   onChange={(e) => setName(e.target.value)}
-                                  disabled={!isEditMode}
                                 />
                               </div>
                             </div>
                             <div className="form-group col-6">
                               <label className="col-form-label">Manager</label>
                               <CDropdown className="w-100">
-                                <CDropdownToggle color="warning" disabled={!isEditMode}>
-                                  {manager}
-                                </CDropdownToggle>
+                                <CDropdownToggle color="warning">{manager}</CDropdownToggle>
                                 <CDropdownMenu className="w-100">
                                   {listManager.map((manager) => (
                                     <CDropdownItem onClick={() => setManager(manager)}>{manager}</CDropdownItem>
@@ -184,9 +152,7 @@ const SubjectDetail = () => {
                             <div className="form-group col-6">
                               <label className="col-form-label">Expert</label>
                               <CDropdown className="w-100">
-                                <CDropdownToggle color="warning" disabled={!isEditMode}>
-                                  {expert}
-                                </CDropdownToggle>
+                                <CDropdownToggle color="warning">{expert}</CDropdownToggle>
                                 <CDropdownMenu className="w-100">
                                   {listExpert.map((expert) => (
                                     <CDropdownItem onClick={() => setExpert(expert)}>{expert}</CDropdownItem>
@@ -197,7 +163,7 @@ const SubjectDetail = () => {
                             <div className="form-group col-6">
                               <label className="col-form-label">Status</label>
                               <div>
-                                <Radio.Group onChange={handleChangeStatus} value={status} disabled={!isEditMode}>
+                                <Radio.Group onChange={handleChangeStatus} value={status}>
                                   <Radio value={1}>Active</Radio>
                                   <Radio value={0}>Inactive</Radio>
                                 </Radio.Group>
@@ -211,28 +177,14 @@ const SubjectDetail = () => {
                                   type="text"
                                   value={body}
                                   onChange={(e) => setBody(e.target.value)}
-                                  disabled={!isEditMode}
                                 />
                               </div>
                             </div>
                             <ErrorMsg errorMsg={error} />
                             <div className="d-flex">
-                              {isEditMode ? (
-                                <>
-                                  <CButton size="md" className="mr-5" color="warning" onClick={handleSave}>
-                                    Save
-                                  </CButton>
-                                  <CButton size="md" color="warning" onClick={handleCancel}>
-                                    Cancel
-                                  </CButton>
-                                </>
-                              ) : (
-                                <>
-                                  <CButton size="md" color="warning" onClick={handleEdit}>
-                                    Edit
-                                  </CButton>
-                                </>
-                              )}
+                              <CButton size="md" className="mr-5" color="warning" onClick={modalConfirm}>
+                                Add
+                              </CButton>
                             </div>
                           </div>
                         </div>
@@ -249,4 +201,4 @@ const SubjectDetail = () => {
   )
 }
 
-export default SubjectDetail
+export default SubjectAdd

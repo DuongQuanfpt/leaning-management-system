@@ -22,15 +22,20 @@ const subjectListApi = {
     return axiosClient.get(url, header)
   },
 
-  // getDetail: (id) => {
-  //   const url = `/api/setting/${id}`
-  //   return axiosClient.get(url, header)
-  // },
+  getDetail: (id) => {
+    const url = `/api/subjects-detail/${id}`
+    return axiosClient.get(url, header)
+  },
 
-  // changeDetail: (id, params) => {
-  //   const url = `/api/setting/${id}`
-  //   return axiosClient.put(url, params, header)
-  // },
+  changeDetail: (id, params) => {
+    const url = `/api/subjects-detail/${id}`
+    return axiosClient.put(url, params, header)
+  },
+
+  addSubject: (params) => {
+    const url = `/api/subjects-add`
+    return axiosClient.post(url, params, header)
+  },
 }
 
 export default subjectListApi

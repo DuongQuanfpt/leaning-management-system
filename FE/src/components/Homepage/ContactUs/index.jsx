@@ -8,7 +8,7 @@ const ContactUs = () => {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
-  const [subject, setSubject] = useState({ title: 'Choose your subject', value: '' })
+  const [subject, setSubject] = useState({ title: 'Choose your Category', value: '' })
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
 
@@ -25,7 +25,6 @@ const ContactUs = () => {
   const handleChangeSubject = (subject) => {
     setSubject(subject)
   }
-  console.log(subject)
 
   const handleSubmit = async () => {
     if (name === '') {
@@ -50,6 +49,10 @@ const ContactUs = () => {
     }
     if (phone.length < 9 || phone.length > 11) {
       setError('Your phone must 9-10 characters')
+      return
+    }
+    if (subject.title === 'Choose your Category') {
+      setError('Your must choose one category')
       return
     }
     if (message === '') {
@@ -91,7 +94,10 @@ const ContactUs = () => {
                         required
                         className="form-control valid-character"
                         value={name}
-                        onChange={(e) => setName(e.target.value)}
+                        onChange={(e) => {
+                          setName(e.target.value)
+                          setError('')
+                        }}
                       />
                     </div>
                   </div>
@@ -106,7 +112,10 @@ const ContactUs = () => {
                         className="form-control"
                         required
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => {
+                          setEmail(e.target.value)
+                          setError('')
+                        }}
                       />
                     </div>
                   </div>
@@ -121,7 +130,10 @@ const ContactUs = () => {
                         required
                         className="form-control int-value"
                         value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
+                        onChange={(e) => {
+                          setPhone(e.target.value)
+                          setError('')
+                        }}
                       />
                     </div>
                   </div>
@@ -146,7 +158,10 @@ const ContactUs = () => {
                         className="form-control"
                         required
                         value={message}
-                        onChange={(e) => setMessage(e.target.value)}
+                        onChange={(e) => {
+                          setMessage(e.target.value)
+                          setError('')
+                        }}
                       ></textarea>
                     </div>
                   </div>
