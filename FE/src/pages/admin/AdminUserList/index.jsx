@@ -90,9 +90,10 @@ const AdminUserList = () => {
   console.log(filter)
 
   const handleReload = () => {
-    setFilter({ q: '', filterRole: '', filterStatus: '' })
+    setCurrentPage(1)
     setRole('All Roles')
     setStatus('All Status')
+    setFilter({ q: '', filterRole: '', filterStatus: '' })
   }
 
   const handleAdd = () => {
@@ -235,7 +236,7 @@ const AdminUserList = () => {
               shape="circle"
               icon={<EyeOutlined />}
               onClick={() => {
-                navigateTo(`/setting-detail/${user?.userId}`)
+                navigateTo(`/user-detail/${user?.userId}`)
               }}
             ></Button>
           </Tooltip>
@@ -266,7 +267,7 @@ const AdminUserList = () => {
                   id="form1"
                   className="form-control"
                   placeholder="Searching by Fullname, Email or Mobile...."
-                  value={filter.q}
+                  value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
                 <CButton color="primary" type="submit" className="text-light ml-10" onClick={handleSearch}>

@@ -242,10 +242,22 @@ public class UserService implements IUserService {
     public ResponseEntity<String> updateUser(UserRequestDTO dto, Long id) {
         User user = userRepository.findById(id).orElseThrow(NoObjectException::new);
         List<Setting> settings = new ArrayList<>();
+        String username = dto.getUsername();
+        if (username != null) {
+          if(userRepository.findByAccountName(username) == null){
+                user.setAccountName(username);
+            } else {
+                throw new ObjectDuplicateException("Username already exist");
+            }  
+        }
         user.setAccountName(dto.getUsername());
         user.setFullName(dto.getFullName());
         user.setMobile(dto.getMobile());
         user.setNote(dto.getNote());
+
+        if (dto.getStatus() != null) {
+            user.setStatus(UserStatus.getFromValue(Integer.parseInt(dto.getStatus())).get());
+        }
 
         if (!dto.getRoles().isEmpty()) {
             for (String role : dto.getRoles()) {
@@ -298,7 +310,7 @@ public class UserService implements IUserService {
         List<String> roles = requestDTO.getRoles();
 
         if (requestDTO.getEmail() != null) {
-            if(userRepository.findByEmail(requestDTO.getEmail()) == null){
+            if(!userRepository.findByEmail(requestDTO.getEmail()).isPresent()){
                 user.setEmail(requestDTO.getEmail());
             } else {
                 throw new ObjectDuplicateException("Email already exist");
@@ -336,6 +348,11 @@ public class UserService implements IUserService {
 
         if (requestDTO.getNote() != null) {
             user.setNote(requestDTO.getNote());
+        }
+
+        if(requestDTO.getPassword() != null) {
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            user.setPassword(encoder.encode(requestDTO.getPassword()));
         }
 
         userRepository.save(user);

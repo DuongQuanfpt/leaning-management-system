@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { Radio, Modal } from 'antd'
+import { ExclamationCircleOutlined } from '@ant-design/icons'
 
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
@@ -15,17 +17,12 @@ import {
   CDropdownMenu,
   CDropdownItem,
 } from '@coreui/react'
-import { Breadcrumb, Radio } from 'antd'
+import { Breadcrumb } from 'antd'
 
 import ErrorMsg from '~/components/Common/ErrorMsg'
 import settingListApi from '~/api/settingListApi'
 
-const AdminSettingDetail = () => {
-  const { id } = useParams()
-
-  const [settingDetail, setSettingDetail] = useState({})
-  const [isEditMode, setIsEditMode] = useState(false)
-
+const AdminSettingAdd = () => {
   const [listType, setListType] = useState([])
 
   const [type, setType] = useState({ title: 'Choose Type', value: '' })
@@ -38,25 +35,19 @@ const AdminSettingDetail = () => {
 
   useEffect(() => {
     loadData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const loadData = async () => {
-    settingListApi.getDetail(id).then((response) => {
-      console.log(response)
-      setSettingDetail(response)
-      setTitle(response.settingTitle)
-      setValue(response.settingValue)
-      setStatus(response.status === 'Active' ? 1 : 0)
-      setOrder(response.displayOrder)
-      setDescription(response.description)
-    })
     settingListApi.getFilter().then((response) => {
       setListType(response.typeFilter)
     })
   }
 
-  const handleSave = async () => {
+  const handleChangeType = (type) => {
+    setType(type)
+  }
+
+  const handleAdd = async () => {
     if (type.title === 'Choose Type') {
       setError('You must choose one of any type')
       return
@@ -77,6 +68,7 @@ const AdminSettingDetail = () => {
       setError('Description must not empty')
       return
     }
+
     const params = {
       settingTitle: title,
       settingValue: value,
@@ -87,30 +79,27 @@ const AdminSettingDetail = () => {
     }
 
     await settingListApi
-      .changeDetail(id, params)
+      .addSetting(params)
       .then((response) => {
-        setIsEditMode(false)
-        setError('You have successfully changed your setting detail')
+        setError('Add new setting successfully')
       })
-      .catch((error) => setError('Something went wrong, please try again'))
+      .catch((error) => {
+        setError('Something went wrong, please try again later')
+      })
   }
 
-  const handleCancel = () => {
-    setTitle(settingDetail.settingTitle)
-    setValue(settingDetail.settingValue)
-    setStatus(settingDetail.status === 'Active' ? 1 : 0)
-    setOrder(settingDetail.displayOrder)
-    setDescription(settingDetail.description)
-    setError('')
-    setIsEditMode(false)
-  }
-  const handleEdit = () => {
-    setIsEditMode(true)
-    setError('')
-  }
-
-  const handleChangeType = (type) => {
-    setType(type)
+  const modalConfirm = () => {
+    Modal.confirm({
+      title: `Are you want to add new Setting?`,
+      icon: <ExclamationCircleOutlined />,
+      okText: 'OK',
+      cancelText: 'Cancel',
+      okType: 'danger',
+      onOk() {
+        handleAdd()
+      },
+      onCancel() {},
+    })
   }
 
   const handleChangeStatus = (e) => {
@@ -145,16 +134,16 @@ const AdminSettingDetail = () => {
                           <div className="row">
                             <div className="form-group col-6">
                               <label className="col-form-label">Type</label>
-                              <CDropdown className="w-100">
-                                <CDropdownToggle color="warning" disabled={!isEditMode}>
-                                  {type.title}
-                                </CDropdownToggle>
-                                <CDropdownMenu className="w-100">
-                                  {listType.map((type) => (
-                                    <CDropdownItem onClick={() => handleChangeType(type)}>{type.title}</CDropdownItem>
-                                  ))}
-                                </CDropdownMenu>
-                              </CDropdown>
+                              <div>
+                                <CDropdown className="w-100">
+                                  <CDropdownToggle color="warning">{type.title}</CDropdownToggle>
+                                  <CDropdownMenu className="w-100">
+                                    {listType.map((type) => (
+                                      <CDropdownItem onClick={() => handleChangeType(type)}>{type.title}</CDropdownItem>
+                                    ))}
+                                  </CDropdownMenu>
+                                </CDropdown>
+                              </div>
                             </div>
                             <div className="form-group col-6">
                               <label className="col-form-label">Title</label>
@@ -164,7 +153,6 @@ const AdminSettingDetail = () => {
                                   type="text"
                                   value={title}
                                   onChange={(e) => setTitle(e.target.value)}
-                                  disabled={!isEditMode}
                                 />
                               </div>
                             </div>
@@ -176,14 +164,13 @@ const AdminSettingDetail = () => {
                                   type="text"
                                   value={value}
                                   onChange={(e) => setValue(e.target.value)}
-                                  disabled={!isEditMode}
                                 />
                               </div>
                             </div>
                             <div className="form-group col-6">
                               <label className="col-form-label">Status</label>
                               <div>
-                                <Radio.Group onChange={handleChangeStatus} value={status} disabled={!isEditMode}>
+                                <Radio.Group onChange={handleChangeStatus} value={status}>
                                   <Radio value={1}>Active</Radio>
                                   <Radio value={0}>Inactive</Radio>
                                 </Radio.Group>
@@ -197,7 +184,6 @@ const AdminSettingDetail = () => {
                                   type="number"
                                   value={order}
                                   onChange={(e) => setOrder(e.target.value)}
-                                  disabled={!isEditMode}
                                 />
                               </div>
                             </div>
@@ -209,28 +195,14 @@ const AdminSettingDetail = () => {
                                   type="text"
                                   value={description}
                                   onChange={(e) => setDescription(e.target.value)}
-                                  disabled={!isEditMode}
                                 />
                               </div>
                             </div>
                             <ErrorMsg errorMsg={error} />
                             <div className="d-flex">
-                              {isEditMode ? (
-                                <>
-                                  <CButton size="md" className="mr-5" color="warning" onClick={handleSave}>
-                                    Save
-                                  </CButton>
-                                  <CButton size="md" color="warning" onClick={handleCancel}>
-                                    Cancel
-                                  </CButton>
-                                </>
-                              ) : (
-                                <>
-                                  <CButton size="md" color="warning" onClick={handleEdit}>
-                                    Edit
-                                  </CButton>
-                                </>
-                              )}
+                              <CButton size="md" color="warning" onClick={modalConfirm}>
+                                Add
+                              </CButton>
                             </div>
                           </div>
                         </div>
@@ -247,4 +219,4 @@ const AdminSettingDetail = () => {
   )
 }
 
-export default AdminSettingDetail
+export default AdminSettingAdd

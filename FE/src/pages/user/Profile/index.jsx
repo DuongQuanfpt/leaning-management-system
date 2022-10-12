@@ -175,7 +175,7 @@ const Profile = () => {
                                       alt=""
                                       className="w-75 mb-2 rounded-circle"
                                     />
-                                    <div className="d-flex pt-4 ml-5">
+                                    <div className="d-flex pt-4">
                                       <CButton size="md" color="warning" onClick={handleAvatar}>
                                         Edit Avatar
                                       </CButton>

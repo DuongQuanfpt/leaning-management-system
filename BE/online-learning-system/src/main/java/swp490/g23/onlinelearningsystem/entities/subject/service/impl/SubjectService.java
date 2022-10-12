@@ -216,8 +216,8 @@ public class SubjectService implements ISubjectService {
         List<StatusEntity> statuses = new ArrayList<>();
 
         List<User> allUser = userRepository.findAll();
-        Setting managerSetting = settingRepositories.findBySettingValue("ROLE_TRAINER");
-        Setting expertSetting = settingRepositories.findBySettingValue("ROLE_SUPPORTER");
+        Setting managerSetting = settingRepositories.findBySettingValue("ROLE_MANAGER");
+        Setting expertSetting = settingRepositories.findBySettingValue("ROLE_EXPERT");
 
         for (User user : allUser) {
             if (user.getSettings().contains(managerSetting)) {

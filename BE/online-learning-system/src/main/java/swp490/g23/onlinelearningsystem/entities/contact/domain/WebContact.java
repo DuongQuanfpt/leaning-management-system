@@ -46,7 +46,7 @@ public class WebContact extends BaseEntity {
     @Column
     private String mobile;
 
-    @Column
+    @Column(columnDefinition="TEXT")
     private String message;
 
     @Column

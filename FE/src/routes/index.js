@@ -16,8 +16,10 @@ const Profile = lazy(() => import('~/pages/user/Profile'))
 const ChangePassword = lazy(() => import('~/pages/user/ChangePassword'))
 const SettingList = lazy(() => import('~/pages/admin/AdminSettingList'))
 const SettingDetail = lazy(() => import('~/pages/admin/AdminSettingDetail'))
+const SettingAdd = lazy(() => import('~/pages/admin/AdminSettingAdd'))
 const UserList = lazy(() => import('~/pages/admin/AdminUserList'))
 const UserDetail = lazy(() => import('~/pages/admin/AdminUserDetail'))
+const UserAdd = lazy(() => import('~/pages/admin/AdminUserAdd'))
 const SystemPermission = lazy(() => import('~/pages/admin/SystemPermission'))
 
 //Manager pages
@@ -53,8 +55,10 @@ const userRoutes = [
 const adminRoutes = [
   { path: '/setting-list', component: SettingList },
   { path: '/setting-detail/:id', component: SettingDetail },
+  { path: '/setting-add', component: SettingAdd },
   { path: '/user-list', component: UserList },
   { path: '/user-detail/:id', component: UserDetail },
+  { path: '/user-add', component: UserAdd },
   { path: '/system-permission', component: SystemPermission },
 ]
 
