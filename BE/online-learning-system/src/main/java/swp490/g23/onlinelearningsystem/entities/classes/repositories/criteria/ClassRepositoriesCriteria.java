@@ -20,6 +20,8 @@ public class ClassRepositoriesCriteria {
 
         
         if (keyword != null) {
+            query = new StringBuilder(query.toString().replaceAll("SELECT DISTINCT c FROM Classes c",
+                    "SELECT DISTINCT c FROM Classes c JOIN c.classSubject as s"));
             query.append(" AND c.code LIKE '%" + keyword + "%' OR s.subject.subjectName LIKE '%" + keyword + "%'");
         }
 
@@ -43,6 +45,7 @@ public class ClassRepositoriesCriteria {
         }
 
         query.append(" ORDER BY c.classId ASC");
+        System.out.println(query.toString());
         TypedQuery<Classes> typedQuery = em.createQuery(query.toString(), Classes.class);
 
         return typedQuery;

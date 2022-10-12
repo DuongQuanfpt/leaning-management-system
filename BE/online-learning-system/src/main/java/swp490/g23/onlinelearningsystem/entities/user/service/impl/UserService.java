@@ -244,9 +244,9 @@ public class UserService implements IUserService {
         List<Setting> settings = new ArrayList<>();
         String username = dto.getUsername();
 
-        System.out.println("??????? : " + user.getAccountName() + "/" + username);
+        System.out.println(user.getAccountName().equals(username));
 
-        if (username != null && !user.getAccountName().equals(username)== false) {
+        if (username != null && user.getAccountName().equals(username)== false) {
             if (userRepository.findByAccountName(username) == null ) {
                 user.setAccountName(username);
             } else {
