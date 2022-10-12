@@ -5,8 +5,7 @@ import webContactApi from '~/api/webContactApi'
 import ErrorMsg from '~/components/Common/ErrorMsg'
 
 const ContactUs = () => {
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [subject, setSubject] = useState({ title: 'Choose your subject', value: '' })
@@ -29,7 +28,7 @@ const ContactUs = () => {
   console.log(subject)
 
   const handleSubmit = async () => {
-    if (firstName === '' || lastName === '') {
+    if (name === '') {
       setError('Your name must not empty')
       return
     }
@@ -58,10 +57,9 @@ const ContactUs = () => {
       return
     }
     const params = {
-      firstname: firstName,
-      lastname: lastName,
-      subject: subject.value,
-      description: message,
+      fullName: name,
+      categoryValue: subject.value,
+      message: message,
       mobile: phone,
       email: email,
     }
@@ -83,7 +81,7 @@ const ContactUs = () => {
                 <p>It is a long established fact that a reader will be distracted by the readable content of a page</p>
               </div>
               <div className="row placeani">
-                <div className="col-lg-6">
+                <div className="col-lg-12">
                   <div className="form-group">
                     <div className="input-group">
                       <input
@@ -92,23 +90,8 @@ const ContactUs = () => {
                         placeholder="Your first name"
                         required
                         className="form-control valid-character"
-                        value={firstName}
-                        onChange={(e) => setFirstName(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className="col-lg-6">
-                  <div className="form-group">
-                    <div className="input-group">
-                      <input
-                        name="name"
-                        type="text"
-                        placeholder="Your last name"
-                        required
-                        className="form-control valid-character"
-                        value={lastName}
-                        onChange={(e) => setLastName(e.target.value)}
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
                       />
                     </div>
                   </div>

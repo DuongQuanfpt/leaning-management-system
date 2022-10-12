@@ -84,11 +84,16 @@ const AdminSettingAdd = () => {
         setError('Add new setting successfully')
       })
       .catch((error) => {
+        if (error.response.data.message === 'Setting Value already exist') {
+          setError('Setting Value already existed')
+          return
+        }
         setError('Something went wrong, please try again later')
       })
   }
 
   const modalConfirm = () => {
+    setError('')
     Modal.confirm({
       title: `Are you want to add new Setting?`,
       icon: <ExclamationCircleOutlined />,

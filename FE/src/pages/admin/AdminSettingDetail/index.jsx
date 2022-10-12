@@ -86,6 +86,8 @@ const AdminSettingDetail = () => {
       typeValue: type.value,
     }
 
+    console.log(params)
+
     await settingListApi
       .changeDetail(id, params)
       .then((response) => {
@@ -131,7 +133,7 @@ const AdminSettingDetail = () => {
               <Breadcrumb.Item>
                 <Link to="/setting-list">Setting List</Link>
               </Breadcrumb.Item>
-              <Breadcrumb.Item>Setting Add</Breadcrumb.Item>
+              <Breadcrumb.Item>Setting Detail</Breadcrumb.Item>
             </Breadcrumb>
           </div>
           <CContainer>
