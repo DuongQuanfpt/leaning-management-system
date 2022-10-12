@@ -84,7 +84,7 @@ public class SettingService implements ISettingService {
         if (setting.getType() == null || setting.getType().getSettingValue().equals("TYPE_ROLE")
                 || setting.getType().getSettingValue().equals("TYPE_API")
                 || setting.getType().getSettingValue().equals("TYPE_SCREEN")) {
-            throw new NoObjectException("this setting cant be view");
+            throw new NoObjectException("this setting cant be update");
         }
         
         if (dto.getSettingTitle() != null) {

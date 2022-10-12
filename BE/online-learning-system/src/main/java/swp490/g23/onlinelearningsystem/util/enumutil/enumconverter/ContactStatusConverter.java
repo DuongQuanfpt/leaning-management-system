@@ -8,7 +8,6 @@ import javax.persistence.Converter;
 
 import swp490.g23.onlinelearningsystem.util.enumutil.ContactStatus;
 
-@Converter(autoApply = true)
 public class ContactStatusConverter implements AttributeConverter<ContactStatus,String>{
 
     @Override

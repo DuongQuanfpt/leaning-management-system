@@ -7,7 +7,6 @@ import javax.persistence.Converter;
 
 import swp490.g23.onlinelearningsystem.util.enumutil.ClassStatus;
 
-@Converter(autoApply = true)
 public class ClassStatusConverter implements AttributeConverter<ClassStatus,String>{
 
     @Override

@@ -32,7 +32,7 @@ import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
 import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
 
 @Entity
-@Table(name = "user")
+@Table(name = "user_tbl")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -72,7 +72,7 @@ public class User extends BaseEntity implements UserDetails {
 
     @ManyToMany
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "userId", referencedColumnName = "userId"), inverseJoinColumns = @JoinColumn(name = "roleId", referencedColumnName = "settingId"))
-    private List<Setting> settings = new ArrayList<>();
+    private List<Setting> settings ;
 
     @OneToMany(mappedBy = "userTrainer")
     private List<Classes> classes;
@@ -89,13 +89,13 @@ public class User extends BaseEntity implements UserDetails {
     }
 
     @OneToMany(mappedBy = "manager")
-	private List<Subject> managedSubject = new ArrayList<>();
+	private List<Subject> managedSubject;
 
     @OneToMany(mappedBy = "expert")
-	private List<Subject> expertSubject = new ArrayList<>();
+	private List<Subject> expertSubject;
 
     @OneToMany(mappedBy = "staff")
-	private List<WebContact> webContact = new ArrayList<>();
+	private List<WebContact> webContact;
 
 
     public User(String email, String password, Setting settings) {

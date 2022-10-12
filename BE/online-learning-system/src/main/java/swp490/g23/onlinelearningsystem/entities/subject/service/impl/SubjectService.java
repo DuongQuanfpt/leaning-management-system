@@ -140,6 +140,11 @@ public class SubjectService implements ISubjectService {
 
         }
 
+        if (dto.getBody() != null) {
+            subject.setBody(dto.getBody());
+
+        }
+
         if (dto.getSubjectStatus() != null) {
             subject.setSubjectStatus(Status.getFromValue(Integer.parseInt(dto.getSubjectStatus())).get());
         }

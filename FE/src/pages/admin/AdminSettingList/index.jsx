@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 
-import { Table, Input, Button, Space, Tag, Breadcrumb } from 'antd'
-import { SearchOutlined } from '@ant-design/icons'
+import { CButton, CDropdown, CDropdownToggle, CDropdownMenu, CDropdownItem } from '@coreui/react'
+import CIcon from '@coreui/icons-react'
+import { cilPlus, cilSearch, cilSync } from '@coreui/icons'
+
+import { Table, Button, Space, Breadcrumb, Tooltip, Modal, Tag, Pagination } from 'antd'
+import { CloseOutlined, CheckOutlined, EyeOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 
 import settingListApi from '~/api/settingListApi'
 
@@ -11,31 +15,98 @@ import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 
 const AdminSettingList = () => {
+  const ITEM_PER_PAGE = 10
+
   const navigateTo = useNavigate()
 
   const [listSetting, setListSetting] = useState([])
+  const [listType, setListType] = useState([])
+  const [listStatus, setListStatus] = useState([])
+
+  const [totalItem, setTotalItem] = useState(1)
+  // eslint-disable-next-line no-unused-vars
+  const [currentPage, setCurrentPage] = useState(1)
+
+  const [search, setSearch] = useState('')
+  const [type, setType] = useState('All Type')
+  const [status, setStatus] = useState('All Status')
+  const [filter, setFilter] = useState({
+    filterType: '',
+    filterStatus: '',
+  })
 
   useEffect(() => {
-    loadData()
+    settingListApi.getFilter().then((response) => {
+      setListType(response.typeFilter)
+      setListStatus(response.statusFilter)
+    })
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const loadData = async () => {
-    await settingListApi.getAll().then((response) => {
+  useEffect(() => {
+    loadData(1, filter)
+  }, [filter])
+
+  const loadData = async (page, filter, q = '') => {
+    const params = {
+      limit: ITEM_PER_PAGE,
+      page: page,
+    }
+    if (q !== '') {
+      params.q = q
+    }
+    if (filter.filterType !== '') {
+      params.filterType = filter.filterType
+    }
+    if (filter.filterStatus !== '') {
+      params.filterStatus = filter.filterStatus
+    }
+    await settingListApi.getPage(params).then((response) => {
+      console.log(response)
+      setTotalItem(response.totalItem)
       setListSetting(response.listResult)
     })
   }
 
   const handleActive = async (id) => {
     await settingListApi.changeActive(id).then((response) => {
-      loadData()
+      loadData(1, filter)
     })
+  }
+
+  const handleSearch = () => {
+    loadData(1, filter, search)
+  }
+
+  const handleFilterType = (type) => {
+    setFilter({ ...filter, filterType: type.value })
+    setType(type.title)
+  }
+
+  const handleFilterStatus = (status) => {
+    setFilter({ ...filter, filterStatus: status.value })
+    setStatus(status.name)
+  }
+
+  const handleReload = () => {
+    setFilter({ q: '', filterType: '', filterStatus: '' })
+    setType('All Type')
+    setStatus('All Status')
+  }
+
+  const handleAdd = () => {
+    navigateTo('/setting-add')
+  }
+
+  const handleChangePage = (pageNumber) => {
+    loadData(pageNumber, filter)
   }
 
   const columns = [
     {
       title: 'ID',
       dataIndex: 'settingId',
-      sorter: (a, b) => a.settingId - b.settingId,
       width: 80,
     },
     {
@@ -49,76 +120,24 @@ const AdminSettingList = () => {
       dataIndex: 'settingTitle',
       sorter: (a, b) => a.settingTitle?.length - b.settingTitle?.length,
       ellipsis: true,
-      filterDropdown: ({ selectedKeys, setSelectedKeys, confirm, clearFilters }) => {
-        return (
-          <>
-            <Input
-              autoFocus
-              placeholder="Searching by Manager"
-              value={selectedKeys[0]}
-              onChange={(e) => {
-                setSelectedKeys(e.target.value ? [e.target.value] : [])
-                confirm({ closeDropdown: false })
-              }}
-              onPressEnter={() => {
-                confirm()
-              }}
-              onBlur={() => {
-                confirm()
-              }}
-            ></Input>
-            <Button
-              type="primary"
-              onClick={() => {
-                confirm()
-              }}
-            >
-              Search
-            </Button>
-            <Button
-              type="danger"
-              onClick={() => {
-                clearFilters()
-                confirm()
-              }}
-            >
-              Clear
-            </Button>
-          </>
-        )
-      },
-      filterIcon: () => {
-        return <SearchOutlined />
-      },
-      onFilter: (value, record) => {
-        return record?.settingTitle.toLowerCase().includes(value.toLowerCase())
-      },
     },
 
     {
       title: 'Value',
       dataIndex: 'settingValue',
-      sorter: (a, b) => a.settingValue?.length - b.settingValue?.length,
       ellipsis: true,
     },
     {
       title: 'Display Order',
       dataIndex: 'displayOrder',
-      sorter: (a, b) => a.displayOrder - b.displayOrder,
       width: 150,
     },
     {
       title: 'Status',
       dataIndex: 'status',
-      sorter: (a, b) => a.status?.length - b.status?.length,
-      width: 150,
-      filters: [
-        { text: 'ACTIVE', value: 'ACTIVE' },
-        { text: 'INACTIVE', value: 'INACTIVE' },
-      ],
-      onFilter: (value, record) => record.status === value,
+      width: 90,
       render: (_, { status }) => (
-        <Tag color={status === 'ACTIVE' ? 'blue' : 'red'} key={status}>
+        <Tag color={status === 'Active' ? 'blue' : 'red'} key={status}>
           {status}
         </Tag>
       ),
@@ -126,29 +145,46 @@ const AdminSettingList = () => {
     {
       title: 'Action',
       dataIndex: 'action',
-      ellipsis: true,
+      width: 120,
       render: (_, setting) => (
         <Space size="middle">
-          <Button
-            type={setting.status === 'ACTIVE' ? 'danger' : 'primary'}
-            onClick={() => {
-              handleActive(setting.settingId)
-            }}
-          >
-            {setting.status === 'ACTIVE' ? 'Deactive' : 'Reactive'}
-          </Button>
-          <Button
-            type="link"
-            onClick={() => {
-              navigateTo(`/setting-detail/${setting?.settingId}`)
-            }}
-          >
-            View
-          </Button>
+          <Tooltip title={setting.status === 'Active' ? 'Deactivate' : 'Reactivate'} placement="top">
+            <Button
+              type={setting.status === 'Active' ? 'danger' : 'primary'}
+              shape="circle"
+              icon={setting.status === 'Active' ? <CloseOutlined /> : <CheckOutlined />}
+              onClick={() => {
+                modalConfirm(setting)
+              }}
+            ></Button>
+          </Tooltip>
+          <Tooltip title="View" placement="top">
+            <Button
+              shape="circle"
+              icon={<EyeOutlined />}
+              onClick={() => {
+                navigateTo(`/setting-detail/${setting?.settingId}`)
+              }}
+            ></Button>
+          </Tooltip>
         </Space>
       ),
     },
   ]
+
+  const modalConfirm = (setting) => {
+    Modal.confirm({
+      title: `Are you want to ${setting.status === 'Active' ? 'deactivate' : 'reactivate'} "${setting.settingTitle}"?`,
+      icon: <ExclamationCircleOutlined />,
+      okText: 'OK',
+      cancelText: 'Cancel',
+      okType: 'danger',
+      onOk() {
+        handleActive(setting.settingId)
+      },
+      onCancel() {},
+    })
+  }
 
   return (
     <div>
@@ -157,15 +193,59 @@ const AdminSettingList = () => {
         <AdminHeader />
         <div className="body flex-grow-1 px-3">
           <div className="col-lg-12 m-b30">
-            <Breadcrumb>
-              <Breadcrumb.Item>
-                <Link to="/">Dashboard</Link>
-              </Breadcrumb.Item>
-              <Breadcrumb.Item>Setting List</Breadcrumb.Item>
-            </Breadcrumb>
+            <div className="row">
+              <div className="col-2 d-flex align-items-center">
+                <Breadcrumb>
+                  <Breadcrumb.Item>
+                    <Link to="/dashboard">Dashboard</Link>
+                  </Breadcrumb.Item>
+                  <Breadcrumb.Item>Setting List</Breadcrumb.Item>
+                </Breadcrumb>
+              </div>
+              <div className="col-6 d-flex w-80">
+                <input
+                  type="search"
+                  id="form1"
+                  className="form-control"
+                  placeholder="Searching by title...."
+                  value={filter.q}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+                <CButton color="primary" type="submit" className="text-light ml-10" onClick={handleSearch}>
+                  <CIcon icon={cilSearch} />
+                </CButton>
+              </div>
+              <div className="col-4 d-flex justify-content-end">
+                <CDropdown className="ml-4">
+                  <CDropdownToggle color="secondary">{type}</CDropdownToggle>
+                  <CDropdownMenu>
+                    {listType.map((type) => (
+                      <CDropdownItem onClick={() => handleFilterType(type)}>{type.title}</CDropdownItem>
+                    ))}
+                  </CDropdownMenu>
+                </CDropdown>
+                <CDropdown className="ml-4">
+                  <CDropdownToggle color="secondary">{status}</CDropdownToggle>
+                  <CDropdownMenu>
+                    {listStatus.map((status) => (
+                      <CDropdownItem onClick={() => handleFilterStatus(status)}>{status.name}</CDropdownItem>
+                    ))}
+                  </CDropdownMenu>
+                </CDropdown>
+                <CButton color="success" type="submit" className="text-light ml-4" onClick={handleReload}>
+                  <CIcon icon={cilSync} />
+                </CButton>
+                <CButton color="danger" type="submit" className="text-light ml-4" onClick={handleAdd}>
+                  <CIcon icon={cilPlus} />
+                </CButton>
+              </div>
+            </div>
           </div>
-          <div className="col-lg-12 m-b30">
-            <Table bordered dataSource={listSetting} columns={columns} />
+          <div className="col-lg-12">
+            <Table bordered dataSource={listSetting} columns={columns} pagination={false} />
+          </div>
+          <div className="col-lg-12 d-flex justify-content-end">
+            <Pagination defaultCurrent={currentPage} total={totalItem} onChange={handleChangePage} />;
           </div>
         </div>
         <AdminFooter />

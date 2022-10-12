@@ -33,5 +33,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query(value = "SELECT u FROM User u WHERE u.accountName = :accountName AND u.email <> :email")
     List<User> findDupeAccountName(String accountName , String email);
-
 }

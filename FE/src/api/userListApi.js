@@ -7,9 +7,9 @@ const header = {
 }
 
 const userListApi = {
-  getAll: () => {
+  getPage: (params) => {
     const url = `/api/user`
-    return axiosClient.get(url, header)
+    return axiosClient.get(url, { ...header, params })
   },
 
   getFilter: () => {

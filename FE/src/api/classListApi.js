@@ -13,7 +13,7 @@ const classListApi = {
   },
 
   changeActive: (id) => {
-    const url = `/api/class/${id}`
+    const url = `/api/class-status/${id}`
     return axiosClient.put(url, {}, header)
   },
 

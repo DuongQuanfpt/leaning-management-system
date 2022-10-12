@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.util.AuditorAwareImpl;
 
 
@@ -14,7 +13,7 @@ import swp490.g23.onlinelearningsystem.util.AuditorAwareImpl;
 public class JpaAuditingConfig {
    
         @Bean
-        public AuditorAware<User> auditorAware() {
+        public AuditorAware<String> auditorAware() {
             return new AuditorAwareImpl();
         }
 

@@ -8,7 +8,7 @@ import javax.persistence.Embeddable;
 @Embeddable
 
 public class SettingPermissionId implements Serializable {
-   
+
     @Column(name = "screen_id")
     Long screenId;
 
@@ -62,7 +62,4 @@ public class SettingPermissionId implements Serializable {
         this.roleId = roleId;
     }
 
-    
-   
-    
 }

@@ -16,13 +16,13 @@ import swp490.g23.onlinelearningsystem.errorhandling.CustomException.UnverifiedU
 @RestControllerAdvice
 public class ApiExceptionHandler {
    
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorMessage handleAllException(Exception ex, WebRequest request) {
-        // quá trình kiểm soat lỗi diễn ra ở đây
+    // @ExceptionHandler(Exception.class)
+    // @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+    // public ErrorMessage handleAllException(Exception ex, WebRequest request) {
+    //     // quá trình kiểm soat lỗi diễn ra ở đây
     
-        return new ErrorMessage(10000, ex.getLocalizedMessage());
-    }
+    //     return new ErrorMessage(10000, ex.getLocalizedMessage());
+    // }
 
     
    
