@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserUpdatePassRequestDTO;
-import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserListResponsePaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.user.service.impl.UserService;
 
 @RestController
@@ -97,15 +96,4 @@ public class UserController {
 				requestDTO.getMobile(), user.getUserId() , requestDTO.getUsername(),user.getEmail());
 	}
 
-	@GetMapping(value = "/trainee")
-	public ResponseEntity<UserListResponsePaginateDTO> displayTrainee(
-			@RequestParam(name = "page", required = false) String currentPage,
-			@RequestParam(name = "limit", required = false) String requestLimit,
-			@RequestParam(name = "q", required = false) String keyword,
-			@RequestParam(name = "filterStatus", required = false) String statusFilter) {
-		
-		int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
-		int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
-		return userService.displayTrainee(limit, page, keyword, keyword, statusFilter);
-	}
 }

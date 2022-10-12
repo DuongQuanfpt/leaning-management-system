@@ -61,9 +61,8 @@ public class ClassService implements IClassService {
 
         TypedQuery<Classes> queryResult = classCriteria.displayClass(keyword, filterTerm, filterTrainer,
                 filterSupporter, filterBranch, filterStatus);
-        
-        List<Classes> resultList = queryResult.getResultList();
-        int totalItem = resultList.size();
+    
+        int totalItem = queryResult.getResultList().size();
         int totalPage;
         if (limit != 0) {
             queryResult.setFirstResult((currentPage - 1) * limit);
@@ -73,7 +72,7 @@ public class ClassService implements IClassService {
             totalPage = 1;
         }
 
-        for (Classes clazz : resultList) {
+        for (Classes clazz : queryResult.getResultList()) {
             classes.add(toDTO(clazz));
         }
 
