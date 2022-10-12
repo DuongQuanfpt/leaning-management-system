@@ -19,6 +19,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -35,6 +36,8 @@ import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+
 public class User extends BaseEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -86,13 +89,13 @@ public class User extends BaseEntity implements UserDetails {
     }
 
     @OneToMany(mappedBy = "manager")
-	private List<Subject> managedSubject = new ArrayList<>();
+	private List<Subject> managedSubject;
 
     @OneToMany(mappedBy = "expert")
-	private List<Subject> expertSubject = new ArrayList<>();
+	private List<Subject> expertSubject;
 
     @OneToMany(mappedBy = "staff")
-	private List<WebContact> webContact = new ArrayList<>();
+	private List<WebContact> webContact;
 
 
     public User(String email, String password, Setting settings) {

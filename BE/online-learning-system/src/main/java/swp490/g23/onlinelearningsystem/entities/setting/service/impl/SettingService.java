@@ -67,6 +67,13 @@ public class SettingService implements ISettingService {
     @Override
     public ResponseEntity<SettingResponseDTO> viewSetting(long id) {
         Setting setting = settingRepositories.findById(id).get();
+        System.out.print("ACVVVVV : " + setting.getType().getSettingValue());
+        if (setting.getType() == null || setting.getType().getSettingValue().equals("TYPE_ROLE")
+                || setting.getType().getSettingValue().equals("TYPE_API")
+                || setting.getType().getSettingValue().equals("TYPE_SCREEN")) {
+            throw new NoObjectException("this setting cant be view");
+        }
+
         return ResponseEntity.ok(toDTO(setting));
     }
 
@@ -74,8 +81,22 @@ public class SettingService implements ISettingService {
     public ResponseEntity<String> updateSetting(SettingRequestDTO dto, Long id) {
         Setting setting = settingRepositories.findById(id).orElseThrow(NoSettingException::new);
 
+        if (setting.getType() == null || setting.getType().getSettingValue().equals("TYPE_ROLE")
+                || setting.getType().getSettingValue().equals("TYPE_API")
+                || setting.getType().getSettingValue().equals("TYPE_SCREEN")) {
+            throw new NoObjectException("this setting cant be update");
+        }
+        
         if (dto.getSettingTitle() != null) {
             setting.setSettingTitle(dto.getSettingTitle());
+        }
+
+        if (dto.getSettingValue() != null) {
+            if(settingRepositories.findBySettingValue(dto.getSettingValue()) == null){
+                setting.setSettingValue(dto.getSettingValue());
+            } else {
+                throw new ObjectDuplicateException("Setting Value already exist");
+            }
         }
 
         if (dto.getDisplayOrder() != null) {
@@ -151,7 +172,7 @@ public class SettingService implements ISettingService {
         }
 
         if (requestDTO.getSettingValue() != null) {
-            if(settingRepositories.findBySettingValue(requestDTO.getSettingValue()) == null){
+            if (settingRepositories.findBySettingValue(requestDTO.getSettingValue()) == null) {
                 setting.setSettingValue(requestDTO.getSettingValue());
             } else {
                 throw new ObjectDuplicateException("Setting Value already exist");
@@ -159,12 +180,12 @@ public class SettingService implements ISettingService {
         }
 
         Setting typeCheck = settingRepositories.findBySettingValue(requestDTO.getTypeValue());
-        if(typeCheck != null){
+        if (typeCheck != null) {
             setting.setType(typeCheck);
-        }else{
+        } else {
             throw new NoObjectException("Type doesnt exist");
         }
-    
+
         setting.setStatus(Status.getFromValue(Integer.parseInt(requestDTO.getStatus())).get());
 
         if (requestDTO.getDisplayOrder() != null) {

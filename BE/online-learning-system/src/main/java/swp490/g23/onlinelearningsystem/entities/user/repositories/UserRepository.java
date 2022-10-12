@@ -21,7 +21,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     "AND u.status = swp490.g23.onlinelearningsystem.util.enumutil.UserStatus.Active")
     User findActiveUserByEmail(String email);
 
-    @Query(value = "SELECT * FROM user WHERE email= ?1", nativeQuery = true)
+    @Query(value = "SELECT u FROM User u WHERE u.email= ?1")
     User findUserWithEmail(String email);
 
     @Query(value = "SELECT u FROM User u WHERE u.accountName = :accountName " +

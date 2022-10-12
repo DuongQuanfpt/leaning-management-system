@@ -20,25 +20,29 @@ public class UserRepositoriesCriteria {
     private final EntityManager em;
 
     public TypedQuery<User> displayUser(String keyword, String filterRole, String filterStatus) {
-        StringBuilder query = new StringBuilder("SELECT DISTINCT u FROM User u INNER JOIN u.settings as s WHERE 1=1");
+        StringBuilder query = new StringBuilder("SELECT DISTINCT u FROM User u WHERE 1=1");
 
-        
         if (keyword != null) {
-            query.append(" AND u.fullName LIKE '%" + keyword + "%'" + "OR u.mobile LIKE '%" + keyword + "%' OR u.email LIKE  '%" + keyword + "%'");
+            query.append(" AND u.fullName LIKE '%" + keyword + "%'" + "OR u.mobile LIKE '%" + keyword
+                    + "%' OR u.email LIKE  '%" + keyword + "%'");
         }
 
         if (filterStatus != null) {
+            
             query.append(" AND u.status = '" + filterStatus + "'");
         }
 
-        if( filterRole != null){
-            // Setting setting = (settingRepositories.findBySettingTitle(filterRole));
-            query.append("AND s.settingTitle = '" + filterRole + "'");
+        if (filterRole != null) {
+            query = new StringBuilder(query.toString().replaceAll("SELECT DISTINCT u FROM User u",
+                    "SELECT DISTINCT u FROM User u JOIN u.settings as s"));
+            query.append(" AND s.settingTitle = '" + filterRole + "'");
+
+            
         }
 
         query.append(" ORDER BY u.userId ASC");
         TypedQuery<User> typedQuery = em.createQuery(query.toString(), User.class);
-
+        System.out.println(query.toString());
         return typedQuery;
     }
 }

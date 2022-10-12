@@ -96,7 +96,7 @@ public class SubjectService implements ISubjectService {
         if (dto.getManagerUsername() != null) {
             User manager = userRepository.findActiveByAccountName(dto.getManagerUsername());
             if (manager != null) {
-                subject.setExpert(manager);
+                subject.setManager(manager);
             } else {
                 throw new NoObjectException("Manager " + dto.getManagerUsername() + " doesnt exist");
             }
@@ -131,12 +131,24 @@ public class SubjectService implements ISubjectService {
         if (subject == null) {
             throw new NoObjectException("Subject doesnt exist");
         }
+        
         if (dto.getSubjectCode() != null) {
-            subject.setSubjectCode(dto.getSubjectCode());
+            if (subjectRepository.findBySubjectCode(dto.getSubjectCode()) == null
+                    && !subject.getSubjectCode().equals(dto.getSubjectCode())) {
+                subject.setSubjectCode(dto.getSubjectCode());
+            } else {
+                throw new ObjectDuplicateException("Subject code already exist");
+            }
+
         }
 
         if (dto.getSubjectName() != null) {
             subject.setSubjectName(dto.getSubjectName());
+
+        }
+
+        if (dto.getBody() != null) {
+            subject.setBody(dto.getBody());
 
         }
 
@@ -204,8 +216,8 @@ public class SubjectService implements ISubjectService {
         List<StatusEntity> statuses = new ArrayList<>();
 
         List<User> allUser = userRepository.findAll();
-        Setting managerSetting = settingRepositories.findBySettingValue("ROLE_TRAINER");
-        Setting expertSetting = settingRepositories.findBySettingValue("ROLE_SUPPORTER");
+        Setting managerSetting = settingRepositories.findBySettingValue("ROLE_MANAGER");
+        Setting expertSetting = settingRepositories.findBySettingValue("ROLE_EXPERT");
 
         for (User user : allUser) {
             if (user.getSettings().contains(managerSetting)) {

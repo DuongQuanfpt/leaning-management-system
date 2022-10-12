@@ -1,0 +1,8 @@
+"subject_id","created_by","created_date","modified_by","modified_date","body","subject_code","subject_name","subject_status","expert_id","manager_id"
+1,,,Some thing hêre,"2022-10-11 14:36:52.796000","",LAB101,Lab Java,"1",1,2
+2,,,Some thing hêre,"2022-10-11 14:36:56.799000","",MAE203,Math,"1",1,2
+3,,,,,"",PRF192,Programming Fundamentals,"1",,6
+4,,,,,"",PRO201,Front-end Web Development,"1",,6
+5,,,xucxichbo@doivl.com,"2022-10-11 16:28:50.230000","",CODE_B,Subject B,"0",,2
+6,Some thing hêre,"2022-10-11 14:39:22.599000",Some thing hêre,"2022-10-11 14:39:22.599000",,CODE_A112,qqqqq,"0",2,
+7,null,"2022-10-11 16:01:43.108000",null,"2022-10-11 16:01:43.108000",,CODE_A12,qqqqq,"0",1,2

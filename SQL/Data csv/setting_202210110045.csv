@@ -1,0 +1,50 @@
+setting_id,created_by,created_date,modified_by,modified_date,description,display_order,setting_title,setting_value,status,screen_id,type_id
+1,,10/7/2022 23:15,,10/7/2022 23:15,contain setting for each screen in system,,System Screen,TYPE_SCREEN,,,
+2,,10/7/2022 23:15,,10/7/2022 23:15,contain api link,,API,TYPE_API,,,
+3,,10/7/2022 23:15,,10/7/2022 23:15,contain settings relate to user role,,User Role,TYPE_ROLE,,,
+4,,10/7/2022 23:15,,10/9/2022 5:25,admin12,2,admin,ROLE_ADMIN,1,,3
+5,,10/7/2022 23:15,,10/9/2022 5:52,trainee,1E+48,trainee,ROLE_TRAINEE,1,,3
+6,,10/7/2022 23:15,,10/7/2022 23:15,description for manager,1,manager,ROLE_MANAGER,1,,3
+7,,10/7/2022 23:15,,10/8/2022 14:29,description for supporter,1,supporter,ROLE_SUPPORTER,1,,3
+8,,10/7/2022 23:15,,10/7/2022 23:15,description for trainer,1,trainer,ROLE_TRAINER,1,,3
+9,,10/7/2022 23:15,,10/7/2022 23:15,description for expert,1,expert,ROLE_EXPERT,1,,3
+10,,10/7/2022 23:15,,10/7/2022 23:15,type for test,,Test,TYPE_TEST,,,
+19,,10/7/2022 23:15,,10/9/2022 8:50,description for test,2,test3,TEST3,1,,10
+20,,10/7/2022 23:15,,10/7/2022 23:58,dfsfdfsfs,2,GRRRR 3,TEST4,0,,10
+21,,10/7/2022 23:15,,10/7/2022 23:15,description,1,Dashboard ,/dashboard,1,,1
+22,,10/7/2022 23:15,,10/7/2022 23:15,description,1,Profile  ,/profile,1,,1
+23,,10/7/2022 23:15,,10/7/2022 23:15,description,1,ChangePassword   ,/change-password,1,,1
+24,,10/7/2022 23:15,,10/7/2022 23:15,description,1,SettingList ,/setting-list,1,,1
+25,,10/7/2022 23:15,,10/7/2022 23:15,description,1,SettingDetail,/setting-detail/:id,1,,1
+26,,10/7/2022 23:15,,10/7/2022 23:15,description,1,UserDetail ,/user-detail/:id,1,,1
+27,,10/7/2022 23:15,,10/8/2022 14:45,description,1,UserList,/user-list,1,,1
+28,,10/7/2022 23:15,,10/7/2022 23:15,description,1,SubjectList,/subject-list,1,,1
+29,,10/7/2022 23:15,,10/7/2022 23:15,description,1,SubjectDetail,/subject-detail/:id,1,,1
+30,,10/7/2022 23:15,,10/7/2022 23:15,description,1,ClassList,/class-list,1,,1
+31,,10/7/2022 23:15,,10/7/2022 23:15,description,1,ClassDetail,/class-detail/:id,1,,1
+38,,,,,term for classes,1,Term,TYPE_TERM,1,,
+39,,,,,branch of classes,1,Branch,TYPE_BRANCH,1,,
+40,,,,,contain different type of web contact,1,Contact Category,TYPE_CONTACT,1,,
+44,,,,,term spring,3,Spring,TERM_SPRING,1,,38
+54,,,,,term summer,3,Summer,TERM_SUMMER,1,,38
+64,,,,,term fall,3,Fall,TERM_FALL,1,,38
+74,,,,,branch Ho Chi Minh,4,HCM,BRANCH_HCM,1,,39
+84,,,,,branch Ha Noi,4,Ha Noi,BRANCH_HN,1,,39
+94,,,,10/9/2022 7:25,,1,Da Nang,BRANCH_DN,1,,39
+104,,,,,question about account,1,Account and billing,CONTACT_ACCOUNT,1,,40
+114,,,,,general question,1,General,CONTACT_GENERAL,1,,40
+124,,,,,"report a bug , problem",1,"Report a problem, bugs",CONTACT_PROBLEM,1,,40
+11,,10/7/2022 23:15,,10/7/2022 23:15,description,1,Setting List ,/api/setting,1,24,2
+12,,10/7/2022 23:15,,10/7/2022 23:15,description ,1,Setting Filter,/api/setting-filter,1,24,2
+13,,10/7/2022 23:15,,10/7/2022 23:15,description ,1,Setting Status,/api/setting-status,1,24,2
+14,,10/7/2022 23:15,,10/7/2022 23:15,description ,1,Subject List,/api/subjects,1,28,2
+15,,10/7/2022 23:15,,10/7/2022 23:15,description ,1,Subject Status,/api/subjects-status,1,28,2
+16,,10/7/2022 23:15,,10/7/2022 23:15,description ,1,User List,/api/user,1,27,2
+17,,10/7/2022 23:15,,10/7/2022 23:15,description ,1,User Filter,/api/user-filter,1,27,2
+18,,10/7/2022 23:15,,10/7/2022 23:15,description ,1,User Status,/api/user-status,1,27,2
+32,,,,,API setting details,1,ApiSettingDetails,/api/setting-detail,1,25,2
+33,,,,,API subject details,1,ApiSubjectDetail,/api/subjects-detail,1,29,2
+34,,,,,API for user detail,1,ApiUserDetail,/api/user-detail,1,26,2
+35,,,,,API for class,1,APIClasslist,/api/class,1,30,2
+36,,,,,API for class detail,1,APIClassDetail,/api/class-detail,1,31,2
+37,,,,,API for class-status,1,API class status,/api/class-status,1,30,2

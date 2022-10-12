@@ -16,11 +16,11 @@ public class ClassRepositoriesCriteria {
 
     public TypedQuery<Classes> displayClass(String keyword, String filterTerm, String filterTrainer,
                                          String filterSupporter, String filterBranch, String filterStatus) {
-        StringBuilder query = new StringBuilder("SELECT c FROM Classes c WHERE 1=1");
+        StringBuilder query = new StringBuilder("SELECT DISTINCT c FROM Classes c WHERE 1=1");
 
         
         if (keyword != null) {
-            query.append(" AND c.code LIKE '%" + keyword + "%'");
+            query.append(" AND c.code LIKE '%" + keyword + "%' OR s.subject.subjectName LIKE '%" + keyword + "%'");
         }
 
         if (filterStatus != null) {

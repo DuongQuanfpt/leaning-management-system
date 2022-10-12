@@ -49,9 +49,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        System.out.println("URI 2 :  " + request.getQueryString());
+       
         System.out.println("URI :  " + request.getRequestURI());
         System.out.println("METHOD :  " + request.getMethod());
+
         if (!hasAuthorizationHeader(request)) {
             filterChain.doFilter(request, response);
             return;
@@ -98,23 +99,23 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         user.setSettings(roles);
         Setting api = settingRepositories.findActiveSettingByValue(url);
 
-        boolean canAccess = false;
+        boolean canAccess = true;
         if (api != null) {
 
             List<SettingPermission> list = permissionRepositories.findByScreen(api.getScreen());
             if (!list.isEmpty()) {
                 for (SettingPermission permission : list) {
 
-                    if(permission.getScreen().getStatus() == Status.Inactive){
+                    if (permission.getScreen().getStatus() == Status.Inactive) {
                         canAccess = false;
                         break;
                     }
-                    
+
                     for (Setting role : user.getSettings()) {
 
                         if (permission.getRole().getSettingValue().equals(role.getSettingValue())
                                 && permission.getScreen().getSettingValue().equals(api.getScreen().getSettingValue())) {
-                                    
+
                             if (method.equalsIgnoreCase("GET") && permission.isCanGetAll()) {
                                 canAccess = true;
                                 break;
