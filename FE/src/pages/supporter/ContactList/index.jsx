@@ -13,15 +13,15 @@ import settingListApi from '~/api/settingListApi'
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
-import subjectListApi from '~/api/subjectListApi'
+import webContactApi from '~/api/webContactApi'
 
-const AdminSettingList = () => {
+const ContactList = () => {
   const ITEM_PER_PAGE = 10
 
   const navigateTo = useNavigate()
 
-  const [listSetting, setListSetting] = useState([])
-  const [listType, setListType] = useState([])
+  const [listContact, setListContact] = useState([])
+  const [listSupporter, setListSupporter] = useState([])
   const [listStatus, setListStatus] = useState([])
 
   const [totalItem, setTotalItem] = useState(1)
@@ -29,7 +29,7 @@ const AdminSettingList = () => {
   const [currentPage, setCurrentPage] = useState(1)
 
   const [search, setSearch] = useState('')
-  const [type, setType] = useState('All Type')
+  const [supporter, setSupporter] = useState('All Supporter')
   const [status, setStatus] = useState('All Status')
   const [filter, setFilter] = useState({
     filterType: '',
@@ -37,101 +37,98 @@ const AdminSettingList = () => {
   })
 
   useEffect(() => {
-    settingListApi.getFilter().then((response) => {
-      setListType(response.typeFilter)
-      setListStatus(response.statusFilter)
-    })
-
+    loadData(1)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  useEffect(() => {
-    loadData(1, filter)
-  }, [filter])
-
-  const loadData = async (page, filter, q = '') => {
+  const loadData = async (page) => {
     const params = {
-      limit: ITEM_PER_PAGE,
       page: page,
+      limit: ITEM_PER_PAGE,
     }
-    if (q !== '') {
-      params.q = q
-    }
-    if (filter.filterType !== '') {
-      params.filterType = filter.filterType
-    }
-    if (filter.filterStatus !== '') {
-      params.filterStatus = filter.filterStatus
-    }
-    await settingListApi.getPage(params).then((response) => {
-      console.log(response)
-      setTotalItem(response.totalItem)
-      setListSetting(response.listResult)
+
+    await webContactApi
+      .getPage(params)
+      .then((response) => {
+        console.log(response)
+        setListContact(response)
+      })
+      .catch((error) => console.log(error))
+  }
+
+  const handleSearch = () => {}
+  const handleFilterSupporter = () => {}
+  const handleFilterStatus = () => {}
+  const handleReload = () => {}
+  const handleChangePage = () => {}
+  const handleActive = (contact) => {}
+
+  const modalConfirm = (setting) => {
+    Modal.confirm({
+      title: `Are you want to ${setting.status === 'Active' ? 'deactivate' : 'reactivate'} contact with ID "${
+        setting.contactId
+      }"?`,
+      icon: <ExclamationCircleOutlined />,
+      okText: 'OK',
+      cancelText: 'Cancel',
+      okType: 'danger',
+      onOk() {
+        handleActive(setting)
+      },
+      onCancel() {},
     })
-  }
-
-  const handleActive = async (id) => {
-    await settingListApi.changeActive(id).then((response) => {
-      loadData(1, filter)
-    })
-  }
-
-  const handleSearch = () => {
-    loadData(1, filter, search)
-  }
-
-  const handleFilterType = (type) => {
-    setFilter({ ...filter, filterType: type.value })
-    setType(type.title)
-  }
-
-  const handleFilterStatus = (status) => {
-    setFilter({ ...filter, filterStatus: status.value })
-    setStatus(status.name)
-  }
-
-  const handleReload = () => {
-    setFilter({ q: '', filterType: '', filterStatus: '' })
-    setType('All Type')
-    setStatus('All Status')
-  }
-
-  const handleAdd = () => {
-    navigateTo('/setting-add')
-  }
-
-  const handleChangePage = (pageNumber) => {
-    loadData(pageNumber, filter)
   }
 
   const columns = [
     {
       title: 'ID',
-      dataIndex: 'settingId',
+      dataIndex: 'contactId',
       width: 80,
     },
     {
-      title: 'Type',
-      dataIndex: 'typeName',
-      sorter: (a, b) => a.typeName?.length - b.typeName?.length,
-      ellipsis: true,
+      title: 'Supporter',
+      dataIndex: 'staffEmail',
+      sorter: (a, b) => a.staffEmail?.length - b.staffEmail?.length,
+      width: 120,
     },
     {
-      title: 'Title',
-      dataIndex: 'settingTitle',
-      sorter: (a, b) => a.settingTitle?.length - b.settingTitle?.length,
+      title: 'Category',
+      dataIndex: 'categoryName',
+      sorter: (a, b) => a.categoryName?.length - b.categoryName?.length,
       ellipsis: true,
     },
 
     {
-      title: 'Value',
-      dataIndex: 'settingValue',
+      title: 'Fullname',
+      dataIndex: 'fullName',
+      sorter: (a, b) => a.fullName?.length - b.fullName?.length,
       ellipsis: true,
     },
     {
-      title: 'Display Order',
-      dataIndex: 'displayOrder',
+      title: 'Email',
+      dataIndex: 'email',
+      sorter: (a, b) => a.email?.length - b.email?.length,
       width: 150,
+    },
+    {
+      title: 'Mobile',
+      dataIndex: 'mobile',
+      sorter: (a, b) => a.mobile?.length - b.mobile?.length,
+      width: 150,
+    },
+    {
+      title: 'Message',
+      dataIndex: 'message',
+      sorter: (a, b) => a.message?.length - b.message?.length,
+      width: 150,
+      ellipsis: true,
+    },
+    {
+      title: 'Response',
+      dataIndex: 'response',
+      sorter: (a, b) => a.response?.length - b.response?.length,
+      width: 150,
+      ellipsis: true,
     },
     {
       title: 'Status',
@@ -164,7 +161,7 @@ const AdminSettingList = () => {
               shape="circle"
               icon={<EyeOutlined />}
               onClick={() => {
-                navigateTo(`/setting-detail/${setting?.settingId}`)
+                navigateTo(`/contact-detail/${setting?.contactId}`)
               }}
             ></Button>
           </Tooltip>
@@ -172,20 +169,6 @@ const AdminSettingList = () => {
       ),
     },
   ]
-
-  const modalConfirm = (setting) => {
-    Modal.confirm({
-      title: `Are you want to ${setting.status === 'Active' ? 'deactivate' : 'reactivate'} "${setting.settingTitle}"?`,
-      icon: <ExclamationCircleOutlined />,
-      okText: 'OK',
-      cancelText: 'Cancel',
-      okType: 'danger',
-      onOk() {
-        handleActive(setting.settingId)
-      },
-      onCancel() {},
-    })
-  }
 
   return (
     <div>
@@ -200,7 +183,7 @@ const AdminSettingList = () => {
                   <Breadcrumb.Item>
                     <Link to="/dashboard">Dashboard</Link>
                   </Breadcrumb.Item>
-                  <Breadcrumb.Item>Setting List</Breadcrumb.Item>
+                  <Breadcrumb.Item>Contact List</Breadcrumb.Item>
                 </Breadcrumb>
               </div>
               <div className="col-6 d-flex w-80">
@@ -218,10 +201,10 @@ const AdminSettingList = () => {
               </div>
               <div className="col-4 d-flex justify-content-end">
                 <CDropdown className="ml-4">
-                  <CDropdownToggle color="secondary">{type}</CDropdownToggle>
+                  <CDropdownToggle color="secondary">{supporter}</CDropdownToggle>
                   <CDropdownMenu>
-                    {listType.map((type) => (
-                      <CDropdownItem onClick={() => handleFilterType(type)}>{type.title}</CDropdownItem>
+                    {listSupporter.map((supporter) => (
+                      <CDropdownItem onClick={() => handleFilterSupporter(supporter)}>{supporter}</CDropdownItem>
                     ))}
                   </CDropdownMenu>
                 </CDropdown>
@@ -229,21 +212,18 @@ const AdminSettingList = () => {
                   <CDropdownToggle color="secondary">{status}</CDropdownToggle>
                   <CDropdownMenu>
                     {listStatus.map((status) => (
-                      <CDropdownItem onClick={() => handleFilterStatus(status)}>{status.name}</CDropdownItem>
+                      <CDropdownItem onClick={() => handleFilterStatus(status)}>{status}</CDropdownItem>
                     ))}
                   </CDropdownMenu>
                 </CDropdown>
                 <CButton color="success" type="submit" className="text-light ml-4" onClick={handleReload}>
                   <CIcon icon={cilSync} />
                 </CButton>
-                <CButton color="danger" type="submit" className="text-light ml-4" onClick={handleAdd}>
-                  <CIcon icon={cilPlus} />
-                </CButton>
               </div>
             </div>
           </div>
           <div className="col-lg-12">
-            <Table bordered dataSource={listSetting} columns={columns} pagination={false} />
+            <Table bordered dataSource={listContact} columns={columns} pagination={false} />
           </div>
           <div className="col-lg-12 d-flex justify-content-end">
             <Pagination defaultCurrent={currentPage} total={totalItem} onChange={handleChangePage} />;
@@ -255,4 +235,4 @@ const AdminSettingList = () => {
   )
 }
 
-export default AdminSettingList
+export default ContactList

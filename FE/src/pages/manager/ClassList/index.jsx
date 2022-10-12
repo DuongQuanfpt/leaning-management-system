@@ -255,7 +255,7 @@ const ClassList = () => {
                   <Breadcrumb.Item>
                     <Link to="/dashboard">Dashboard</Link>
                   </Breadcrumb.Item>
-                  <Breadcrumb.Item>Setting List</Breadcrumb.Item>
+                  <Breadcrumb.Item>Class List</Breadcrumb.Item>
                 </Breadcrumb>
               </div>
               <div className="col-3 d-flex w-80">
