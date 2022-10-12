@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import net.bytebuddy.utility.RandomString;
 import swp490.g23.onlinelearningsystem.entities.auth.domain.request.AuthRequest;
 import swp490.g23.onlinelearningsystem.entities.auth.domain.request.GoogleAuthRequest;
 import swp490.g23.onlinelearningsystem.entities.auth.service.impl.AuthService;
@@ -51,8 +50,8 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody @Valid AuthRequest request) {
-        String generatedPassword = RandomString.make(10);
-        return authService.register(request, generatedPassword);
+     
+        return authService.register(request, request.getPassword());
     }
 
     /**

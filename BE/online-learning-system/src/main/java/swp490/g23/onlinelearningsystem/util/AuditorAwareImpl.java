@@ -14,11 +14,15 @@ public class AuditorAwareImpl implements AuditorAware<String> {
         // TODO Auto-generated method stub
         Authentication authentication = SecurityContextHolder.getContext()
                 .getAuthentication();
-        UserDetails uDetails =  (UserDetails) authentication.getPrincipal();
-        System.out.println("EDITOR : " + uDetails.getUsername());
+    
         if (authentication == null || !authentication.isAuthenticated()) {
             return null;
         }
+
+        if(authentication.getPrincipal().equals("anonymousUser")){
+            return Optional.of("anonymousUser");
+        }
+        UserDetails uDetails = (UserDetails) authentication.getPrincipal();
 
         return Optional.of(uDetails.getUsername());
     }

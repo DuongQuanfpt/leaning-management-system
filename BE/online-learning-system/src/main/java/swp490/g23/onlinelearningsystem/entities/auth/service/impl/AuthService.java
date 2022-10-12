@@ -33,6 +33,7 @@ import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepo
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.InvalidTokenException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.ObjectDuplicateException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.UnverifiedUserException;
 import swp490.g23.onlinelearningsystem.util.GoogleHelper;
 import swp490.g23.onlinelearningsystem.util.JwtTokenUtil;
@@ -81,7 +82,7 @@ public class AuthService implements IAuthService {
     @Override
     public ResponseEntity<String> register(AuthRequest request, String password) {
         if (userRepository.findUserWithEmail(request.getEmail()) != null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email already exist");
+            throw new ObjectDuplicateException("email already exist");
         }
 
         PasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -89,7 +90,8 @@ public class AuthService implements IAuthService {
         user.setFullName(request.getFullName());
         user.setEmail(request.getEmail());
         user.setPassword(encoder.encode(password));
-        user.addRole(settingRepositories.findBySettingValue(RoleEnum.ROLE_TRAINEE.toString()));
+        System.out.println("????????????? : " +settingRepositories.findBySettingValue("ROLE_TRAINEE").getSettingValue());
+        user.addRole(settingRepositories.findBySettingValue("ROLE_TRAINEE"));
         user.setStatus(UserStatus.Unverified);
         user.setMailToken(RandomString.make(30));
         userRepository.save(user);
@@ -98,7 +100,7 @@ public class AuthService implements IAuthService {
             // "https://lms-app-1.herokuapp.com/auth/verify?token="+user.getMailToken();
             String verifyUrl = request.getLink() + user.getMailToken();
             System.out.println(verifyUrl);
-            sendRegisterMail(request.getEmail(), verifyUrl, password);
+            sendRegisterMail(request.getEmail(), verifyUrl);
         } catch (UnsupportedEncodingException | MessagingException e) {
             e.printStackTrace();
         }
@@ -193,7 +195,7 @@ public class AuthService implements IAuthService {
         emailService.sendMimeMail(details);
     }
 
-    public void sendRegisterMail(String email, String verifyUrl, String password)
+    public void sendRegisterMail(String email, String verifyUrl)
             throws UnsupportedEncodingException, MessagingException {
 
         EmailDetails details = new EmailDetails();
@@ -203,7 +205,7 @@ public class AuthService implements IAuthService {
         String subject = "Register sucessfull";
 
         String content = "<p>Hello,</p>"
-                + "<p>Your account have been sucessfully created, here your password : " + password + ".</p>"
+                + "<p>Your account have been sucessfully created .</p>"
                 + "<p>For the final step , click the link below to activate your account :</p>"
                 + "<p><a href=\"" + verifyUrl + "\">Click to verify your account  </a></p>"
                 + "<br>";

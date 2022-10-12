@@ -32,7 +32,7 @@ import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
 import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
 
 @Entity
-@Table(name = "user_tbl")
+@Table(name = "user")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -72,7 +72,7 @@ public class User extends BaseEntity implements UserDetails {
 
     @ManyToMany
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "userId", referencedColumnName = "userId"), inverseJoinColumns = @JoinColumn(name = "roleId", referencedColumnName = "settingId"))
-    private List<Setting> settings ;
+    private List<Setting> settings = new ArrayList<>();
 
     @OneToMany(mappedBy = "userTrainer")
     private List<Classes> classes;
