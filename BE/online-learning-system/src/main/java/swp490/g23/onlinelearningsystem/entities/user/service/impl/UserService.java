@@ -147,7 +147,7 @@ public class UserService implements IUserService {
 
     @Override
     public ResponseEntity<UserResponseDTO> updateUserProfile(String fullName, String bas64Avatar, String mobile,
-            Long userId, String username ,String email) {
+            Long userId, String username, String email) {
         User user = userRepository.findById(userId).orElseThrow(NoObjectException::new);
         // User user = userRepository.findById(userId).get();
         if (mobile != null) {
@@ -159,13 +159,13 @@ public class UserService implements IUserService {
         }
 
         if (username != null) {
-        
-            if(userRepository.findDupeAccountName(username,email).isEmpty()){
+
+            if (userRepository.findDupeAccountName(username, email).isEmpty()) {
                 user.setAccountName(username);
             } else {
                 throw new ObjectDuplicateException("User name already exist");
             }
-          
+
         }
 
         if (bas64Avatar != null) {
@@ -243,14 +243,16 @@ public class UserService implements IUserService {
         User user = userRepository.findById(id).orElseThrow(NoObjectException::new);
         List<Setting> settings = new ArrayList<>();
         String username = dto.getUsername();
-        if (username != null) {
-          if(userRepository.findByAccountName(username) == null){
+
+        System.out.println("??????? : " + user.getAccountName() + "/" + username);
+
+        if (username != null && !user.getAccountName().equals(username)== false) {
+            if (userRepository.findByAccountName(username) == null ) {
                 user.setAccountName(username);
             } else {
                 throw new ObjectDuplicateException("Username already exist");
-            }  
+            }
         }
-        user.setAccountName(dto.getUsername());
         user.setFullName(dto.getFullName());
         user.setMobile(dto.getMobile());
         user.setNote(dto.getNote());
@@ -272,7 +274,7 @@ public class UserService implements IUserService {
 
     @Override
     public ResponseEntity<String> updateStatus(Long id) {
-        User user = userRepository.findById(id).orElseThrow(NoObjectException :: new);
+        User user = userRepository.findById(id).orElseThrow(NoObjectException::new);
         if (user.getStatus() == UserStatus.Active) {
             user.setStatus(UserStatus.Inactive);
         } else {
@@ -302,7 +304,6 @@ public class UserService implements IUserService {
         return ResponseEntity.ok(filterDTO);
     }
 
-    
     @Override
     public ResponseEntity<String> addUser(UserRequestDTO requestDTO) {
         User user = new User();
@@ -310,7 +311,7 @@ public class UserService implements IUserService {
         List<String> roles = requestDTO.getRoles();
 
         if (requestDTO.getEmail() != null) {
-            if(!userRepository.findByEmail(requestDTO.getEmail()).isPresent()){
+            if (!userRepository.findByEmail(requestDTO.getEmail()).isPresent()) {
                 user.setEmail(requestDTO.getEmail());
             } else {
                 throw new ObjectDuplicateException("Email already exist");
@@ -318,13 +319,13 @@ public class UserService implements IUserService {
         }
 
         if (requestDTO.getUsername() != null) {
-            if(userRepository.findByAccountName(requestDTO.getUsername()) == null){
+            if (userRepository.findByAccountName(requestDTO.getUsername()) == null) {
                 user.setAccountName(requestDTO.getUsername());
             } else {
                 throw new ObjectDuplicateException("Username already exist");
             }
         }
-    
+
         user.setStatus(UserStatus.getFromValue(Integer.parseInt(requestDTO.getStatus())).get());
 
         if (requestDTO.getFullName() != null) {
@@ -350,7 +351,7 @@ public class UserService implements IUserService {
             user.setNote(requestDTO.getNote());
         }
 
-        if(requestDTO.getPassword() != null) {
+        if (requestDTO.getPassword() != null) {
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             user.setPassword(encoder.encode(requestDTO.getPassword()));
         }
@@ -416,6 +417,5 @@ public class UserService implements IUserService {
         responseDTO.setPermissions(permissionDTO);
         return responseDTO;
     }
-
 
 }

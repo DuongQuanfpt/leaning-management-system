@@ -86,13 +86,13 @@ public class SettingService implements ISettingService {
                 || setting.getType().getSettingValue().equals("TYPE_SCREEN")) {
             throw new NoObjectException("this setting cant be update");
         }
-        
+
         if (dto.getSettingTitle() != null) {
             setting.setSettingTitle(dto.getSettingTitle());
         }
 
-        if (dto.getSettingValue() != null) {
-            if(settingRepositories.findBySettingValue(dto.getSettingValue()) == null){
+        if (dto.getSettingValue() != null && setting.getSettingValue().equals(dto.getSettingValue())== false) {
+            if (settingRepositories.findBySettingValue(dto.getSettingValue()) == null) {
                 setting.setSettingValue(dto.getSettingValue());
             } else {
                 throw new ObjectDuplicateException("Setting Value already exist");

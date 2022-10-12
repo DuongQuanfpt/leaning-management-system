@@ -68,8 +68,8 @@ public class ContactService implements IContactService {
     public ResponseEntity<String> addContact(ContactRequestDTO dto) {
         WebContact entity = new WebContact();
 
-        if (dto.getFirstName() != null && dto.getLastName() != null) {
-            entity.setFullName(dto.getFirstName() + " " +dto.getLastName());
+        if (dto.getFullName()!= null) {
+            entity.setFullName(dto.getFullName());
         }
 
         if (dto.getEmail() != null) {

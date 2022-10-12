@@ -132,9 +132,8 @@ public class SubjectService implements ISubjectService {
             throw new NoObjectException("Subject doesnt exist");
         }
         
-        if (dto.getSubjectCode() != null) {
-            if (subjectRepository.findBySubjectCode(dto.getSubjectCode()) == null
-                    && !subject.getSubjectCode().equals(dto.getSubjectCode())) {
+        if (dto.getSubjectCode() != null && subject.getSubjectCode().equalsIgnoreCase(dto.getSubjectCode())==false) {
+            if (subjectRepository.findBySubjectCode(dto.getSubjectCode()) == null) {
                 subject.setSubjectCode(dto.getSubjectCode());
             } else {
                 throw new ObjectDuplicateException("Subject code already exist");
