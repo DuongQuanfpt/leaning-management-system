@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import swp490.g23.onlinelearningsystem.util.enumutil.TraineeStatus;
 
 @Getter
 @Setter
@@ -20,7 +21,7 @@ public class TraineeResponseDTO {
 
     private String mobile;
 
-    private String status;
+    private TraineeStatus status;
 
     private String note;
 

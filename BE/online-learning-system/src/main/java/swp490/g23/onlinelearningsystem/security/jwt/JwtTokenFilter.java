@@ -100,7 +100,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         Setting api = settingRepositories.findActiveSettingByValue(url);
 
         boolean canAccess = false;
-        if (api != null) {
+        if (api != null && api.getScreen() != null) {
 
             List<SettingPermission> list = permissionRepositories.findByScreen(api.getScreen());
             if (!list.isEmpty()) {

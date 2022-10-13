@@ -32,7 +32,7 @@ public class Subject extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long subjectId;
 
-    @Column(name="subject_code",unique = true)
+    @Column(name="subject_code",unique = true,nullable = false)
     private String subjectCode;
 
     @Column

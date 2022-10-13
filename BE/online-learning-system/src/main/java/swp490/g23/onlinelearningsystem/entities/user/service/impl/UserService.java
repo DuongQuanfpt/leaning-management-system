@@ -37,6 +37,7 @@ import swp490.g23.onlinelearningsystem.entities.user.repositories.criteria.UserR
 import swp490.g23.onlinelearningsystem.entities.user.service.IUserService;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoObjectException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.ObjectDuplicateException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.ValueMissingException;
 import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.UserStatusEntity;
 
@@ -316,6 +317,8 @@ public class UserService implements IUserService {
             } else {
                 throw new ObjectDuplicateException("Email already exist");
             }
+        }else{
+            throw new ValueMissingException("must asign an email");
         }
 
         if (requestDTO.getUsername() != null) {
@@ -324,6 +327,8 @@ public class UserService implements IUserService {
             } else {
                 throw new ObjectDuplicateException("Username already exist");
             }
+        }else{
+            throw new ValueMissingException("must asign a username");
         }
 
         user.setStatus(UserStatus.getFromValue(Integer.parseInt(requestDTO.getStatus())).get());

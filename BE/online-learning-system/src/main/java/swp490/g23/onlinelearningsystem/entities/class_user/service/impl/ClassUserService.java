@@ -41,6 +41,7 @@ public class ClassUserService implements IClassUserService{
 
         for (ClassUser classUser : queryResult.getResultList()) {
             TraineeResponseDTO responseDTO = toTraineeDTO(classUser.getUser());
+            responseDTO.setStatus(classUser.getStatus());
             // responseDTO.setStatus(classUser.getStatus());
             users.add(responseDTO);
         }
