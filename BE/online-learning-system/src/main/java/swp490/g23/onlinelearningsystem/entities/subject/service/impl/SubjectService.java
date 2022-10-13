@@ -45,11 +45,32 @@ public class SubjectService implements ISubjectService {
     @Override
     public ResponseEntity<SubjectResponsePaginateDTO> getSubject(int limit, int currentPage, String keyword,
             String managerFilter, String expertFilter, String statusFilter) {
-        List<SubjectResponseDTO> list = new ArrayList<>();
+
         TypedQuery<Subject> queryResult = subjectCriteria.searchFilterSubject(keyword, statusFilter, managerFilter,
                 expertFilter);
 
-        int totalItem = queryResult.getResultList().size();
+        List<SubjectResponseDTO> list = new ArrayList<>();
+        List<StatusEntity> statusfilter = new ArrayList<>();
+        List<String> managerList = new ArrayList<>();
+        List<String> expertList = new ArrayList<>();
+        List<Subject> subjects = queryResult.getResultList();
+
+        for (Status status : new ArrayList<Status>(EnumSet.allOf(Status.class))) {
+            statusfilter.add(new StatusEntity(status));
+        }
+
+        for (Subject subject : subjects) {
+            if (subject.getManager() != null && !managerList.contains(subject.getManager().getAccountName())) {
+                managerList.add(subject.getManager().getAccountName());
+            }
+
+            if (subject.getExpert() != null && !expertList.contains(subject.getExpert().getAccountName())) {
+                expertList.add(subject.getExpert().getAccountName());
+
+            }
+        }
+
+        int totalItem = subjects.size();
         int totalPage;
         if (limit != 0) {
             queryResult.setFirstResult((currentPage - 1) * limit);
@@ -68,6 +89,9 @@ public class SubjectService implements ISubjectService {
         dto.setTotalItem(totalItem);
         dto.setListResult(list);
         dto.setTotalPage(totalPage);
+        dto.setManagerFilter(managerList);
+        dto.setExpertFilter(expertList);
+        dto.setStatusFilter(statusfilter);
 
         return ResponseEntity.ok(dto);
     }
@@ -81,7 +105,7 @@ public class SubjectService implements ISubjectService {
         }
 
         if (dto.getBody() != null) {
-            subject.setSubjectName(dto.getBody());
+            subject.setBody(dto.getBody());
         }
 
         if (dto.getExpertUsername() != null) {
@@ -131,10 +155,9 @@ public class SubjectService implements ISubjectService {
         if (subject == null) {
             throw new NoObjectException("Subject doesnt exist");
         }
-        
-        if (dto.getSubjectCode() != null) {
-            if (subjectRepository.findBySubjectCode(dto.getSubjectCode()) == null
-                    && !subject.getSubjectCode().equals(dto.getSubjectCode())) {
+
+        if (dto.getSubjectCode() != null && subject.getSubjectCode().equalsIgnoreCase(dto.getSubjectCode()) == false) {
+            if (subjectRepository.findBySubjectCode(dto.getSubjectCode()) == null) {
                 subject.setSubjectCode(dto.getSubjectCode());
             } else {
                 throw new ObjectDuplicateException("Subject code already exist");

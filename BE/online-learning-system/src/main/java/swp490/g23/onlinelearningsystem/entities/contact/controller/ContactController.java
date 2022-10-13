@@ -4,32 +4,45 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import swp490.g23.onlinelearningsystem.entities.contact.domain.filter.ContactFilter;
 import swp490.g23.onlinelearningsystem.entities.contact.domain.request.ContactRequestDTO;
+import swp490.g23.onlinelearningsystem.entities.contact.domain.response.ContactPaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.contact.domain.response.ContactResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.contact.service.impl.ContactService;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
+import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 
 @RestController
 @CrossOrigin
 @RequestMapping(Setting.API_PREFIX)
 public class ContactController {
-    
+
     @Autowired
     private ContactService contactService;
 
     @GetMapping(value = "/contact")
-    public ResponseEntity<List<ContactResponseDTO>> getAllContact() {
+    public ResponseEntity<ContactPaginateDTO> getAllContact(
+            @RequestParam(name = "page", required = false) String currentPage,
+            @RequestParam(name = "limit", required = false) String requestLimit,
+            @RequestParam(name = "q", required = false) String keyword,
+            @RequestParam(name = "filterStatus", required = false) String statusFilter,
+            @RequestParam(name = "filterCategory", required = false) String categoryFilter) {
 
-        return contactService.getAllContact();
+        int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
+        int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
+
+        return contactService.getAllContact(keyword, limit, page, categoryFilter, statusFilter);
     }
 
     @GetMapping(value = "/contact-detail/{id}")
@@ -49,4 +62,13 @@ public class ContactController {
 
         return contactService.addContact(requestDTO);
     }
+
+    @PutMapping(value = "/contact-detail/{id}")
+	public ResponseEntity<String> updateContact(@PathVariable("id") Long id, 
+                                                @RequestBody ContactRequestDTO requestDTO,
+                                                @AuthenticationPrincipal User user) {
+
+		return contactService.editContactDetail(id , requestDTO,user);
+	}
+
 }

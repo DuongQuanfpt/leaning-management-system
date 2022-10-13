@@ -12,7 +12,7 @@ import lombok.Setter;
 public class ContactResponseDTO {
     private Long contactId;
 
-    private String staffEmail;
+    private String staffName;
 
     private String categoryName;
 

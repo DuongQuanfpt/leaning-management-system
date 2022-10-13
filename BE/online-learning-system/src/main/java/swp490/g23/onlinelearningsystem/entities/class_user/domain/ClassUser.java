@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
-import swp490.g23.onlinelearningsystem.util.enumutil.Status;
+import swp490.g23.onlinelearningsystem.util.enumutil.TraineeStatus;
 
 @Entity
 @Getter
@@ -28,7 +28,7 @@ public class ClassUser {
     private ClassUserKey id;
 
     @Column
-    private Status status;
+    private TraineeStatus status;
 
     @Column
     private String note;

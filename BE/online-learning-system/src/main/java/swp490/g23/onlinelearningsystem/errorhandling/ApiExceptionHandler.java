@@ -9,10 +9,10 @@ import org.springframework.web.context.request.WebRequest;
 
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.ObjectDuplicateException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.InvalidTokenException;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoContactException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoSettingException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoObjectException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.UnverifiedUserException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.ValueMissingException;
 @RestControllerAdvice
 public class ApiExceptionHandler {
    
@@ -62,10 +62,10 @@ public class ApiExceptionHandler {
         return new ErrorMessage(10107, "Setting doesnt exist");
     }
 
-    @ExceptionHandler(NoContactException.class)
+    @ExceptionHandler(ValueMissingException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public ErrorMessage noContactException(Exception ex,  WebRequest request) {
-        return new ErrorMessage(10108, "Contact doesnt exist");
+    public ErrorMessage missingValueException(Exception ex,  WebRequest request) {
+        return new ErrorMessage(10108, ex.getMessage());
     }
 
 }

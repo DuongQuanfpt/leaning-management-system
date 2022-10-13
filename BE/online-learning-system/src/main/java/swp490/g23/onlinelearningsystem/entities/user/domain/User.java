@@ -46,10 +46,10 @@ public class User extends BaseEntity implements UserDetails {
     @Column
     private String fullName;
 
-    @Column(name= "username", unique = true)
+    @Column(name= "username", unique = true , nullable = false)
     private String accountName;
 
-    @Column(name = "email", length = 40, unique = true)
+    @Column(name = "email", length = 40, unique = true , nullable = false)
     private String email;
 
     @Column

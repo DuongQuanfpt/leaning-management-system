@@ -37,6 +37,7 @@ import swp490.g23.onlinelearningsystem.entities.user.repositories.criteria.UserR
 import swp490.g23.onlinelearningsystem.entities.user.service.IUserService;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoObjectException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.ObjectDuplicateException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.ValueMissingException;
 import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.UserStatusEntity;
 
@@ -147,8 +148,8 @@ public class UserService implements IUserService {
 
     @Override
     public ResponseEntity<UserResponseDTO> updateUserProfile(String fullName, String bas64Avatar, String mobile,
-            Long userId, String username ,String email) {
-        User user = userRepository.findById(userId).orElseThrow(NoObjectException::new);
+            Long userId, String username, String email) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NoObjectException("User doesnt exist"));
         // User user = userRepository.findById(userId).get();
         if (mobile != null) {
             user.setMobile(mobile);
@@ -159,13 +160,13 @@ public class UserService implements IUserService {
         }
 
         if (username != null) {
-        
-            if(userRepository.findDupeAccountName(username,email).isEmpty()){
+
+            if (userRepository.findDupeAccountName(username, email).isEmpty()) {
                 user.setAccountName(username);
             } else {
                 throw new ObjectDuplicateException("User name already exist");
             }
-          
+
         }
 
         if (bas64Avatar != null) {
@@ -234,23 +235,25 @@ public class UserService implements IUserService {
 
     @Override
     public ResponseEntity<UserResponseDTO> viewUser(long id) {
-        User user = userRepository.findById(id).get();
+        User user = userRepository.findById(id).orElseThrow(() -> new NoObjectException("User doesnt exist"));
         return ResponseEntity.ok(toDTO(user));
     }
 
     @Override
     public ResponseEntity<String> updateUser(UserRequestDTO dto, Long id) {
-        User user = userRepository.findById(id).orElseThrow(NoObjectException::new);
+        User user = userRepository.findById(id).orElseThrow(() -> new NoObjectException("User doesnt exist"));
         List<Setting> settings = new ArrayList<>();
         String username = dto.getUsername();
-        if (username != null) {
-          if(userRepository.findByAccountName(username) == null){
+
+        System.out.println(user.getAccountName().equals(username));
+
+        if (username != null && user.getAccountName().equals(username)== false) {
+            if (userRepository.findByAccountName(username) == null ) {
                 user.setAccountName(username);
             } else {
                 throw new ObjectDuplicateException("Username already exist");
-            }  
+            }
         }
-        user.setAccountName(dto.getUsername());
         user.setFullName(dto.getFullName());
         user.setMobile(dto.getMobile());
         user.setNote(dto.getNote());
@@ -272,7 +275,7 @@ public class UserService implements IUserService {
 
     @Override
     public ResponseEntity<String> updateStatus(Long id) {
-        User user = userRepository.findById(id).orElseThrow(NoObjectException :: new);
+        User user = userRepository.findById(id).orElseThrow(() -> new NoObjectException("User doesnt exist"));
         if (user.getStatus() == UserStatus.Active) {
             user.setStatus(UserStatus.Inactive);
         } else {
@@ -302,7 +305,6 @@ public class UserService implements IUserService {
         return ResponseEntity.ok(filterDTO);
     }
 
-    
     @Override
     public ResponseEntity<String> addUser(UserRequestDTO requestDTO) {
         User user = new User();
@@ -310,21 +312,25 @@ public class UserService implements IUserService {
         List<String> roles = requestDTO.getRoles();
 
         if (requestDTO.getEmail() != null) {
-            if(!userRepository.findByEmail(requestDTO.getEmail()).isPresent()){
+            if (!userRepository.findByEmail(requestDTO.getEmail()).isPresent()) {
                 user.setEmail(requestDTO.getEmail());
             } else {
                 throw new ObjectDuplicateException("Email already exist");
             }
+        }else{
+            throw new ValueMissingException("must asign an email");
         }
 
         if (requestDTO.getUsername() != null) {
-            if(userRepository.findByAccountName(requestDTO.getUsername()) == null){
+            if (userRepository.findByAccountName(requestDTO.getUsername()) == null) {
                 user.setAccountName(requestDTO.getUsername());
             } else {
                 throw new ObjectDuplicateException("Username already exist");
             }
+        }else{
+            throw new ValueMissingException("must asign a username");
         }
-    
+
         user.setStatus(UserStatus.getFromValue(Integer.parseInt(requestDTO.getStatus())).get());
 
         if (requestDTO.getFullName() != null) {
@@ -350,7 +356,7 @@ public class UserService implements IUserService {
             user.setNote(requestDTO.getNote());
         }
 
-        if(requestDTO.getPassword() != null) {
+        if (requestDTO.getPassword() != null) {
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             user.setPassword(encoder.encode(requestDTO.getPassword()));
         }
@@ -360,13 +366,6 @@ public class UserService implements IUserService {
     }
 
     public String uploadImageS3(String imgBase64) {
-        return null;
-    }
-
-    @Override
-    public ResponseEntity<UserListResponsePaginateDTO> displayTrainee(int limit, int currentPage, String keyword,
-            String filterClass, String filterStatus) {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -416,6 +415,5 @@ public class UserService implements IUserService {
         responseDTO.setPermissions(permissionDTO);
         return responseDTO;
     }
-
 
 }
