@@ -21,7 +21,7 @@ const ContactList = () => {
   const navigateTo = useNavigate()
 
   const [listContact, setListContact] = useState([])
-  const [listSupporter, setListSupporter] = useState([])
+  const [listCategory, setListCategory] = useState([])
   const [listStatus, setListStatus] = useState([])
 
   const [totalItem, setTotalItem] = useState(1)
@@ -29,54 +29,74 @@ const ContactList = () => {
   const [currentPage, setCurrentPage] = useState(1)
 
   const [search, setSearch] = useState('')
-  const [supporter, setSupporter] = useState('All Supporter')
+  const [category, setCategory] = useState('All Category')
   const [status, setStatus] = useState('All Status')
   const [filter, setFilter] = useState({
-    filterType: '',
+    filterCategory: '',
     filterStatus: '',
   })
 
   useEffect(() => {
-    loadData(1)
+    webContactApi
+      .getPage(1)
+      .then((response) => {
+        setListCategory(response.contactFilter)
+        setListStatus(response.statusFilter)
+      })
+      .catch((error) => console.log(error))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const loadData = async (page) => {
+  useEffect(() => {
+    loadData(1, filter)
+  }, [filter])
+
+  const loadData = async (page, filter, q = '') => {
     const params = {
       page: page,
       limit: ITEM_PER_PAGE,
+    }
+
+    if (q !== '') {
+      params.q = q
+    }
+
+    if (filter.filterCategory !== '') {
+      params.filterCategory = filter.filterCategory
+    }
+    if (filter.filterStatus !== '') {
+      params.filterStatus = filter.filterStatus
     }
 
     await webContactApi
       .getPage(params)
       .then((response) => {
         console.log(response)
-        setListContact(response)
+        setListContact(response.listResult)
+        setTotalItem(response.totalPage)
       })
       .catch((error) => console.log(error))
   }
 
-  const handleSearch = () => {}
-  const handleFilterSupporter = () => {}
-  const handleFilterStatus = () => {}
-  const handleReload = () => {}
-  const handleChangePage = () => {}
-  const handleActive = (contact) => {}
-
-  const modalConfirm = (setting) => {
-    Modal.confirm({
-      title: `Are you want to ${setting.status === 'Active' ? 'deactivate' : 'reactivate'} contact with ID "${
-        setting.contactId
-      }"?`,
-      icon: <ExclamationCircleOutlined />,
-      okText: 'OK',
-      cancelText: 'Cancel',
-      okType: 'danger',
-      onOk() {
-        handleActive(setting)
-      },
-      onCancel() {},
-    })
+  const handleSearch = () => {
+    loadData(1, filter, search)
+  }
+  const handleFilterCategory = (category) => {
+    setFilter({ ...filter, filterCategory: category.value })
+    setCategory(category.title)
+  }
+  const handleFilterStatus = () => {
+    setFilter({ ...filter, filterStatus: status.value })
+    setStatus(status.name)
+  }
+  const handleReload = () => {
+    setFilter({ q: '', filterType: '', filterStatus: '' })
+    setSearch('')
+    setCategory('All Category')
+    setStatus('All Status')
+  }
+  const handleChangePage = (pageNumber) => {
+    loadData(pageNumber, filter)
   }
 
   const columns = [
@@ -86,48 +106,38 @@ const ContactList = () => {
       width: 80,
     },
     {
-      title: 'Supporter',
-      dataIndex: 'staffEmail',
-      sorter: (a, b) => a.staffEmail?.length - b.staffEmail?.length,
-      width: 120,
-    },
-    {
       title: 'Category',
       dataIndex: 'categoryName',
       sorter: (a, b) => a.categoryName?.length - b.categoryName?.length,
-      ellipsis: true,
+      width: 180,
     },
 
     {
       title: 'Fullname',
       dataIndex: 'fullName',
       sorter: (a, b) => a.fullName?.length - b.fullName?.length,
-      ellipsis: true,
     },
     {
       title: 'Email',
       dataIndex: 'email',
       sorter: (a, b) => a.email?.length - b.email?.length,
-      width: 150,
     },
     {
       title: 'Mobile',
       dataIndex: 'mobile',
       sorter: (a, b) => a.mobile?.length - b.mobile?.length,
-      width: 150,
+      width: 120,
     },
     {
       title: 'Message',
       dataIndex: 'message',
       sorter: (a, b) => a.message?.length - b.message?.length,
-      width: 150,
       ellipsis: true,
     },
     {
       title: 'Response',
       dataIndex: 'response',
       sorter: (a, b) => a.response?.length - b.response?.length,
-      width: 150,
       ellipsis: true,
     },
     {
@@ -135,7 +145,7 @@ const ContactList = () => {
       dataIndex: 'status',
       width: 90,
       render: (_, { status }) => (
-        <Tag color={status === 'Active' ? 'blue' : 'red'} key={status}>
+        <Tag color={status === 'OPEN' ? 'blue' : 'red'} key={status}>
           {status}
         </Tag>
       ),
@@ -143,19 +153,9 @@ const ContactList = () => {
     {
       title: 'Action',
       dataIndex: 'action',
-      width: 120,
+      width: 75,
       render: (_, setting) => (
         <Space size="middle">
-          <Tooltip title={setting.status === 'Active' ? 'Deactivate' : 'Reactivate'} placement="top">
-            <Button
-              type={setting.status === 'Active' ? 'danger' : 'primary'}
-              shape="circle"
-              icon={setting.status === 'Active' ? <CloseOutlined /> : <CheckOutlined />}
-              onClick={() => {
-                modalConfirm(setting)
-              }}
-            ></Button>
-          </Tooltip>
           <Tooltip title="View" placement="top">
             <Button
               shape="circle"
@@ -191,7 +191,7 @@ const ContactList = () => {
                   type="search"
                   id="form1"
                   className="form-control"
-                  placeholder="Searching by title...."
+                  placeholder="Searching by name, email, message and response...."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
@@ -201,10 +201,10 @@ const ContactList = () => {
               </div>
               <div className="col-4 d-flex justify-content-end">
                 <CDropdown className="ml-4">
-                  <CDropdownToggle color="secondary">{supporter}</CDropdownToggle>
+                  <CDropdownToggle color="secondary">{category}</CDropdownToggle>
                   <CDropdownMenu>
-                    {listSupporter.map((supporter) => (
-                      <CDropdownItem onClick={() => handleFilterSupporter(supporter)}>{supporter}</CDropdownItem>
+                    {listCategory.map((category) => (
+                      <CDropdownItem onClick={() => handleFilterCategory(category)}>{category.title}</CDropdownItem>
                     ))}
                   </CDropdownMenu>
                 </CDropdown>
@@ -212,7 +212,7 @@ const ContactList = () => {
                   <CDropdownToggle color="secondary">{status}</CDropdownToggle>
                   <CDropdownMenu>
                     {listStatus.map((status) => (
-                      <CDropdownItem onClick={() => handleFilterStatus(status)}>{status}</CDropdownItem>
+                      <CDropdownItem onClick={() => handleFilterStatus(status)}>{status.name}</CDropdownItem>
                     ))}
                   </CDropdownMenu>
                 </CDropdown>

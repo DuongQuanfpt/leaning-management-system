@@ -83,6 +83,7 @@ const ClassList = () => {
       params.filterStatus = filter.filterStatus
     }
     await classListApi.getPage(params).then((response) => {
+      console.log(response)
       setTotalItem(response.totalItem)
       setListClass(response.listResult)
     })
@@ -206,7 +207,7 @@ const ClassList = () => {
       width: 90,
       sorter: (a, b) => a.status?.length - b.status?.length,
       render: (_, { status }) => (
-        <Tag color={status === 'Active' ? 'green' : status === 'Inactive' ? 'red' : 'primary'} key={status}>
+        <Tag color={status === 'Active' ? 'blue' : status === 'Inactive' ? 'red' : 'grey'} key={status}>
           {status}
         </Tag>
       ),
