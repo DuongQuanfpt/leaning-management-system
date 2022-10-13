@@ -28,7 +28,7 @@ public class ClassUser {
     private ClassUserKey id;
 
     @Column
-    private TraineeStatus status;
+    private String status;
 
     @Column
     private String note;

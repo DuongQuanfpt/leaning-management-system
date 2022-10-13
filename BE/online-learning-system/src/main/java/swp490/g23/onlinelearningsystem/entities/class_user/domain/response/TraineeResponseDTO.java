@@ -23,9 +23,9 @@ public class TraineeResponseDTO {
 
     private String mobile;
 
-    private TraineeStatus status;
+    private String status;
 
     private String note;
 
-    private List<String> classes;
+    private String classes;
 }
