@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import swp490.g23.onlinelearningsystem.entities.contact.domain.filter.ContactFilter;
+import swp490.g23.onlinelearningsystem.entities.contact.domain.filter.ContactCategoryFilter;
 import swp490.g23.onlinelearningsystem.entities.contact.domain.request.ContactRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.contact.domain.response.ContactPaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.contact.domain.response.ContactResponseDTO;
@@ -37,12 +37,13 @@ public class ContactController {
             @RequestParam(name = "limit", required = false) String requestLimit,
             @RequestParam(name = "q", required = false) String keyword,
             @RequestParam(name = "filterStatus", required = false) String statusFilter,
+            @RequestParam(name = "filterSupporter", required = false) String suppFilter,
             @RequestParam(name = "filterCategory", required = false) String categoryFilter) {
 
         int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
         int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
 
-        return contactService.getAllContact(keyword, limit, page, categoryFilter, statusFilter);
+        return contactService.getAllContact(keyword, limit, page, categoryFilter, statusFilter , suppFilter);
     }
 
     @GetMapping(value = "/contact-detail/{id}")
@@ -52,7 +53,7 @@ public class ContactController {
     }
 
     @GetMapping(value = "/contact-subjects")
-    public ResponseEntity<List<ContactFilter>> getContactFilter() {
+    public ResponseEntity<List<ContactCategoryFilter>> getContactFilter() {
 
         return contactService.contactFilter();
     }

@@ -12,4 +12,7 @@ public interface SubjecRepository extends JpaRepository<Subject, Long>{
 
     @Query(value = "SELECT s FROM Subject s WHERE s.subjectCode IN :subjects")
     List<Subject> getSubjectsBySubjects (List<String> subjects);
+
+    @Query(value = "SELECT s FROM Subject s WHERE s.manager IS NOT NULL AND s.expert IS NOT NULL")
+    List<Subject> getSubjectManagerExpert ();
 }

@@ -1,8 +1,6 @@
 package swp490.g23.onlinelearningsystem.entities.class_user.service.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.persistence.TypedQuery;
@@ -17,8 +15,6 @@ import swp490.g23.onlinelearningsystem.entities.class_user.domain.response.Train
 import swp490.g23.onlinelearningsystem.entities.class_user.repositories.criteria.UserTraineeCriteria;
 import swp490.g23.onlinelearningsystem.entities.class_user.service.IClassUserService;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
-import swp490.g23.onlinelearningsystem.util.enumutil.TraineeStatus;
-
 @Service
 public class ClassUserService implements IClassUserService{
 
@@ -43,10 +39,14 @@ public class ClassUserService implements IClassUserService{
         }
 
         for (ClassUser classUser : queryResult.getResultList()) {
-            TraineeResponseDTO responseDTO = toTraineeDTO(classUser.getUser());
-            responseDTO.setClasses(classUser.getClasses().getCode());
-            responseDTO.setStatus(classUser.getStatus());
-            trainees.add(responseDTO);
+            TraineeResponseDTO traineeDTO = toTraineeDTO(classUser.getUser());
+            traineeDTO.setClasses(classUser.getClasses().getCode());
+            traineeDTO.setStatus(classUser.getStatus());
+            if(classUser.getDropoutDate() != null){
+                traineeDTO.setDropOut(classUser.getDropoutDate().toString());
+            }
+          
+            trainees.add(traineeDTO);
         }
 
         // Collections.sort(trainees, new Comparator<TraineeResponseDTO>() {

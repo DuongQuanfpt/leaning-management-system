@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ContactFilter {
+public class ContactCategoryFilter {
     String title;
     String value;
 }
