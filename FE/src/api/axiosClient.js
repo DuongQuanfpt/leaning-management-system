@@ -1,8 +1,5 @@
 import axios from 'axios'
 import queryString from 'query-string'
-import { createBrowserHistory } from 'history'
-
-const history = createBrowserHistory({ window })
 
 const axiosClient = axios.create({
   baseURL: 'https://lms-app-1.herokuapp.com',
@@ -43,16 +40,14 @@ axiosClient.interceptors.response.use(
       //Response return fail by not loggin yet
       //Then logout account and navigate to login page
       localStorage.removeItem('persist:LMS')
-      history.push('/login')
-      window.location.reload()
+      window.location.replace('/login')
       console.warn('Error 401', error)
     }
 
     if (message === 'Access denied') {
       //Response return fail by account not have permission to access
       //Then navigate to access denied page
-      history.push('/access-denied')
-      window.location.reload()
+      window.location.replace('/access-denied')
       console.warn('Error 403', error)
     }
     return Promise.reject(error)

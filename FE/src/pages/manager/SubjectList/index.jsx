@@ -135,11 +135,13 @@ const SubjectList = () => {
       title: 'Code',
       dataIndex: 'subjectCode',
       sorter: (a, b) => a.subjectCode?.length - b.subjectCode?.length,
+      width: 150,
     },
     {
       title: 'Name',
       dataIndex: 'subjectName',
       sorter: (a, b) => a.subjectName?.length - b.subjectName?.length,
+      width: 450,
     },
     {
       title: 'Manager',

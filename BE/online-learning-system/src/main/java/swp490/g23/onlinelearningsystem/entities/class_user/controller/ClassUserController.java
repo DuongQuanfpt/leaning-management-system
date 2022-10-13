@@ -25,11 +25,12 @@ public class ClassUserController {
 			@RequestParam(name = "page", required = false) String currentPage,
 			@RequestParam(name = "limit", required = false) String requestLimit,
 			@RequestParam(name = "q", required = false) String keyword,
+			@RequestParam(name = "filterClass", required = false) String classFilter,
 			@RequestParam(name = "filterStatus", required = false) String statusFilter) {
 		
 		int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
 		int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
-		return classUserService.displayTrainee(limit, page, keyword, keyword, statusFilter);
+		return classUserService.displayTrainee(limit, page, keyword, classFilter, statusFilter);
 	}
 
 }

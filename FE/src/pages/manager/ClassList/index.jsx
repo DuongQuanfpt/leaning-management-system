@@ -95,11 +95,11 @@ const ClassList = () => {
   }
 
   const handleFilterTerm = (term) => {
-    setFilter({ ...filter, filterTerm: term.title })
+    setFilter({ ...filter, filterTerm: term.value })
     setTerm(term.title)
   }
   const handleFilterBranch = (branch) => {
-    setFilter({ ...filter, filterBranch: branch.title })
+    setFilter({ ...filter, filterBranch: branch.value })
     setBranch(branch.title)
   }
   const handleFilterTrainer = (trainer) => {

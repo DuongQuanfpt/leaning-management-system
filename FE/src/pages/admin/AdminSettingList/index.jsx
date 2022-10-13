@@ -13,7 +13,6 @@ import settingListApi from '~/api/settingListApi'
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
-import subjectListApi from '~/api/subjectListApi'
 
 const AdminSettingList = () => {
   const ITEM_PER_PAGE = 10
