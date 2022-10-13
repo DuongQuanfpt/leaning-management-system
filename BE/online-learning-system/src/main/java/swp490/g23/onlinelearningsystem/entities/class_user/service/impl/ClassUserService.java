@@ -1,6 +1,8 @@
 package swp490.g23.onlinelearningsystem.entities.class_user.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.persistence.TypedQuery;
@@ -15,6 +17,7 @@ import swp490.g23.onlinelearningsystem.entities.class_user.domain.response.Train
 import swp490.g23.onlinelearningsystem.entities.class_user.repositories.criteria.UserTraineeCriteria;
 import swp490.g23.onlinelearningsystem.entities.class_user.service.IClassUserService;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
+import swp490.g23.onlinelearningsystem.util.enumutil.TraineeStatus;
 
 @Service
 public class ClassUserService implements IClassUserService{
@@ -26,7 +29,7 @@ public class ClassUserService implements IClassUserService{
     public ResponseEntity<TraineeResponsePaginateDTP> displayTrainee(int limit, int currentPage, String keyword,
             String filterClass, String filterStatus) {
 
-        List<TraineeResponseDTO> users = new ArrayList<>();
+        List<TraineeResponseDTO> trainees = new ArrayList<>();
         TypedQuery<ClassUser> queryResult = traineeCriteria.displayTrainee(keyword, filterClass, filterStatus);
 
         int totalItem = queryResult.getResultList().size();
@@ -41,15 +44,22 @@ public class ClassUserService implements IClassUserService{
 
         for (ClassUser classUser : queryResult.getResultList()) {
             TraineeResponseDTO responseDTO = toTraineeDTO(classUser.getUser());
+            responseDTO.setClasses(classUser.getClasses().getCode());
             responseDTO.setStatus(classUser.getStatus());
-            // responseDTO.setStatus(classUser.getStatus());
-            users.add(responseDTO);
+            trainees.add(responseDTO);
         }
+
+        // Collections.sort(trainees, new Comparator<TraineeResponseDTO>() {
+        //     @Override
+        //     public int compare(TraineeResponseDTO t1, TraineeResponseDTO t2) {
+        //       return t1.getClasses().compareTo(t2.getClasses());
+        //     }
+        //   });
 
         TraineeResponsePaginateDTP responseDTO = new TraineeResponsePaginateDTP();
         responseDTO.setPage(currentPage);
         responseDTO.setTotalItem(totalItem);
-        responseDTO.setListResult(users);
+        responseDTO.setListResult(trainees);
         responseDTO.setTotalPage(totalPage);
 
         return ResponseEntity.ok(responseDTO);
@@ -58,17 +68,12 @@ public class ClassUserService implements IClassUserService{
     //convert to DTO
     public TraineeResponseDTO toTraineeDTO(User entity) {
         TraineeResponseDTO responseDTO = new TraineeResponseDTO();
-        List<ClassUser>classUsers = entity.getClassUsers();
         responseDTO.setFullName(entity.getFullName());
         responseDTO.setUsername(entity.getAccountName());
         responseDTO.setEmail(entity.getEmail());
         responseDTO.setMobile(entity.getMobile());
         responseDTO.setNote(entity.getNote());
         responseDTO.setUserId(entity.getUserId());
-        for (ClassUser classUser : classUsers){
-            responseDTO.setClazz(classUser.getClasses().getCode());
-        }
-        
         return responseDTO;
     }
 

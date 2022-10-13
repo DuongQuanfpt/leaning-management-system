@@ -1,5 +1,6 @@
 package swp490.g23.onlinelearningsystem.entities.class_user.domain.response;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,5 +26,5 @@ public class TraineeResponseDTO {
 
     private String note;
 
-    private String clazz;
+    private String classes;
 }
