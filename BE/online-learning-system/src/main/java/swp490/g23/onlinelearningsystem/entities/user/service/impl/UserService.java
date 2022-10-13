@@ -148,7 +148,7 @@ public class UserService implements IUserService {
     @Override
     public ResponseEntity<UserResponseDTO> updateUserProfile(String fullName, String bas64Avatar, String mobile,
             Long userId, String username, String email) {
-        User user = userRepository.findById(userId).orElseThrow(NoObjectException::new);
+        User user = userRepository.findById(userId).orElseThrow(() -> new NoObjectException("User doesnt exist"));
         // User user = userRepository.findById(userId).get();
         if (mobile != null) {
             user.setMobile(mobile);
@@ -234,13 +234,13 @@ public class UserService implements IUserService {
 
     @Override
     public ResponseEntity<UserResponseDTO> viewUser(long id) {
-        User user = userRepository.findById(id).get();
+        User user = userRepository.findById(id).orElseThrow(() -> new NoObjectException("User doesnt exist"));
         return ResponseEntity.ok(toDTO(user));
     }
 
     @Override
     public ResponseEntity<String> updateUser(UserRequestDTO dto, Long id) {
-        User user = userRepository.findById(id).orElseThrow(NoObjectException::new);
+        User user = userRepository.findById(id).orElseThrow(() -> new NoObjectException("User doesnt exist"));
         List<Setting> settings = new ArrayList<>();
         String username = dto.getUsername();
 
@@ -274,7 +274,7 @@ public class UserService implements IUserService {
 
     @Override
     public ResponseEntity<String> updateStatus(Long id) {
-        User user = userRepository.findById(id).orElseThrow(NoObjectException::new);
+        User user = userRepository.findById(id).orElseThrow(() -> new NoObjectException("User doesnt exist"));
         if (user.getStatus() == UserStatus.Active) {
             user.setStatus(UserStatus.Inactive);
         } else {

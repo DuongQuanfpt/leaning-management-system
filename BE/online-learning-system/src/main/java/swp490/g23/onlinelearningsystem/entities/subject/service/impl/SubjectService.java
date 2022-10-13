@@ -81,7 +81,7 @@ public class SubjectService implements ISubjectService {
         }
 
         if (dto.getBody() != null) {
-            subject.setSubjectName(dto.getBody());
+            subject.setBody(dto.getBody());
         }
 
         if (dto.getExpertUsername() != null) {
