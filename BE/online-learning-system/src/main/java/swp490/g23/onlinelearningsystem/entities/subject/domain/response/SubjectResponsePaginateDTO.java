@@ -18,7 +18,7 @@ public class SubjectResponsePaginateDTO {
     private int totalPage;
     private long totalItem;
     private List<SubjectResponseDTO> listResult = new ArrayList<>();
-    List<String> managerFilter;
-    List<String> expertFilter;
-    List <StatusEntity> statusFilter;
+    private List<String> managerFilter;
+    private List<String> expertFilter;
+    private List <StatusEntity> statusFilter;
 }

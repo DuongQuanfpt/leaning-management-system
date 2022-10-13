@@ -3,6 +3,7 @@ package swp490.g23.onlinelearningsystem.entities.class_user.service.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.List;
 
 import javax.persistence.TypedQuery;
@@ -12,18 +13,27 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.ClassUser;
+import swp490.g23.onlinelearningsystem.entities.class_user.domain.filter.TraineeFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.response.TraineeResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.response.TraineeResponsePaginateDTP;
 import swp490.g23.onlinelearningsystem.entities.class_user.repositories.criteria.UserTraineeCriteria;
 import swp490.g23.onlinelearningsystem.entities.class_user.service.IClassUserService;
+import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
+import swp490.g23.onlinelearningsystem.entities.classes.repositories.ClassRepositories;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
+import swp490.g23.onlinelearningsystem.util.enumutil.ClassStatus;
 import swp490.g23.onlinelearningsystem.util.enumutil.TraineeStatus;
+import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.ClassStatusEntity;
+import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.TraineeStatusEntity;
 
 @Service
 public class ClassUserService implements IClassUserService{
 
     @Autowired
     UserTraineeCriteria traineeCriteria;
+
+    @Autowired
+    ClassRepositories classRepositories;
 
     @Override
     public ResponseEntity<TraineeResponsePaginateDTP> displayTrainee(int limit, int currentPage, String keyword,
@@ -45,7 +55,7 @@ public class ClassUserService implements IClassUserService{
         for (ClassUser classUser : queryResult.getResultList()) {
             TraineeResponseDTO responseDTO = toTraineeDTO(classUser.getUser());
             responseDTO.setClasses(classUser.getClasses().getCode());
-            responseDTO.setStatus(classUser.getStatus());
+            // responseDTO.setStatus(classUser.getStatus());
             trainees.add(responseDTO);
         }
 
@@ -63,6 +73,26 @@ public class ClassUserService implements IClassUserService{
         responseDTO.setTotalPage(totalPage);
 
         return ResponseEntity.ok(responseDTO);
+    }
+
+    @Override
+    public ResponseEntity<TraineeFilterDTO> getFilter() {
+        List<String> list = new ArrayList<>();
+        List<TraineeStatusEntity> statues = new ArrayList<>();
+        
+        for (TraineeStatus status : new ArrayList<TraineeStatus>(EnumSet.allOf(TraineeStatus.class))) {
+            statues.add(new TraineeStatusEntity(status));
+        }
+
+        for (Classes clazz : classRepositories.findAll()) {
+            list.add(clazz.getCode());
+        }
+
+        TraineeFilterDTO filterDTO = new TraineeFilterDTO();
+        filterDTO.setStatusFilter(statues);
+        filterDTO.setClassFilter(list);
+
+        return ResponseEntity.ok(filterDTO);
     }
 
     //convert to DTO
