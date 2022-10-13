@@ -27,7 +27,7 @@ public class ClassUserService implements IClassUserService{
             String filterClass, String filterStatus) {
 
         List<TraineeResponseDTO> users = new ArrayList<>();
-        TypedQuery<ClassUser> queryResult = traineeCriteria.displayTrainee(keyword, filterClass, filterStatus);
+        TypedQuery<User> queryResult = traineeCriteria.displayTrainee(keyword, filterClass, filterStatus);
 
         int totalItem = queryResult.getResultList().size();
         int totalPage;
@@ -39,9 +39,8 @@ public class ClassUserService implements IClassUserService{
             totalPage = 1;
         }
 
-        for (ClassUser classUser : queryResult.getResultList()) {
-            TraineeResponseDTO responseDTO = toTraineeDTO(classUser.getUser());
-            responseDTO.setStatus(classUser.getStatus());
+        for (User user : queryResult.getResultList()) {
+            TraineeResponseDTO responseDTO = toTraineeDTO(user);
             // responseDTO.setStatus(classUser.getStatus());
             users.add(responseDTO);
         }
@@ -59,6 +58,7 @@ public class ClassUserService implements IClassUserService{
     public TraineeResponseDTO toTraineeDTO(User entity) {
         TraineeResponseDTO responseDTO = new TraineeResponseDTO();
         List<ClassUser>classUsers = entity.getClassUsers();
+        List<String> classes = new ArrayList<>();
         responseDTO.setFullName(entity.getFullName());
         responseDTO.setUsername(entity.getAccountName());
         responseDTO.setEmail(entity.getEmail());
@@ -66,8 +66,9 @@ public class ClassUserService implements IClassUserService{
         responseDTO.setNote(entity.getNote());
         responseDTO.setUserId(entity.getUserId());
         for (ClassUser classUser : classUsers){
-            responseDTO.setClazz(classUser.getClasses().getCode());
+            classes.add(classUser.getClasses().getCode());
         }
+        responseDTO.setClasses(classes);
         
         return responseDTO;
     }
