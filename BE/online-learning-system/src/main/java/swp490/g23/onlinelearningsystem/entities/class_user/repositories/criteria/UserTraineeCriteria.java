@@ -31,7 +31,6 @@ public class UserTraineeCriteria {
             query.append(" AND c.classes.code = '" + filterClass + "'");
         }
 
-        query.append(" ORDER BY c.user.userId ASC");
         TypedQuery<ClassUser> typedQuery = em.createQuery(query.toString(), ClassUser.class);
         System.out.println(query.toString());
         return typedQuery;
