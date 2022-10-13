@@ -35,6 +35,7 @@ const SubjectAdd = () => {
   const [error, setError] = useState('')
 
   const { roles } = useSelector((state) => state.profile)
+  console.log(roles)
 
   useEffect(() => {
     loadData()
@@ -52,6 +53,22 @@ const SubjectAdd = () => {
   }
 
   const handleAdd = async () => {
+    if (code === '') {
+      setError('Subject Code must not empty')
+      return
+    }
+    if (name === '') {
+      setError('Subject Name must not empty')
+      return
+    }
+    if (manager === 'Select Manager') {
+      setError('You must choose one Manager')
+      return
+    }
+    if (expert === 'Select Expert') {
+      setError('You must choose one Expert')
+      return
+    }
     const params = {
       subjectCode: code,
       subjectName: name,
@@ -67,6 +84,10 @@ const SubjectAdd = () => {
         setError('You have successfully add new subject')
       })
       .catch((error) => {
+        if (error.response.data.message === 'Subject code already exist') {
+          setError('Subject code already existed')
+          return
+        }
         setError('Something went wrong, please try again')
       })
   }
@@ -104,7 +125,7 @@ const SubjectAdd = () => {
               <Breadcrumb.Item>
                 <Link to="/subject-list">Subject List</Link>
               </Breadcrumb.Item>
-              <Breadcrumb.Item>Subject Detail</Breadcrumb.Item>
+              <Breadcrumb.Item>Subject Add</Breadcrumb.Item>
             </Breadcrumb>
           </div>
           <CContainer>

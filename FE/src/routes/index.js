@@ -34,6 +34,9 @@ const ClassAdd = lazy(() => import('~/pages/manager/ClassAdd'))
 const ContactList = lazy(() => import('~/pages/supporter/ContactList'))
 const ContactDetail = lazy(() => import('~/pages/supporter/ContactDetail'))
 
+//Trainer
+const TraineeList = lazy(() => import('~/pages/trainer/TraineeList'))
+
 //404 pages
 const PageNotFound = lazy(() => import('~/pages/common/PageNotFound'))
 
@@ -69,11 +72,7 @@ const adminRoutes = [
 ]
 
 // Manager routes
-const managerRoutes = [
-  { path: '/class-list', component: ClassList },
-  { path: '/class-detail/:id', component: ClassDetail },
-  { path: '/class-add', component: ClassAdd },
-]
+const managerRoutes = []
 
 // Supporter routes
 const supporterRoutes = [
@@ -94,6 +93,14 @@ const adminAndManagerRoutes = [
   { path: '/subject-add', component: SubjectAdd },
 ]
 
+const managerAndTrainerRoutes = [
+  { path: '/class-list', component: ClassList },
+  { path: '/class-detail/:id', component: ClassDetail },
+  { path: '/class-add', component: ClassAdd },
+]
+
+const supporterAndTrainerRoutes = [{ path: '/trainee-list', component: TraineeList }]
+
 export {
   commonRoutes,
   userRoutes,
@@ -103,4 +110,6 @@ export {
   trainerRoutes,
   traineeRoutes,
   adminAndManagerRoutes,
+  managerAndTrainerRoutes,
+  supporterAndTrainerRoutes,
 }

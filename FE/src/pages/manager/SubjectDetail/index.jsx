@@ -28,7 +28,6 @@ const SubjectDetail = () => {
   const [subjectDetail, setSubjectDetail] = useState({})
   const [isEditMode, setIsEditMode] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
-  const [isManager, setIsManager] = useState(false)
 
   const [listManager, setListManager] = useState([])
   const [listExpert, setListExpert] = useState([])
@@ -47,9 +46,6 @@ const SubjectDetail = () => {
     loadData()
     if (roles.includes('admin')) {
       setIsAdmin(true)
-    }
-    if (roles.includes('manager')) {
-      setIsManager(true)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -103,14 +99,12 @@ const SubjectDetail = () => {
 
   const handleCancel = () => {
     setError('')
-    setIsAdmin(!isAdmin)
-    setIsManager(!isManager)
+
     setIsEditMode(false)
   }
   const handleEdit = () => {
     setError('')
-    setIsAdmin(!isAdmin)
-    setIsManager(!isManager)
+
     setIsEditMode(true)
   }
 
@@ -152,7 +146,7 @@ const SubjectDetail = () => {
                                   type="text"
                                   value={code}
                                   onChange={(e) => setCode(e.target.value)}
-                                  disabled={!isEditMode}
+                                  disabled={isAdmin ? !isEditMode : true}
                                 />
                               </div>
                             </div>
@@ -164,14 +158,14 @@ const SubjectDetail = () => {
                                   type="text"
                                   value={name}
                                   onChange={(e) => setName(e.target.value)}
-                                  disabled={!isEditMode}
+                                  disabled={isAdmin ? !isEditMode : true}
                                 />
                               </div>
                             </div>
                             <div className="form-group col-6">
                               <label className="col-form-label">Manager</label>
                               <CDropdown className="w-100">
-                                <CDropdownToggle color="warning" disabled={!isEditMode}>
+                                <CDropdownToggle color="warning" disabled={isAdmin ? !isEditMode : true}>
                                   {manager}
                                 </CDropdownToggle>
                                 <CDropdownMenu className="w-100">
