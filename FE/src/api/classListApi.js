@@ -7,9 +7,9 @@ const header = {
 }
 
 const classListApi = {
-  getAll: () => {
+  getPage: (params) => {
     const url = `/api/class`
-    return axiosClient.get(url, header)
+    return axiosClient.get(url, { ...header, params })
   },
 
   changeActive: (id) => {
@@ -25,6 +25,11 @@ const classListApi = {
   changeDetail: (id, params) => {
     const url = `/api/class-detail/${id}`
     return axiosClient.put(url, params, header)
+  },
+
+  getFilter: () => {
+    const url = `/api/class-filter`
+    return axiosClient.get(url, header)
   },
 }
 

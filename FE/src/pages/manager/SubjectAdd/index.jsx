@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Radio, Modal } from 'antd'
-import { ExclamationCircleOutlined } from '@ant-design/icons'
 
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
@@ -17,85 +15,70 @@ import {
   CDropdownMenu,
   CDropdownItem,
 } from '@coreui/react'
-import { Breadcrumb } from 'antd'
+import { Breadcrumb, Radio, Modal } from 'antd'
+import { ExclamationCircleOutlined } from '@ant-design/icons'
 
 import ErrorMsg from '~/components/Common/ErrorMsg'
-import settingListApi from '~/api/settingListApi'
+import subjectListApi from '~/api/subjectListApi'
+import { useSelector } from 'react-redux'
 
-const AdminSettingAdd = () => {
-  const [listType, setListType] = useState([])
+const SubjectAdd = () => {
+  const [listManager, setListManager] = useState([])
+  const [listExpert, setListExpert] = useState([])
 
-  const [type, setType] = useState({ title: 'Choose Type', value: '' })
-  const [title, setTitle] = useState('')
-  const [value, setValue] = useState('')
+  const [manager, setManager] = useState('Select Manager')
+  const [expert, setExpert] = useState('Select Expert')
+  const [code, setCode] = useState('')
+  const [name, setName] = useState('')
   const [status, setStatus] = useState(0)
-  const [order, setOrder] = useState('')
-  const [description, setDescription] = useState('')
+  const [body, setBody] = useState('')
   const [error, setError] = useState('')
+
+  const { roles } = useSelector((state) => state.profile)
 
   useEffect(() => {
     loadData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const loadData = async () => {
-    settingListApi.getFilter().then((response) => {
-      setListType(response.typeFilter)
-    })
-  }
-
-  const handleChangeType = (type) => {
-    setType(type)
+    subjectListApi
+      .getFilter()
+      .then((response) => {
+        setListManager(response.managerFilter)
+        setListExpert(response.expertFilter)
+      })
+      .catch((error) => setError('Something went wrong, please try again'))
   }
 
   const handleAdd = async () => {
-    if (type.title === 'Choose Type') {
-      setError('You must choose one of any type')
-      return
-    }
-    if (title === '') {
-      setError('Title must not empty')
-      return
-    }
-    if (value === '') {
-      setError('Value must not empty')
-      return
-    }
-    if (order === '') {
-      setError('Display Order must not empty')
-      return
-    }
-    if (description === '') {
-      setError('Description must not empty')
-      return
-    }
-
     const params = {
-      settingTitle: title,
-      settingValue: value,
-      status: status,
-      description: description,
-      displayOrder: order,
-      typeValue: type.value,
+      subjectCode: code,
+      subjectName: name,
+      managerUsername: manager,
+      expertUsername: expert,
+      subjectStatus: status,
+      body: body,
     }
 
-    await settingListApi
-      .addSetting(params)
+    await subjectListApi
+      .addSubject(params)
       .then((response) => {
-        setError('Add new setting successfully')
+        setError('You have successfully add new subject')
       })
       .catch((error) => {
-        if (error.response.data.message === 'Setting Value already exist') {
-          setError('Setting Value already existed')
-          return
-        }
-        setError('Something went wrong, please try again later')
+        setError('Something went wrong, please try again')
       })
+  }
+
+  const handleChangeStatus = (e) => {
+    setStatus(e.target.value)
   }
 
   const modalConfirm = () => {
     setError('')
     Modal.confirm({
-      title: `Are you want to add new Setting?`,
+      title: `Are you want to add new Subject?`,
       icon: <ExclamationCircleOutlined />,
       okText: 'OK',
       cancelText: 'Cancel',
@@ -105,10 +88,6 @@ const AdminSettingAdd = () => {
       },
       onCancel() {},
     })
-  }
-
-  const handleChangeStatus = (e) => {
-    setStatus(e.target.value)
   }
 
   return (
@@ -123,9 +102,9 @@ const AdminSettingAdd = () => {
                 <Link to="/">Dashboard</Link>
               </Breadcrumb.Item>
               <Breadcrumb.Item>
-                <Link to="/setting-list">Setting List</Link>
+                <Link to="/subject-list">Subject List</Link>
               </Breadcrumb.Item>
-              <Breadcrumb.Item>Setting Add</Breadcrumb.Item>
+              <Breadcrumb.Item>Subject Detail</Breadcrumb.Item>
             </Breadcrumb>
           </div>
           <CContainer>
@@ -138,39 +117,48 @@ const AdminSettingAdd = () => {
                         <div className="widget-inner">
                           <div className="row">
                             <div className="form-group col-6">
-                              <label className="col-form-label">Type</label>
-                              <div>
-                                <CDropdown className="w-100">
-                                  <CDropdownToggle color="warning">{type.title}</CDropdownToggle>
-                                  <CDropdownMenu className="w-100">
-                                    {listType.map((type) => (
-                                      <CDropdownItem onClick={() => handleChangeType(type)}>{type.title}</CDropdownItem>
-                                    ))}
-                                  </CDropdownMenu>
-                                </CDropdown>
-                              </div>
-                            </div>
-                            <div className="form-group col-6">
-                              <label className="col-form-label">Title</label>
+                              <label className="col-form-label">Code</label>
                               <div>
                                 <input
                                   className="form-control"
                                   type="text"
-                                  value={title}
-                                  onChange={(e) => setTitle(e.target.value)}
+                                  value={code}
+                                  onChange={(e) => setCode(e.target.value)}
                                 />
                               </div>
                             </div>
                             <div className="form-group col-6">
-                              <label className="col-form-label">Value</label>
+                              <label className="col-form-label">Name</label>
                               <div>
                                 <input
                                   className="form-control"
                                   type="text"
-                                  value={value}
-                                  onChange={(e) => setValue(e.target.value)}
+                                  value={name}
+                                  onChange={(e) => setName(e.target.value)}
                                 />
                               </div>
+                            </div>
+                            <div className="form-group col-6">
+                              <label className="col-form-label">Manager</label>
+                              <CDropdown className="w-100">
+                                <CDropdownToggle color="warning">{manager}</CDropdownToggle>
+                                <CDropdownMenu className="w-100">
+                                  {listManager.map((manager) => (
+                                    <CDropdownItem onClick={() => setManager(manager)}>{manager}</CDropdownItem>
+                                  ))}
+                                </CDropdownMenu>
+                              </CDropdown>
+                            </div>
+                            <div className="form-group col-6">
+                              <label className="col-form-label">Expert</label>
+                              <CDropdown className="w-100">
+                                <CDropdownToggle color="warning">{expert}</CDropdownToggle>
+                                <CDropdownMenu className="w-100">
+                                  {listExpert.map((expert) => (
+                                    <CDropdownItem onClick={() => setExpert(expert)}>{expert}</CDropdownItem>
+                                  ))}
+                                </CDropdownMenu>
+                              </CDropdown>
                             </div>
                             <div className="form-group col-6">
                               <label className="col-form-label">Status</label>
@@ -182,30 +170,19 @@ const AdminSettingAdd = () => {
                               </div>
                             </div>
                             <div className="form-group col-12">
-                              <label className="col-form-label">Display Order</label>
-                              <div>
-                                <input
-                                  className="form-control"
-                                  type="number"
-                                  value={order}
-                                  onChange={(e) => setOrder(e.target.value)}
-                                />
-                              </div>
-                            </div>
-                            <div className="form-group col-12">
                               <label className="col-form-label">Description</label>
                               <div>
                                 <textarea
                                   className="form-control"
                                   type="text"
-                                  value={description}
-                                  onChange={(e) => setDescription(e.target.value)}
+                                  value={body}
+                                  onChange={(e) => setBody(e.target.value)}
                                 />
                               </div>
                             </div>
                             <ErrorMsg errorMsg={error} />
                             <div className="d-flex">
-                              <CButton size="md" color="warning" onClick={modalConfirm}>
+                              <CButton size="md" className="mr-5" color="warning" onClick={modalConfirm}>
                                 Add
                               </CButton>
                             </div>
@@ -224,4 +201,4 @@ const AdminSettingAdd = () => {
   )
 }
 
-export default AdminSettingAdd
+export default SubjectAdd

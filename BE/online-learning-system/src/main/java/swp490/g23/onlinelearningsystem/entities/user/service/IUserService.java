@@ -36,5 +36,4 @@ public interface IUserService {
 
     ResponseEntity<String> addUser(UserRequestDTO requestDTO);
     
-    ResponseEntity<UserListResponsePaginateDTO> displayTrainee(int limit, int currentPage, String keyword, String filterClass, String filterStatus);
 }

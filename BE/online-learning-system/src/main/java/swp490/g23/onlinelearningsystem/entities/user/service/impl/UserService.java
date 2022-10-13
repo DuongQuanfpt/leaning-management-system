@@ -364,13 +364,6 @@ public class UserService implements IUserService {
         return null;
     }
 
-    @Override
-    public ResponseEntity<UserListResponsePaginateDTO> displayTrainee(int limit, int currentPage, String keyword,
-            String filterClass, String filterStatus) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     // Convert Entity to DTO
     public UserResponseDTO toDTO(User entity) {
         UserResponseDTO responseDTO = new UserResponseDTO();

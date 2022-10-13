@@ -78,6 +78,7 @@ const AdminUserList = () => {
   }
 
   const handleFilterRole = (role) => {
+    console.log(role)
     setFilter({ ...filter, filterRole: role.title })
     setRole(role.title)
   }

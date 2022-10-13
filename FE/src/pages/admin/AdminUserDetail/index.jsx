@@ -46,27 +46,29 @@ const AdminUserDetail = () => {
   }, [])
 
   const handleSave = async () => {
-    if (note?.length === 0 || roles?.length === 0) {
-      setError('Roles and Note must not empty!')
-      return
+    const rolesData = roles.map((role) => role.value)
+    const data = {
+      username: userName,
+      fullName: fullName,
+      mobile: mobile,
+      roles: rolesData,
+      status: status,
+      note,
     }
-    try {
-      const rolesData = roles.map((role) => role.value)
-      const data = {
-        username: userName,
-        fullName: fullName,
-        mobile: mobile,
-        roles: rolesData,
-        status: status,
-        note,
-      }
-      await userListApi.changeDetail(id, data).then((response) => {
+    await userListApi
+      .changeDetail(id, data)
+      .then((response) => {
         setIsEditMode(false)
         setError('You have successfully changed your user detail')
       })
-    } catch (error) {
-      setError('Something went wrong, please try again')
-    }
+      .catch((error) => {
+        console.log(error)
+        if (error.response.data.message === 'Username already exist') {
+          setError('Username already existed')
+          return
+        }
+        setError('Something went wrong, please try again')
+      })
   }
 
   const handleCancel = () => {

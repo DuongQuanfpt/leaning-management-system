@@ -43,10 +43,10 @@ const Verify = () => {
         <div className="account-form-inner">
           <div className="account-container">
             <div className="error-page">
-              <h2 className="m-b15">{verifySuccess ? 'Verify Account Successfully' : 'Verify Account Fail'}</h2>
+              <h2 className="m-b15">Verify Account {verifySuccess ? 'Successfully' : 'Failed'}</h2>
               <p className="m-b30">
                 {verifySuccess
-                  ? 'Your account now is actived and already to login!'
+                  ? 'Your account now is activated and already to login!'
                   : 'This account maybe is verified or not available, try again!'}
               </p>
               <div className="">

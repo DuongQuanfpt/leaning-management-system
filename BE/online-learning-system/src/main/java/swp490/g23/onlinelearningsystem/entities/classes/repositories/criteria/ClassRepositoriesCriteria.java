@@ -20,7 +20,7 @@ public class ClassRepositoriesCriteria {
 
         
         if (keyword != null) {
-            query = new StringBuilder(query.toString().replaceAll("SELECT DISTINCT c FROM Classes c",
+            query = new StringBuilder(query.toString().replaceAll("SELECT DISTINCT c FROM Classes c", 
                     "SELECT DISTINCT c FROM Classes c JOIN c.classSubject as s"));
             query.append(" AND c.code LIKE '%" + keyword + "%' OR s.subject.subjectName LIKE '%" + keyword + "%'");
         }
@@ -30,7 +30,7 @@ public class ClassRepositoriesCriteria {
         }
 
         if( filterTerm != null){
-            query.append("AND c.settingTerm.settingTitle = '" + filterTerm + "'");
+            query.append("AND c.settingTerm.settingValue = '" + filterTerm + "'");
         }
 
         if( filterTrainer != null){
@@ -41,7 +41,7 @@ public class ClassRepositoriesCriteria {
             query.append("AND c.userSupporter.accountName = '" + filterSupporter + "'");
         }
         if( filterBranch != null){
-            query.append("AND c.settingBranch.settingTitle = '" + filterBranch + "'");
+            query.append("AND c.settingBranch.settingValue = '" + filterBranch + "'");
         }
 
         query.append(" ORDER BY c.classId ASC");

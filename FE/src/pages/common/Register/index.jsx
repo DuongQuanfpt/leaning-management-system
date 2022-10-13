@@ -31,6 +31,8 @@ const Register = () => {
   const schema = Yup.object().shape({
     name: Yup.string().required().min(3),
     email: Yup.string().required().email(),
+    password: Yup.string().required().min(6),
+    confirmPassword: Yup.string().required().min(6),
   })
 
   const {
@@ -40,23 +42,25 @@ const Register = () => {
   } = useForm({ resolver: yupResolver(schema), mode: 'onTouched' })
 
   const submitForm = async (data) => {
+    if (!isValid) return
+    if (data.password !== data.confirmPassword) {
+      setError('Your password and confirm password is not matched')
+      return
+    }
     data = {
-      ...data,
+      fullName: data.name,
+      email: data.email,
+      password: data.password,
       link: 'http://localhost:3000/verify?token=',
     }
-    if (!isValid) return
-    try {
-      const response = await axios.post('https://lms-app-1.herokuapp.com/auth/register', JSON.stringify(data), {
+    await axios
+      .post('https://lms-app-1.herokuapp.com/auth/register', JSON.stringify(data), {
         headers: {
           'Content-Type': 'application/json',
         },
       })
-      console.log(data)
-      console.log(response)
-      navigateTo('/register-processed')
-    } catch (error) {
-      setError('Email is available')
-    }
+      .then((response) => navigateTo('/register-processed'))
+      .catch((error) => setError('Email is available'))
   }
 
   const onSuccess = async (res) => {
@@ -141,7 +145,7 @@ const Register = () => {
                       <input
                         name="email"
                         type="email"
-                        placeholder="Your Email Address"
+                        placeholder="Your Email"
                         required=""
                         className="form-control"
                         autoComplete="false"
@@ -150,6 +154,42 @@ const Register = () => {
                     </div>
                     {errors.email?.type === 'required' && <ErrorMsg errorMsg="Email is required" />}
                     {errors.email?.type === 'email' && <ErrorMsg errorMsg="Email is not valid" />}
+                  </div>
+                </div>
+                <div className="col-lg-12">
+                  <div className="form-group">
+                    <div className="input-group">
+                      <input
+                        type="password"
+                        placeholder="Your Password"
+                        required=""
+                        className="form-control"
+                        autoComplete="false"
+                        {...register('password')}
+                      />
+                    </div>
+                    {errors.password?.type === 'required' && <ErrorMsg errorMsg="Password is required" />}
+                    {errors.password?.type === 'min' && (
+                      <ErrorMsg errorMsg="Your password length must be at least 6 characters" />
+                    )}
+                  </div>
+                </div>
+                <div className="col-lg-12">
+                  <div className="form-group">
+                    <div className="input-group">
+                      <input
+                        type="password"
+                        placeholder="Confirm your Password"
+                        required=""
+                        className="form-control"
+                        autoComplete="false"
+                        {...register('confirmPassword')}
+                      />
+                    </div>
+                    {errors.confirmPassword?.type === 'required' && <ErrorMsg errorMsg="Password is required" />}
+                    {errors.confirmPassword?.type === 'min' && (
+                      <ErrorMsg errorMsg="Your confirm password length must be at least 6 characters" />
+                    )}
                   </div>
                 </div>
                 <div className="col-lg-12 mb-10">

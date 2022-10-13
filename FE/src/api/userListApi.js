@@ -31,6 +31,11 @@ const userListApi = {
     const url = `/api/user-detail/${id}`
     return axiosClient.put(url, params, header)
   },
+
+  addUser: (params) => {
+    const url = `/api/user-add`
+    return axiosClient.post(url, params, header)
+  },
 }
 
 export default userListApi

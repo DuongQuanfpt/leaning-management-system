@@ -53,7 +53,6 @@ const Login = () => {
   }, [])
 
   const submitForm = async (data) => {
-    console.log(errors)
     if (!isValid) return
 
     //Get user token
@@ -67,7 +66,6 @@ const Login = () => {
       .then((token) => {
         //Get profile data
         userApi.getProfile(token).then((response) => {
-          console.log(response)
           dispatch(setProfile(response))
 
           setLogged(true)
@@ -76,7 +74,6 @@ const Login = () => {
       })
       .catch((error) => {
         setLogged(false)
-        console.log(error)
         const { message } = error.response.data
         if (message === 'This account is unverified') {
           setError('This account is unverified')
@@ -94,11 +91,11 @@ const Login = () => {
   }
 
   const onSuccess = async (res) => {
+    console.log(res)
     const data = {
       idToken: res.tokenId,
       clientId: clientId,
     }
-
     try {
       //Get google account token
       await authApi

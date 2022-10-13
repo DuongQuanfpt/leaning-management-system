@@ -86,13 +86,21 @@ const AdminSettingDetail = () => {
       typeValue: type.value,
     }
 
+    console.log(params)
+
     await settingListApi
       .changeDetail(id, params)
       .then((response) => {
         setIsEditMode(false)
         setError('You have successfully changed your setting detail')
       })
-      .catch((error) => setError('Something went wrong, please try again'))
+      .catch((error) => {
+        if (error.response.data.message === 'Setting Value already exist') {
+          setError('Setting Value already existed')
+          return
+        }
+        setError('Something went wrong, please try again')
+      })
   }
 
   const handleCancel = () => {
@@ -131,7 +139,7 @@ const AdminSettingDetail = () => {
               <Breadcrumb.Item>
                 <Link to="/setting-list">Setting List</Link>
               </Breadcrumb.Item>
-              <Breadcrumb.Item>Setting Add</Breadcrumb.Item>
+              <Breadcrumb.Item>Setting Detail</Breadcrumb.Item>
             </Breadcrumb>
           </div>
           <CContainer>

@@ -4,15 +4,14 @@ import { useSelector } from 'react-redux'
 import $ from 'jquery'
 import Sticky from 'react-stickynode'
 
-// Images
-import logo from '~/assets/images/logo.png'
-import adv from '~/assets/images/adv/adv.jpg'
-import logoWhite from '~/assets/images/logo-white.png'
-
 import { CAvatar, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
 import { cilCreditCard, cilAccountLogout, cilSettings, cilUser } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
 
+// Images
+import logo from '~/assets/images/logo.png'
+import adv from '~/assets/images/adv/adv.jpg'
+import logoWhite from '~/assets/images/logo-white.png'
 import avatar from '~/assets/images/profile/pic1.jpg'
 
 const Header = () => {
@@ -151,7 +150,6 @@ const Header = () => {
   return (
     <>
       <header className="header-client rs-nav header-transparent">
-        {/* {logged ? ( */}
         <Sticky enabled={true} className="sticky-header navbar-expand-lg">
           <div className="menu-bar clearfix">
             <div className="container clearfix">
