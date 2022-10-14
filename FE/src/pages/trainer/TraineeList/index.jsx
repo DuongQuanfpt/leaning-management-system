@@ -54,7 +54,6 @@ const TraineeList = () => {
     await traineeListApi
       .getPage(params)
       .then((response) => {
-        console.log(response)
         setListClasses(response.listResult)
         setTotalItem(response.totalItem)
       })
@@ -69,12 +68,10 @@ const TraineeList = () => {
   const handleReload = () => {}
 
   const handleExport = () => {
-    console.log('export start')
     const ws = utils.json_to_sheet(listClasses)
     const wb = utils.book_new()
     utils.book_append_sheet(wb, ws, 'Data')
     writeFileXLSX(wb, 'SheetJSReactAoO.xlsx')
-    console.log('export done')
   }
 
   const handleChangePage = (pageNumber) => {
@@ -147,7 +144,6 @@ const TraineeList = () => {
         <AdminHeader />
 
         <div className="body flex-grow-1 px-3">
-          <h1>Chưa xong đừng sờ vào</h1>
           <div className="col-lg-12 m-b30">
             <div className="row">
               <div className="col-2 d-flex align-items-center">

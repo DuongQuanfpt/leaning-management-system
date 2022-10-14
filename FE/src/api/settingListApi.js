@@ -9,7 +9,6 @@ const header = {
 const settingListApi = {
   getAll: () => {
     const url = `/api/setting`
-    console.log(header)
     return axiosClient.get(url, header)
   },
 
