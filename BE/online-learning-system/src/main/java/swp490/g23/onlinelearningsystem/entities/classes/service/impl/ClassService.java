@@ -58,10 +58,37 @@ public class ClassService implements IClassService {
             String filterTerm, String filterTrainer,
             String filterSupporter, String filterBranch, String filterStatus) {
         List<ClassResponseDTO> classes = new ArrayList<>();
+        List<ClassStatusEntity> statusFilter = new ArrayList<>();
+        List<String> termList = new ArrayList<>();
+        List<String> branchList = new ArrayList<>();
+        List<String> trainerList = new ArrayList<>();
+        List<String> supporterList = new ArrayList<>();
 
         TypedQuery<Classes> queryResult = classCriteria.displayClass(keyword, filterTerm, filterTrainer,
                 filterSupporter, filterBranch, filterStatus);
-    
+
+        List<Classes> classList = queryResult.getResultList();
+        
+        for (ClassStatus status : new ArrayList<ClassStatus>(EnumSet.allOf(ClassStatus.class))) {
+            statusFilter.add(new ClassStatusEntity(status));
+        }
+
+        for (Classes clazz : classList) {
+            if (clazz.getUserTrainer() != null && !trainerList.contains(clazz.getUserTrainer().getAccountName())) {
+                trainerList.add(clazz.getUserTrainer().getAccountName());
+            }
+
+            if (clazz.getUserSupporter() != null && !supporterList.contains(clazz.getUserSupporter().getAccountName())) {
+                supporterList.add(clazz.getUserSupporter().getAccountName());
+            }
+            if (clazz.getSettingBranch() != null && !branchList.contains(clazz.getSettingBranch().getSettingValue())) {
+                branchList.add(clazz.getSettingBranch().getSettingValue());
+            }
+            if (clazz.getSettingTerm() != null && !termList.contains(clazz.getSettingTerm().getSettingValue())) {
+                termList.add(clazz.getSettingTerm().getSettingValue());
+            }
+        }
+
         int totalItem = queryResult.getResultList().size();
         int totalPage;
         if (limit != 0) {
@@ -81,7 +108,12 @@ public class ClassService implements IClassService {
         responseDTO.setTotalItem(totalItem);
         responseDTO.setListResult(classes);
         responseDTO.setTotalPage(totalPage);
-
+        responseDTO.setBranchFilter(branchList);
+        responseDTO.setTermFilter(termList);
+        responseDTO.setTrainerFilter(trainerList);
+        responseDTO.setSupporterFilter(supporterList);
+        responseDTO.setStatusFilter(statusFilter);
+        
         return ResponseEntity.ok(responseDTO);
     }
 

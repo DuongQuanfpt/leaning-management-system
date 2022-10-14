@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import swp490.g23.onlinelearningsystem.entities.class_user.domain.filter.TraineeFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.response.TraineeResponsePaginateDTP;
 import swp490.g23.onlinelearningsystem.entities.class_user.service.impl.ClassUserService;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
@@ -33,4 +34,9 @@ public class ClassUserController {
 		return classUserService.displayTrainee(limit, page, keyword, classFilter, statusFilter);
 	}
 
+	@GetMapping(value = "/trainee-filter")
+	public ResponseEntity<TraineeFilterDTO> getFilter() {
+		
+		return classUserService.getFilter();
+	} 
 }
