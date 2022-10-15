@@ -22,7 +22,6 @@ import swp490.g23.onlinelearningsystem.entities.contact.service.IContactService;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
-import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoObjectException;
 import swp490.g23.onlinelearningsystem.util.enumutil.ContactStatus;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.ContactStatusEntity;

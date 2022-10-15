@@ -50,6 +50,7 @@
     "simplebar-react": "^2.4.1",
     "slick-carousel": "^1.8.1",
     "web-vitals": "^1.1.0",
+    "xlsx": "^0.18.5",
     "yup": "^0.32.11"
   },
   "devDependencies": {

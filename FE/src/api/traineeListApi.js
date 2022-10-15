@@ -6,20 +6,16 @@ const header = {
   headers: { Authorization: `Bearer ${currentAccessToken}` },
 }
 
-const webContactApi = {
-  addContact: (params) => {
-    const url = `/api/contact-add`
-    return axiosClient.post(url, params)
-  },
+const traineeListApi = {
   getPage: (params) => {
-    const url = `/api/contact`
+    const url = `/api/trainee`
     return axiosClient.get(url, { ...header, params })
   },
 
   getDetail: (id) => {
-    const url = `/api/contact-detail/${id}`
+    const url = `/api/trainee/${id}`
     return axiosClient.get(url, header)
   },
 }
 
-export default webContactApi
+export default traineeListApi

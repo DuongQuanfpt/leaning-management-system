@@ -38,7 +38,7 @@ const SubjectList = () => {
   })
 
   useEffect(() => {
-    subjectListApi.getFilter().then((response) => {
+    subjectListApi.getPage(1).then((response) => {
       setListManager(response.managerFilter)
       setListExpert(response.expertFilter)
       setListStatus(response.statusFilter)
