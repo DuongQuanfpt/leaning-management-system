@@ -61,7 +61,6 @@ const AdminUserList = () => {
       params.filterStatus = filter.filterStatus
     }
     await userListApi.getPage(params).then((response) => {
-      console.log(response)
       setTotalItem(response.totalItem)
       setListUser(response.listResult)
     })
@@ -78,7 +77,6 @@ const AdminUserList = () => {
   }
 
   const handleFilterRole = (role) => {
-    console.log(role)
     setFilter({ ...filter, filterRole: role.title })
     setRole(role.title)
   }
@@ -87,8 +85,6 @@ const AdminUserList = () => {
     setFilter({ ...filter, filterStatus: status.value })
     setStatus(status.name)
   }
-
-  console.log(filter)
 
   const handleReload = () => {
     setCurrentPage(1)

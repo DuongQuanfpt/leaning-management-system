@@ -109,7 +109,6 @@ const AdminUserAdd = () => {
         setError('You have successfully add new User!')
       })
       .catch((error) => {
-        console.log(error)
         if (error.response.data.message === 'Username already exist') {
           setError('Username already existed, please try again')
           return
@@ -135,7 +134,7 @@ const AdminUserAdd = () => {
                   <div className="col-lg-12 m-b30">
                     <Breadcrumb>
                       <Breadcrumb.Item>
-                        <Link to="/">Dashboard</Link>
+                        <Link to="/dashboard">Dashboard</Link>
                       </Breadcrumb.Item>
                       <Breadcrumb.Item>
                         <Link to="/user-list">User List</Link>

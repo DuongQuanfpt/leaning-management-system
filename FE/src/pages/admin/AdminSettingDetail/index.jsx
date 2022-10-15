@@ -43,7 +43,6 @@ const AdminSettingDetail = () => {
 
   const loadData = async () => {
     settingListApi.getDetail(id).then((response) => {
-      console.log(response)
       setSettingDetail(response)
       setTitle(response.settingTitle)
       setValue(response.settingValue)
@@ -85,8 +84,6 @@ const AdminSettingDetail = () => {
       displayOrder: order,
       typeValue: type.value,
     }
-
-    console.log(params)
 
     await settingListApi
       .changeDetail(id, params)
@@ -134,7 +131,7 @@ const AdminSettingDetail = () => {
           <div className="col-lg-12 m-b30">
             <Breadcrumb>
               <Breadcrumb.Item>
-                <Link to="/">Dashboard</Link>
+                <Link to="/dashboard">Dashboard</Link>
               </Breadcrumb.Item>
               <Breadcrumb.Item>
                 <Link to="/setting-list">Setting List</Link>

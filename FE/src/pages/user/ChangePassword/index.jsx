@@ -46,7 +46,6 @@ const AdminChangePassword = () => {
       const response = await axios.put('https://lms-app-1.herokuapp.com/user/update-pass', data, {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
-      console.log(response.status)
       if (response.status === 200) {
         setError('You have successfully changed your password')
         return

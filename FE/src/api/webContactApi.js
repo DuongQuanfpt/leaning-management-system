@@ -20,6 +20,11 @@ const webContactApi = {
     const url = `/api/contact-detail/${id}`
     return axiosClient.get(url, header)
   },
+
+  changeDetail: (id, params) => {
+    const url = `/api/contact-detail/${id}`
+    return axiosClient.put(url, params, header)
+  },
 }
 
 export default webContactApi

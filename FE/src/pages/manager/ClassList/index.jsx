@@ -46,7 +46,6 @@ const ClassList = () => {
 
   useEffect(() => {
     classListApi.getFilter().then((response) => {
-      console.log(response)
       setListTerm(response.terms)
       setListBranch(response.branches)
       setListTrainer(response.trainerFilter)
@@ -83,7 +82,6 @@ const ClassList = () => {
       params.filterStatus = filter.filterStatus
     }
     await classListApi.getPage(params).then((response) => {
-      console.log(response)
       setTotalItem(response.totalItem)
       setListClass(response.listResult)
     })
