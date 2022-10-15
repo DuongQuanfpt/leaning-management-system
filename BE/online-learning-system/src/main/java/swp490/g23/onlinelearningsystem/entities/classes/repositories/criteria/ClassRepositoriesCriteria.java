@@ -16,13 +16,12 @@ public class ClassRepositoriesCriteria {
 
     public TypedQuery<Classes> displayClass(String keyword, String filterTerm, String filterTrainer,
                                          String filterSupporter, String filterBranch, String filterStatus) {
-        StringBuilder query = new StringBuilder("SELECT DISTINCT c FROM Classes c WHERE 1=1");
+        StringBuilder query = new StringBuilder("SELECT DISTINCT c FROM Classes c LEFT OUTER JOIN c.classSubject as cs WHERE 1=1");
 
-        
         if (keyword != null) {
-            query = new StringBuilder(query.toString().replaceAll("SELECT DISTINCT c FROM Classes c", 
-                    "SELECT DISTINCT c FROM Classes c JOIN c.classSubject as s"));
-            query.append(" AND c.code LIKE '%" + keyword + "%' OR s.subject.subjectName LIKE '%" + keyword + "%'");
+            // query = new StringBuilder(query.toString().replaceAll("SELECT DISTINCT c FROM Classes c", 
+            //         "SELECT DISTINCT c FROM Classes c FULL JOIN c.classSubject as s"));
+            query.append(" AND c.code LIKE '%" + keyword + "%'");
         }
 
         if (filterStatus != null) {

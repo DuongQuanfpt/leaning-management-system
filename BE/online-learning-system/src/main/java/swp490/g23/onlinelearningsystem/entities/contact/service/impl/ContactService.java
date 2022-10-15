@@ -11,12 +11,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import swp490.g23.onlinelearningsystem.entities.contact.domain.WebContact;
-import swp490.g23.onlinelearningsystem.entities.contact.domain.filter.ContactFilter;
+import swp490.g23.onlinelearningsystem.entities.contact.domain.filter.ContactCategoryFilter;
 import swp490.g23.onlinelearningsystem.entities.contact.domain.request.ContactRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.contact.domain.response.ContactPaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.contact.domain.response.ContactResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.contact.repositories.ContactRepository;
 import swp490.g23.onlinelearningsystem.entities.contact.repositories.criteria.ContactCriteria;
+import swp490.g23.onlinelearningsystem.entities.contact.repositories.criteriaEntity.ContactQuery;
 import swp490.g23.onlinelearningsystem.entities.contact.service.IContactService;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
@@ -38,12 +39,12 @@ public class ContactService implements IContactService {
     private SettingRepositories settingRepositories;
 
     @Override
-    public ResponseEntity<List<ContactFilter>> contactFilter() {// get category to filter
-        List<ContactFilter> filters = new ArrayList<>();
+    public ResponseEntity<List<ContactCategoryFilter>> contactFilter() {// get category to filter
+        List<ContactCategoryFilter> filters = new ArrayList<>();
         List<Setting> settings = settingRepositories.findAllCategory();
 
         for (Setting s : settings) {
-            filters.add(new ContactFilter(s.getSettingTitle(), s.getSettingValue()));
+            filters.add(new ContactCategoryFilter(s.getSettingTitle(), s.getSettingValue()));
         }
 
         return ResponseEntity.ok(filters);
@@ -52,25 +53,35 @@ public class ContactService implements IContactService {
     @Override
     public ResponseEntity<ContactPaginateDTO> getAllContact(String q, int limit, int page, // display ,search and filter
                                                                                            // all webcontact,
-            String filterCategory, String filterStatus) {
-        TypedQuery<WebContact> queryResult = contactCriteria.displaySetting(q, filterCategory, filterStatus);
+            String filterCategory, String filterStatus , String filterSupp) {
+
+        ContactQuery result = contactCriteria.displaySetting(q, filterCategory, filterStatus ,filterSupp);
+        TypedQuery<WebContact> queryResult = result.getResultQuery();
+        TypedQuery<Long> countQuery = result.getCountQuery();
 
         List<ContactResponseDTO> contacDtos = new ArrayList<>();
-        List<ContactFilter> contactFilters = new ArrayList<>();
+        List<ContactCategoryFilter> contactFilters = new ArrayList<>();
         List<ContactStatusEntity> statusfilter = new ArrayList<>();
+        List<String> suppFilter = new ArrayList<>();
         List<WebContact> contacts = queryResult.getResultList();
 
         for (ContactStatus status : new ArrayList<ContactStatus>(EnumSet.allOf(ContactStatus.class))) {
             statusfilter.add(new ContactStatusEntity(status));
         }
 
+        for (WebContact webContact : contacts) {
+            if (webContact.getStaff() != null && !suppFilter.contains(webContact.getStaff().getAccountName())) {
+                suppFilter.add(webContact.getStaff().getAccountName());
+            }
+        }
+
         for (WebContact contact : contacts) {// get category in query result
-            ContactFilter category = new ContactFilter(contact.getCategory().getSettingTitle(),
+            ContactCategoryFilter category = new ContactCategoryFilter(contact.getCategory().getSettingTitle(),
                     contact.getCategory().getSettingValue());
 
             boolean canAdd = true;
 
-            for (ContactFilter contactTemp : contactFilters) {
+            for (ContactCategoryFilter contactTemp : contactFilters) {
                 if (contactTemp.getValue().equals(category.getValue())) {
                     canAdd = false;
                     break;
@@ -83,7 +94,7 @@ public class ContactService implements IContactService {
 
         }
 
-        int totalItem = contacts.size();
+        Long totalItem = countQuery.getSingleResult();
         int totalPage;
         if (limit != 0) {
             queryResult.setFirstResult((page - 1) * limit);
@@ -104,6 +115,7 @@ public class ContactService implements IContactService {
         responseDTO.setTotalPage(totalPage);
         responseDTO.setContactFilter(contactFilters);
         responseDTO.setStatusFilter(statusfilter);
+        responseDTO.setSuppFilter(suppFilter);
 
         return ResponseEntity.ok(responseDTO);
     }
@@ -117,7 +129,7 @@ public class ContactService implements IContactService {
     }
 
     @Override
-    public ResponseEntity<String> editContactDetail(Long id, ContactRequestDTO dto ,User user) {
+    public ResponseEntity<String> editContactDetail(Long id, ContactRequestDTO dto, User user) {
         WebContact contact = contactRepository.findById(id)
                 .orElseThrow(() -> new NoObjectException("Contact doesnt exist"));
         if (dto.getResponse() != null) {

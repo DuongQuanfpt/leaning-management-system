@@ -17,6 +17,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.BaseEntity;
+import swp490.g23.onlinelearningsystem.entities.assignment.domain.Assignment;
 import swp490.g23.onlinelearningsystem.entities.class_subject.domain.ClassSubject;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.util.enumutil.Status;
@@ -54,6 +55,10 @@ public class Subject extends BaseEntity {
 
     @OneToMany(mappedBy = "classes")
     private List<ClassSubject> classSubjects;
+
+    @OneToMany(mappedBy = "forSubject")
+    private List<Assignment> assignments;
+
 
     public Subject(String subjectCode, String subjectName, Status subjectStatus, User manager) {
         this.subjectCode = subjectCode;

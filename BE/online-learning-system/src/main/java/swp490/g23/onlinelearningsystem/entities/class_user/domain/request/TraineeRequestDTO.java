@@ -1,32 +1,30 @@
-package swp490.g23.onlinelearningsystem.entities.class_user.domain.response;
-
+package swp490.g23.onlinelearningsystem.entities.class_user.domain.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import swp490.g23.onlinelearningsystem.util.enumutil.TraineeStatus;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TraineeResponseDTO {
+public class TraineeRequestDTO {
     private Long userId;
 
     private String fullName;
 
     private String username;
 
+    private String password;
+
     private String email;
 
     private String mobile;
 
-    private TraineeStatus status;
+    private String status;
 
     private String note;
 
     private String classes;
-
-    private String dropOut ;
 }

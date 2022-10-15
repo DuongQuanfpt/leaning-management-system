@@ -17,6 +17,7 @@ import swp490.g23.onlinelearningsystem.entities.subject.domain.filter.SubjectFil
 import swp490.g23.onlinelearningsystem.entities.subject.domain.request.SubjectRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.subject.repositories.SubjecRepository;
 import swp490.g23.onlinelearningsystem.entities.subject.repositories.criteria.SubjectRepositoriesCriteria;
+import swp490.g23.onlinelearningsystem.entities.subject.repositories.criteriaEntity.SubjectQuery;
 import swp490.g23.onlinelearningsystem.entities.subject.domain.response.SubjectResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.subject.domain.response.SubjectResponsePaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.subject.service.ISubjectService;
@@ -46,8 +47,11 @@ public class SubjectService implements ISubjectService {
     public ResponseEntity<SubjectResponsePaginateDTO> getSubject(int limit, int currentPage, String keyword,
             String managerFilter, String expertFilter, String statusFilter) {
 
-        TypedQuery<Subject> queryResult = subjectCriteria.searchFilterSubject(keyword, statusFilter, managerFilter,
-                expertFilter);
+        SubjectQuery result = subjectCriteria.searchFilterSubject(keyword, statusFilter, managerFilter,
+        expertFilter);
+
+        TypedQuery<Subject> queryResult =  result.getResultQuery();
+        TypedQuery<Long> countQuery =   result.getCountQuery();
 
         List<SubjectResponseDTO> list = new ArrayList<>();
         List<StatusEntity> statusfilter = new ArrayList<>();
@@ -70,7 +74,7 @@ public class SubjectService implements ISubjectService {
             }
         }
 
-        int totalItem = subjects.size();
+        Long totalItem = countQuery.getSingleResult();
         int totalPage;
         if (limit != 0) {
             queryResult.setFirstResult((currentPage - 1) * limit);
@@ -238,11 +242,11 @@ public class SubjectService implements ISubjectService {
         List<String> expert = new ArrayList<>();
         List<StatusEntity> statuses = new ArrayList<>();
 
-        List<User> allUser = userRepository.findAll();
+        List<User> allManagerExpert = userRepository.findManagerAndExpert();
         Setting managerSetting = settingRepositories.findBySettingValue("ROLE_MANAGER");
         Setting expertSetting = settingRepositories.findBySettingValue("ROLE_EXPERT");
 
-        for (User user : allUser) {
+        for (User user : allManagerExpert) {
             if (user.getSettings().contains(managerSetting)) {
                 manager.add(user.getAccountName());
             }

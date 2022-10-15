@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.TraineeStatusEntity;
 
 @Getter
 @Setter
@@ -17,4 +18,6 @@ public class TraineeResponsePaginateDTP {
 	private int totalPage;
 	private long totalItem;
 	private List<TraineeResponseDTO> listResult = new ArrayList<>();
+	private List<String> classFilter;
+	private List<TraineeStatusEntity> statuFilter;
 }

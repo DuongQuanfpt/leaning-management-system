@@ -31,6 +31,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = "SELECT DISTINCT u FROM User u INNER JOIN u.settings as s WHERE s.settingValue = 'ROLE_TRAINER' OR s.settingValue = 'ROLE_SUPPORTER'")
     List<User> findTrainerAndSupporter();
 
+    @Query(value = "SELECT DISTINCT u FROM User u INNER JOIN u.settings as s WHERE s.settingValue = 'ROLE_MANAGER' OR s.settingValue = 'ROLE_EXPERT'")
+    List<User> findManagerAndExpert();
+
+    @Query(value = "SELECT DISTINCT u FROM User u INNER JOIN u.settings as s WHERE s.settingValue = 'ROLE_SUPPORTER'")
+    List<User> findSupport();
+
     @Query(value = "SELECT u FROM User u WHERE u.accountName = :accountName AND u.email <> :email")
     List<User> findDupeAccountName(String accountName , String email);
 }
