@@ -12,7 +12,7 @@ import swp490.g23.onlinelearningsystem.entities.assignment.domain.Assignment;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AssigntmenQuery {
+public class AssignmenQuery {
     TypedQuery<Assignment> resultQuery;
     TypedQuery<Long> countQuery;
 }

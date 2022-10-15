@@ -19,9 +19,9 @@ public class ClassRepositoriesCriteria {
         StringBuilder query = new StringBuilder("SELECT DISTINCT c FROM Classes c LEFT OUTER JOIN c.classSubject as cs WHERE 1=1");
 
         if (keyword != null) {
-            // query = new StringBuilder(query.toString().replaceAll("SELECT c FROM Classes c", 
-            //         "SELECT DISTINCT c FROM Classes c  LEFT OUTER JOIN c.classSubject as cs"));
-            query.append(" AND c.code LIKE '%" + keyword + "%' OR c.classSubject.subject.subjectName LIKE '%" + keyword + "%'");
+            // query = new StringBuilder(query.toString().replaceAll("SELECT DISTINCT c FROM Classes c", 
+            //         "SELECT DISTINCT c FROM Classes c FULL JOIN c.classSubject as s"));
+            query.append(" AND c.code LIKE '%" + keyword + "%'");
         }
 
         if (filterStatus != null) {

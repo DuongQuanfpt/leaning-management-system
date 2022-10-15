@@ -50,8 +50,6 @@ const SubjectDetail = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  console.log(!isEditMode && isAdmin)
-
   const loadData = async () => {
     subjectListApi
       .getFilter()
@@ -64,7 +62,6 @@ const SubjectDetail = () => {
     subjectListApi
       .getDetail(id)
       .then((response) => {
-        console.log(response)
         setSubjectDetail(response)
         setCode(response.subjectCode)
         setName(response.subjectName)
@@ -121,7 +118,7 @@ const SubjectDetail = () => {
           <div className="col-lg-12 m-b30">
             <Breadcrumb>
               <Breadcrumb.Item>
-                <Link to="/">Dashboard</Link>
+                <Link to="/dashboard">Dashboard</Link>
               </Breadcrumb.Item>
               <Breadcrumb.Item>
                 <Link to="/subject-list">Subject List</Link>

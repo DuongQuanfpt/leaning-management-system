@@ -62,7 +62,6 @@ const AdminUserDetail = () => {
         setError('You have successfully changed your user detail')
       })
       .catch((error) => {
-        console.log(error)
         if (error.response.data.message === 'Username already exist') {
           setError('Username already existed')
           return
@@ -105,7 +104,7 @@ const AdminUserDetail = () => {
                     <div className="col-lg-12 m-b30">
                       <Breadcrumb>
                         <Breadcrumb.Item>
-                          <Link to="/">Dashboard</Link>
+                          <Link to="/dashboard">Dashboard</Link>
                         </Breadcrumb.Item>
                         <Breadcrumb.Item>
                           <Link to="/user-list">User List</Link>

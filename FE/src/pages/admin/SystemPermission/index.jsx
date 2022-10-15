@@ -23,7 +23,7 @@ const SystemPermission = () => {
           <div className="col-lg-12 m-b30">
             <Breadcrumb>
               <Breadcrumb.Item>
-                <Link to="/">Dashboard</Link>
+                <Link to="/dashboard">Dashboard</Link>
               </Breadcrumb.Item>
               <Breadcrumb.Item>System Permission</Breadcrumb.Item>
             </Breadcrumb>

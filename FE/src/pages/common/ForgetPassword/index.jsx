@@ -21,13 +21,10 @@ const ForgetPassword = () => {
     try {
       // eslint-disable-next-line no-unused-vars
       const response = await axios.put('https://lms-app-1.herokuapp.com/user/forgot-pass', data).then((response) => {
-        console.log(data)
-        console.log(response)
         setError('Password reset link has been sent to your email')
       })
     } catch (error) {
       setError('This account is not available or unverified, please try again')
-      console.log(error)
     }
   }
   return (

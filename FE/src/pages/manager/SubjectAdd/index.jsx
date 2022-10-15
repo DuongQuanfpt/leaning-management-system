@@ -20,7 +20,6 @@ import { ExclamationCircleOutlined } from '@ant-design/icons'
 
 import ErrorMsg from '~/components/Common/ErrorMsg'
 import subjectListApi from '~/api/subjectListApi'
-import { useSelector } from 'react-redux'
 
 const SubjectAdd = () => {
   const [listManager, setListManager] = useState([])
@@ -33,9 +32,6 @@ const SubjectAdd = () => {
   const [status, setStatus] = useState(0)
   const [body, setBody] = useState('')
   const [error, setError] = useState('')
-
-  const { roles } = useSelector((state) => state.profile)
-  console.log(roles)
 
   useEffect(() => {
     loadData()
@@ -120,7 +116,7 @@ const SubjectAdd = () => {
           <div className="col-lg-12 m-b30">
             <Breadcrumb>
               <Breadcrumb.Item>
-                <Link to="/">Dashboard</Link>
+                <Link to="/dashboard">Dashboard</Link>
               </Breadcrumb.Item>
               <Breadcrumb.Item>
                 <Link to="/subject-list">Subject List</Link>

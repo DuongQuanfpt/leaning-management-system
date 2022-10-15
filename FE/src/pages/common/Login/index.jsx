@@ -91,7 +91,6 @@ const Login = () => {
   }
 
   const onSuccess = async (res) => {
-    console.log(res)
     const data = {
       idToken: res.tokenId,
       clientId: clientId,
@@ -116,7 +115,6 @@ const Login = () => {
         })
     } catch (error) {
       setError('Something went wrong, please try again later!')
-      console.log(error)
     }
   }
 

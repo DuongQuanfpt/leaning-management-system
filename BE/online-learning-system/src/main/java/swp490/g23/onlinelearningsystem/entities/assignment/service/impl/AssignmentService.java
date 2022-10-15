@@ -46,7 +46,7 @@ public class AssignmentService implements IAssignmentService {
             statusfilter.add(new StatusEntity(status));
         }
 
-        for (Assignment subject : assignments) {
+        for (Assignment assignment : assignments) {
           
         }
 

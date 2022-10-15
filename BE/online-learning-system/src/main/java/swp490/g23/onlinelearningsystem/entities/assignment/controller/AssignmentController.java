@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import swp490.g23.onlinelearningsystem.entities.assignment.domain.response.AssignmentPaginate;
-import swp490.g23.onlinelearningsystem.entities.assignment.service.impl.AsignmentService;
+import swp490.g23.onlinelearningsystem.entities.assignment.service.impl.AssignmentService;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 
 @RestController
@@ -18,7 +18,7 @@ import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 public class AssignmentController {
 
     @Autowired
-    private AsignmentService asignmentService;
+    private AssignmentService asignmentService;
 
     @GetMapping(value = "/assignment")
 	public ResponseEntity<AssignmentPaginate> getAssignment(

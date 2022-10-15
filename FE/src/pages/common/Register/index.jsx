@@ -88,7 +88,6 @@ const Register = () => {
         })
     } catch (error) {
       setError('Something went wrong, please try again later!')
-      console.log(error)
     }
   }
 

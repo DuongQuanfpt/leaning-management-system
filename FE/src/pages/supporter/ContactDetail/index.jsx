@@ -4,20 +4,10 @@ import { useParams, Link } from 'react-router-dom'
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 
-import {
-  CContainer,
-  CRow,
-  CCol,
-  CButton,
-  CDropdown,
-  CDropdownToggle,
-  CDropdownMenu,
-  CDropdownItem,
-} from '@coreui/react'
+import { CContainer, CRow, CCol, CButton } from '@coreui/react'
 import { Breadcrumb, Radio } from 'antd'
 
 import ErrorMsg from '~/components/Common/ErrorMsg'
-import settingListApi from '~/api/settingListApi'
 import webContactApi from '~/api/webContactApi'
 
 const ContactDetail = () => {
@@ -25,8 +15,6 @@ const ContactDetail = () => {
 
   const [contactDetail, setContactDetail] = useState({})
   const [isEditMode, setIsEditMode] = useState(false)
-
-  const [listSupporter, setListSupporter] = useState([])
 
   const [category, setCategory] = useState('')
   const [name, setName] = useState('')
@@ -45,7 +33,6 @@ const ContactDetail = () => {
 
   const loadData = async () => {
     webContactApi.getDetail(id).then((response) => {
-      console.log(response)
       setContactDetail(response)
       setCategory(response.categoryName)
       setName(response.fullName)
@@ -54,37 +41,32 @@ const ContactDetail = () => {
       setMessage(response.message)
       setSupporter(response.staffName)
       setStatus(response.status === 'OPEN' ? 1 : 0)
-      setResponse(response.response)
+      setResponse(response.response == null ? '' : response.response)
     })
   }
 
   const handleSave = async () => {
-    const params = {}
+    const params = {
+      status: status,
+    }
 
-    console.log(params)
+    if (response !== '') {
+      params.response = response
+    }
 
-    await settingListApi
+    await webContactApi
       .changeDetail(id, params)
       .then((response) => {
         setIsEditMode(false)
-        setError('You have successfully changed your setting detail')
+        setError('You have successfully changed your contact detail')
+        loadData()
       })
       .catch((error) => {
-        if (error.response.data.message === 'Setting Value already exist') {
-          setError('Setting Value already existed')
-          return
-        }
         setError('Something went wrong, please try again')
       })
   }
 
   const handleCancel = () => {
-    setCategory(contactDetail.categoryName)
-    setName(contactDetail.fullName)
-    setEmail(contactDetail.email)
-    setMobile(contactDetail.mobile)
-    setMessage(contactDetail.message)
-    setSupporter(contactDetail.staffName)
     setStatus(contactDetail.status)
     setResponse(contactDetail.response)
     setError('')
@@ -94,8 +76,6 @@ const ContactDetail = () => {
     setIsEditMode(true)
     setError('')
   }
-
-  const handleChangeSupporter = () => {}
 
   const handleChangeStatus = (e) => {
     setStatus(e.target.value)
@@ -110,7 +90,7 @@ const ContactDetail = () => {
           <div className="col-lg-12 m-b30">
             <Breadcrumb>
               <Breadcrumb.Item>
-                <Link to="/">Dashboard</Link>
+                <Link to="/dashboard">Dashboard</Link>
               </Breadcrumb.Item>
               <Breadcrumb.Item>
                 <Link to="/contact-list">Contact List</Link>
@@ -155,19 +135,10 @@ const ContactDetail = () => {
                             </div>
                           </div>
                           <div className="form-group col-6">
-                            <label className="col-form-label">Supporter</label>
-                            <CDropdown className="w-100">
-                              <CDropdownToggle color="warning" disabled={!isEditMode}>
-                                {supporter}
-                              </CDropdownToggle>
-                              <CDropdownMenu className="w-100">
-                                {/* {listSupporter.map((supporter) => (
-                                  <CDropdownItem onClick={() => handleChangeSupporter(supporter)}>
-                                    {supporter.title}
-                                  </CDropdownItem>
-                                ))} */}
-                              </CDropdownMenu>
-                            </CDropdown>
+                            <label className="col-form-label">Supporter Handle</label>
+                            <div>
+                              <input className="form-control" type="text" value={supporter} disabled={true} />
+                            </div>
                           </div>
                           <div className="form-group col-6">
                             <label className="col-form-label">Status</label>
@@ -182,7 +153,13 @@ const ContactDetail = () => {
                           <div className="form-group col-12">
                             <label className="col-form-label">Response</label>
                             <div>
-                              <textarea className="form-control" type="text" value={response} disabled={!isEditMode} />
+                              <textarea
+                                className="form-control"
+                                type="text"
+                                value={response}
+                                onChange={(e) => setResponse(e.target.value)}
+                                disabled={!isEditMode}
+                              />
                             </div>
                           </div>
                           <ErrorMsg errorMsg={error} />

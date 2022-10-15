@@ -120,7 +120,7 @@ const AdminSettingAdd = () => {
           <div className="col-lg-12 m-b30">
             <Breadcrumb>
               <Breadcrumb.Item>
-                <Link to="/">Dashboard</Link>
+                <Link to="/dashboard">Dashboard</Link>
               </Breadcrumb.Item>
               <Breadcrumb.Item>
                 <Link to="/setting-list">Setting List</Link>

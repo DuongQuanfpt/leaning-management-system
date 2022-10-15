@@ -63,7 +63,6 @@ const AdminSettingList = () => {
       params.filterStatus = filter.filterStatus
     }
     await settingListApi.getPage(params).then((response) => {
-      console.log(response)
       setTotalItem(response.totalItem)
       setListSetting(response.listResult)
     })

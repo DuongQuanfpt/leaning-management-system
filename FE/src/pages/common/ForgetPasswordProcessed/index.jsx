@@ -37,15 +37,10 @@ const ForgetPasswordProcessed = () => {
           headers: { 'Content-Type': 'application/json; charset=UTF-8' },
         })
         .then((response) => {
-          console.log(data)
-          console.log(response.status)
           setIsResetSuccess(true)
         })
-      console.log(token)
-      console.log(response)
     } catch (error) {
       setError('Something went wrong, please try again later')
-      console.log(error)
     }
   }
 
