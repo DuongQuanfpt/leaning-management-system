@@ -28,7 +28,7 @@ const AdminSettingDetail = () => {
 
   const [listType, setListType] = useState([])
 
-  const [type, setType] = useState({ title: 'Choose Type', value: '' })
+  const [type, setType] = useState('')
   const [title, setTitle] = useState('')
   const [value, setValue] = useState('')
   const [status, setStatus] = useState(0)
@@ -44,6 +44,7 @@ const AdminSettingDetail = () => {
   const loadData = async () => {
     settingListApi.getDetail(id).then((response) => {
       setSettingDetail(response)
+      setType(response.typeName)
       setTitle(response.settingTitle)
       setValue(response.settingValue)
       setStatus(response.status === 'Active' ? 1 : 0)
@@ -56,10 +57,6 @@ const AdminSettingDetail = () => {
   }
 
   const handleSave = async () => {
-    if (type.title === 'Choose Type') {
-      setError('You must choose one of any type')
-      return
-    }
     if (title === '') {
       setError('Title must not empty')
       return
@@ -82,7 +79,6 @@ const AdminSettingDetail = () => {
       status: status,
       description: description,
       displayOrder: order,
-      typeValue: type.value,
     }
 
     await settingListApi
@@ -150,16 +146,9 @@ const AdminSettingDetail = () => {
                           <div className="row">
                             <div className="form-group col-6">
                               <label className="col-form-label">Type</label>
-                              <CDropdown className="w-100">
-                                <CDropdownToggle color="warning" disabled={!isEditMode}>
-                                  {type.title}
-                                </CDropdownToggle>
-                                <CDropdownMenu className="w-100">
-                                  {listType.map((type) => (
-                                    <CDropdownItem onClick={() => handleChangeType(type)}>{type.title}</CDropdownItem>
-                                  ))}
-                                </CDropdownMenu>
-                              </CDropdown>
+                              <div>
+                                <input className="form-control" type="text" value={type} disabled={true} />
+                              </div>
                             </div>
                             <div className="form-group col-6">
                               <label className="col-form-label">Title</label>

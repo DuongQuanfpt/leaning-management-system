@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
 import { CContainer, CRow, CCol, CForm, CButton } from '@coreui/react'
-import { Breadcrumb, Radio } from 'antd'
+import { Breadcrumb, Radio, Modal } from 'antd'
+import { ExclamationCircleOutlined } from '@ant-design/icons'
 
 import Multiselect from 'multiselect-react-dropdown'
 
@@ -33,8 +34,8 @@ const AdminUserDetail = () => {
     userListApi.getDetail(id).then((response) => {
       setUserDetail(response)
       setUserName(response.username)
-      setFullName(response.fullName)
-      setMobile(response.mobile)
+      setFullName(response.fullName == null ? '' : response.fullName)
+      setMobile(response.mobile == null ? '' : response.mobile)
       setRoles(response.roles)
       setStatus(response.status === 'Active' ? 1 : response.status === 'Inactive' ? 0 : -1)
       setNote(response.note)
@@ -45,8 +46,26 @@ const AdminUserDetail = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  console.log(userDetail)
+
   const handleSave = async () => {
     const rolesData = roles.map((role) => role.value)
+    if (userName === '') {
+      setError('Username must not empty!')
+      return
+    }
+    if (mobile === '') {
+      setError('Mobile must not empty!')
+      return
+    }
+    if (mobile.length < 9 || mobile.length > 11) {
+      setError('Mobile length must 9-10 characters!')
+      return
+    }
+    if (roles.length === 0) {
+      setError('Role must not empty!')
+      return
+    }
     const data = {
       username: userName,
       fullName: fullName,
@@ -90,6 +109,21 @@ const AdminUserDetail = () => {
     setStatus(e.target.value)
   }
 
+  const modalConfirm = () => {
+    setError('')
+    Modal.confirm({
+      title: `Are you want to add new User?`,
+      icon: <ExclamationCircleOutlined />,
+      okText: 'OK',
+      cancelText: 'Cancel',
+      okType: 'danger',
+      onOk() {
+        handleSave()
+      },
+      onCancel() {},
+    })
+  }
+
   return (
     <>
       <AdminSidebar />
@@ -119,7 +153,15 @@ const AdminUserDetail = () => {
                             <div className="row col-3 h-100">
                               <label className="col-form-label align-middle">Avatar</label>
                               <div>
-                                <img src={userDetail.avatar_url ?? avatar} alt="" />
+                                <img
+                                  className="w-75 mb-2 rounded-circle"
+                                  src={!!userDetail.avatar_url === true ? userDetail.avatar_url : avatar}
+                                  alt=""
+                                  onError={({ currentTarget }) => {
+                                    currentTarget.onerror = null // prevents looping
+                                    currentTarget.src = { avatar }
+                                  }}
+                                />
                               </div>
                             </div>
                             <div className="row col-9">
@@ -215,7 +257,7 @@ const AdminUserDetail = () => {
                               <div className="d-flex">
                                 {isEditMode ? (
                                   <>
-                                    <CButton className="mr-5" size="md" color="warning" onClick={handleSave}>
+                                    <CButton className="mr-5" size="md" color="warning" onClick={modalConfirm}>
                                       Save
                                     </CButton>
                                     <CButton size="md" color="warning" onClick={handleCancel}>

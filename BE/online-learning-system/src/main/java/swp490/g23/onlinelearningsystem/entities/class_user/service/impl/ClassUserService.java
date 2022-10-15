@@ -3,8 +3,6 @@ package swp490.g23.onlinelearningsystem.entities.class_user.service.impl;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
