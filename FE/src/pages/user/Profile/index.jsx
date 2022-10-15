@@ -171,7 +171,7 @@ const Profile = () => {
                                 ) : (
                                   <>
                                     <img
-                                      src={profileData.avatar_url ?? avatar}
+                                      src={!!profileData.avatar_url === true ? profileData.avatar_url : avatar}
                                       alt=""
                                       className="w-75 mb-2 rounded-circle"
                                     />

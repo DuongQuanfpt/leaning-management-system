@@ -75,6 +75,7 @@ const ContactList = () => {
     await webContactApi
       .getPage(params)
       .then((response) => {
+        console.log(response)
         setListContact(response.listResult)
         setTotalItem(response.totalPage)
       })
@@ -141,6 +142,12 @@ const ContactList = () => {
       title: 'Message',
       dataIndex: 'message',
       sorter: (a, b) => a.message?.length - b.message?.length,
+      ellipsis: true,
+    },
+    {
+      title: 'Supporter',
+      dataIndex: 'staffName',
+      sorter: (a, b) => a.staffName?.length - b.staffName?.length,
       ellipsis: true,
     },
     {

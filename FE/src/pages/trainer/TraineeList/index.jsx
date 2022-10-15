@@ -54,6 +54,7 @@ const TraineeList = () => {
     await traineeListApi
       .getPage(params)
       .then((response) => {
+        console.log(response)
         setListClasses(response.listResult)
         setTotalItem(response.totalItem)
       })
@@ -95,16 +96,19 @@ const TraineeList = () => {
       title: 'Fullname',
       dataIndex: 'fullName',
       sorter: (a, b) => a.fullName?.length - b.fullName?.length,
+      width: 220,
     },
     {
       title: 'Email',
       dataIndex: 'email',
       sorter: (a, b) => a.email?.length - b.email?.length,
+      width: 220,
     },
     {
       title: 'Status',
       dataIndex: 'status',
       sorter: (a, b) => a.status?.length - b.status?.length,
+      width: 90,
       render: (_, { status }) => (
         <Tag color={status === 'Active' ? 'blue' : status === 'Inactive' ? 'red' : 'grey'} key={status}>
           {status}
@@ -115,7 +119,12 @@ const TraineeList = () => {
       title: 'Dropout Date',
       dataIndex: 'dropOut',
       sorter: (a, b) => a.dropOut?.length - b.dropOut?.length,
-      ellipsis: true,
+      width: 150,
+    },
+    {
+      title: 'Note',
+      dataIndex: 'dropOut',
+      sorter: (a, b) => a.note?.length - b.note?.length,
     },
     {
       title: 'Action',
@@ -128,7 +137,7 @@ const TraineeList = () => {
               shape="circle"
               icon={<EyeOutlined />}
               onClick={() => {
-                navigateTo(`/contact-detail/${setting?.contactId}`)
+                navigateTo(`/trainee-detail/${setting?.userId}`)
               }}
             ></Button>
           </Tooltip>

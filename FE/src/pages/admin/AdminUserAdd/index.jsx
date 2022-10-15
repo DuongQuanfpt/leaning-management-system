@@ -20,8 +20,6 @@ const AdminUserAdd = () => {
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [mobile, setMobile] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
   const [roles, setRoles] = useState([])
   const [status, setStatus] = useState(1)
   const [note, setNote] = useState('')
@@ -76,18 +74,6 @@ const AdminUserAdd = () => {
       setError('Mobile length must 9-10 characters!')
       return
     }
-    if (password === '') {
-      setError('Password must not empty!')
-      return
-    }
-    if (confirmPassword === '') {
-      setError('Confirm password must not empty!')
-      return
-    }
-    if (password !== confirmPassword) {
-      setError('Password and confirm password is not matched!')
-      return
-    }
     if (roles.length === 0) {
       setError('Role must not empty!')
       return
@@ -98,7 +84,6 @@ const AdminUserAdd = () => {
       fullName: fullName,
       email: email,
       mobile: mobile,
-      password: password,
       roles: rolesData,
       status: status,
       note: note,
@@ -188,28 +173,6 @@ const AdminUserAdd = () => {
                                   type="number"
                                   value={mobile}
                                   onChange={(e) => setMobile(e.target.value)}
-                                />
-                              </div>
-                            </div>
-                            <div className="form-group col-6">
-                              <label className="col-form-label">Password</label>
-                              <div>
-                                <input
-                                  className="form-control"
-                                  type="password"
-                                  value={password}
-                                  onChange={(e) => setPassword(e.target.value)}
-                                />
-                              </div>
-                            </div>
-                            <div className="form-group col-6">
-                              <label className="col-form-label">Confirm Password</label>
-                              <div>
-                                <input
-                                  className="form-control"
-                                  type="password"
-                                  value={confirmPassword}
-                                  onChange={(e) => setConfirmPassword(e.target.value)}
                                 />
                               </div>
                             </div>
