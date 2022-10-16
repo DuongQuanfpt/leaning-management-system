@@ -1,5 +1,7 @@
 package swp490.g23.onlinelearningsystem.entities.class_user.domain.request;
 
+import java.util.Date;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +19,8 @@ public class TraineeRequestDTO {
     private String username;
 
     private String password;
+
+    private String dropoutDate;
 
     private String email;
 

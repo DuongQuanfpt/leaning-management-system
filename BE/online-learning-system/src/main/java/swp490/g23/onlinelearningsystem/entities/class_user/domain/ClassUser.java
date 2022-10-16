@@ -1,6 +1,6 @@
 package swp490.g23.onlinelearningsystem.entities.class_user.domain;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -34,7 +34,7 @@ public class ClassUser {
     private String note;
 
     @Column
-    private Date dropoutDate;
+    private LocalDate dropoutDate;
 
     @Column
     private String ongoingEval;
