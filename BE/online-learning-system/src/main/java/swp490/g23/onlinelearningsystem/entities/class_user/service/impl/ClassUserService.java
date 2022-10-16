@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Random;
 
 import javax.mail.MessagingException;
 import javax.persistence.TypedQuery;
@@ -15,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.annotation.RequestScope;
 
 import net.bytebuddy.utility.RandomString;
 import swp490.g23.onlinelearningsystem.entities.auth.service.impl.AuthService;
@@ -33,10 +31,8 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NullException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.ObjectDuplicateException;
-import swp490.g23.onlinelearningsystem.util.enumutil.ClassStatus;
 import swp490.g23.onlinelearningsystem.util.enumutil.TraineeStatus;
 import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
-import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.ClassStatusEntity;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.TraineeStatusEntity;
 
 @Service

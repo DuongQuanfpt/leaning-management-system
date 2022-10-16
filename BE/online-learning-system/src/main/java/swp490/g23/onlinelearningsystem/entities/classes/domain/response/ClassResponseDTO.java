@@ -1,6 +1,5 @@
 package swp490.g23.onlinelearningsystem.entities.classes.domain.response;
 
-import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,7 +18,7 @@ public class ClassResponseDTO {
 
     private ClassStatus status;
 
-    private List<String> subject;
+    private String subjectCode;
 
     private String term;
 

@@ -15,7 +15,7 @@ public class AssignmentCriteria {
     private final EntityManager em;
 
     public AssignmenQuery searchFilterAssignment(String keyword, String filterStatus ,String filterSubject) {
-        StringBuilder query = new StringBuilder("SELECT a FROM Subject Assignment WHERE 1=1 ");
+        StringBuilder query = new StringBuilder("SELECT a FROM Assignment a WHERE 1=1 ");
 
         // if (keyword != null) {
         //     query.append(" AND s.subjectName LIKE '%" + keyword + "%' OR s.subjectCode LIKE '%" + keyword + "%'");

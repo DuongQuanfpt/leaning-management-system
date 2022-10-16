@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.persistence.JoinColumn;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,7 +14,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.JoinColumn;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -29,6 +29,7 @@ import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.contact.domain.WebContact;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
+import swp490.g23.onlinelearningsystem.entities.user_roles.domain.UserRoles;
 import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
 
 @Entity
@@ -77,6 +78,9 @@ public class User extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy = "userTrainer")
     private List<Classes> classes;
 
+    @OneToMany(mappedBy = "role")
+    private List<UserRoles> roles;
+
     @OneToMany(mappedBy = "userSupporter")
     private List<Classes> classList;
 
@@ -112,8 +116,8 @@ public class User extends BaseEntity implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        for (Setting setting : settings) {
-            authorities.add(new SimpleGrantedAuthority(setting.getSettingValue()));
+        for (Setting role : settings) {
+            authorities.add(new SimpleGrantedAuthority(role.getSettingValue()));
         }
         return authorities;
     }
