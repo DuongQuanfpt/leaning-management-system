@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import net.bytebuddy.utility.RandomString;
+import swp490.g23.onlinelearningsystem.entities.auth.service.impl.AuthService;
 import swp490.g23.onlinelearningsystem.entities.email.EmailDetails;
 import swp490.g23.onlinelearningsystem.entities.email.service.impl.EmailService;
 import swp490.g23.onlinelearningsystem.entities.permission.domain.SettingPermission;
@@ -61,6 +62,9 @@ public class UserService implements IUserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private AuthService authService;
 
     @Override
     public ResponseEntity<AuthenticatedResponseDTO> getAuthenticatedUser(Long id, List<Setting> roles) {
@@ -247,8 +251,8 @@ public class UserService implements IUserService {
 
         System.out.println(user.getAccountName().equals(username));
 
-        if (username != null && user.getAccountName().equals(username)== false) {
-            if (userRepository.findByAccountName(username) == null ) {
+        if (username != null && user.getAccountName().equals(username) == false) {
+            if (userRepository.findByAccountName(username) == null) {
                 user.setAccountName(username);
             } else {
                 throw new ObjectDuplicateException("Username already exist");
@@ -310,14 +314,16 @@ public class UserService implements IUserService {
         User user = new User();
         List<Setting> settings = new ArrayList<>();
         List<String> roles = requestDTO.getRoles();
+        String emailRequest = requestDTO.getEmail();
+        String passRequest = requestDTO.getPassword();
 
-        if (requestDTO.getEmail() != null) {
-            if (!userRepository.findByEmail(requestDTO.getEmail()).isPresent()) {
-                user.setEmail(requestDTO.getEmail());
+        if (emailRequest != null) {
+            if (!userRepository.findByEmail(emailRequest).isPresent()) {
+                user.setEmail(emailRequest);
             } else {
                 throw new ObjectDuplicateException("Email already exist");
             }
-        }else{
+        } else {
             throw new ValueMissingException("must asign an email");
         }
 
@@ -327,7 +333,7 @@ public class UserService implements IUserService {
             } else {
                 throw new ObjectDuplicateException("Username already exist");
             }
-        }else{
+        } else {
             throw new ValueMissingException("must asign a username");
         }
 
@@ -356,9 +362,19 @@ public class UserService implements IUserService {
             user.setNote(requestDTO.getNote());
         }
 
-        if (requestDTO.getPassword() != null) {
+        if (passRequest != null) {
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-            user.setPassword(encoder.encode(requestDTO.getPassword()));
+            user.setPassword(encoder.encode(passRequest));
+        }
+
+        try {
+            authService.sendGooglePass(emailRequest, passRequest);
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (MessagingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
 
         userRepository.save(user);

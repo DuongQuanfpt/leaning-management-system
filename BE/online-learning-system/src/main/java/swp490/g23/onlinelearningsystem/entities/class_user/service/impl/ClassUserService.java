@@ -85,9 +85,9 @@ public class ClassUserService implements IClassUserService {
         }
 
         for (ClassUser classUser : queryResult.getResultList()) {
-            TraineeResponseDTO responseDTO = toTraineeDTO(classUser.getUser());
-            responseDTO.setClasses(classUser.getClasses().getCode());
-            responseDTO.setStatus(classUser.getStatus());
+            TraineeResponseDTO responseDTO = toTraineeDTO(classUser);
+            // responseDTO.setClasses(classUser.getClasses().getCode());
+            // responseDTO.setStatus(classUser.getStatus());
             trainees.add(responseDTO);
         }
 
@@ -107,6 +107,12 @@ public class ClassUserService implements IClassUserService {
         responseDTO.setStatuFilter(statusList);
 
         return ResponseEntity.ok(responseDTO);
+    }
+
+    @Override
+    public ResponseEntity<TraineeResponseDTO> viewTrainee(Long userId, String classCode) {
+        ClassUser classUser = classUserRepositories.findByClassesAndUser(userId, classCode);
+        return ResponseEntity.ok(toTraineeDTO(classUser));
     }
 
     @Override
@@ -201,21 +207,21 @@ public class ClassUserService implements IClassUserService {
     }
 
     @Override
-    public ResponseEntity<String> updateStatus(Long id) {
-        User user = userRepository.findById(id).get();
+    public ResponseEntity<String> updateStatus(Long userId, String classCode) {
+        ClassUser classUser = classUserRepositories.findByClassesAndUser(userId, classCode);
 
-        // if (classUser.getStatus() == TraineeStatus.Active) {
-        // classUser.setStatus(TraineeStatus.Inactive);
-        // } else {
-        // classUser.setStatus(TraineeStatus.Active);
-        // }
-        // classUserRepositories.save(classUser);
+        if (classUser.getStatus() == TraineeStatus.Active) {
+            classUser.setStatus(TraineeStatus.Inactive);
+        } else {
+            classUser.setStatus(TraineeStatus.Active);
+        }
+        classUserRepositories.save(classUser);
         return ResponseEntity.ok("Trainee status updated");
     }
 
     @Override
-    public ResponseEntity<String> setDropout(Long id, TraineeRequestDTO dto) {
-        ClassUser classUser = classUserRepositories.findById(id).get();
+    public ResponseEntity<String> setDropout(Long userId, String classCode, TraineeRequestDTO dto) {
+        ClassUser classUser = classUserRepositories.findByClassesAndUser(userId, classCode);
         LocalDate date = LocalDate.parse(dto.getDropoutDate());
         if (classUser.getStatus() == TraineeStatus.Active || classUser.getStatus() == TraineeStatus.Inactive) {
             classUser.setDropoutDate(date);
@@ -226,14 +232,21 @@ public class ClassUserService implements IClassUserService {
     }
 
     // convert to DTO
-    public TraineeResponseDTO toTraineeDTO(User entity) {
+    public TraineeResponseDTO toTraineeDTO(ClassUser entity) {
         TraineeResponseDTO responseDTO = new TraineeResponseDTO();
-        responseDTO.setFullName(entity.getFullName());
-        responseDTO.setUsername(entity.getAccountName());
-        responseDTO.setEmail(entity.getEmail());
-        responseDTO.setMobile(entity.getMobile());
+        responseDTO.setFullName(entity.getUser().getFullName());
+        responseDTO.setUsername(entity.getUser().getAccountName());
+        responseDTO.setEmail(entity.getUser().getEmail());
+        responseDTO.setMobile(entity.getUser().getMobile());
         responseDTO.setNote(entity.getNote());
-        responseDTO.setUserId(entity.getUserId());
+        responseDTO.setUserId(entity.getUser().getUserId());
+        if (entity.getStatus().equals(TraineeStatus.Dropout)) {
+            LocalDate date = entity.getDropoutDate();
+            responseDTO.setDropDate(date);
+        }
+        responseDTO.setStatus(entity.getStatus());
+        responseDTO.setClasses(entity.getClasses().getCode());
+
         return responseDTO;
     }
 
