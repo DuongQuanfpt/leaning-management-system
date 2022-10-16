@@ -20,6 +20,7 @@ const TraineeList = () => {
 
   const navigateTo = useNavigate()
 
+  const [listTrainee, setListTrainee] = useState([])
   const [listClasses, setListClasses] = useState([])
   const [listStatus, setListStatus] = useState([])
 
@@ -31,11 +32,19 @@ const TraineeList = () => {
   const [classes, setClasses] = useState('All Class')
   const [status, setStatus] = useState('All Status')
   const [filter, setFilter] = useState({
-    filterCategory: '',
+    filterClass: '',
     filterStatus: '',
   })
 
-  useEffect(() => {}, [])
+  useEffect(() => {
+    traineeListApi
+      .getPage(1)
+      .then((response) => {
+        setListClasses(response.classFilter)
+        setListStatus(response.statuFilter)
+      })
+      .catch((error) => console.log(error))
+  }, [])
 
   useEffect(() => {
     loadData(1, filter)
@@ -50,12 +59,17 @@ const TraineeList = () => {
     if (q !== '') {
       params.q = q
     }
+    if (filter.classFilter !== '') {
+      params.filterClass = filter.classFilter
+    }
+    if (filter.statusFilter !== '') {
+      params.filterStatus = filter.statusFilter
+    }
 
     await traineeListApi
       .getPage(params)
       .then((response) => {
-        console.log(response)
-        setListClasses(response.listResult)
+        setListTrainee(response.listResult)
         setTotalItem(response.totalItem)
       })
       .catch((error) => console.log(error))
@@ -64,21 +78,70 @@ const TraineeList = () => {
   const handleSearch = () => {
     loadData(1, filter, search)
   }
-  const handleFilterClasses = (classes) => {}
-  const handleFilterStatus = () => {}
-  const handleReload = () => {}
+  const handleFilterClasses = (classes) => {
+    setFilter({ ...filter, classFilter: classes })
+    setClasses(classes)
+  }
+  const handleFilterStatus = (status) => {
+    setFilter({ ...filter, statusFilter: status.value })
+    setStatus(status.name)
+  }
+  const handleReload = () => {
+    setFilter({ classFilter: '', statusFilter: '' })
+    setSearch('')
+    setClasses('All Class')
+    setStatus('All Status')
+    loadData(1, filter)
+  }
 
-  const handleExport = () => {
-    const ws = utils.json_to_sheet(listClasses)
-    const wb = utils.book_new()
-    utils.book_append_sheet(wb, ws, 'Data')
-    writeFileXLSX(wb, 'SheetJSReactAoO.xlsx')
+  const handleExport = async () => {
+    const params = {}
+    if (filter.classFilter !== '') {
+      params.filterClass = filter.classFilter
+    }
+    if (filter.statusFilter !== '') {
+      params.filterStatus = filter.statusFilter
+    }
+    await traineeListApi
+      .getAll(params)
+      .then((response) => {
+        const listExport = response.listResult
+        for (let i = 0; i < listExport.length; i++) {
+          delete listExport[i].userId
+          listExport[i]['Full name'] = listExport[i].fullName
+          listExport[i]['User name'] = listExport[i].username
+          listExport[i]['Email'] = listExport[i].email
+          listExport[i]['Mobile'] = listExport[i].mobile
+          listExport[i]['Status'] = listExport[i].status
+          listExport[i]['Note'] = listExport[i].note
+          listExport[i]['Class'] = listExport[i].classes
+          listExport[i]['Dropout Date'] = listExport[i].dropOut
+          delete listExport[i].fullName
+          delete listExport[i].username
+          delete listExport[i].email
+          delete listExport[i].mobile
+          delete listExport[i].status
+          delete listExport[i].note
+          delete listExport[i].classes
+          delete listExport[i].dropOut
+        }
+        const ws = utils.json_to_sheet(listExport)
+        const wb = utils.book_new()
+        utils.book_append_sheet(wb, ws, 'Data')
+        writeFileXLSX(wb, 'ListClassInformation.xlsx')
+      })
+      .catch((error) => modalError(error))
   }
 
   const handleChangePage = (pageNumber) => {
     loadData(pageNumber, filter)
   }
-  //Class, Full Name, User Name, Email, Status, Dropout Date, Note
+  const modalError = (error) => {
+    Modal.error({
+      title: 'Error',
+      content: "Can't export class data to excel, please try again " + error,
+    })
+  }
   const columns = [
     {
       title: 'Class',
@@ -180,17 +243,17 @@ const TraineeList = () => {
                 <CDropdown className="ml-4">
                   <CDropdownToggle color="secondary">{classes}</CDropdownToggle>
                   <CDropdownMenu>
-                    {/* {listClasses.map((classes) => (
+                    {listClasses.map((classes) => (
                       <CDropdownItem onClick={() => handleFilterClasses(classes)}>{classes}</CDropdownItem>
-                    ))} */}
+                    ))}
                   </CDropdownMenu>
                 </CDropdown>
                 <CDropdown className="ml-4">
                   <CDropdownToggle color="secondary">{status}</CDropdownToggle>
                   <CDropdownMenu>
-                    {/* {listStatus.map((status) => (
+                    {listStatus.map((status) => (
                       <CDropdownItem onClick={() => handleFilterStatus(status)}>{status.name}</CDropdownItem>
-                    ))} */}
+                    ))}
                   </CDropdownMenu>
                 </CDropdown>
                 <CButton color="success" type="submit" className="text-light ml-4" onClick={handleReload}>
@@ -203,7 +266,7 @@ const TraineeList = () => {
             </div>
           </div>
           <div className="col-lg-12">
-            <Table bordered dataSource={listClasses} columns={columns} pagination={false} />
+            <Table bordered dataSource={listTrainee} columns={columns} pagination={false} />
           </div>
           <div className="col-lg-12 d-flex justify-content-end">
             <Pagination defaultCurrent={currentPage} total={totalItem} onChange={handleChangePage} />;

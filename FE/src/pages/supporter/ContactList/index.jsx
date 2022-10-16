@@ -162,7 +162,7 @@ const ContactList = () => {
       width: 90,
       render: (_, { status }) => (
         <Tag color={status === 'OPEN' ? 'blue' : 'red'} key={status}>
-          {status}
+          {`${status.charAt(0).toUpperCase()}${status.slice(1).toLowerCase()}`}
         </Tag>
       ),
     },

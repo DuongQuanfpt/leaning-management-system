@@ -80,10 +80,10 @@ const AdminUserAdd = () => {
     }
     const rolesData = roles.map((role) => role.value)
     const data = {
-      username: userName,
-      fullName: fullName,
-      email: email,
-      mobile: mobile,
+      username: userName.trim(),
+      fullName: fullName.trim(),
+      email: email.trim(),
+      mobile: mobile.trim(),
       roles: rolesData,
       status: status,
       note: note,

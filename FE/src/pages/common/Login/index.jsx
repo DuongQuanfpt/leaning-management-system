@@ -65,16 +65,28 @@ const Login = () => {
       })
       .then((token) => {
         //Get profile data
-        userApi.getProfile(token).then((response) => {
-          dispatch(setProfile(response))
+        userApi
+          .getProfile(token)
+          .then((response) => {
+            dispatch(setProfile(response))
 
-          setLogged(true)
-          navigateTo('/')
-        })
+            setLogged(true)
+            navigateTo('/')
+          })
+          .catch((error) => {
+            console.log(error)
+            //Xử lí error nếu login bằng tài khoản inactive
+            setError('Get data failed')
+          })
       })
       .catch((error) => {
+        console.log(error)
         setLogged(false)
         const { message } = error.response.data
+        if (message === 'User doesnt exist') {
+          setError('This account is does not exist')
+          return
+        }
         if (message === 'This account is unverified') {
           setError('This account is unverified')
           return
@@ -83,6 +95,7 @@ const Login = () => {
           setError('Your email or password is incorrect')
           return
         }
+        setError('Something went wrong, please try again')
       })
   }
 

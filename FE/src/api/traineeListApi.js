@@ -7,6 +7,10 @@ const header = {
 }
 
 const traineeListApi = {
+  getAll: (params) => {
+    const url = `/api/trainee`
+    return axiosClient.get(url, { ...header, params })
+  },
   getPage: (params) => {
     const url = `/api/trainee`
     return axiosClient.get(url, { ...header, params })

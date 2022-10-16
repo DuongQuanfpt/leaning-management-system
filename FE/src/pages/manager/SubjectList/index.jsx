@@ -38,7 +38,7 @@ const SubjectList = () => {
   })
 
   useEffect(() => {
-    subjectListApi.getPage(1).then((response) => {
+    subjectListApi.getFilter().then((response) => {
       setListManager(response.managerFilter)
       setListExpert(response.expertFilter)
       setListStatus(response.statusFilter)
@@ -73,8 +73,9 @@ const SubjectList = () => {
   }
 
   const handleActive = async (status) => {
-    await subjectListApi.changeActive(status.subjectId).then((response) => {
-      loadData(1, filter, search)
+    const statusValue = status.subjectId
+    await subjectListApi.changeActive(statusValue).then((response) => {
+      loadData()
     })
   }
 
@@ -135,13 +136,11 @@ const SubjectList = () => {
       title: 'Code',
       dataIndex: 'subjectCode',
       sorter: (a, b) => a.subjectCode?.length - b.subjectCode?.length,
-      width: 150,
     },
     {
       title: 'Name',
       dataIndex: 'subjectName',
       sorter: (a, b) => a.subjectName?.length - b.subjectName?.length,
-      width: 450,
     },
     {
       title: 'Manager',
