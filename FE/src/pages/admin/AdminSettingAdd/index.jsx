@@ -70,8 +70,8 @@ const AdminSettingAdd = () => {
     }
 
     const params = {
-      settingTitle: title,
-      settingValue: value,
+      settingTitle: title.trim(),
+      settingValue: value.trim(),
       status: status,
       description: description,
       displayOrder: order,

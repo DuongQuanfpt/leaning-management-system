@@ -231,12 +231,16 @@ const AdminSettingList = () => {
                     ))}
                   </CDropdownMenu>
                 </CDropdown>
-                <CButton color="success" type="submit" className="text-light ml-4" onClick={handleReload}>
-                  <CIcon icon={cilSync} />
-                </CButton>
-                <CButton color="danger" type="submit" className="text-light ml-4" onClick={handleAdd}>
-                  <CIcon icon={cilPlus} />
-                </CButton>
+                <Tooltip title="Reload" placement="top">
+                  <CButton color="success" type="submit" className="text-light ml-4" onClick={handleReload}>
+                    <CIcon icon={cilSync} />
+                  </CButton>
+                </Tooltip>
+                <Tooltip title="Add New Setting" placement="top">
+                  <CButton color="danger" type="submit" className="text-light ml-4" onClick={handleAdd}>
+                    <CIcon icon={cilPlus} />
+                  </CButton>
+                </Tooltip>
               </div>
             </div>
           </div>

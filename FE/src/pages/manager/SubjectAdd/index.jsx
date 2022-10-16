@@ -66,7 +66,7 @@ const SubjectAdd = () => {
       return
     }
     const params = {
-      subjectCode: code,
+      subjectCode: code.trim(),
       subjectName: name,
       managerUsername: manager,
       expertUsername: expert,
@@ -80,6 +80,7 @@ const SubjectAdd = () => {
         setError('You have successfully add new subject')
       })
       .catch((error) => {
+        console.log(error)
         if (error.response.data.message === 'Subject code already exist') {
           setError('Subject code already existed')
           return

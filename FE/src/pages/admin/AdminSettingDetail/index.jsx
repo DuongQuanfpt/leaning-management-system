@@ -74,8 +74,8 @@ const AdminSettingDetail = () => {
       return
     }
     const params = {
-      settingTitle: title,
-      settingValue: value,
+      settingTitle: title.trim(),
+      settingValue: value.trim(),
       status: status,
       description: description,
       displayOrder: order,
@@ -108,10 +108,6 @@ const AdminSettingDetail = () => {
   const handleEdit = () => {
     setIsEditMode(true)
     setError('')
-  }
-
-  const handleChangeType = (type) => {
-    setType(type)
   }
 
   const handleChangeStatus = (e) => {

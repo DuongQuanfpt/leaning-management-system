@@ -67,9 +67,9 @@ const AdminUserDetail = () => {
       return
     }
     const data = {
-      username: userName,
-      fullName: fullName,
-      mobile: mobile,
+      username: userName.trim(),
+      fullName: fullName.trim(),
+      mobile: mobile.trim(),
       roles: rolesData,
       status: status,
       note,
