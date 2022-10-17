@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.filter.TraineeFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.request.TraineeRequestDTO;
+import swp490.g23.onlinelearningsystem.entities.class_user.domain.response.TraineeResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.response.TraineeResponsePaginateDTP;
 import swp490.g23.onlinelearningsystem.entities.class_user.service.impl.ClassUserService;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
@@ -54,20 +55,28 @@ public class ClassUserController {
 		return classUserService.getFilter();
 	}
 
-	@PutMapping(value = "/trainee-status/{id}")
-	public ResponseEntity<String> updateSettingStatus(@PathVariable("id") Long id) {
-		return classUserService.updateStatus(id);
+	@PutMapping(value = "/trainee-status/{userId}/{classCode}")
+	public ResponseEntity<String> updateSettingStatus(@PathVariable("userId") Long userId,
+			@PathVariable String classCode) {
+		return classUserService.updateStatus(userId, classCode);
 	}
 
-	@PutMapping(value = "/trainee-dropout/{id}")
-	public ResponseEntity<String> dropTrainee(@PathVariable("id") Long id, @RequestBody TraineeRequestDTO dto) {
-		return classUserService.setDropout(id, dto);
+	@PutMapping(value = "/trainee-dropout/{userId}/{classCode}")
+	public ResponseEntity<String> dropTrainee(@PathVariable("userId") Long userId,
+			@PathVariable("classCode") String classCode, @RequestBody TraineeRequestDTO dto) {
+		return classUserService.setDropout(userId, classCode, dto);
 	}
 
 	@PostMapping(value = "/trainee-import")
 	public ResponseEntity<String> importTrainee(@RequestBody List<TraineeRequestDTO> requestDTO) {
 
 		return classUserService.addTrainee(requestDTO);
+	}
+
+	@GetMapping(value = "/trainee-detail/{userId}/{classCode}")
+	public ResponseEntity<TraineeResponseDTO> viewTrainee(@PathVariable("userId") Long userId,
+			@PathVariable("classCode") String classCode) {
+		return classUserService.viewTrainee(userId, classCode);
 	}
 
 }

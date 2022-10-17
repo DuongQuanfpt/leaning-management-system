@@ -1,5 +1,6 @@
 package swp490.g23.onlinelearningsystem.entities.class_user.domain.response;
 
+import java.time.LocalDate;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,9 +25,9 @@ public class TraineeResponseDTO {
 
     private TraineeStatus status;
 
+    private LocalDate dropDate;
+
     private String note;
 
     private String classes;
-
-    private String dropOut ;
 }

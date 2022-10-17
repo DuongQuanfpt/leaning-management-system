@@ -8,7 +8,7 @@ import javax.persistence.Converter;
 import swp490.g23.onlinelearningsystem.util.enumutil.TraineeStatus;
 
 @Converter(autoApply = true)
-public class TraineeStatusConverter implements AttributeConverter<TraineeStatus, String>{
+public class TraineeStatusConverter implements AttributeConverter<TraineeStatus, String> {
 
     @Override
     public String convertToDatabaseColumn(TraineeStatus attribute) {
@@ -23,11 +23,11 @@ public class TraineeStatusConverter implements AttributeConverter<TraineeStatus,
         if (dbData == null) {
             return null;
         }
-        
+
         return Stream.of(TraineeStatus.values())
-          .filter(u -> u.getValue().equals(dbData))
-          .findFirst()
-          .orElseThrow(IllegalArgumentException::new);
+                .filter(u -> u.getValue().equals(dbData))
+                .findFirst()
+                .orElseThrow(IllegalArgumentException::new);
     }
-    
+
 }
