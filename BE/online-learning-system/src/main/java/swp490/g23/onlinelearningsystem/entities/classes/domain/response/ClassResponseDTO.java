@@ -20,9 +20,9 @@ public class ClassResponseDTO {
 
     private String subjectCode;
 
-    private String term;
+    private ClassTypeResponseDTO term;
 
-    private String branch;
+    private ClassTypeResponseDTO branch;
 
     private String description;
 

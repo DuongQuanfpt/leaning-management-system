@@ -203,7 +203,10 @@ const AdminSettingAdd = () => {
                                 />
                               </div>
                             </div>
-                            <ErrorMsg errorMsg={error} />
+                            <ErrorMsg
+                              errorMsg={error}
+                              isError={error === 'Add new setting successfully' ? false : true}
+                            />
                             <div className="d-flex">
                               <CButton size="md" color="warning" onClick={modalConfirm}>
                                 Add

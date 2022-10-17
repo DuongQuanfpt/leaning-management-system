@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 import { CButton, CDropdown, CDropdownToggle, CDropdownMenu, CDropdownItem } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
@@ -17,6 +18,7 @@ import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 const ClassList = () => {
   const ITEM_PER_PAGE = 10
   const navigateTo = useNavigate()
+  const { roles } = useSelector((state) => state.profile)
 
   const [listClass, setListClass] = useState([])
 
@@ -43,6 +45,12 @@ const ClassList = () => {
     filterSupporter: '',
     filterStatus: '',
   })
+  // eslint-disable-next-line no-unused-vars
+  const [role, setRole] = useState({
+    isManager: false,
+    isSupporter: false,
+    isTrainer: false,
+  })
 
   useEffect(() => {
     classListApi.getFilter().then((response) => {
@@ -52,8 +60,18 @@ const ClassList = () => {
       setListSupporter(response.supporterFilter)
       setListStatus(response.statusFilter)
     })
-  }, [])
 
+    if (roles.includes('manager')) {
+      setRole((prev) => ({ ...prev, isManager: true }))
+    }
+    if (roles.includes('supporter')) {
+      setRole((prev) => ({ ...prev, isSupporter: true }))
+    }
+    if (roles.includes('trainer')) {
+      setRole((prev) => ({ ...prev, isTrainer: true }))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   useEffect(() => {
     loadData(1, filter)
   }, [filter])
@@ -88,9 +106,12 @@ const ClassList = () => {
   }
 
   const handleActive = async (id) => {
-    await classListApi.changeActive(id).then((response) => {
-      loadData()
-    })
+    await classListApi
+      .changeActive(id)
+      .then((response) => {
+        loadData(1, filter)
+      })
+      .catch((error) => console.log(error))
   }
 
   const handleFilterTerm = (term) => {
@@ -170,34 +191,34 @@ const ClassList = () => {
     },
     {
       title: 'Subject',
-      dataIndex: 'subject',
-      sorter: (a, b) => a.subject?.length - b.subject?.length,
-      ellipsis: true,
-      render: (_, { subject }) => subject.map((item) => <Tag key={item}>{item}</Tag>),
+      dataIndex: 'subjectCode',
+      sorter: (a, b) => a.subjectCode?.length - b.subjectCode?.length,
     },
     {
       title: 'Term',
       dataIndex: 'term',
       sorter: (a, b) => a.term - b.term,
-      width: 100,
+      width: 120,
+      render: (_, { term }) => term.title,
     },
     {
       title: 'Branch',
       dataIndex: 'branch',
       sorter: (a, b) => a.branch?.length - b.branch?.length,
-      width: 100,
+      width: 120,
+      render: (_, { branch }) => branch.title,
     },
     {
       title: 'Trainer',
       dataIndex: 'trainer',
       sorter: (a, b) => a.trainer?.length - b.trainer?.length,
-      width: 150,
+      width: 180,
     },
     {
       title: 'Supporter',
       dataIndex: 'supporter',
       sorter: (a, b) => a.supporter?.length - b.supporter?.length,
-      width: 150,
+      width: 180,
     },
     {
       title: 'Status',
@@ -216,17 +237,19 @@ const ClassList = () => {
       dataIndex: 'actions',
       width: 120,
       render: (_, subject) => (
-        <Space size="middle">
-          <Tooltip title={subject.status === 'Active' ? 'Deactivate' : 'Reactivate'} placement="top">
-            <Button
-              type={subject.status === 'Active' ? 'danger' : 'primary'}
-              shape="circle"
-              icon={subject.status === 'Active' ? <CloseOutlined /> : <CheckOutlined />}
-              onClick={() => {
-                modalConfirm(subject)
-              }}
-            ></Button>
-          </Tooltip>
+        <Space size="middle" align="baseline">
+          {!role.isTrainer && (
+            <Tooltip title={subject.status === 'Active' ? 'Deactivate' : 'Reactivate'} placement="top">
+              <Button
+                type={subject.status === 'Active' ? 'danger' : 'primary'}
+                shape="circle"
+                icon={subject.status === 'Active' ? <CloseOutlined /> : <CheckOutlined />}
+                onClick={() => {
+                  modalConfirm(subject)
+                }}
+              ></Button>
+            </Tooltip>
+          )}
           <Tooltip title="View" placement="top">
             <Button
               shape="circle"
@@ -287,22 +310,26 @@ const ClassList = () => {
                     ))}
                   </CDropdownMenu>
                 </CDropdown>
-                <CDropdown className="ml-2">
-                  <CDropdownToggle color="secondary">{trainer}</CDropdownToggle>
-                  <CDropdownMenu>
-                    {listTrainer.map((trainer) => (
-                      <CDropdownItem onClick={() => handleFilterTrainer(trainer)}>{trainer}</CDropdownItem>
-                    ))}
-                  </CDropdownMenu>
-                </CDropdown>
-                <CDropdown className="ml-2">
-                  <CDropdownToggle color="secondary">{supporter}</CDropdownToggle>
-                  <CDropdownMenu>
-                    {listSupporter.map((supporter) => (
-                      <CDropdownItem onClick={() => handleFilterSupporter(supporter)}>{supporter}</CDropdownItem>
-                    ))}
-                  </CDropdownMenu>
-                </CDropdown>
+                {role.isTrainer ? null : (
+                  <CDropdown className="ml-2">
+                    <CDropdownToggle color="secondary">{trainer}</CDropdownToggle>
+                    <CDropdownMenu>
+                      {listTrainer.map((trainer) => (
+                        <CDropdownItem onClick={() => handleFilterTrainer(trainer)}>{trainer}</CDropdownItem>
+                      ))}
+                    </CDropdownMenu>
+                  </CDropdown>
+                )}
+                {role.isSupporter ? null : (
+                  <CDropdown className="ml-2">
+                    <CDropdownToggle color="secondary">{supporter}</CDropdownToggle>
+                    <CDropdownMenu>
+                      {listSupporter.map((supporter) => (
+                        <CDropdownItem onClick={() => handleFilterSupporter(supporter)}>{supporter}</CDropdownItem>
+                      ))}
+                    </CDropdownMenu>
+                  </CDropdown>
+                )}
                 <CDropdown className="ml-2">
                   <CDropdownToggle color="secondary">{status}</CDropdownToggle>
                   <CDropdownMenu>
@@ -316,11 +343,13 @@ const ClassList = () => {
                     <CIcon icon={cilSync} />
                   </CButton>
                 </Tooltip>
-                <Tooltip title="Add New Class" placement="top">
-                  <CButton color="danger" type="submit" className="text-light ml-4" onClick={handleAdd}>
-                    <CIcon icon={cilPlus} />
-                  </CButton>
-                </Tooltip>
+                {role.isManager && (
+                  <Tooltip title="Add New Class" placement="top">
+                    <CButton color="danger" type="submit" className="text-light ml-4" onClick={handleAdd}>
+                      <CIcon icon={cilPlus} />
+                    </CButton>
+                  </Tooltip>
+                )}
               </div>
             </div>
           </div>

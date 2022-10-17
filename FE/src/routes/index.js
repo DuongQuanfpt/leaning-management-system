@@ -72,7 +72,7 @@ const adminRoutes = [
 ]
 
 // Manager routes
-const managerRoutes = []
+const managerRoutes = [{ path: '/class-add', component: ClassAdd }]
 
 // Supporter routes
 const supporterRoutes = [
@@ -87,19 +87,18 @@ const trainerRoutes = []
 const traineeRoutes = []
 
 //Admin and manager routes
-const adminAndManagerRoutes = [
+const subjectListRoutes = [
   { path: '/subject-list', component: SubjectList },
   { path: '/subject-detail/:id', component: SubjectDetail },
   { path: '/subject-add', component: SubjectAdd },
 ]
 
-const managerAndTrainerRoutes = [
+const classListRoutes = [
   { path: '/class-list', component: ClassList },
   { path: '/class-detail/:id', component: ClassDetail },
-  { path: '/class-add', component: ClassAdd },
 ]
 
-const supporterAndTrainerRoutes = [{ path: '/trainee-list', component: TraineeList }]
+const traineeListRoutes = [{ path: '/trainee-list', component: TraineeList }]
 
 export {
   commonRoutes,
@@ -109,7 +108,7 @@ export {
   supporterRoutes,
   trainerRoutes,
   traineeRoutes,
-  adminAndManagerRoutes,
-  managerAndTrainerRoutes,
-  supporterAndTrainerRoutes,
+  subjectListRoutes,
+  traineeListRoutes,
+  classListRoutes,
 }

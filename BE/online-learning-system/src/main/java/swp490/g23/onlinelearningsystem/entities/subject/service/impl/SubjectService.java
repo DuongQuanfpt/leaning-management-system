@@ -228,7 +228,7 @@ public class SubjectService implements ISubjectService {
     public ResponseEntity<String> editSubjectStatus(Long id) {
         Subject subject = subjectRepository.findById(id)
                 .orElseThrow(() -> new NoObjectException("Subject doesnt exist"));
-
+        
         if (subject.getSubjectStatus() == Status.Active) {
             subject.setSubjectStatus(Status.Inactive);
         } else {

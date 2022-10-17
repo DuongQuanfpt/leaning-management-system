@@ -96,12 +96,10 @@ const SubjectDetail = () => {
 
   const handleCancel = () => {
     setError('')
-
     setIsEditMode(false)
   }
   const handleEdit = () => {
     setError('')
-
     setIsEditMode(true)
   }
 

@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 
 import net.bytebuddy.utility.RandomString;
 import swp490.g23.onlinelearningsystem.entities.auth.service.impl.AuthService;
+import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
+import swp490.g23.onlinelearningsystem.entities.classes.repositories.ClassRepositories;
 import swp490.g23.onlinelearningsystem.entities.email.EmailDetails;
 import swp490.g23.onlinelearningsystem.entities.email.service.impl.EmailService;
 import swp490.g23.onlinelearningsystem.entities.permission.domain.SettingPermission;
@@ -65,6 +67,10 @@ public class UserService implements IUserService {
 
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    private ClassRepositories classRepositories;
+
 
     @Override
     public ResponseEntity<AuthenticatedResponseDTO> getAuthenticatedUser(Long id, List<Setting> roles) {
@@ -421,6 +427,21 @@ public class UserService implements IUserService {
             roleNames.add(setting.getSettingTitle());
         }
         responseDTO.setRoles(roleNames);
+
+        List<String> classCode = new ArrayList<>();
+        if(roleNames.contains("manager")){
+            List<Classes> classesAll = classRepositories.findAll();
+            for (Classes classes : classesAll) {
+                classCode.add(classes.getCode());
+            }
+            
+        } else if(roleNames.contains("supporter") || roleNames.contains("trainer")) {
+            List<Classes> classesAll = classRepositories.getClassByUser(entity.getAccountName());
+            for (Classes classes : classesAll) {
+                classCode.add(classes.getCode());
+            }
+        }
+        responseDTO.setClassCodes(classCode);
 
         List<PermissionResponseDTO> permissionDTO = new ArrayList<>();
         for (SettingPermission sp : permissions) {

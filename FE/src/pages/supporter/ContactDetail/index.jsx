@@ -62,12 +62,13 @@ const ContactDetail = () => {
         loadData()
       })
       .catch((error) => {
+        console.log(error)
         setError('Something went wrong, please try again')
       })
   }
 
   const handleCancel = () => {
-    setStatus(contactDetail.status)
+    setStatus(contactDetail.status === 'OPEN' ? 1 : 0)
     setResponse(contactDetail.response)
     setError('')
     setIsEditMode(false)
@@ -162,7 +163,10 @@ const ContactDetail = () => {
                               />
                             </div>
                           </div>
-                          <ErrorMsg errorMsg={error} />
+                          <ErrorMsg
+                            errorMsg={error}
+                            isError={error === 'You have successfully changed your contact detail' ? false : true}
+                          />
                           <div className="d-flex">
                             {isEditMode ? (
                               <>
