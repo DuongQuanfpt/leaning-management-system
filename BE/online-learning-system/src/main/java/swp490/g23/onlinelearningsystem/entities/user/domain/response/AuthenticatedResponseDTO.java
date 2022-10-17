@@ -9,7 +9,10 @@ import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.permission.domain.response.PermissionResponseDTO;
 import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
 
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class AuthenticatedResponseDTO {
     private Long userId;
 
@@ -28,6 +31,8 @@ public class AuthenticatedResponseDTO {
     private String note;
 
     private List<String> roles;
+
+    private List<String> classCodes;
 
     private List<PermissionResponseDTO> permissions;
 }

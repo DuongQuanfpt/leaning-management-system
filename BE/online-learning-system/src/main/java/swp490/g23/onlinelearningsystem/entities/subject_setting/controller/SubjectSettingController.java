@@ -5,12 +5,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.subject_setting.domain.response.SubjectSettingPaginate;
+import swp490.g23.onlinelearningsystem.entities.subject_setting.domain.response.SubjectSettingResponse;
 import swp490.g23.onlinelearningsystem.entities.subject_setting.service.impl.SubjectSettingService;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 
@@ -37,4 +39,10 @@ public class SubjectSettingController {
 		int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
 		return subjectSettingService.getSubjectSetting(limit, page , keyword ,statusFilter , subjectFilter, typeFilter,user);
 	}
+
+    @GetMapping(value = "/subject-setting-detail/{id}")
+    public ResponseEntity<SubjectSettingResponse> viewSubjectSetting(@PathVariable Long id) {
+
+        return subjectSettingService.viewSubjectSetting(id);
+    }
 }

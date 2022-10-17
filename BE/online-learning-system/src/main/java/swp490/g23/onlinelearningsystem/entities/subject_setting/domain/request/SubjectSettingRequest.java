@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SubjectRequestRequest {
+public class SubjectSettingRequest {
     private Long subjectSettingId;
 
     private String subjectCode;

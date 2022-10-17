@@ -16,6 +16,7 @@ public class ClassFilterDTO {
     List <String> trainerFilter;
     List <String> supporterFilter;
     List <ClassStatusEntity> statusFilter;
+    List <String> subjectFilter;
     List <ClassTypeResponseDTO> terms;
     List <ClassTypeResponseDTO> branches;
 }

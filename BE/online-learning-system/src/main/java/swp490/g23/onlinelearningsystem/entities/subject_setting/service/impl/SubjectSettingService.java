@@ -20,6 +20,7 @@ import swp490.g23.onlinelearningsystem.entities.subject_setting.repositories.cri
 import swp490.g23.onlinelearningsystem.entities.subject_setting.service.ISubjectSettingService;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoObjectException;
 import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
 
@@ -103,6 +104,13 @@ public class SubjectSettingService implements ISubjectSettingService {
         dto.setSubjectFilter(subjectFilter);
 
         return ResponseEntity.ok(dto);
+    }
+
+    @Override
+    public ResponseEntity<SubjectSettingResponse> viewSubjectSetting(Long id) {
+        SubjectSetting subjectSetting = subjectSettingRepository.findById(id)
+                .orElseThrow(() -> new NoObjectException("Setting doesnt exist"));
+        return ResponseEntity.ok(toDTO(subjectSetting));
     }
 
     public SubjectSettingResponse toDTO(SubjectSetting entity) {

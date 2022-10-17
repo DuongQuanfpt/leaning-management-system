@@ -21,6 +21,7 @@ import swp490.g23.onlinelearningsystem.entities.classes.repositories.criteria.Cl
 import swp490.g23.onlinelearningsystem.entities.classes.service.IClassService;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
+import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
 import swp490.g23.onlinelearningsystem.entities.subject.repositories.SubjecRepository;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
@@ -213,6 +214,7 @@ public class ClassService implements IClassService {
     public ResponseEntity<ClassFilterDTO> getFilter() {
         List<String> listTrainer = new ArrayList<>();
         List<String> listSupporter = new ArrayList<>();
+        List<String> subjectFilter = new ArrayList<>();
         List<ClassTypeResponseDTO> listTerm = new ArrayList<>();
         List<ClassTypeResponseDTO> listBranch = new ArrayList<>();
         List<Setting> settingTerm = settingRepositories.termList();
@@ -221,6 +223,12 @@ public class ClassService implements IClassService {
         Setting roleSupporter = settingRepositories.findBySettingValue("ROLE_SUPPORTER");
         List<ClassStatusEntity> statuses = new ArrayList<>();
         List<User> users = userRepository.findTrainerAndSupporter();
+        List<Subject> subjects = subjecRepository.findAll();
+
+        for (Subject subject : subjects) {
+            subjectFilter.add(subject.getSubjectCode());
+        }
+
         for (User user : users) {
             if (user.getSettings().contains(roleTrainer)) {
                 listTrainer.add(user.getAccountName());
@@ -246,6 +254,8 @@ public class ClassService implements IClassService {
         filterDTO.setSupporterFilter(listSupporter);
         filterDTO.setTerms(listTerm);
         filterDTO.setBranches(listBranch);
+        filterDTO.setBranches(listBranch);
+        filterDTO.setSubjectFilter(subjectFilter);
 
         return ResponseEntity.ok(filterDTO);
     }
@@ -313,11 +323,14 @@ public class ClassService implements IClassService {
         }
 
         if (entity.getSettingTerm() != null) {
-            responseDTO.setTerm(entity.getSettingTerm().getSettingTitle());
+            responseDTO.setTerm(new ClassTypeResponseDTO(entity.getSettingTerm().getSettingTitle(),
+                    entity.getSettingTerm().getSettingValue()));
         }
 
         if (entity.getSettingBranch() != null) {
-            responseDTO.setBranch(entity.getSettingBranch().getSettingTitle());
+
+            responseDTO.setBranch(new ClassTypeResponseDTO(entity.getSettingBranch().getSettingTitle(),
+                    entity.getSettingBranch().getSettingValue()));
         }
 
         if (entity.getUserSupporter() != null) {
