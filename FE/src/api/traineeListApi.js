@@ -16,9 +16,19 @@ const traineeListApi = {
     return axiosClient.get(url, { ...header, params })
   },
 
-  getDetail: (id) => {
-    const url = `/api/trainee/${id}`
+  getDetail: (id, code) => {
+    const url = `/api/trainee-detail/${id}/${code}`
     return axiosClient.get(url, header)
+  },
+
+  updateStatus: (id, code) => {
+    const url = `/api/trainee-status/${id}/${code}`
+    return axiosClient.put(url, header)
+  },
+
+  setDropout: (id, code) => {
+    const url = `/api/trainee-dropout/${id}/${code}`
+    return axiosClient.put(url, header)
   },
 }
 

@@ -95,6 +95,10 @@ const Login = () => {
           setError('Your email or password is incorrect')
           return
         }
+        if (message === 'cant login to this user') {
+          setError('This account is inactivated')
+          return
+        }
         setError('Something went wrong, please try again')
       })
   }

@@ -91,7 +91,7 @@ const AdminUserAdd = () => {
     await userListApi
       .addUser(data)
       .then((response) => {
-        setError('You have successfully add new User!')
+        setError('You have successfully add new User')
       })
       .catch((error) => {
         if (error.response.data.message === 'Username already exist') {
@@ -215,7 +215,10 @@ const AdminUserAdd = () => {
                                 />
                               </div>
                             </div>
-                            <ErrorMsg errorMsg={error} />
+                            <ErrorMsg
+                              errorMsg={error}
+                              isError={error === 'You have successfully add new User' ? false : true}
+                            />
                             <div className="d-flex">
                               <CButton className="mr-5" size="md" color="warning" onClick={modalConfirm}>
                                 Add

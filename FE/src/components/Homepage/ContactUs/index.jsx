@@ -167,7 +167,7 @@ const ContactUs = () => {
                   </div>
                 </div>
                 <div className="col-lg-12">
-                  <ErrorMsg errorMsg={error} />
+                  <ErrorMsg errorMsg={error} isError={error === 'Your contact added successfully' ? false : true} />
                   <CButton
                     name="submit"
                     type="submit"

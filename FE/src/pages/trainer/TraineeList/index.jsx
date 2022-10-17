@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { read, utils, writeFileXLSX } from 'xlsx'
+import { utils, writeFileXLSX } from 'xlsx'
 
 import { CButton, CDropdown, CDropdownToggle, CDropdownMenu, CDropdownItem } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilSearch, cilSync, cilCloudDownload } from '@coreui/icons'
 
 import { Table, Button, Space, Breadcrumb, Tooltip, Modal, Tag, Pagination } from 'antd'
-import { CloseOutlined, CheckOutlined, EyeOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
+import {
+  CloseOutlined,
+  CheckOutlined,
+  EyeOutlined,
+  ExclamationCircleOutlined,
+  RollbackOutlined,
+} from '@ant-design/icons'
 
 import traineeListApi from '~/api/traineeListApi'
 
@@ -69,6 +75,7 @@ const TraineeList = () => {
     await traineeListApi
       .getPage(params)
       .then((response) => {
+        console.log(response)
         setListTrainee(response.listResult)
         setTotalItem(response.totalItem)
       })
@@ -136,12 +143,32 @@ const TraineeList = () => {
   const handleChangePage = (pageNumber) => {
     loadData(pageNumber, filter)
   }
+
+  const handleChangeStatus = async (trainee) => {
+    console.log(trainee)
+  }
+
   const modalError = (error) => {
     Modal.error({
       title: 'Error',
-      content: "Can't export class data to excel, please try again " + error,
+      content: `Can't export class data to excel, please try again ${error}`,
     })
   }
+
+  const modalConfirm = (trainee) => {
+    Modal.confirm({
+      title: `Are you want to add new Subject?`,
+      icon: <ExclamationCircleOutlined />,
+      okText: 'OK',
+      cancelText: 'Cancel',
+      okType: 'danger',
+      onOk() {
+        handleChangeStatus(trainee)
+      },
+      onCancel() {},
+    })
+  }
+
   const columns = [
     {
       title: 'Class',
@@ -195,6 +222,28 @@ const TraineeList = () => {
       width: 75,
       render: (_, setting) => (
         <Space size="middle">
+          <Tooltip
+            title={setting.status === 'Active' ? 'Deactivate' : setting.status === 'Inactive' ? 'Reactive' : 'Back'}
+            placement="top"
+          >
+            <Button
+              type={setting.status === 'Active' ? 'danger' : setting.status === 'Inactive' ? 'primary' : 'grey'}
+              shape="circle"
+              FrownOutlined
+              icon={
+                setting.status === 'Active' ? (
+                  <CloseOutlined />
+                ) : setting.status === 'Inactive' ? (
+                  <CheckOutlined />
+                ) : (
+                  <RollbackOutlined />
+                )
+              }
+              onClick={() => {
+                modalConfirm(setting)
+              }}
+            ></Button>
+          </Tooltip>
           <Tooltip title="View" placement="top">
             <Button
               shape="circle"

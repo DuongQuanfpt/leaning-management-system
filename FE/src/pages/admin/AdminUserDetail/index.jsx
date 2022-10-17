@@ -253,7 +253,10 @@ const AdminUserDetail = () => {
                                   />
                                 </div>
                               </div>
-                              <ErrorMsg errorMsg={error} />
+                              <ErrorMsg
+                                errorMsg={error}
+                                isError={error === 'You have successfully changed your user detail' ? false : true}
+                              />
                               <div className="d-flex">
                                 {isEditMode ? (
                                   <>

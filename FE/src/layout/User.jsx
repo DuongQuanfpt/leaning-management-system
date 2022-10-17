@@ -8,9 +8,9 @@ import {
   traineeRoutes,
   userRoutes,
   commonRoutes,
-  adminAndManagerRoutes,
-  managerAndTrainerRoutes,
-  supporterAndTrainerRoutes,
+  subjectListRoutes,
+  classListRoutes,
+  traineeListRoutes,
 } from '~/routes'
 import RequireAuth from '~/utils/RequireAuth'
 
@@ -68,23 +68,23 @@ const User = () => {
               return <Route key={index} path={route.path} element={<Page />} />
             })}
           </Route>
-          {/* Both admin and manager role can access */}
+
           <Route element={<RequireAuth allowedRoles={['admin', 'manager']} />}>
-            {adminAndManagerRoutes.map((route, index) => {
+            {subjectListRoutes.map((route, index) => {
               const Page = route.component
               return <Route key={index} path={route.path} element={<Page />} />
             })}
           </Route>
-          {/* Both manager and trainer role can access */}
-          <Route element={<RequireAuth allowedRoles={['manager', 'trainer']} />}>
-            {managerAndTrainerRoutes.map((route, index) => {
+
+          <Route element={<RequireAuth allowedRoles={['manager', 'supporter', 'trainer']} />}>
+            {classListRoutes.map((route, index) => {
               const Page = route.component
               return <Route key={index} path={route.path} element={<Page />} />
             })}
           </Route>
-          {/* Both trainer and supporter role can access */}
-          <Route element={<RequireAuth allowedRoles={['trainer', 'supporter']} />}>
-            {supporterAndTrainerRoutes.map((route, index) => {
+
+          <Route element={<RequireAuth allowedRoles={['manager', 'supporter', 'trainer']} />}>
+            {traineeListRoutes.map((route, index) => {
               const Page = route.component
               return <Route key={index} path={route.path} element={<Page />} />
             })}
