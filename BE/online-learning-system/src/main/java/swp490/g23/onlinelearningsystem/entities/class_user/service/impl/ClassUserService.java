@@ -116,6 +116,26 @@ public class ClassUserService implements IClassUserService {
     }
 
     @Override
+    public ResponseEntity<String> updateTrainee(Long userId, String classCode, TraineeRequestDTO dto) {
+        ClassUser classUser = classUserRepositories.findByClassesAndUser(userId, classCode);
+        if (dto.getStatus() != null) {
+            classUser.setStatus(TraineeStatus.getFromValue(Integer.parseInt(dto.getStatus())).get());
+        }
+        if (dto.getDropoutDate() != null) {
+            if (dto.getStatus().equals(TraineeStatus.Dropout.toString())) {
+                LocalDate date = LocalDate.parse(dto.getDropoutDate());
+                classUser.setDropoutDate(date);
+            }
+        }
+        if (dto.getNote() != null) {
+            classUser.setNote(dto.getNote());
+        }
+
+        classUserRepositories.save(classUser);
+        return ResponseEntity.ok("Update trainee successful");
+    }
+
+    @Override
     public ResponseEntity<TraineeFilterDTO> getFilter() {
         List<String> list = new ArrayList<>();
         List<TraineeStatusEntity> statues = new ArrayList<>();
@@ -148,21 +168,21 @@ public class ClassUserService implements IClassUserService {
             String emailRequest = requestDTO.getEmail();
 
             String classRequest = requestDTO.getClasses();
-            if (usernameRequest != null && !requestDTO.getUsername()
-                    .equals(userRepository.findByAccountName(usernameRequest).getAccountName())) {
+            if (usernameRequest != null
+                    && !usernameRequest.equals(userRepository.findByAccountName(usernameRequest).getAccountName())) {
                 newTrainee.setAccountName(usernameRequest);
-            } else if (usernameRequest != null && requestDTO.getUsername()
-                    .equals(userRepository.findByAccountName(usernameRequest).getAccountName())) {
+            } else if (usernameRequest != null
+                    && usernameRequest.equals(userRepository.findByAccountName(usernameRequest).getAccountName())) {
                 throw new ObjectDuplicateException("username already existed");
             } else {
                 throw new NullException("Trainee dont have username");
             }
 
             if (emailRequest != null
-                    && !requestDTO.getEmail().equals(userRepository.findByEmail(usernameRequest).get().getEmail())) {
+                    && !emailRequest.equals(userRepository.findByEmail(usernameRequest).get().getEmail())) {
                 newTrainee.setEmail(emailRequest);
             } else if (emailRequest != null
-                    && requestDTO.getUsername().equals(userRepository.findByEmail(usernameRequest).get().getEmail())) {
+                    && emailRequest.equals(userRepository.findByEmail(usernameRequest).get().getEmail())) {
                 throw new ObjectDuplicateException("email already existed");
             } else {
                 throw new NullException("Trainee dont have email");
@@ -180,7 +200,7 @@ public class ClassUserService implements IClassUserService {
                 newTrainee.setNote(requestDTO.getNote());
             }
 
-            newTrainee.setStatus(UserStatus.Active);
+            newTrainee.setStatus(UserStatus.Inactive);
             try {
                 authService.sendGooglePass(emailRequest, newPass);
             } catch (UnsupportedEncodingException e) {
@@ -195,6 +215,7 @@ public class ClassUserService implements IClassUserService {
             if (classRequest != null) {
                 classUser.setClasses(classRepositories.findClassByCode(classRequest));
                 classUser.setUser(newTrainee);
+                classUser.setStatus(TraineeStatus.Inactive);
                 newList.add(classUser);
                 newTrainee.setClassUsers(newList);
             }
