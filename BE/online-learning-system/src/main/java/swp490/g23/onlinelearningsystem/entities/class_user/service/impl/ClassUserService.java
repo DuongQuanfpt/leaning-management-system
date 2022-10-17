@@ -169,7 +169,7 @@ public class ClassUserService implements IClassUserService {
 
             String classRequest = requestDTO.getClasses();
             if (usernameRequest != null
-                    && !usernameRequest.equals(userRepository.findByAccountName(usernameRequest).getAccountName())) {
+                    && userRepository.findByAccountName(usernameRequest) == null) {
                 newTrainee.setAccountName(usernameRequest);
             } else if (usernameRequest != null
                     && usernameRequest.equals(userRepository.findByAccountName(usernameRequest).getAccountName())) {
@@ -179,7 +179,7 @@ public class ClassUserService implements IClassUserService {
             }
 
             if (emailRequest != null
-                    && !emailRequest.equals(userRepository.findByEmail(usernameRequest).get().getEmail())) {
+                    && !userRepository.findByEmail(emailRequest).isPresent()) {
                 newTrainee.setEmail(emailRequest);
             } else if (emailRequest != null
                     && emailRequest.equals(userRepository.findByEmail(usernameRequest).get().getEmail())) {
