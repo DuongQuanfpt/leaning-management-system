@@ -2,6 +2,7 @@ package swp490.g23.onlinelearningsystem.entities.subject.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +19,7 @@ import swp490.g23.onlinelearningsystem.entities.subject.domain.request.SubjectRe
 import swp490.g23.onlinelearningsystem.entities.subject.domain.response.SubjectResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.subject.domain.response.SubjectResponsePaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.subject.service.impl.SubjectService;
+import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 
 @RestController
 @RequestMapping(Setting.API_PREFIX)
@@ -34,12 +36,14 @@ public class SubjectController {
 			@RequestParam(name = "q", required = false) String keyword,
 			@RequestParam(name = "filterManager", required = false) String managerFilter,
 			@RequestParam(name = "filterExpert", required = false) String expertFilter,
-			@RequestParam(name = "filterStatus", required = false) String status) {
+			@RequestParam(name = "filterStatus", required = false) String status,
+			@AuthenticationPrincipal User user)
+			 {
 
 		int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
 		int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
 
-		return service.getSubject(limit, page, keyword, managerFilter, expertFilter, status);
+		return service.getSubject(limit, page, keyword, managerFilter, expertFilter, status,user);
 	}
 
 	@GetMapping(value = "/subjects-detail/{id}")

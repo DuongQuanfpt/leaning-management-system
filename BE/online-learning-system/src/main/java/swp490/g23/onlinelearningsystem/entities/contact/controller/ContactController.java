@@ -38,12 +38,13 @@ public class ContactController {
             @RequestParam(name = "q", required = false) String keyword,
             @RequestParam(name = "filterStatus", required = false) String statusFilter,
             @RequestParam(name = "filterSupporter", required = false) String suppFilter,
-            @RequestParam(name = "filterCategory", required = false) String categoryFilter) {
+            @RequestParam(name = "filterCategory", required = false) String categoryFilter,
+            @AuthenticationPrincipal User user) {
 
         int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
         int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
 
-        return contactService.getAllContact(keyword, limit, page, categoryFilter, statusFilter , suppFilter);
+        return contactService.getAllContact(keyword, limit, page, categoryFilter, statusFilter , suppFilter,user);
     }
 
     @GetMapping(value = "/contact-detail/{id}")

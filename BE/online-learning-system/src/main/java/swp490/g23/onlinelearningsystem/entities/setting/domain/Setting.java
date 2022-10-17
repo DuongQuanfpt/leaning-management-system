@@ -24,6 +24,7 @@ import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.contact.domain.WebContact;
 import swp490.g23.onlinelearningsystem.entities.permission.domain.SettingPermission;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
+import swp490.g23.onlinelearningsystem.entities.user_roles.domain.UserRoles;
 import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 
 @Entity
@@ -85,6 +86,9 @@ public class Setting extends BaseEntity {
 
     @OneToMany(mappedBy = "category")
 	private List<WebContact> webContact = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+	private List<UserRoles> userRoles = new ArrayList<>();
 
     // @OneToMany(mappedBy = "api" ,cascade = CascadeType.ALL)
     // private List<SettingPermission> apis;

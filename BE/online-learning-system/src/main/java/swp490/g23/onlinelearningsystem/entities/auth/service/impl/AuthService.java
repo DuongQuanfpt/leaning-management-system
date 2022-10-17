@@ -33,6 +33,7 @@ import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepo
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.InvalidTokenException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoObjectException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.ObjectDuplicateException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.UnverifiedUserException;
 import swp490.g23.onlinelearningsystem.util.GoogleHelper;
@@ -74,6 +75,10 @@ public class AuthService implements IAuthService {
             throw new UnverifiedUserException();
         }
 
+        if (user.getStatus() == UserStatus.Inactive) {
+            throw new NoObjectException("cant login to this user");
+        }
+
         String accessToken = tokenUtil.generateAccessToken(user);
         AuthResponse response = new AuthResponse(user.getEmail(), accessToken, user.getFullName());
         return ResponseEntity.ok(response);
@@ -90,7 +95,6 @@ public class AuthService implements IAuthService {
         user.setFullName(request.getFullName());
         user.setEmail(request.getEmail());
         user.setPassword(encoder.encode(password));
-        System.out.println("????????????? : " +settingRepositories.findBySettingValue("ROLE_TRAINEE").getSettingValue());
         user.addRole(settingRepositories.findBySettingValue("ROLE_TRAINEE"));
         user.setStatus(UserStatus.Unverified);
         user.setMailToken(RandomString.make(30));

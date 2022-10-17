@@ -45,10 +45,12 @@ public class SubjectService implements ISubjectService {
 
     @Override
     public ResponseEntity<SubjectResponsePaginateDTO> getSubject(int limit, int currentPage, String keyword,
-            String managerFilter, String expertFilter, String statusFilter) {
+            String managerFilter, String expertFilter, String statusFilter,User user) {
+        
+        User currentUser = userRepository.findById(user.getUserId()).get();
 
         SubjectQuery result = subjectCriteria.searchFilterSubject(keyword, statusFilter, managerFilter,
-        expertFilter);
+        expertFilter,currentUser);
 
         TypedQuery<Subject> queryResult =  result.getResultQuery();
         TypedQuery<Long> countQuery =   result.getCountQuery();
@@ -243,8 +245,8 @@ public class SubjectService implements ISubjectService {
         List<StatusEntity> statuses = new ArrayList<>();
 
         List<User> allManagerExpert = userRepository.findManagerAndExpert();
-        Setting managerSetting = settingRepositories.findBySettingValue("ROLE_MANAGER");
-        Setting expertSetting = settingRepositories.findBySettingValue("ROLE_EXPERT");
+        Setting managerSetting = settingRepositories.findActiveSettingByValue("ROLE_MANAGER");
+        Setting expertSetting = settingRepositories.findActiveSettingByValue("ROLE_EXPERT");
 
         for (User user : allManagerExpert) {
             if (user.getSettings().contains(managerSetting)) {

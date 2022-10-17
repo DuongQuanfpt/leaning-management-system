@@ -12,7 +12,7 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 
 public interface IContactService {
     ResponseEntity<ContactPaginateDTO> getAllContact(String q, int limit, int page, String filterCategory,
-            String filterStatus ,String filterSupp);
+            String filterStatus ,String filterSupp, User user);
 
     ResponseEntity<ContactResponseDTO> getContactDetail(Long id);
 

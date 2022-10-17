@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import lombok.RequiredArgsConstructor;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
+import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 
 @Repository
 @RequiredArgsConstructor
@@ -15,13 +16,11 @@ public class ClassRepositoriesCriteria {
     private final EntityManager em;
 
     public TypedQuery<Classes> displayClass(String keyword, String filterTerm, String filterTrainer,
-                                         String filterSupporter, String filterBranch, String filterStatus) {
-        StringBuilder query = new StringBuilder("SELECT DISTINCT c FROM Classes c LEFT OUTER JOIN c.classSubject as cs WHERE 1=1");
+                                         String filterSupporter, String filterBranch, String filterStatus,User currentUser) {
+        StringBuilder query = new StringBuilder("SELECT DISTINCT c FROM Classes c  WHERE 1=1");
 
         if (keyword != null) {
-            // query = new StringBuilder(query.toString().replaceAll("SELECT DISTINCT c FROM Classes c", 
-            //         "SELECT DISTINCT c FROM Classes c FULL JOIN c.classSubject as s"));
-            query.append(" AND c.code LIKE '%" + keyword + "%'");
+            query.append(" AND c.code LIKE '%" + keyword + "%' OR c.subject.subjectCode LIKE '%" + keyword + "%'");
         }
 
         if (filterStatus != null) {

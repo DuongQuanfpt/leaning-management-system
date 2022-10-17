@@ -11,7 +11,7 @@ public interface ClassRepositories extends JpaRepository<Classes, Long>{
     
     List<Classes> findByCode(String code);
 
-    @Query(value = "SELECT c FROm Classes c WHERE c.code = :clazz")
+    @Query(value = "SELECT c FROM Classes c WHERE c.code = :clazz")
     Classes findClassByCode (String clazz);
 
 }

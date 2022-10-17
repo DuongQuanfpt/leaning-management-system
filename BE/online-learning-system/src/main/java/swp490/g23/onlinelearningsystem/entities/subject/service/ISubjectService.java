@@ -6,10 +6,12 @@ import swp490.g23.onlinelearningsystem.entities.subject.domain.filter.SubjectFil
 import swp490.g23.onlinelearningsystem.entities.subject.domain.request.SubjectRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.subject.domain.response.SubjectResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.subject.domain.response.SubjectResponsePaginateDTO;
+import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 
 public interface ISubjectService {
 
-   ResponseEntity<SubjectResponsePaginateDTO> getSubject(int limit, int page, String keyword ,String managerFilter, String expertFilter, String statusFilter);
+   ResponseEntity<SubjectResponsePaginateDTO> getSubject(int limit, int page, String keyword, String managerFilter,
+         String expertFilter, String statusFilter, User user);
 
    ResponseEntity<SubjectResponseDTO> getSubjectDetail(Long id);
 

@@ -22,6 +22,7 @@ import swp490.g23.onlinelearningsystem.entities.contact.service.IContactService;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
+import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoObjectException;
 import swp490.g23.onlinelearningsystem.util.enumutil.ContactStatus;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.ContactStatusEntity;
@@ -38,6 +39,9 @@ public class ContactService implements IContactService {
     @Autowired
     private SettingRepositories settingRepositories;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Override
     public ResponseEntity<List<ContactCategoryFilter>> contactFilter() {// get category to filter
         List<ContactCategoryFilter> filters = new ArrayList<>();
@@ -53,9 +57,10 @@ public class ContactService implements IContactService {
     @Override
     public ResponseEntity<ContactPaginateDTO> getAllContact(String q, int limit, int page, // display ,search and filter
                                                                                            // all webcontact,
-            String filterCategory, String filterStatus , String filterSupp) {
-
-        ContactQuery result = contactCriteria.displaySetting(q, filterCategory, filterStatus ,filterSupp);
+            String filterCategory, String filterStatus , String filterSupp , User user) {
+        
+        User user2 = userRepository.findById(user.getUserId()).get();        
+        ContactQuery result = contactCriteria.displaySetting(q, filterCategory, filterStatus ,filterSupp,user2);
         TypedQuery<WebContact> queryResult = result.getResultQuery();
         TypedQuery<Long> countQuery = result.getCountQuery();
 

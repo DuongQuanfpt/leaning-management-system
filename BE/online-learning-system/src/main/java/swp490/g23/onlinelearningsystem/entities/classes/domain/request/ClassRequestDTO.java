@@ -1,6 +1,5 @@
 package swp490.g23.onlinelearningsystem.entities.classes.domain.request;
 
-import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,7 +17,7 @@ public class ClassRequestDTO {
 
     private String status;
 
-    private List<String> subject;
+    private String subjectCode;
 
     private String term;
 

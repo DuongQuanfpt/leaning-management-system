@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.filter.TraineeFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.request.TraineeRequestDTO;
+import swp490.g23.onlinelearningsystem.entities.class_user.domain.response.TraineeResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.response.TraineeResponsePaginateDTP;
 
 public interface IClassUserService {
@@ -16,7 +17,9 @@ public interface IClassUserService {
 
     ResponseEntity<String> addTrainee(List<TraineeRequestDTO> requestDTO);
 
-    ResponseEntity<String> updateStatus(Long id);
+    ResponseEntity<String> updateStatus(Long userId, String classCode);
 
-    ResponseEntity<String> setDropout(Long id, TraineeRequestDTO dto);
+    ResponseEntity<String> setDropout(Long userId, String classCode, TraineeRequestDTO dto);
+
+    ResponseEntity<TraineeResponseDTO> viewTrainee(Long userId, String classCode);
 }

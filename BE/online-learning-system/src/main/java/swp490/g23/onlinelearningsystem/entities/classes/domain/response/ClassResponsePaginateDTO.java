@@ -18,8 +18,8 @@ public class ClassResponsePaginateDTO {
 	private int totalPage;
 	private long totalItem;
 	private List<ClassResponseDTO> listResult = new ArrayList<>();
-	private List<String> termFilter;
-	private List<String> branchFilter;
+	private List<ClassTypeResponseDTO> termFilter;
+	private List<ClassTypeResponseDTO> branchFilter;
 	private List<String> trainerFilter;
 	private List<String> supporterFilter;
 	private List<ClassStatusEntity> statusFilter;
