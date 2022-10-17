@@ -31,6 +31,11 @@ const classListApi = {
     const url = `/api/class-filter`
     return axiosClient.get(url, header)
   },
+
+  addClass: (params) => {
+    const url = `/api/class-add`
+    return axiosClient.post(url, params, header)
+  },
 }
 
 export default classListApi

@@ -10,7 +10,7 @@ const AdminDashboard = () => {
       <div className="wrapper d-flex flex-column min-vh-100 bg-light">
         <AdminHeader />
         <div className="body flex-grow-1 px-3">
-          <h1>Dashboard admin content here</h1>
+          <h1>Dashboard content here</h1>
         </div>
         <AdminFooter />
       </div>

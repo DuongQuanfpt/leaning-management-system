@@ -203,7 +203,10 @@ const AdminSettingDetail = () => {
                                 />
                               </div>
                             </div>
-                            <ErrorMsg errorMsg={error} />
+                            <ErrorMsg
+                              errorMsg={error}
+                              isError={error === 'You have successfully changed your setting detail' ? false : true}
+                            />
                             <div className="d-flex">
                               {isEditMode ? (
                                 <>

@@ -1,7 +1,289 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
+
+import AdminHeader from '~/components/AdminDashboard/AdminHeader'
+import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
+
+import {
+  CContainer,
+  CRow,
+  CCol,
+  CButton,
+  CDropdown,
+  CDropdownToggle,
+  CDropdownMenu,
+  CDropdownItem,
+} from '@coreui/react'
+import { Breadcrumb, Radio, Modal } from 'antd'
+import { ExclamationCircleOutlined } from '@ant-design/icons'
+
+import classListApi from '~/api/classListApi'
+
+import ErrorMsg from '~/components/Common/ErrorMsg'
 
 const ClassAdd = () => {
-  return <div>ClassAdd</div>
+  const [list, setList] = useState({
+    subject: [],
+    term: [],
+    branch: [],
+    trainer: [],
+    supporter: [],
+    status: [],
+  })
+
+  const [object, setObject] = useState({
+    classes: '',
+    subject: 'Select Subject',
+    term: 'Select Term',
+    branch: 'Select Branch',
+    trainer: 'Select Trainer',
+    supporter: 'Select Supporter',
+    status: 0,
+    description: '',
+    error: '',
+  })
+
+  useEffect(() => {
+    loadData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const loadData = async () => {
+    classListApi
+      .getFilter()
+      .then((response) => {
+        console.log(response)
+        setList({
+          ...list,
+          subject: response.subjectFilter,
+          term: response.terms,
+          branch: response.branches,
+          trainer: response.trainerFilter,
+          supporter: response.supporterFilter,
+          status: response.statusFilter,
+        })
+      })
+      .catch((error) => setObject({ ...object, error: 'Something went wrong, please try again' }))
+  }
+
+  const handleAdd = async () => {
+    if (object.classes === '') {
+      setObject((prev) => ({ ...prev, error: 'Class code must not empty' }))
+      return
+    }
+    if (object.subject === 'Select Subject') {
+      setObject((prev) => ({ ...prev, error: 'You must select one Subject' }))
+      return
+    }
+    if (object.term === 'Select Term') {
+      setObject((prev) => ({ ...prev, error: 'You must select one Term' }))
+      return
+    }
+    if (object.branch === 'Select Branch') {
+      setObject((prev) => ({ ...prev, error: 'You must select one Branch' }))
+      return
+    }
+    if (object.trainer === 'Select Trainer') {
+      setObject((prev) => ({ ...prev, error: 'You must select one Trainer' }))
+      return
+    }
+    if (object.supporter === 'Select Supporter') {
+      setObject((prev) => ({ ...prev, error: 'You must select one Supporter' }))
+      return
+    }
+    if (object.description === '') {
+      setObject((prev) => ({ ...prev, error: 'Description must not empty' }))
+      return
+    }
+    const params = {
+      code: object.classes,
+      subject: object.subject,
+      term: object.term.value,
+      branch: object.branch.value,
+      supporter: object.supporter,
+      trainer: object.trainer,
+      status: object.status,
+      description: object.description,
+    }
+
+    await classListApi
+      .addClass(params)
+      .then((response) => {
+        setObject((prev) => ({ ...prev, error: 'You have successfully add new class' }))
+      })
+      .catch((error) => {
+        console.log(error)
+        if (error.response.data.message === 'Class name already exist') {
+          setObject((prev) => ({ ...prev, error: 'Class name already existed' }))
+          return
+        }
+        setObject((prev) => ({ ...prev, error: 'Something went wrong, please try again' }))
+      })
+  }
+
+  const modalConfirm = () => {
+    setObject({ ...object, error: '' })
+    Modal.confirm({
+      title: `Are you want to add new Class?`,
+      icon: <ExclamationCircleOutlined />,
+      okText: 'OK',
+      cancelText: 'Cancel',
+      okType: 'danger',
+      onOk() {
+        handleAdd()
+      },
+      onCancel() {},
+    })
+  }
+
+  return (
+    <>
+      <AdminSidebar />
+      <div className="wrapper d-flex flex-column min-vh-100 bg-light">
+        <AdminHeader />
+        <div className="body flex-grow-1 px-3">
+          <div className="col-lg-12 m-b30">
+            <Breadcrumb>
+              <Breadcrumb.Item>
+                <Link to="/dashboard">Dashboard</Link>
+              </Breadcrumb.Item>
+              <Breadcrumb.Item>
+                <Link to="/class-list">Class List</Link>
+              </Breadcrumb.Item>
+              <Breadcrumb.Item>Class Add</Breadcrumb.Item>
+            </Breadcrumb>
+          </div>
+          <CContainer>
+            <CRow>
+              <CCol sm="12">
+                <div className="row">
+                  <div className="col-lg-12 m-b30">
+                    <div className="widget-box">
+                      <div className="widget-inner">
+                        <div className="row">
+                          <div className="form-group col-6">
+                            <label className="col-form-label">Class</label>
+                            <div>
+                              <input
+                                className="form-control"
+                                type="text"
+                                value={object.classes}
+                                onChange={(e) => setObject((prev) => ({ ...prev, classes: e.target.value }))}
+                              />
+                            </div>
+                          </div>
+                          <div className="form-group col-6">
+                            <label className="col-form-label">Subject</label>
+                            <CDropdown className="w-100">
+                              <CDropdownToggle color="warning">{object.subject}</CDropdownToggle>
+                              <CDropdownMenu className="w-100">
+                                {list.subject.map((item) => (
+                                  <CDropdownItem onClick={() => setObject((prev) => ({ ...prev, subject: item }))}>
+                                    {item}
+                                  </CDropdownItem>
+                                ))}
+                              </CDropdownMenu>
+                            </CDropdown>
+                          </div>
+                          <div className="form-group col-3">
+                            <label className="col-form-label">Term</label>
+                            <CDropdown className="w-100">
+                              <CDropdownToggle color="warning">{object.term}</CDropdownToggle>
+                              <CDropdownMenu className="w-100">
+                                {list.term.map((item) => (
+                                  <CDropdownItem onClick={() => setObject((prev) => ({ ...prev, term: item.title }))}>
+                                    {item.title}
+                                  </CDropdownItem>
+                                ))}
+                              </CDropdownMenu>
+                            </CDropdown>
+                          </div>
+                          <div className="form-group col-3">
+                            <label className="col-form-label">Branch</label>
+                            <CDropdown className="w-100">
+                              <CDropdownToggle color="warning">{object.branch}</CDropdownToggle>
+                              <CDropdownMenu className="w-100">
+                                {list.branch.map((item) => (
+                                  <CDropdownItem onClick={() => setObject((prev) => ({ ...prev, branch: item.title }))}>
+                                    {item.title}
+                                  </CDropdownItem>
+                                ))}
+                              </CDropdownMenu>
+                            </CDropdown>
+                          </div>
+                          <div className="form-group col-3">
+                            <label className="col-form-label">Trainer</label>
+                            <CDropdown className="w-100">
+                              <CDropdownToggle color="warning">{object.trainer}</CDropdownToggle>
+                              <CDropdownMenu className="w-100">
+                                {list.trainer.map((item) => (
+                                  <CDropdownItem onClick={() => setObject((prev) => ({ ...prev, trainer: item }))}>
+                                    {item}
+                                  </CDropdownItem>
+                                ))}
+                              </CDropdownMenu>
+                            </CDropdown>
+                          </div>
+                          <div className="form-group col-3">
+                            <label className="col-form-label">Supporter</label>
+                            <CDropdown className="w-100">
+                              <CDropdownToggle color="warning">{object.supporter}</CDropdownToggle>
+                              <CDropdownMenu className="w-100">
+                                {list.supporter.map((item) => (
+                                  <CDropdownItem onClick={() => setObject((prev) => ({ ...prev, supporter: item }))}>
+                                    {item}
+                                  </CDropdownItem>
+                                ))}
+                              </CDropdownMenu>
+                            </CDropdown>
+                          </div>
+                          <div className="form-group col-6">
+                            <label className="col-form-label">Status</label>
+                            <div>
+                              <Radio.Group
+                                value={object.status}
+                                onChange={(e) => {
+                                  setObject((prev) => ({ ...prev, status: e.target.value }))
+                                }}
+                              >
+                                <Radio value={1}>Active</Radio>
+                                <Radio value={0}>Inactive</Radio>
+                                <Radio value={-1}>Closed</Radio>
+                              </Radio.Group>
+                            </div>
+                          </div>
+                          <div className="form-group col-12">
+                            <label className="col-form-label">Description</label>
+                            <div>
+                              <textarea
+                                className="form-control"
+                                type="text"
+                                value={object.description}
+                                onChange={(e) => setObject((prev) => ({ ...prev, description: e.target.value }))}
+                              />
+                            </div>
+                          </div>
+                          <ErrorMsg
+                            errorMsg={object.error}
+                            isError={object.error === 'You have successfully add new class' ? false : true}
+                          />
+                          <div className="d-flex">
+                            <CButton size="md" className="mr-5" color="warning" onClick={modalConfirm}>
+                              Add
+                            </CButton>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CCol>
+            </CRow>
+          </CContainer>
+        </div>
+      </div>
+    </>
+  )
 }
 
 export default ClassAdd
