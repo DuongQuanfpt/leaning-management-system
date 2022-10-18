@@ -1,5 +1,7 @@
 package swp490.g23.onlinelearningsystem.entities.class_user.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.filter.TraineeFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.request.TraineeRequestDTO;
+import swp490.g23.onlinelearningsystem.entities.class_user.domain.request.TraineeWrapper;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.response.TraineeResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.response.TraineeResponsePaginateDTP;
 import swp490.g23.onlinelearningsystem.entities.class_user.service.impl.ClassUserService;
@@ -68,9 +71,10 @@ public class ClassUserController {
 	}
 
 	@PostMapping(value = "/trainee-import")
-	public ResponseEntity<String> importTrainee(@RequestBody List<TraineeRequestDTO> requestDTO) {
-
-		return classUserService.addTrainee(requestDTO);
+	public ResponseEntity<String> importTrainee(@RequestBody TraineeWrapper wrapper) {
+		List<TraineeRequestDTO> list = wrapper.getDto();
+		System.out.println(wrapper.getDto().get(0).getUsername());
+		return classUserService.addTrainee(list);
 	}
 
 	@GetMapping(value = "/trainee-detail/{userId}/{classCode}")

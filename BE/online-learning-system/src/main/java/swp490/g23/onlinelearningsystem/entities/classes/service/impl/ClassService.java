@@ -27,6 +27,7 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoClassException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.ObjectDuplicateException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.ValueMissingException;
 import swp490.g23.onlinelearningsystem.util.enumutil.ClassStatus;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.ClassStatusEntity;
 
@@ -175,21 +176,27 @@ public class ClassService implements IClassService {
                 throw new ObjectDuplicateException("Class name already exist");
             }
         }
+
         if (dto.getStatus() != null) {
             clazz.setStatus(ClassStatus.getFromValue(Integer.parseInt(dto.getStatus())).get());
         }
+
         if (dto.getDescription() != null) {
             clazz.setDescription(dto.getDescription());
         }
+
         if (dto.getSupporter() != null) {
             clazz.setUserSupporter(userSupportter);
         }
+
         if (dto.getTrainer() != null) {
             clazz.setUserTrainer(userTrainer);
         }
+
         if (dto.getBranch() != null) {
             clazz.setSettingBranch(settingBranch);
         }
+
         if (dto.getTerm() != null) {
             clazz.setSettingTerm(settingTerm);
         }
@@ -273,6 +280,8 @@ public class ClassService implements IClassService {
             } else {
                 throw new ObjectDuplicateException("Class name already exist");
             }
+        } else {
+            throw new ValueMissingException("must assign class code");
         }
 
         clazz.setStatus(ClassStatus.getFromValue(Integer.parseInt(requestDTO.getStatus())).get());

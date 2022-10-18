@@ -22,4 +22,6 @@ public interface IClassUserService {
     ResponseEntity<String> setDropout(Long userId, String classCode, TraineeRequestDTO dto);
 
     ResponseEntity<TraineeResponseDTO> viewTrainee(Long userId, String classCode);
+
+    ResponseEntity<String> updateTrainee(Long userId, String classCode, TraineeRequestDTO dto);
 }
