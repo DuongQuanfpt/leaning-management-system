@@ -1,10 +1,16 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
+import { setCurrentClass } from '~/redux/ProfileSlice/profileSlice'
 import { setSidebarShow } from '~/redux/SidebarSlice/sidebarSlice'
 import { CContainer, CHeader, CHeaderBrand, CHeaderNav, CHeaderToggler, CNavLink, CNavItem } from '@coreui/react'
+
+import { DownOutlined } from '@ant-design/icons'
+import { Dropdown, Menu, Space } from 'antd'
+
 import CIcon from '@coreui/icons-react'
-import { cilBell, cilEnvelopeOpen, cilList, cilMenu } from '@coreui/icons'
+import { cilMenu } from '@coreui/icons'
 
 import AdminHeaderDropdown from './AdminHeaderDropdown'
 import { logo } from 'src/assets/brand/logo'
@@ -12,6 +18,24 @@ import { logo } from 'src/assets/brand/logo'
 const AdminHeader = () => {
   const dispatch = useDispatch()
   const sidebarShow = useSelector((state) => state.sidebar.sidebarShow)
+  const listClassAssigned = useSelector((state) => state.profile.classCodes)
+  const currentClass = useSelector((state) => state.profile.currentClass)
+
+  const handleChangeClass = (key) => {
+    console.log(listClassAssigned[key])
+    dispatch(setCurrentClass(listClassAssigned[key]))
+  }
+
+  const menu = (
+    <Menu
+      selectable
+      onClick={({ key }) => handleChangeClass(key)}
+      items={listClassAssigned.map((item, index) => ({
+        key: index,
+        label: item,
+      }))}
+    />
+  )
 
   return (
     <CHeader position="sticky" className="mb-4">
@@ -30,21 +54,14 @@ const AdminHeader = () => {
           </CNavItem>
         </CHeaderNav>
         <CHeaderNav>
-          <CNavItem>
-            <CNavLink href="#">
-              <CIcon icon={cilBell} size="lg" />
-            </CNavLink>
-          </CNavItem>
-          <CNavItem>
-            <CNavLink href="#">
-              <CIcon icon={cilList} size="lg" />
-            </CNavLink>
-          </CNavItem>
-          <CNavItem>
-            <CNavLink href="#">
-              <CIcon icon={cilEnvelopeOpen} size="lg" />
-            </CNavLink>
-          </CNavItem>
+          <Dropdown overlay={menu}>
+            <a onClick={(e) => e.preventDefault()}>
+              <Space>
+                {currentClass}
+                <DownOutlined />
+              </Space>
+            </a>
+          </Dropdown>
         </CHeaderNav>
         <CHeaderNav className="ms-3">
           <AdminHeaderDropdown />

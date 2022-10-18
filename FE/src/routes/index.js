@@ -36,6 +36,8 @@ const ContactDetail = lazy(() => import('~/pages/supporter/ContactDetail'))
 
 //Trainer
 const TraineeList = lazy(() => import('~/pages/trainer/TraineeList'))
+const TraineeDetail = lazy(() => import('~/pages/trainer/TraineeDetail'))
+const TraineeImport = lazy(() => import('~/pages/trainer/TraineeImport'))
 
 //404 pages
 const PageNotFound = lazy(() => import('~/pages/common/PageNotFound'))
@@ -98,7 +100,11 @@ const classListRoutes = [
   { path: '/class-detail/:id', component: ClassDetail },
 ]
 
-const traineeListRoutes = [{ path: '/trainee-list', component: TraineeList }]
+const traineeListRoutes = [
+  { path: '/trainee-list', component: TraineeList },
+  { path: '/trainee-detail/:id', component: TraineeDetail },
+  { path: '/trainee-import', component: TraineeImport },
+]
 
 export {
   commonRoutes,

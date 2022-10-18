@@ -23,12 +23,12 @@ const traineeListApi = {
 
   updateStatus: (id, code) => {
     const url = `/api/trainee-status/${id}/${code}`
-    return axiosClient.put(url, header)
+    return axiosClient.put(url, {}, header)
   },
 
-  setDropout: (id, code) => {
+  setDropout: (id, code, params) => {
     const url = `/api/trainee-dropout/${id}/${code}`
-    return axiosClient.put(url, header)
+    return axiosClient.put(url, params, header)
   },
 }
 

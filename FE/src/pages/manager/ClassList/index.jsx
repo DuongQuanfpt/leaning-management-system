@@ -18,7 +18,7 @@ import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 const ClassList = () => {
   const ITEM_PER_PAGE = 10
   const navigateTo = useNavigate()
-  const { roles } = useSelector((state) => state.profile)
+  const { roles, currentClass } = useSelector((state) => state.profile)
 
   const [listClass, setListClass] = useState([])
 
@@ -29,7 +29,6 @@ const ClassList = () => {
   const [listStatus, setListStatus] = useState([])
 
   const [totalItem, setTotalItem] = useState(1)
-  // eslint-disable-next-line no-unused-vars
   const [currentPage, setCurrentPage] = useState(1)
 
   const [search, setSearch] = useState('')
@@ -63,23 +62,29 @@ const ClassList = () => {
 
     if (roles.includes('manager')) {
       setRole((prev) => ({ ...prev, isManager: true }))
+      return
     }
     if (roles.includes('supporter')) {
       setRole((prev) => ({ ...prev, isSupporter: true }))
+      return
     }
     if (roles.includes('trainer')) {
       setRole((prev) => ({ ...prev, isTrainer: true }))
+      return
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
   useEffect(() => {
     loadData(1, filter)
-  }, [filter])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter, currentClass])
 
   const loadData = async (page, filter, q = '') => {
     const params = {
       limit: ITEM_PER_PAGE,
       page: page,
+      filterClass: currentClass,
     }
     if (q !== '') {
       params.q = q
@@ -100,6 +105,7 @@ const ClassList = () => {
       params.filterStatus = filter.filterStatus
     }
     await classListApi.getPage(params).then((response) => {
+      setCurrentPage(page)
       setTotalItem(response.totalItem)
       setListClass(response.listResult)
     })
@@ -109,7 +115,7 @@ const ClassList = () => {
     await classListApi
       .changeActive(id)
       .then((response) => {
-        loadData(1, filter)
+        loadData(currentPage, filter)
       })
       .catch((error) => console.log(error))
   }
@@ -160,6 +166,7 @@ const ClassList = () => {
   }
 
   const handleChangePage = (pageNumber) => {
+    setCurrentPage(pageNumber)
     loadData(pageNumber, filter)
   }
 
@@ -199,14 +206,14 @@ const ClassList = () => {
       dataIndex: 'term',
       sorter: (a, b) => a.term - b.term,
       width: 120,
-      render: (_, { term }) => term.title,
+      render: (_, { term }) => term?.title,
     },
     {
       title: 'Branch',
       dataIndex: 'branch',
       sorter: (a, b) => a.branch?.length - b.branch?.length,
       width: 120,
-      render: (_, { branch }) => branch.title,
+      render: (_, { branch }) => branch?.title,
     },
     {
       title: 'Trainer',
@@ -357,7 +364,7 @@ const ClassList = () => {
             <Table bordered dataSource={listClass} columns={columns} pagination={false} />
           </div>
           <div className="col-lg-12 d-flex justify-content-end">
-            <Pagination defaultCurrent={currentPage} total={totalItem} onChange={handleChangePage} />;
+            <Pagination current={currentPage} total={totalItem} onChange={handleChangePage} />;
           </div>
         </div>
         <AdminFooter />
