@@ -10,8 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
+import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
+import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
+import swp490.g23.onlinelearningsystem.entities.subject.repositories.SubjecRepository;
 import swp490.g23.onlinelearningsystem.entities.subject_setting.domain.SubjectSetting;
+import swp490.g23.onlinelearningsystem.entities.subject_setting.domain.filter.SubjectSettingFilter;
 import swp490.g23.onlinelearningsystem.entities.subject_setting.domain.filter.SubjectSettingFilterValue;
+import swp490.g23.onlinelearningsystem.entities.subject_setting.domain.request.SubjectSettingRequest;
 import swp490.g23.onlinelearningsystem.entities.subject_setting.domain.response.SubjectSettingPaginate;
 import swp490.g23.onlinelearningsystem.entities.subject_setting.domain.response.SubjectSettingResponse;
 import swp490.g23.onlinelearningsystem.entities.subject_setting.repositories.SubjectSettingRepository;
@@ -35,6 +41,12 @@ public class SubjectSettingService implements ISubjectSettingService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private SubjecRepository subjecRepository;
+
+    @Autowired
+    private SettingRepositories settingRepositories;
 
     @Override
     public ResponseEntity<SubjectSettingPaginate> getSubjectSetting(int limit, int page, String keyword,
@@ -107,6 +119,71 @@ public class SubjectSettingService implements ISubjectSettingService {
     }
 
     @Override
+    public ResponseEntity<String> updateSubjectSetting(Long id, SubjectSettingRequest request) {
+        SubjectSetting subjectSetting = subjectSettingRepository.findById(id)
+                .orElseThrow(() -> new NoObjectException("Subject setting doesnt exist"));
+
+        if (request.getSettingTitle() != null) {
+            subjectSetting.setSettingTitle(request.getSettingTitle());
+        }
+
+        if (request.getSettingValue() != null) {
+            subjectSetting.setSettingValue(request.getSettingValue());
+        }
+
+        if (request.getDescription() != null) {
+            subjectSetting.setDescription(request.getDescription());
+        }
+
+        if (request.getDisplayOrder() != null) {
+            subjectSetting.setDisplayOrder(request.getDisplayOrder());
+        }
+
+        if (request.getStatus() != null) {
+            subjectSetting.setStatus(Status.getFromValue(Integer.parseInt(request.getStatus())).get());
+        }
+
+        subjectSettingRepository.save(subjectSetting);
+        return ResponseEntity.ok("Subject setting updated");
+    }
+
+    @Override
+    public ResponseEntity<String> addSubjectSetting(SubjectSettingRequest request) {
+        SubjectSetting subjectSetting = new SubjectSetting();
+
+        if (request.getSubjectCode() != null) {
+            subjectSetting.setSubject(subjecRepository.findBySubjectCode(request.getSubjectCode()));
+        }
+
+        if (request.getTypeValue() != null) {
+            subjectSetting.setType(settingRepositories.findBySettingValue(request.getTypeValue()));
+        }
+
+        if (request.getSettingTitle() != null) {
+            subjectSetting.setSettingTitle(request.getSettingTitle());
+        }
+
+        if (request.getSettingValue() != null) {
+            subjectSetting.setSettingValue(request.getSettingValue());
+        }
+
+        if (request.getDescription() != null) {
+            subjectSetting.setDescription(request.getDescription());
+        }
+
+        if (request.getDisplayOrder() != null) {
+            subjectSetting.setDisplayOrder(request.getDisplayOrder());
+        }
+
+        if (request.getStatus() != null) {
+            subjectSetting.setStatus(Status.getFromValue(Integer.parseInt(request.getStatus())).get());
+        }
+
+        subjectSettingRepository.save(subjectSetting);
+        return ResponseEntity.ok("Subject setting added");
+    }
+
+    @Override
     public ResponseEntity<SubjectSettingResponse> viewSubjectSetting(Long id) {
         SubjectSetting subjectSetting = subjectSettingRepository.findById(id)
                 .orElseThrow(() -> new NoObjectException("Setting doesnt exist"));
@@ -140,6 +217,34 @@ public class SubjectSettingService implements ISubjectSettingService {
         }
 
         return responseDTO;
+    }
+
+    @Override
+    public ResponseEntity<SubjectSettingFilter> subjectSettingFilter() {
+        SubjectSettingFilter filter = new SubjectSettingFilter();
+        List<StatusEntity> statusFilter = new ArrayList<>();
+        List<Subject> subjects = subjecRepository.findAll();
+        List<Setting> types = settingRepositories.subjectSettingList();
+
+        for (Status status : new ArrayList<Status>(EnumSet.allOf(Status.class))) {
+            statusFilter.add(new StatusEntity(status));
+        }
+
+        List<String> subjectCodes = new ArrayList<>();
+        for (Subject subject : subjects) {
+            subjectCodes.add(subject.getSubjectCode());
+        }
+
+        List<SubjectSettingFilterValue> typeFilter = new ArrayList<>();
+        for (Setting type : types) {
+            typeFilter.add(new SubjectSettingFilterValue(type.getSettingTitle(), type.getSettingValue()));
+        }
+
+        filter.setStatusFilter(statusFilter);
+        filter.setSubjectFilter(subjectCodes);
+        filter.setTypeFilter(typeFilter);
+
+        return ResponseEntity.ok(filter);
     }
 
 }
