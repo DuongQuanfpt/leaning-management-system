@@ -1,0 +1,5 @@
+"subject_setting_id";"created_by";"created_date";"modified_by";"modified_date";"description";"display_order";"setting_title";"setting_value";"status";"subject_id";"type_id"
+1;"";"";"quan1@doivl.com";"2022-10-18 07:45:28.221000";"Description";"2";"Lab 101 complexity";"Complex";"0";1;275
+2;"";"";"";"";"Description";"1";"Lab 101 quality";"Medium";"1";1;276
+3;"";"";"";"";"Description";"1";"Slot 01 : Title here";"Slot 01 content";"1";1;277
+4;"";"";"";"";"Description";"1";"Slot 02 : Title here";"Slot 02 content";"1";1;277

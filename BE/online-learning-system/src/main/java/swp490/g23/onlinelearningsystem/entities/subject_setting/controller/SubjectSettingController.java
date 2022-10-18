@@ -6,13 +6,18 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
+import swp490.g23.onlinelearningsystem.entities.subject_setting.domain.request.SubjectSettingRequest;
 import swp490.g23.onlinelearningsystem.entities.subject_setting.domain.response.SubjectSettingPaginate;
 import swp490.g23.onlinelearningsystem.entities.subject_setting.domain.response.SubjectSettingResponse;
+import swp490.g23.onlinelearningsystem.entities.subject_setting.domain.filter.SubjectSettingFilter;
 import swp490.g23.onlinelearningsystem.entities.subject_setting.service.impl.SubjectSettingService;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 
@@ -22,27 +27,47 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 
 public class SubjectSettingController {
 
-    @Autowired
-    private SubjectSettingService subjectSettingService;
+	@Autowired
+	private SubjectSettingService subjectSettingService;
 
-    @GetMapping(value = "/subject-setting")
+	@GetMapping(value = "/subject-setting")
 	public ResponseEntity<SubjectSettingPaginate> getSubjectSetting(
 			@RequestParam(name = "page", required = false) String currentPage,
 			@RequestParam(name = "limit", required = false) String requestLimit,
 			@RequestParam(name = "q", required = false) String keyword,
 			@RequestParam(name = "filterStatus", required = false) String statusFilter,
-            @RequestParam(name = "filterSubject", required = false) String subjectFilter,
+			@RequestParam(name = "filterSubject", required = false) String subjectFilter,
 			@RequestParam(name = "filterType", required = false) String typeFilter,
-            @AuthenticationPrincipal User user) {
+			@AuthenticationPrincipal User user) {
 
 		int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
 		int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
-		return subjectSettingService.getSubjectSetting(limit, page , keyword ,statusFilter , subjectFilter, typeFilter,user);
+		return subjectSettingService.getSubjectSetting(limit, page, keyword, statusFilter, subjectFilter, typeFilter,
+				user);
 	}
 
-    @GetMapping(value = "/subject-setting-detail/{id}")
-    public ResponseEntity<SubjectSettingResponse> viewSubjectSetting(@PathVariable Long id) {
+	@GetMapping(value = "/subject-setting-detail/{id}")
+	public ResponseEntity<SubjectSettingResponse> viewSubjectSetting(@PathVariable Long id) {
 
-        return subjectSettingService.viewSubjectSetting(id);
-    }
+		return subjectSettingService.viewSubjectSetting(id);
+	}
+
+	@GetMapping(value = "/subject-setting-filter")
+	public ResponseEntity<SubjectSettingFilter> SubjectSettingFilter() {
+
+		return subjectSettingService.subjectSettingFilter();
+	}
+
+	@PutMapping(value = "/subject-setting-detail/{id}")
+	public ResponseEntity<String> editSubjectSetting(@PathVariable Long id,
+			@RequestBody SubjectSettingRequest request) {
+
+		return subjectSettingService.updateSubjectSetting(id, request);
+	}
+
+	@PostMapping(value = "/subject-setting-add")
+	public ResponseEntity<String> addSubjectSetting(@RequestBody SubjectSettingRequest request) {
+
+		return subjectSettingService.addSubjectSetting(request);
+	}
 }
