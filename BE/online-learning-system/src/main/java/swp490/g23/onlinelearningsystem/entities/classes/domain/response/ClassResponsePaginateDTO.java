@@ -14,7 +14,7 @@ import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.ClassStatusEnt
 @NoArgsConstructor
 @AllArgsConstructor
 public class ClassResponsePaginateDTO {
-    private int page;
+	private int page;
 	private int totalPage;
 	private long totalItem;
 	private List<ClassResponseDTO> listResult = new ArrayList<>();
@@ -23,4 +23,5 @@ public class ClassResponsePaginateDTO {
 	private List<String> trainerFilter;
 	private List<String> supporterFilter;
 	private List<ClassStatusEntity> statusFilter;
+	private List<String> classFilter;
 }
