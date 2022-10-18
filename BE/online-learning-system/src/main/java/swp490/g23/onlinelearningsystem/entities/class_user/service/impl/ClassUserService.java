@@ -158,7 +158,6 @@ public class ClassUserService implements IClassUserService {
     @Override
     public ResponseEntity<String> addTrainee(List<TraineeRequestDTO> listRequestDTO) {
         User newTrainee = new User();
-        List<User> listTrainee = new ArrayList<>();
         String newPass = RandomString.make(10);
         ClassUser classUser = new ClassUser();
         List<ClassUser> newList = new ArrayList<>();
@@ -220,10 +219,9 @@ public class ClassUserService implements IClassUserService {
                 newTrainee.setClassUsers(newList);
             }
 
-            listTrainee.add(newTrainee);
+            userRepository.save(newTrainee);
         }
 
-        userRepository.saveAll(listTrainee);
         return ResponseEntity.ok("Import successful");
     }
 

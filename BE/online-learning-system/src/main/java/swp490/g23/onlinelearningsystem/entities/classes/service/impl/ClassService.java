@@ -61,6 +61,7 @@ public class ClassService implements IClassService {
         List<ClassTypeResponseDTO> listBranch = new ArrayList<>();
         List<String> trainerList = new ArrayList<>();
         List<String> supporterList = new ArrayList<>();
+        List<String> classFilter = new ArrayList<>();
 
         TypedQuery<Classes> queryResult = classCriteria.displayClass(keyword, filterTerm, filterTrainer,
                 filterSupporter, filterBranch, filterStatus, currentUser);
@@ -110,6 +111,7 @@ public class ClassService implements IClassService {
                             clazz.getSettingTerm().getSettingValue()));
                 }
             }
+            classFilter.add(clazz.getCode());
         }
 
         int totalItem = queryResult.getResultList().size();
@@ -136,6 +138,7 @@ public class ClassService implements IClassService {
         responseDTO.setTrainerFilter(trainerList);
         responseDTO.setSupporterFilter(supporterList);
         responseDTO.setStatusFilter(statusFilter);
+        responseDTO.setClassFilter(classFilter);
 
         return ResponseEntity.ok(responseDTO);
     }
@@ -157,8 +160,8 @@ public class ClassService implements IClassService {
         }
         String trainerUsername = dto.getTrainer();
         String supporterUsername = dto.getSupporter();
-        String term = dto.getTerm();
-        String branch = dto.getBranch();
+        String term = dto.getTerm().getValue();
+        String branch = dto.getBranch().getValue();
 
         User userTrainer = userRepository.findByAccountName(trainerUsername);
         User userSupportter = userRepository.findByAccountName(supporterUsername);
@@ -222,6 +225,7 @@ public class ClassService implements IClassService {
         List<String> listTrainer = new ArrayList<>();
         List<String> listSupporter = new ArrayList<>();
         List<String> subjectFilter = new ArrayList<>();
+        List<String> classFilter = new ArrayList<>();
         List<ClassTypeResponseDTO> listTerm = new ArrayList<>();
         List<ClassTypeResponseDTO> listBranch = new ArrayList<>();
         List<Setting> settingTerm = settingRepositories.termList();
@@ -231,6 +235,7 @@ public class ClassService implements IClassService {
         List<ClassStatusEntity> statuses = new ArrayList<>();
         List<User> users = userRepository.findTrainerAndSupporter();
         List<Subject> subjects = subjecRepository.findAll();
+        List<Classes> classes = classRepositories.findAll();
 
         for (Subject subject : subjects) {
             subjectFilter.add(subject.getSubjectCode());
@@ -255,6 +260,10 @@ public class ClassService implements IClassService {
             statuses.add(new ClassStatusEntity(status));
         }
 
+        for (Classes clazz : classes) {
+            classFilter.add(clazz.getCode());
+        }
+
         ClassFilterDTO filterDTO = new ClassFilterDTO();
         filterDTO.setStatusFilter(statuses);
         filterDTO.setTrainerFilter(listTrainer);
@@ -263,6 +272,7 @@ public class ClassService implements IClassService {
         filterDTO.setBranches(listBranch);
         filterDTO.setBranches(listBranch);
         filterDTO.setSubjectFilter(subjectFilter);
+        filterDTO.setClassCodeFilter(classFilter);
 
         return ResponseEntity.ok(filterDTO);
     }
@@ -306,11 +316,11 @@ public class ClassService implements IClassService {
         }
 
         if (requestDTO.getTerm() != null) {
-            clazz.setSettingTerm(settingRepositories.findBySettingValue(requestDTO.getTerm()));
+            clazz.setSettingTerm(settingRepositories.findBySettingValue(requestDTO.getTerm().getValue()));
         }
 
         if (requestDTO.getBranch() != null) {
-            clazz.setSettingBranch(settingRepositories.findBySettingValue(requestDTO.getBranch()));
+            clazz.setSettingBranch(settingRepositories.findBySettingValue(requestDTO.getBranch().getValue()));
         }
 
         classRepositories.save(clazz);
