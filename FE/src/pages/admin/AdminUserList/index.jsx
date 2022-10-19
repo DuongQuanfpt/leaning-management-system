@@ -61,6 +61,7 @@ const AdminUserList = () => {
       params.filterStatus = filter.filterStatus
     }
     await userListApi.getPage(params).then((response) => {
+      setCurrentPage(page)
       setTotalItem(response.totalItem)
       setListUser(response.listResult)
     })
@@ -68,7 +69,7 @@ const AdminUserList = () => {
 
   const handleActive = async (id) => {
     await userListApi.changeActive(id).then((response) => {
-      loadData(1, filter)
+      loadData(currentPage, filter)
     })
   }
 
@@ -98,6 +99,7 @@ const AdminUserList = () => {
   }
 
   const handleChangePage = (pageNumber) => {
+    setCurrentPage(pageNumber)
     loadData(pageNumber, filter)
   }
 
@@ -305,7 +307,7 @@ const AdminUserList = () => {
             <Table bordered dataSource={listUser} columns={columns} pagination={false} />
           </div>
           <div className="col-lg-12 d-flex justify-content-end">
-            <Pagination defaultCurrent={currentPage} total={totalItem} onChange={handleChangePage} />;
+            <Pagination current={currentPage} total={totalItem} onChange={handleChangePage} />;
           </div>
         </div>
         <AdminFooter />

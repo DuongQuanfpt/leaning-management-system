@@ -59,12 +59,15 @@ const ClassDetail = () => {
 
     if (roles.includes('manager')) {
       setRole((prev) => ({ ...prev, isManager: true }))
+      return
     }
     if (roles.includes('supporter')) {
       setRole((prev) => ({ ...prev, isSupporter: true }))
+      return
     }
     if (roles.includes('trainer')) {
       setRole((prev) => ({ ...prev, isTrainer: true }))
+      return
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -114,9 +117,11 @@ const ClassDetail = () => {
       branch: object.branch.value,
       supporter: object.supporter,
       trainer: object.trainer,
-      status: object.status.value,
+      status: object.status,
       description: object.description,
     }
+
+    console.log(params)
 
     await classListApi
       .changeDetail(id, params)
@@ -125,6 +130,7 @@ const ClassDetail = () => {
         setObject((prev) => ({ ...prev, error: 'You have successfully changed your class detail' }))
       })
       .catch((error) => {
+        console.log(error)
         if (error.response.data.message === 'Class name already exist') {
           setObject((prev) => ({ ...prev, error: 'Class name already existed' }))
           return

@@ -12,7 +12,7 @@ import userApi from '~/api/profileApi'
 import authApi from '~/api/authApi'
 
 import { setToken } from '~/redux/AuthSlice/authSlice'
-import { setProfile } from '~/redux/ProfileSlice/profileSlice'
+import { setCurrentClass, setProfile } from '~/redux/ProfileSlice/profileSlice'
 import { CButton } from '@coreui/react'
 
 import ErrorMsg from '~/components/Common/ErrorMsg'
@@ -69,18 +69,13 @@ const Login = () => {
           .getProfile(token)
           .then((response) => {
             dispatch(setProfile(response))
-
+            dispatch(setCurrentClass(response.classCodes[0]))
             setLogged(true)
             navigateTo('/')
           })
-          .catch((error) => {
-            console.log(error)
-            //Xử lí error nếu login bằng tài khoản inactive
-            setError('Get data failed')
-          })
+          .catch((error) => {})
       })
       .catch((error) => {
-        console.log(error)
         setLogged(false)
         const { message } = error.response.data
         if (message === 'User doesnt exist') {
@@ -125,18 +120,21 @@ const Login = () => {
           //Get profile data
           userApi.getProfile(token).then((response) => {
             dispatch(setProfile(response))
-
+            dispatch(setCurrentClass(response.classCodes[0]))
             setLogged(true)
             navigateTo('/')
           })
         })
     } catch (error) {
+      console.log(error)
       setError('Something went wrong, please try again later!')
     }
   }
 
   const onFailure = (res) => {
-    setError('Something went wrong, please try again later!')
+    if (res.error !== 'popup_closed_by_user') {
+      setError('Something went wrong, please try again later!')
+    }
   }
 
   return (

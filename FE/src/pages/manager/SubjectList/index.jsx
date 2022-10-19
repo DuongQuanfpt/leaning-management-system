@@ -24,7 +24,6 @@ const SubjectList = () => {
   const [listStatus, setListStatus] = useState([])
 
   const [totalItem, setTotalItem] = useState(1)
-  // eslint-disable-next-line no-unused-vars
   const [currentPage, setCurrentPage] = useState(1)
 
   const [search, setSearch] = useState('')
@@ -39,6 +38,7 @@ const SubjectList = () => {
 
   useEffect(() => {
     subjectListApi.getFilter().then((response) => {
+      console.log(response)
       setListManager(response.managerFilter)
       setListExpert(response.expertFilter)
       setListStatus(response.statusFilter)
@@ -67,17 +67,19 @@ const SubjectList = () => {
       params.filterStatus = filter.subjectStatus
     }
     await subjectListApi.getPage(params).then((response) => {
-      console.log(response)
+      setCurrentPage(page)
       setTotalItem(response.totalItem)
       setListSubject(response.listResult)
     })
   }
 
-  const handleActive = async (status) => {
-    const statusValue = status.subjectId
-    await subjectListApi.changeActive(statusValue).then((response) => {
-      loadData()
-    })
+  const handleActive = async (subject) => {
+    await subjectListApi
+      .changeActive(subject.subjectId)
+      .then((response) => {
+        loadData(currentPage, filter)
+      })
+      .catch((error) => console.log(error))
   }
 
   const handleSearch = () => {
@@ -107,6 +109,7 @@ const SubjectList = () => {
   }
 
   const handleChangePage = (pageNumber) => {
+    setCurrentPage(pageNumber)
     loadData(pageNumber, filter)
   }
 
@@ -264,7 +267,7 @@ const SubjectList = () => {
             <Table bordered dataSource={listSubject} columns={columns} pagination={false} />
           </div>
           <div className="col-lg-12 d-flex justify-content-end">
-            <Pagination defaultCurrent={currentPage} total={totalItem} onChange={handleChangePage} />;
+            <Pagination current={currentPage} total={totalItem} onChange={handleChangePage} />;
           </div>
         </div>
         <AdminFooter />

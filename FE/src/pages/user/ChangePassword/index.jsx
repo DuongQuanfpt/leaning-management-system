@@ -109,7 +109,10 @@ const AdminChangePassword = () => {
                                 />
                               </div>
                             </div>
-                            <ErrorMsg errorMsg={error} />
+                            <ErrorMsg
+                              errorMsg={error}
+                              isError={error === 'You have successfully changed your password' ? false : true}
+                            />
                             <div className="d-flex justify-content-start">
                               <CButton size="md" color="warning" onClick={handleSubmit} className="mr-3">
                                 Submit

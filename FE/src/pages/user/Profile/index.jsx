@@ -256,7 +256,15 @@ const Profile = () => {
                                     />
                                   </div>
                                 </div>
-                                <ErrorMsg errorMsg={error} />
+                                <ErrorMsg
+                                  errorMsg={error}
+                                  isError={
+                                    error === 'You have successfully changed your password' ||
+                                    error === 'Your avatar has changed successfully'
+                                      ? false
+                                      : true
+                                  }
+                                />
                                 <div className="d-flex">
                                   {isEditMode ? (
                                     <>

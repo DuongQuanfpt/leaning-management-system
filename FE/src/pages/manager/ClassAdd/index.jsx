@@ -34,8 +34,14 @@ const ClassAdd = () => {
   const [object, setObject] = useState({
     classes: '',
     subject: 'Select Subject',
-    term: 'Select Term',
-    branch: 'Select Branch',
+    term: {
+      title: 'Select Term',
+      value: '',
+    },
+    branch: {
+      title: 'Select Branch',
+      value: '',
+    },
     trainer: 'Select Trainer',
     supporter: 'Select Supporter',
     status: 0,
@@ -75,11 +81,11 @@ const ClassAdd = () => {
       setObject((prev) => ({ ...prev, error: 'You must select one Subject' }))
       return
     }
-    if (object.term === 'Select Term') {
+    if (object.term.title === 'Select Term') {
       setObject((prev) => ({ ...prev, error: 'You must select one Term' }))
       return
     }
-    if (object.branch === 'Select Branch') {
+    if (object.branch.title === 'Select Branch') {
       setObject((prev) => ({ ...prev, error: 'You must select one Branch' }))
       return
     }
@@ -96,8 +102,8 @@ const ClassAdd = () => {
       return
     }
     const params = {
-      code: object.classes,
-      subject: object.subject,
+      code: object.classes.trim(),
+      subjectCode: object.subject,
       term: object.term.value,
       branch: object.branch.value,
       supporter: object.supporter,
@@ -105,6 +111,8 @@ const ClassAdd = () => {
       status: object.status,
       description: object.description,
     }
+
+    console.log(params)
 
     await classListApi
       .addClass(params)
@@ -188,10 +196,10 @@ const ClassAdd = () => {
                           <div className="form-group col-3">
                             <label className="col-form-label">Term</label>
                             <CDropdown className="w-100">
-                              <CDropdownToggle color="warning">{object.term}</CDropdownToggle>
+                              <CDropdownToggle color="warning">{object.term.title}</CDropdownToggle>
                               <CDropdownMenu className="w-100">
                                 {list.term.map((item) => (
-                                  <CDropdownItem onClick={() => setObject((prev) => ({ ...prev, term: item.title }))}>
+                                  <CDropdownItem onClick={() => setObject((prev) => ({ ...prev, term: item }))}>
                                     {item.title}
                                   </CDropdownItem>
                                 ))}
@@ -201,10 +209,10 @@ const ClassAdd = () => {
                           <div className="form-group col-3">
                             <label className="col-form-label">Branch</label>
                             <CDropdown className="w-100">
-                              <CDropdownToggle color="warning">{object.branch}</CDropdownToggle>
+                              <CDropdownToggle color="warning">{object.branch.title}</CDropdownToggle>
                               <CDropdownMenu className="w-100">
                                 {list.branch.map((item) => (
-                                  <CDropdownItem onClick={() => setObject((prev) => ({ ...prev, branch: item.title }))}>
+                                  <CDropdownItem onClick={() => setObject((prev) => ({ ...prev, branch: item }))}>
                                     {item.title}
                                   </CDropdownItem>
                                 ))}
