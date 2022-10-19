@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { setCurrentClass } from '~/redux/ProfileSlice/profileSlice'
 import { setSidebarShow } from '~/redux/SidebarSlice/sidebarSlice'
@@ -16,6 +16,9 @@ import AdminHeaderDropdown from './AdminHeaderDropdown'
 import { logo } from 'src/assets/brand/logo'
 
 const AdminHeader = () => {
+  const location = useLocation()
+  const showDropdownClassPathname = ['/trainee-list', '/trainee-import']
+
   const dispatch = useDispatch()
   const sidebarShow = useSelector((state) => state.sidebar.sidebarShow)
   const listClassAssigned = useSelector((state) => state.profile.classCodes)
@@ -37,6 +40,8 @@ const AdminHeader = () => {
     />
   )
 
+  console.log()
+
   return (
     <CHeader position="sticky" className="mb-4">
       <CContainer fluid>
@@ -53,16 +58,18 @@ const AdminHeader = () => {
             </CNavLink>
           </CNavItem>
         </CHeaderNav>
-        <CHeaderNav>
-          <Dropdown overlay={menu}>
-            <a onClick={(e) => e.preventDefault()}>
-              <Space>
-                {currentClass}
-                <DownOutlined />
-              </Space>
-            </a>
-          </Dropdown>
-        </CHeaderNav>
+        {showDropdownClassPathname.includes(location.pathname) && (
+          <CHeaderNav>
+            <Dropdown overlay={menu}>
+              <a onClick={(e) => e.preventDefault()}>
+                <Space>
+                  {currentClass}
+                  <DownOutlined />
+                </Space>
+              </a>
+            </Dropdown>
+          </CHeaderNav>
+        )}
         <CHeaderNav className="ms-3">
           <AdminHeaderDropdown />
         </CHeaderNav>

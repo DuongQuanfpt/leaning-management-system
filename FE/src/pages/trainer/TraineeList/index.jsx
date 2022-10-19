@@ -136,8 +136,16 @@ const TraineeList = () => {
           [['Full name', 'User name', 'Email', 'Mobile', 'Status', 'Note', 'Class', 'Dropout Date']],
           { origin: 'A1' },
         )
-        const max_width = listExport.reduce((w, r) => Math.max(w, r['Full name'].length), 10)
-        ws['!cols'] = [{ wch: max_width }]
+        ws['!cols'] = [
+          { wch: 20 },
+          { wch: 20 },
+          { wch: 20 },
+          { wch: 10 },
+          { wch: 10 },
+          { wch: 20 },
+          { wch: 10 },
+          { wch: 15 },
+        ]
 
         utils.book_append_sheet(wb, ws, 'Data')
         writeFileXLSX(wb, 'ListClassInformation.xlsx')
@@ -319,7 +327,7 @@ const TraineeList = () => {
               shape="circle"
               icon={<EyeOutlined />}
               onClick={() => {
-                navigateTo(`/trainee-detail/${setting?.userId}`)
+                navigateTo(`/trainee-detail/${currentClass}/${setting?.userId}`)
               }}
             ></Button>
           </Tooltip>

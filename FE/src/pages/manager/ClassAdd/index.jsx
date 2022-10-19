@@ -102,8 +102,8 @@ const ClassAdd = () => {
       return
     }
     const params = {
-      code: object.classes,
-      subject: object.subject,
+      code: object.classes.trim(),
+      subjectCode: object.subject,
       term: object.term.value,
       branch: object.branch.value,
       supporter: object.supporter,
