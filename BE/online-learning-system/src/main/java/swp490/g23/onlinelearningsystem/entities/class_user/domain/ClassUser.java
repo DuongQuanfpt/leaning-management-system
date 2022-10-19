@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
@@ -23,9 +25,10 @@ import swp490.g23.onlinelearningsystem.util.enumutil.TraineeStatus;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ClassUser {
-    
+
     @EmbeddedId
-    private ClassUserKey id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private ClassUserKey id = new ClassUserKey();
 
     @Column
     private TraineeStatus status;
