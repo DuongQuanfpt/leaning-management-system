@@ -57,6 +57,7 @@ const TraineeDetail = () => {
     }
     if (trainee.status === -1 && !!!trainee.dropDate) {
       setError('Dropout date must not empty')
+      return
     }
     const params = {
       status: trainee.status,

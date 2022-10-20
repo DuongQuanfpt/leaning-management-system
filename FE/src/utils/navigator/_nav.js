@@ -62,6 +62,12 @@ const _nav = [
     to: '/subject-setting-list',
     icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
   },
+  {
+    component: CNavItem,
+    name: 'Class Setting List',
+    to: '/class-setting-list',
+    icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+  },
 ]
 
 export default _nav

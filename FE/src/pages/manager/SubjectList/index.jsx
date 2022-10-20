@@ -167,8 +167,8 @@ const SubjectList = () => {
       ),
     },
     {
-      title: 'Action',
-      dataIndex: 'action',
+      title: 'Actions',
+      dataIndex: 'actions',
       width: 120,
       render: (_, subject) => (
         <Space size="middle">
