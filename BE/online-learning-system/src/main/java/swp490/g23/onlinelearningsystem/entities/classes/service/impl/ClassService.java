@@ -25,9 +25,7 @@ import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
 import swp490.g23.onlinelearningsystem.entities.subject.repositories.SubjecRepository;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoClassException;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.ObjectDuplicateException;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.ValueMissingException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.util.enumutil.ClassStatus;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.ClassStatusEntity;
 
@@ -147,7 +145,7 @@ public class ClassService implements IClassService {
     public ResponseEntity<ClassResponseDTO> viewClass(long id) {
         Classes clazz = classRepositories.findById(id).get();
         if (clazz.equals(null)) {
-            throw new NoClassException();
+            throw new CustomException("this class doesnt exist");
         }
         return ResponseEntity.ok(toDTO(clazz));
     }
@@ -156,7 +154,7 @@ public class ClassService implements IClassService {
     public ResponseEntity<String> updateClass(ClassRequestDTO dto, Long id) {
         Classes clazz = classRepositories.findById(id).get();
         if (clazz.equals(null)) {
-            throw new NoClassException();
+            throw new CustomException("this class doesnt exist");
         }
         String trainerUsername = dto.getTrainer();
         String supporterUsername = dto.getSupporter();
@@ -176,7 +174,7 @@ public class ClassService implements IClassService {
             if (classRepositories.findByCode(dto.getCode()).isEmpty()) {
                 clazz.setCode((dto.getCode()));
             } else {
-                throw new ObjectDuplicateException("Class name already exist");
+                throw new CustomException("Class name already exist");
             }
         }
 
@@ -288,10 +286,10 @@ public class ClassService implements IClassService {
             if (classRepositories.findByCode(requestDTO.getCode()).isEmpty()) {
                 clazz.setCode((requestDTO.getCode()));
             } else {
-                throw new ObjectDuplicateException("Class name already exist");
+                throw new CustomException("Class name already exist");
             }
         } else {
-            throw new ValueMissingException("must assign class code");
+            throw new CustomException("must assign to a class code");
         }
 
         clazz.setStatus(ClassStatus.getFromValue(Integer.parseInt(requestDTO.getStatus())).get());

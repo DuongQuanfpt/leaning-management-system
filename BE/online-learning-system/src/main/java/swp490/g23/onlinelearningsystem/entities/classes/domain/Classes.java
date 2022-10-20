@@ -2,6 +2,8 @@ package swp490.g23.onlinelearningsystem.entities.classes.domain;
 
 import java.util.List;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,6 +19,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.BaseEntity;
+import swp490.g23.onlinelearningsystem.entities.class_setting.domain.ClassSetting;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.ClassUser;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
@@ -57,8 +60,12 @@ public class Classes extends BaseEntity {
     private User userSupporter;
 
     @ManyToOne
-    @JoinColumn(name = "subject_id")
-    private Subject subject;
+	@JoinColumn(name = "subject_id")
+	private Subject subject;
+    
+    @OneToMany(mappedBy = "type")
+	private List<ClassSetting> types;
+
 
     @OneToMany(mappedBy = "classes")
     private List<ClassUser> classUsers;

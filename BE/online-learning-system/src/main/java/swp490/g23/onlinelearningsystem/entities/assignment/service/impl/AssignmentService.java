@@ -17,7 +17,7 @@ import swp490.g23.onlinelearningsystem.entities.assignment.repositories.Assignme
 import swp490.g23.onlinelearningsystem.entities.assignment.repositories.criteria.AssignmentCriteria;
 import swp490.g23.onlinelearningsystem.entities.assignment.repositories.criteriaEntity.AssignmenQuery;
 import swp490.g23.onlinelearningsystem.entities.assignment.service.IAssignmentService;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoObjectException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
 
@@ -80,7 +80,7 @@ public class AssignmentService implements IAssignmentService {
     public ResponseEntity<String> updateStatus(Long assId) {
         Assignment assignment = assignmentRepository.findById(assId).get();
         if (assignment == null) {
-            throw new NoObjectException("Assignment doesn't exist!");
+            throw new CustomException("Assignment doesn't exist!");
         }
         return null;
     }

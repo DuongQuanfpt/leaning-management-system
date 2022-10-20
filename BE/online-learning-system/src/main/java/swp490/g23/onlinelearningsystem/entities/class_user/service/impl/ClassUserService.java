@@ -10,17 +10,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.mail.MessagingException;
-import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
 import net.bytebuddy.utility.RandomString;
 import swp490.g23.onlinelearningsystem.entities.auth.service.impl.AuthService;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.ClassUser;
@@ -38,16 +34,12 @@ import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoObjectException;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NullException;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.ObjectDuplicateException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.util.enumutil.TraineeStatus;
 import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.TraineeStatusEntity;
 
 @Service
-@RequiredArgsConstructor
-@Transactional
 public class ClassUserService implements IClassUserService {
 
     @Autowired
@@ -131,7 +123,7 @@ public class ClassUserService implements IClassUserService {
     public ResponseEntity<TraineeResponseDTO> viewTrainee(Long userId, String classCode) {
         ClassUser classUser = classUserRepositories.findByClassesAndUser(userId, classCode);
         if (classUser == null) {
-            throw new NoObjectException("Trainee doesn't exist!");
+            throw new CustomException("Trainee doesn't exist!");
         }
         return ResponseEntity.ok(toTraineeDTO(classUser));
     }
@@ -140,7 +132,7 @@ public class ClassUserService implements IClassUserService {
     public ResponseEntity<String> updateTrainee(Long userId, String classCode, TraineeRequestDTO dto) {
         ClassUser classUser = classUserRepositories.findByClassesAndUser(userId, classCode);
         if (classUser == null) {
-            throw new NoObjectException("Trainee doesn't exist!");
+            throw new CustomException("Trainee doesn't exist!");
         }
         if (dto.getStatus() != null) {
             classUser.setStatus(TraineeStatus.getFromValue(Integer.parseInt(dto.getStatus())).get());
@@ -276,7 +268,7 @@ public class ClassUserService implements IClassUserService {
     public ResponseEntity<String> updateStatus(Long userId, String classCode) {
         ClassUser classUser = classUserRepositories.findByClassesAndUser(userId, classCode);
         if (classUser == null) {
-            throw new NoObjectException("Trainee doesn't exist!");
+            throw new CustomException("Trainee doesn't exist!");
         }
         if (classUser.getStatus() == TraineeStatus.Active) {
             classUser.setStatus(TraineeStatus.Inactive);
@@ -291,7 +283,7 @@ public class ClassUserService implements IClassUserService {
     public ResponseEntity<String> setDropout(Long userId, String classCode, TraineeRequestDTO dto) {
         ClassUser classUser = classUserRepositories.findByClassesAndUser(userId, classCode);
         if (classUser == null) {
-            throw new NoObjectException("Trainee doesn't exist!");
+            throw new CustomException("Trainee doesn't exist!");
         }
         LocalDate date = LocalDate.parse(dto.getDropoutDate());
         if (classUser.getStatus() == TraineeStatus.Active || classUser.getStatus() == TraineeStatus.Inactive) {
