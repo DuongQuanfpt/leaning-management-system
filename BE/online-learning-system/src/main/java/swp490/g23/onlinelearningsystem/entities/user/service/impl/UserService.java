@@ -38,9 +38,7 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserTypeRes
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.criteria.UserRepositoriesCriteria;
 import swp490.g23.onlinelearningsystem.entities.user.service.IUserService;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoObjectException;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.ObjectDuplicateException;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.ValueMissingException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.UserStatusEntity;
 
@@ -77,7 +75,7 @@ public class UserService implements IUserService {
         User user = userRepository.findUserById(id, UserStatus.Active);
 
         if (user == null) {
-            throw new NoObjectException("User doesnt exist");
+            throw new CustomException("User doesnt exist");
         }
         TypedQuery<SettingPermission> query = permissionCriteria.getScreenByRoles(roles);
         List<SettingPermission> result = query.getResultList();
@@ -102,7 +100,7 @@ public class UserService implements IUserService {
         User user = userRepository.findUserById(id, UserStatus.Active);
 
         if (user == null) {
-            throw new NoObjectException("User doesnt exist");
+            throw new CustomException("User doesnt exist");
         }
 
         if (dto.getOldPassword() != null) {
@@ -148,7 +146,7 @@ public class UserService implements IUserService {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         User user = userRepository.findByMailToken(token);
         if (user == null) {
-            throw new NoObjectException("User doesnt exist");
+            throw new CustomException("User doesnt exist");
         }
         user.setPassword(encoder.encode(newPassword));
         user.setMailToken(null);
@@ -159,7 +157,7 @@ public class UserService implements IUserService {
     @Override
     public ResponseEntity<UserResponseDTO> updateUserProfile(String fullName, String bas64Avatar, String mobile,
             Long userId, String username, String email) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new NoObjectException("User doesnt exist"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException("User doesnt exist"));
         // User user = userRepository.findById(userId).get();
         if (mobile != null) {
             user.setMobile(mobile);
@@ -174,7 +172,7 @@ public class UserService implements IUserService {
             if (userRepository.findDupeAccountName(username, email).isEmpty()) {
                 user.setAccountName(username);
             } else {
-                throw new ObjectDuplicateException("User name already exist");
+                throw new CustomException("User name already exist");
             }
 
         }
@@ -245,13 +243,13 @@ public class UserService implements IUserService {
 
     @Override
     public ResponseEntity<UserResponseDTO> viewUser(long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new NoObjectException("User doesnt exist"));
+        User user = userRepository.findById(id).orElseThrow(() -> new CustomException("User doesnt exist"));
         return ResponseEntity.ok(toDTO(user));
     }
 
     @Override
     public ResponseEntity<String> updateUser(UserRequestDTO dto, Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new NoObjectException("User doesnt exist"));
+        User user = userRepository.findById(id).orElseThrow(() -> new CustomException("User doesnt exist"));
         List<Setting> settings = new ArrayList<>();
         String username = dto.getUsername();
 
@@ -261,7 +259,7 @@ public class UserService implements IUserService {
             if (userRepository.findByAccountName(username) == null) {
                 user.setAccountName(username);
             } else {
-                throw new ObjectDuplicateException("Username already exist");
+                throw new CustomException("Username already exist");
             }
         }
         user.setFullName(dto.getFullName());
@@ -285,7 +283,7 @@ public class UserService implements IUserService {
 
     @Override
     public ResponseEntity<String> updateStatus(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new NoObjectException("User doesnt exist"));
+        User user = userRepository.findById(id).orElseThrow(() -> new CustomException("User doesnt exist"));
         if (user.getStatus() == UserStatus.Active) {
             user.setStatus(UserStatus.Inactive);
         } else {
@@ -327,20 +325,20 @@ public class UserService implements IUserService {
             if (!userRepository.findByEmail(emailRequest).isPresent()) {
                 user.setEmail(emailRequest);
             } else {
-                throw new ObjectDuplicateException("Email already exist");
+                throw new CustomException("Email already exist");
             }
         } else {
-            throw new ValueMissingException("must asign an email");
+            throw new CustomException("must asign an email");
         }
 
         if (requestDTO.getUsername() != null) {
             if (userRepository.findByAccountName(requestDTO.getUsername()) == null) {
                 user.setAccountName(requestDTO.getUsername());
             } else {
-                throw new ObjectDuplicateException("Username already exist");
+                throw new CustomException("Username already exist");
             }
         } else {
-            throw new ValueMissingException("must asign a username");
+            throw new CustomException("must asign a username");
         }
 
         user.setStatus(UserStatus.getFromValue(Integer.parseInt(requestDTO.getStatus())).get());

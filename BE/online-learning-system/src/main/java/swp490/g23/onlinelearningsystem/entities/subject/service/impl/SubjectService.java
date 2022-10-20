@@ -23,8 +23,7 @@ import swp490.g23.onlinelearningsystem.entities.subject.domain.response.SubjectR
 import swp490.g23.onlinelearningsystem.entities.subject.service.ISubjectService;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoObjectException;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.ObjectDuplicateException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
 
@@ -119,7 +118,7 @@ public class SubjectService implements ISubjectService {
             if (expert != null) {
                 subject.setExpert(expert);
             } else {
-                throw new NoObjectException("Expert " + dto.getExpertUsername() + " doesnt exist");
+                throw new CustomException("Expert " + dto.getExpertUsername() + " doesnt exist");
             }
         }
 
@@ -128,7 +127,7 @@ public class SubjectService implements ISubjectService {
             if (manager != null) {
                 subject.setManager(manager);
             } else {
-                throw new NoObjectException("Manager " + dto.getManagerUsername() + " doesnt exist");
+                throw new CustomException("Manager " + dto.getManagerUsername() + " doesnt exist");
             }
         }
 
@@ -136,7 +135,7 @@ public class SubjectService implements ISubjectService {
             if (subjectRepository.findBySubjectCode(dto.getSubjectCode()) == null) {
                 subject.setSubjectCode(dto.getSubjectCode());
             } else {
-                throw new ObjectDuplicateException("Subject code already exist");
+                throw new CustomException("Subject code already exist");
             }
         }
         subject.setSubjectStatus(Status.getFromValue(Integer.parseInt(dto.getSubjectStatus())).get());
@@ -149,7 +148,7 @@ public class SubjectService implements ISubjectService {
     public ResponseEntity<SubjectResponseDTO> getSubjectDetail(Long id) {
         Subject subject = subjectRepository.findById(id).get();
         if (subject == null) {
-            throw new NoObjectException("Subject doesnt exist");
+            throw new CustomException("Subject doesnt exist");
         }
         return ResponseEntity.ok(toDTO(subject));
     }
@@ -159,14 +158,14 @@ public class SubjectService implements ISubjectService {
         Subject subject = subjectRepository.findById(id).get();
 
         if (subject == null) {
-            throw new NoObjectException("Subject doesnt exist");
+            throw new CustomException("Subject doesnt exist");
         }
 
         if (dto.getSubjectCode() != null && subject.getSubjectCode().equalsIgnoreCase(dto.getSubjectCode()) == false) {
             if (subjectRepository.findBySubjectCode(dto.getSubjectCode()) == null) {
                 subject.setSubjectCode(dto.getSubjectCode());
             } else {
-                throw new ObjectDuplicateException("Subject code already exist");
+                throw new CustomException("Subject code already exist");
             }
 
         }
@@ -188,7 +187,7 @@ public class SubjectService implements ISubjectService {
         if (dto.getManagerUsername() != null) {
             User manager = userRepository.findActiveByAccountName(dto.getManagerUsername());
             if (manager == null) {
-                throw new NoObjectException("There are no manager with that username");
+                throw new CustomException("There are no manager with that username");
             }
             subject.setManager(manager);
         }
@@ -196,7 +195,7 @@ public class SubjectService implements ISubjectService {
         if (dto.getExpertUsername() != null) {
             User expert = userRepository.findActiveByAccountName(dto.getExpertUsername());
             if (expert == null) {
-                throw new NoObjectException("There are no expert with that username");
+                throw new CustomException("There are no expert with that username");
             }
             subject.setExpert(expert);
         }
@@ -227,7 +226,7 @@ public class SubjectService implements ISubjectService {
     @Override
     public ResponseEntity<String> editSubjectStatus(Long id) {
         Subject subject = subjectRepository.findById(id)
-                .orElseThrow(() -> new NoObjectException("Subject doesnt exist"));
+                .orElseThrow(() -> new CustomException("Subject doesnt exist"));
         
         if (subject.getSubjectStatus() == Status.Active) {
             subject.setSubjectStatus(Status.Inactive);

@@ -29,8 +29,7 @@ import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.classes.repositories.ClassRepositories;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NullException;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.ObjectDuplicateException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.util.enumutil.TraineeStatus;
 import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.TraineeStatusEntity;
@@ -173,9 +172,9 @@ public class ClassUserService implements IClassUserService {
                 newTrainee.setAccountName(usernameRequest);
             } else if (usernameRequest != null
                     && usernameRequest.equals(userRepository.findByAccountName(usernameRequest).getAccountName())) {
-                throw new ObjectDuplicateException("username already existed");
+                throw new CustomException("username already existed");
             } else {
-                throw new NullException("Trainee dont have username");
+                throw new CustomException("Trainee dont have username");
             }
 
             if (emailRequest != null
@@ -183,9 +182,9 @@ public class ClassUserService implements IClassUserService {
                 newTrainee.setEmail(emailRequest);
             } else if (emailRequest != null
                     && emailRequest.equals(userRepository.findByEmail(usernameRequest).get().getEmail())) {
-                throw new ObjectDuplicateException("email already existed");
+                throw new CustomException("email already existed");
             } else {
-                throw new NullException("Trainee dont have email");
+                throw new CustomException("Trainee dont have email");
             }
 
             if (requestDTO.getFullName() != null) {

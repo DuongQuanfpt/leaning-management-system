@@ -20,6 +20,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.BaseEntity;
+import swp490.g23.onlinelearningsystem.entities.class_setting.domain.ClassSetting;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.contact.domain.WebContact;
 import swp490.g23.onlinelearningsystem.entities.permission.domain.SettingPermission;
@@ -93,6 +94,9 @@ public class Setting extends BaseEntity {
 
     @OneToMany(mappedBy = "subject")
 	private List<SubjectSetting> subjects = new ArrayList<>();
+
+    @OneToMany(mappedBy = "classes")
+	private List<ClassSetting> classes = new ArrayList<>();
 
     // @OneToMany(mappedBy = "api" ,cascade = CascadeType.ALL)
     // private List<SettingPermission> apis;
