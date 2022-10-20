@@ -7,12 +7,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.ObjectDuplicateException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.InvalidTokenException;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoSettingException;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoObjectException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.UnverifiedUserException;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.ValueMissingException;
 @RestControllerAdvice
 public class ApiExceptionHandler {
    
@@ -23,8 +20,6 @@ public class ApiExceptionHandler {
     
     //     return new ErrorMessage(10000, ex.getLocalizedMessage());
     // }
-
-    
    
     @ExceptionHandler(UnverifiedUserException.class)
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
@@ -44,28 +39,9 @@ public class ApiExceptionHandler {
         return new ErrorMessage(10103, "Incorect credentials");
     }
 
-    @ExceptionHandler(NoObjectException.class)
+    @ExceptionHandler(CustomException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ErrorMessage noUserException(Exception ex,  WebRequest request) {
         return new ErrorMessage(10104, ex.getMessage());
     }
-
-    @ExceptionHandler(ObjectDuplicateException.class)
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public ErrorMessage duplicateSubjectsException(Exception ex,  WebRequest request) {
-        return new ErrorMessage(10106, ex.getMessage());
-    }
-
-    @ExceptionHandler(NoSettingException.class)
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public ErrorMessage noSettingException(Exception ex,  WebRequest request) {
-        return new ErrorMessage(10107, "Setting doesnt exist");
-    }
-
-    @ExceptionHandler(ValueMissingException.class)
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public ErrorMessage missingValueException(Exception ex,  WebRequest request) {
-        return new ErrorMessage(10108, ex.getMessage());
-    }
-
 }

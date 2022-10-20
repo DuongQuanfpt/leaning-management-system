@@ -1,11 +1,11 @@
-package swp490.g23.onlinelearningsystem.errorhandling.CustomException;
+// package swp490.g23.onlinelearningsystem.errorhandling.CustomException;
 
-public class RoleException extends RuntimeException{
-    public RoleException() {
-        super();
-    }
+// public class RoleExcepton extends RuntimeException{
+//     public RoleException() {
+//         super();
+//     }
 
-    public RoleException(String message) {
-        super(message);
-    }
-}
+//     public RoleException(String message) {
+//         super(message);
+//     }
+// }

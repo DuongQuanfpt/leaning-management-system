@@ -13,7 +13,7 @@ import swp490.g23.onlinelearningsystem.entities.permission.domain.response.Permi
 import swp490.g23.onlinelearningsystem.entities.permission.repositories.PermissionRepositories;
 import swp490.g23.onlinelearningsystem.entities.permission.repositories.criteria.PermissionCriteria;
 import swp490.g23.onlinelearningsystem.entities.permission.service.IPermissionService;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoSettingException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 
 @Service
 public class PermissionService implements IPermissionService {
@@ -44,7 +44,7 @@ public class PermissionService implements IPermissionService {
 
         for (PermissionRequestDTO requestPermission : requestList) {
             SettingPermission permission = permissionRepositories.findPermission(requestPermission.getRoleValue(),
-                    requestPermission.getUrl()).orElseThrow(NoSettingException :: new);
+                    requestPermission.getUrl()).orElseThrow(() -> new CustomException("Setting doesnt exist"));
 
             permission.setCanAdd(requestPermission.isAdd());
             permission.setCanDelete(requestPermission.isDelete());

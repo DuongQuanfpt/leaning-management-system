@@ -33,8 +33,7 @@ import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepo
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.InvalidTokenException;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoObjectException;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.ObjectDuplicateException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.UnverifiedUserException;
 import swp490.g23.onlinelearningsystem.util.GoogleHelper;
 import swp490.g23.onlinelearningsystem.util.JwtTokenUtil;
@@ -76,7 +75,7 @@ public class AuthService implements IAuthService {
         }
 
         if (user.getStatus() == UserStatus.Inactive) {
-            throw new NoObjectException("cant login to this user");
+            throw new CustomException("cant login to this user");
         }
 
         String accessToken = tokenUtil.generateAccessToken(user);
@@ -87,7 +86,7 @@ public class AuthService implements IAuthService {
     @Override
     public ResponseEntity<String> register(AuthRequest request, String password) {
         if (userRepository.findUserWithEmail(request.getEmail()) != null) {
-            throw new ObjectDuplicateException("email already exist");
+            throw new CustomException("email already exist");
         }
 
         PasswordEncoder encoder = new BCryptPasswordEncoder();

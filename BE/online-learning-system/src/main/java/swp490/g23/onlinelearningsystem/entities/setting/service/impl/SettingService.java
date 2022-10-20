@@ -19,9 +19,7 @@ import swp490.g23.onlinelearningsystem.entities.setting.domain.response.TypeResp
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.criteria.SettingRepositoriesCriteria;
 import swp490.g23.onlinelearningsystem.entities.setting.service.ISettingService;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoObjectException;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoSettingException;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.ObjectDuplicateException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
 
@@ -71,7 +69,7 @@ public class SettingService implements ISettingService {
         if (setting.getType() == null || setting.getType().getSettingValue().equals("TYPE_ROLE")
                 || setting.getType().getSettingValue().equals("TYPE_API")
                 || setting.getType().getSettingValue().equals("TYPE_SCREEN")) {
-            throw new NoObjectException("this setting cant be view");
+            throw new CustomException("this setting cant be view");
         }
 
         return ResponseEntity.ok(toDTO(setting));
@@ -79,12 +77,12 @@ public class SettingService implements ISettingService {
 
     @Override
     public ResponseEntity<String> updateSetting(SettingRequestDTO dto, Long id) {
-        Setting setting = settingRepositories.findById(id).orElseThrow(NoSettingException::new);
+        Setting setting = settingRepositories.findById(id).orElseThrow(() -> new CustomException("Setting doesnt exist"));
 
         if (setting.getType() == null || setting.getType().getSettingValue().equals("TYPE_ROLE")
                 || setting.getType().getSettingValue().equals("TYPE_API")
                 || setting.getType().getSettingValue().equals("TYPE_SCREEN")) {
-            throw new NoObjectException("this setting cant be update");
+            throw new CustomException("this setting cant be update");
         }
 
         if (dto.getSettingTitle() != null) {
@@ -95,7 +93,7 @@ public class SettingService implements ISettingService {
             if (settingRepositories.findBySettingValue(dto.getSettingValue()) == null) {
                 setting.setSettingValue(dto.getSettingValue());
             } else {
-                throw new ObjectDuplicateException("Setting Value already exist");
+                throw new CustomException("Setting Value already exist");
             }
         }
 
@@ -175,7 +173,7 @@ public class SettingService implements ISettingService {
             if (settingRepositories.findBySettingValue(requestDTO.getSettingValue()) == null) {
                 setting.setSettingValue(requestDTO.getSettingValue());
             } else {
-                throw new ObjectDuplicateException("Setting Value already exist");
+                throw new CustomException("Setting Value already exist");
             }
         }
 
@@ -183,7 +181,7 @@ public class SettingService implements ISettingService {
         if (typeCheck != null) {
             setting.setType(typeCheck);
         } else {
-            throw new NoObjectException("Type doesnt exist");
+            throw new CustomException("Type doesnt exist");
         }
 
         setting.setStatus(Status.getFromValue(Integer.parseInt(requestDTO.getStatus())).get());

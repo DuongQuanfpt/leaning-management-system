@@ -3,12 +3,14 @@ package swp490.g23.onlinelearningsystem.entities.class_user.service.impl;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.mail.MessagingException;
 import javax.persistence.TypedQuery;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,6 +22,7 @@ import swp490.g23.onlinelearningsystem.entities.auth.service.impl.AuthService;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.ClassUser;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.filter.TraineeFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.request.TraineeRequestDTO;
+import swp490.g23.onlinelearningsystem.entities.class_user.domain.response.TraineeImportResponse;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.response.TraineeResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.response.TraineeResponsePaginateDTP;
 import swp490.g23.onlinelearningsystem.entities.class_user.repositories.ClassUserRepositories;
@@ -27,10 +30,11 @@ import swp490.g23.onlinelearningsystem.entities.class_user.repositories.criteria
 import swp490.g23.onlinelearningsystem.entities.class_user.service.IClassUserService;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.classes.repositories.ClassRepositories;
+import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
+import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NullException;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.ObjectDuplicateException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.util.enumutil.TraineeStatus;
 import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.TraineeStatusEntity;
@@ -51,7 +55,13 @@ public class ClassUserService implements IClassUserService {
     ClassUserRepositories classUserRepositories;
 
     @Autowired
+    SettingRepositories settingRepositories;
+
+    @Autowired
     AuthService authService;
+
+    public static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
+            Pattern.CASE_INSENSITIVE);
 
     @Override
     public ResponseEntity<TraineeResponsePaginateDTP> displayTrainee(int limit, int currentPage, String keyword,
@@ -112,12 +122,18 @@ public class ClassUserService implements IClassUserService {
     @Override
     public ResponseEntity<TraineeResponseDTO> viewTrainee(Long userId, String classCode) {
         ClassUser classUser = classUserRepositories.findByClassesAndUser(userId, classCode);
+        if (classUser == null) {
+            throw new CustomException("Trainee doesn't exist!");
+        }
         return ResponseEntity.ok(toTraineeDTO(classUser));
     }
 
     @Override
     public ResponseEntity<String> updateTrainee(Long userId, String classCode, TraineeRequestDTO dto) {
         ClassUser classUser = classUserRepositories.findByClassesAndUser(userId, classCode);
+        if (classUser == null) {
+            throw new CustomException("Trainee doesn't exist!");
+        }
         if (dto.getStatus() != null) {
             classUser.setStatus(TraineeStatus.getFromValue(Integer.parseInt(dto.getStatus())).get());
         }
@@ -156,47 +172,61 @@ public class ClassUserService implements IClassUserService {
     }
 
     @Override
-    public ResponseEntity<String> addTrainee(List<TraineeRequestDTO> listRequestDTO) {
-        User newTrainee = new User();
+    public ResponseEntity<List<TraineeImportResponse>> addTrainee(List<TraineeRequestDTO> listRequestDTO) {
         String newPass = RandomString.make(10);
-        ClassUser classUser = new ClassUser();
         List<ClassUser> newList = new ArrayList<>();
         PasswordEncoder encoder = new BCryptPasswordEncoder();
+        List<Setting> settings = Arrays.asList(settingRepositories.findBySettingValue("ROLE_TRAINEE"));
+        List<TraineeImportResponse> importList = new ArrayList<>();
         for (TraineeRequestDTO requestDTO : listRequestDTO) {
+            User newTrainee = new User();
+            TraineeImportResponse importResponse = new TraineeImportResponse();
+            ClassUser classUser = new ClassUser();
             String usernameRequest = requestDTO.getUsername();
             String emailRequest = requestDTO.getEmail();
-
             String classRequest = requestDTO.getClasses();
-            if (usernameRequest != null
-                    && userRepository.findByAccountName(usernameRequest) == null) {
-                newTrainee.setAccountName(usernameRequest);
-            } else if (usernameRequest != null
-                    && usernameRequest.equals(userRepository.findByAccountName(usernameRequest).getAccountName())) {
-                throw new ObjectDuplicateException("username already existed");
+            Classes clazz = classRepositories.findClassByCode(classRequest);
+            Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailRequest);
+
+            importResponse.setUsername(usernameRequest);
+            importResponse.setEmail(emailRequest);
+            if (usernameRequest != null) {
+                if (userRepository.findByAccountName(usernameRequest) == null) {
+                    newTrainee.setAccountName(usernameRequest);
+                } else {
+                    importResponse.setImportStatus("Failed!");
+                    importResponse.setImportMessage("username already existed!");
+                    importList.add(importResponse);
+                    continue;
+                }
             } else {
-                throw new NullException("Trainee dont have username");
+                importResponse.setImportMessage("username empty!");
+                importResponse.setImportStatus("Failed!");
+                importList.add(importResponse);
+                continue;
             }
 
-            if (emailRequest != null
-                    && !userRepository.findByEmail(emailRequest).isPresent()) {
-                newTrainee.setEmail(emailRequest);
-            } else if (emailRequest != null
-                    && emailRequest.equals(userRepository.findByEmail(usernameRequest).get().getEmail())) {
-                throw new ObjectDuplicateException("email already existed");
+            if (emailRequest != null) {
+                if (!userRepository.findByEmail(emailRequest).isPresent()) {
+                    if (matcher.find()) {
+                        newTrainee.setEmail(emailRequest);
+                    } else {
+                        importResponse.setImportMessage("email wrong format");
+                        importResponse.setImportStatus("Failed!");
+                        importList.add(importResponse);
+                        continue;
+                    }
+                } else {
+                    importResponse.setImportMessage("email already existed!");
+                    importResponse.setImportStatus("Failed!");
+                    importList.add(importResponse);
+                    continue;
+                }
             } else {
-                throw new NullException("Trainee dont have email");
-            }
-
-            if (requestDTO.getFullName() != null) {
-                newTrainee.setFullName(requestDTO.getFullName());
-            }
-
-            if (requestDTO.getMobile() != null) {
-                newTrainee.setMobile(requestDTO.getMobile());
-            }
-
-            if (requestDTO.getNote() != null) {
-                newTrainee.setNote(requestDTO.getNote());
+                importResponse.setImportMessage("email empty!");
+                importResponse.setImportStatus("Failed!");
+                importList.add(importResponse);
+                continue;
             }
 
             newTrainee.setStatus(UserStatus.Inactive);
@@ -210,25 +240,36 @@ public class ClassUserService implements IClassUserService {
                 e.printStackTrace();
             }
             newTrainee.setPassword(encoder.encode(newPass));
+            newTrainee.setSettings(settings);
 
+            userRepository.save(newTrainee);
             if (classRequest != null) {
-                classUser.setClasses(classRepositories.findClassByCode(classRequest));
+                classUser.setClasses(clazz);
                 classUser.setUser(newTrainee);
                 classUser.setStatus(TraineeStatus.Inactive);
                 newList.add(classUser);
-                newTrainee.setClassUsers(newList);
+                // newTrainee.setClassUsers(newList);
             }
 
-            userRepository.save(newTrainee);
+            // em.persist(newTrainee);
+            // userRepository.save(newTrainee);
+            // em.persist(classUser);
+            // em.merge(newTrainee);
+            // em.merge(clazz);
+            classUserRepositories.save(classUser);
+            importResponse.setImportStatus("Successfully!");
+            importList.add(importResponse);
         }
 
-        return ResponseEntity.ok("Import successful");
+        return ResponseEntity.ok(importList);
     }
 
     @Override
     public ResponseEntity<String> updateStatus(Long userId, String classCode) {
         ClassUser classUser = classUserRepositories.findByClassesAndUser(userId, classCode);
-
+        if (classUser == null) {
+            throw new CustomException("Trainee doesn't exist!");
+        }
         if (classUser.getStatus() == TraineeStatus.Active) {
             classUser.setStatus(TraineeStatus.Inactive);
         } else {
@@ -241,6 +282,9 @@ public class ClassUserService implements IClassUserService {
     @Override
     public ResponseEntity<String> setDropout(Long userId, String classCode, TraineeRequestDTO dto) {
         ClassUser classUser = classUserRepositories.findByClassesAndUser(userId, classCode);
+        if (classUser == null) {
+            throw new CustomException("Trainee doesn't exist!");
+        }
         LocalDate date = LocalDate.parse(dto.getDropoutDate());
         if (classUser.getStatus() == TraineeStatus.Active || classUser.getStatus() == TraineeStatus.Inactive) {
             classUser.setDropoutDate(date);

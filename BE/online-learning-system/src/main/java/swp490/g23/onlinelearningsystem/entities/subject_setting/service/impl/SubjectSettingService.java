@@ -26,7 +26,7 @@ import swp490.g23.onlinelearningsystem.entities.subject_setting.repositories.cri
 import swp490.g23.onlinelearningsystem.entities.subject_setting.service.ISubjectSettingService;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoObjectException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
 
@@ -78,8 +78,10 @@ public class SubjectSettingService implements ISubjectSettingService {
 
             if (subjectSetting.getType() != null) {
                 boolean canAdd = true;
+              
                 for (SubjectSettingFilterValue filterValue : typeFilter) {
-                    if (!filterValue.getValue().equals(subjectSetting.getType().getSettingValue())) {
+                
+                    if (filterValue.getValue().equals(subjectSetting.getType().getSettingValue())) {
                         canAdd = false;
                         break;
                     }
@@ -121,7 +123,7 @@ public class SubjectSettingService implements ISubjectSettingService {
     @Override
     public ResponseEntity<String> updateSubjectSetting(Long id, SubjectSettingRequest request) {
         SubjectSetting subjectSetting = subjectSettingRepository.findById(id)
-                .orElseThrow(() -> new NoObjectException("Subject setting doesnt exist"));
+                .orElseThrow(() -> new CustomException("Subject setting doesnt exist"));
 
         if (request.getSettingTitle() != null) {
             subjectSetting.setSettingTitle(request.getSettingTitle());
@@ -153,10 +155,14 @@ public class SubjectSettingService implements ISubjectSettingService {
 
         if (request.getSubjectCode() != null) {
             subjectSetting.setSubject(subjecRepository.findBySubjectCode(request.getSubjectCode()));
+        }else{
+            throw new CustomException("Must assign to a subject");
         }
 
         if (request.getTypeValue() != null) {
             subjectSetting.setType(settingRepositories.findBySettingValue(request.getTypeValue()));
+        }else{
+            throw new CustomException("Must assign to a type");
         }
 
         if (request.getSettingTitle() != null) {
@@ -186,7 +192,7 @@ public class SubjectSettingService implements ISubjectSettingService {
     @Override
     public ResponseEntity<SubjectSettingResponse> viewSubjectSetting(Long id) {
         SubjectSetting subjectSetting = subjectSettingRepository.findById(id)
-                .orElseThrow(() -> new NoObjectException("Setting doesnt exist"));
+                .orElseThrow(() -> new CustomException("Setting doesnt exist"));
         return ResponseEntity.ok(toDTO(subjectSetting));
     }
 

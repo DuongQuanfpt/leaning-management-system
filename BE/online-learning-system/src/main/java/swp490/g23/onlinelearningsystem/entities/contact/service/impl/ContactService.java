@@ -23,7 +23,7 @@ import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
-import swp490.g23.onlinelearningsystem.errorhandling.CustomException.NoObjectException;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.util.enumutil.ContactStatus;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.ContactStatusEntity;
 
@@ -128,7 +128,7 @@ public class ContactService implements IContactService {
     @Override
     public ResponseEntity<ContactResponseDTO> getContactDetail(Long id) {
         WebContact contact = contactRepository.findById(id)
-                .orElseThrow(() -> new NoObjectException("Contact doesnt exist"));
+                .orElseThrow(() -> new CustomException("Contact doesnt exist"));
         ContactResponseDTO responseDTO = toDTO(contact);
         return ResponseEntity.ok(responseDTO);
     }
@@ -136,7 +136,7 @@ public class ContactService implements IContactService {
     @Override
     public ResponseEntity<String> editContactDetail(Long id, ContactRequestDTO dto, User user) {
         WebContact contact = contactRepository.findById(id)
-                .orElseThrow(() -> new NoObjectException("Contact doesnt exist"));
+                .orElseThrow(() -> new CustomException("Contact doesnt exist"));
         if (dto.getResponse() != null) {
             contact.setResponse(dto.getResponse());
         }

@@ -17,6 +17,7 @@ import swp490.g23.onlinelearningsystem.entities.assignment.repositories.Assignme
 import swp490.g23.onlinelearningsystem.entities.assignment.repositories.criteria.AssignmentCriteria;
 import swp490.g23.onlinelearningsystem.entities.assignment.repositories.criteriaEntity.AssignmenQuery;
 import swp490.g23.onlinelearningsystem.entities.assignment.service.IAssignmentService;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
 
@@ -24,15 +25,15 @@ import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
 public class AssignmentService implements IAssignmentService {
 
     @Autowired
-    private AssignmentCriteria asignmentCriteria;
+    private AssignmentCriteria assignmentCriteria;
 
     @Autowired
-    private AssignmentRepository asignmentRepository;
+    private AssignmentRepository assignmentRepository;
 
     @Override
     public ResponseEntity<AssignmentPaginate> getAssignment(int limit, int page, String keyword, String subjectFilter,
             String statusFilter) {
-        AssignmenQuery result = asignmentCriteria.searchFilterAssignment(keyword, statusFilter, subjectFilter);
+        AssignmenQuery result = assignmentCriteria.searchFilterAssignment(keyword, statusFilter, subjectFilter);
 
         TypedQuery<Assignment> queryResult = result.getResultQuery();
         TypedQuery<Long> countQuery = result.getCountQuery();
@@ -47,7 +48,7 @@ public class AssignmentService implements IAssignmentService {
         }
 
         for (Assignment assignment : assignments) {
-          
+
         }
 
         Long totalItem = countQuery.getSingleResult();
@@ -73,6 +74,15 @@ public class AssignmentService implements IAssignmentService {
         dto.setStatusFilter(statusfilter);
 
         return ResponseEntity.ok(dto);
+    }
+
+    @Override
+    public ResponseEntity<String> updateStatus(Long assId) {
+        Assignment assignment = assignmentRepository.findById(assId).get();
+        if (assignment == null) {
+            throw new CustomException("Assignment doesn't exist!");
+        }
+        return null;
     }
 
     public AssignmentResponseDTO toDTO(Assignment entity) {
