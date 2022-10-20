@@ -14,6 +14,7 @@ import { cilMenu } from '@coreui/icons'
 
 import AdminHeaderDropdown from './AdminHeaderDropdown'
 import { logo } from 'src/assets/brand/logo'
+import { memo } from 'react'
 
 const AdminHeader = () => {
   const location = useLocation()
@@ -78,4 +79,4 @@ const AdminHeader = () => {
   )
 }
 
-export default AdminHeader
+export default memo(AdminHeader)
