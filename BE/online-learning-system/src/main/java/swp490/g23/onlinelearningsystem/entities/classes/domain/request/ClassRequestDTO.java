@@ -1,10 +1,10 @@
 package swp490.g23.onlinelearningsystem.entities.classes.domain.request;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import swp490.g23.onlinelearningsystem.entities.classes.domain.response.ClassTypeResponseDTO;
 
 @Getter
 @Setter
@@ -19,9 +19,9 @@ public class ClassRequestDTO {
 
     private String subjectCode;
 
-    private String term;
+    private ClassTypeResponseDTO term;
 
-    private String branch;
+    private ClassTypeResponseDTO branch;
 
     private String description;
 

@@ -4,17 +4,7 @@ import { useParams, Link } from 'react-router-dom'
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 
-import {
-  CContainer,
-  CRow,
-  CCol,
-  CForm,
-  CButton,
-  CDropdown,
-  CDropdownToggle,
-  CDropdownMenu,
-  CDropdownItem,
-} from '@coreui/react'
+import { CContainer, CRow, CCol, CForm, CButton } from '@coreui/react'
 import { Breadcrumb, Radio } from 'antd'
 
 import ErrorMsg from '~/components/Common/ErrorMsg'
@@ -25,8 +15,6 @@ const AdminSettingDetail = () => {
 
   const [settingDetail, setSettingDetail] = useState({})
   const [isEditMode, setIsEditMode] = useState(false)
-
-  const [listType, setListType] = useState([])
 
   const [type, setType] = useState('')
   const [title, setTitle] = useState('')
@@ -50,9 +38,6 @@ const AdminSettingDetail = () => {
       setStatus(response.status === 'Active' ? 1 : 0)
       setOrder(response.displayOrder)
       setDescription(response.description)
-    })
-    settingListApi.getFilter().then((response) => {
-      setListType(response.typeFilter)
     })
   }
 

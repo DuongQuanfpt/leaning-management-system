@@ -29,6 +29,9 @@ const SubjectAdd = lazy(() => import('~/pages/manager/SubjectAdd'))
 const ClassList = lazy(() => import('~/pages/manager/ClassList'))
 const ClassDetail = lazy(() => import('~/pages/manager/ClassDetail'))
 const ClassAdd = lazy(() => import('~/pages/manager/ClassAdd'))
+const SubjectSettingList = lazy(() => import('~/pages/manager/SubjectSettingList'))
+const SubjectSettingDetail = lazy(() => import('~/pages/manager/SubjectSettingDetail'))
+const SubjectSettingAdd = lazy(() => import('~/pages/manager/SubjectSettingAdd'))
 
 //Supporter pages
 const ContactList = lazy(() => import('~/pages/supporter/ContactList'))
@@ -36,6 +39,8 @@ const ContactDetail = lazy(() => import('~/pages/supporter/ContactDetail'))
 
 //Trainer
 const TraineeList = lazy(() => import('~/pages/trainer/TraineeList'))
+const TraineeDetail = lazy(() => import('~/pages/trainer/TraineeDetail'))
+const TraineeImport = lazy(() => import('~/pages/trainer/TraineeImport'))
 
 //404 pages
 const PageNotFound = lazy(() => import('~/pages/common/PageNotFound'))
@@ -72,7 +77,12 @@ const adminRoutes = [
 ]
 
 // Manager routes
-const managerRoutes = [{ path: '/class-add', component: ClassAdd }]
+const managerRoutes = [
+  { path: '/class-add', component: ClassAdd },
+  { path: '/subject-setting-list', component: SubjectSettingList },
+  { path: '/subject-setting-detail/:id', component: SubjectSettingDetail },
+  { path: '/subject-setting-add', component: SubjectSettingAdd },
+]
 
 // Supporter routes
 const supporterRoutes = [
@@ -98,7 +108,11 @@ const classListRoutes = [
   { path: '/class-detail/:id', component: ClassDetail },
 ]
 
-const traineeListRoutes = [{ path: '/trainee-list', component: TraineeList }]
+const traineeListRoutes = [
+  { path: '/trainee-list', component: TraineeList },
+  { path: '/trainee-detail/:classId/:id', component: TraineeDetail },
+  { path: '/trainee-import', component: TraineeImport },
+]
 
 export {
   commonRoutes,

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.filter.TraineeFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.request.TraineeRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.request.TraineeWrapper;
+import swp490.g23.onlinelearningsystem.entities.class_user.domain.response.TraineeImportResponse;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.response.TraineeResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.response.TraineeResponsePaginateDTP;
 import swp490.g23.onlinelearningsystem.entities.class_user.service.impl.ClassUserService;
@@ -71,9 +72,8 @@ public class ClassUserController {
 	}
 
 	@PostMapping(value = "/trainee-import")
-	public ResponseEntity<String> importTrainee(@RequestBody TraineeWrapper wrapper) {
+	public ResponseEntity<List<TraineeImportResponse>> importTrainee(@RequestBody TraineeWrapper wrapper) {
 		List<TraineeRequestDTO> list = wrapper.getDto();
-		System.out.println(wrapper.getDto().get(0).getUsername());
 		return classUserService.addTrainee(list);
 	}
 
@@ -81,6 +81,12 @@ public class ClassUserController {
 	public ResponseEntity<TraineeResponseDTO> viewTrainee(@PathVariable("userId") Long userId,
 			@PathVariable("classCode") String classCode) {
 		return classUserService.viewTrainee(userId, classCode);
+	}
+
+	@PutMapping(value = "/trainee-detail/{userId}/{classCode}")
+	public ResponseEntity<String> updateTrainee(@PathVariable("userId") Long userId,
+			@PathVariable("classCode") String classCode, @RequestBody TraineeRequestDTO dto) {
+		return classUserService.updateTrainee(userId, classCode, dto);
 	}
 
 }

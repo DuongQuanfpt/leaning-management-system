@@ -9,6 +9,8 @@ const initialState = {
   status: '',
   note: '',
   roles: [],
+  classCodes: [],
+  currentClass: '',
 }
 
 const profileSlice = createSlice({
@@ -19,8 +21,11 @@ const profileSlice = createSlice({
       ...state,
       ...action.payload,
     }),
+    setCurrentClass: (state, action) => {
+      state.currentClass = action.payload
+    },
   },
 })
 
-export const { setProfile } = profileSlice.actions
+export const { setProfile, setCurrentClass } = profileSlice.actions
 export default profileSlice.reducer

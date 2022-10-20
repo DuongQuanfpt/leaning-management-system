@@ -63,6 +63,7 @@ const AdminSettingList = () => {
       params.filterStatus = filter.filterStatus
     }
     await settingListApi.getPage(params).then((response) => {
+      setCurrentPage(page)
       setTotalItem(response.totalItem)
       setListSetting(response.listResult)
     })
@@ -70,7 +71,7 @@ const AdminSettingList = () => {
 
   const handleActive = async (id) => {
     await settingListApi.changeActive(id).then((response) => {
-      loadData(1, filter)
+      loadData(currentPage, filter)
     })
   }
 
@@ -99,6 +100,7 @@ const AdminSettingList = () => {
   }
 
   const handleChangePage = (pageNumber) => {
+    setCurrentPage(pageNumber)
     loadData(pageNumber, filter)
   }
 
@@ -248,7 +250,7 @@ const AdminSettingList = () => {
             <Table bordered dataSource={listSetting} columns={columns} pagination={false} />
           </div>
           <div className="col-lg-12 d-flex justify-content-end">
-            <Pagination defaultCurrent={currentPage} total={totalItem} onChange={handleChangePage} />;
+            <Pagination current={currentPage} total={totalItem} onChange={handleChangePage} />;
           </div>
         </div>
         <AdminFooter />

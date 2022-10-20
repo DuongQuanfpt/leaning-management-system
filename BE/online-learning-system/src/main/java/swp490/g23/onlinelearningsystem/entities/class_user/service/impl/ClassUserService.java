@@ -3,11 +3,14 @@ package swp490.g23.onlinelearningsystem.entities.class_user.service.impl;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 
 import javax.mail.MessagingException;
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,11 +18,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
 import net.bytebuddy.utility.RandomString;
 import swp490.g23.onlinelearningsystem.entities.auth.service.impl.AuthService;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.ClassUser;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.filter.TraineeFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.request.TraineeRequestDTO;
+import swp490.g23.onlinelearningsystem.entities.class_user.domain.response.TraineeImportResponse;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.response.TraineeResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.response.TraineeResponsePaginateDTP;
 import swp490.g23.onlinelearningsystem.entities.class_user.repositories.ClassUserRepositories;
@@ -27,6 +32,8 @@ import swp490.g23.onlinelearningsystem.entities.class_user.repositories.criteria
 import swp490.g23.onlinelearningsystem.entities.class_user.service.IClassUserService;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.classes.repositories.ClassRepositories;
+import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
+import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
@@ -35,6 +42,8 @@ import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.TraineeStatusEntity;
 
 @Service
+@RequiredArgsConstructor
+@Transactional
 public class ClassUserService implements IClassUserService {
 
     @Autowired
@@ -50,7 +59,12 @@ public class ClassUserService implements IClassUserService {
     ClassUserRepositories classUserRepositories;
 
     @Autowired
+    SettingRepositories settingRepositories;
+
+    @Autowired
     AuthService authService;
+
+    private final EntityManager em;
 
     @Override
     public ResponseEntity<TraineeResponsePaginateDTP> displayTrainee(int limit, int currentPage, String keyword,
@@ -155,48 +169,53 @@ public class ClassUserService implements IClassUserService {
     }
 
     @Override
-    public ResponseEntity<String> addTrainee(List<TraineeRequestDTO> listRequestDTO) {
-        User newTrainee = new User();
-        List<User> listTrainee = new ArrayList<>();
+    public ResponseEntity<List<TraineeImportResponse>> addTrainee(List<TraineeRequestDTO> listRequestDTO) {
         String newPass = RandomString.make(10);
-        ClassUser classUser = new ClassUser();
         List<ClassUser> newList = new ArrayList<>();
         PasswordEncoder encoder = new BCryptPasswordEncoder();
+        List<Setting> settings = Arrays.asList(settingRepositories.findBySettingValue("ROLE_TRAINEE"));
+        List<TraineeImportResponse> importList = new ArrayList<>();
         for (TraineeRequestDTO requestDTO : listRequestDTO) {
+            User newTrainee = new User();
+            TraineeImportResponse importResponse = new TraineeImportResponse();
+            ClassUser classUser = new ClassUser();
             String usernameRequest = requestDTO.getUsername();
             String emailRequest = requestDTO.getEmail();
-
             String classRequest = requestDTO.getClasses();
-            if (usernameRequest != null
-                    && userRepository.findByAccountName(usernameRequest) == null) {
-                newTrainee.setAccountName(usernameRequest);
-            } else if (usernameRequest != null
-                    && usernameRequest.equals(userRepository.findByAccountName(usernameRequest).getAccountName())) {
-                throw new CustomException("username already existed");
+            Classes clazz = classRepositories.findClassByCode(classRequest);
+
+            importResponse.setUsername(usernameRequest);
+            importResponse.setEmail(emailRequest);
+            if (usernameRequest != null) {
+                if (userRepository.findByAccountName(usernameRequest) == null) {
+                    newTrainee.setAccountName(usernameRequest);
+                } else {
+                    importResponse.setImportStatus("Failed!");
+                    importResponse.setImportMessage("username already existed!");
+                    importList.add(importResponse);
+                    continue;
+                }
             } else {
-                throw new CustomException("Trainee dont have username");
+                importResponse.setImportMessage("username empty!");
+                importResponse.setImportStatus("Failed!");
+                importList.add(importResponse);
+                continue;
             }
 
-            if (emailRequest != null
-                    && !userRepository.findByEmail(emailRequest).isPresent()) {
-                newTrainee.setEmail(emailRequest);
-            } else if (emailRequest != null
-                    && emailRequest.equals(userRepository.findByEmail(usernameRequest).get().getEmail())) {
-                throw new CustomException("email already existed");
+            if (emailRequest != null) {
+                if (!userRepository.findByEmail(emailRequest).isPresent()) {
+                    newTrainee.setEmail(emailRequest);
+                } else {
+                    importResponse.setImportMessage("username already existed!");
+                    importResponse.setImportStatus("Failed!");
+                    importList.add(importResponse);
+                    continue;
+                }
             } else {
-                throw new CustomException("Trainee dont have email");
-            }
-
-            if (requestDTO.getFullName() != null) {
-                newTrainee.setFullName(requestDTO.getFullName());
-            }
-
-            if (requestDTO.getMobile() != null) {
-                newTrainee.setMobile(requestDTO.getMobile());
-            }
-
-            if (requestDTO.getNote() != null) {
-                newTrainee.setNote(requestDTO.getNote());
+                importResponse.setImportMessage("username empty!");
+                importResponse.setImportStatus("Failed!");
+                importList.add(importResponse);
+                continue;
             }
 
             newTrainee.setStatus(UserStatus.Inactive);
@@ -210,20 +229,28 @@ public class ClassUserService implements IClassUserService {
                 e.printStackTrace();
             }
             newTrainee.setPassword(encoder.encode(newPass));
+            newTrainee.setSettings(settings);
 
+            userRepository.save(newTrainee);
             if (classRequest != null) {
-                classUser.setClasses(classRepositories.findClassByCode(classRequest));
+                classUser.setClasses(clazz);
                 classUser.setUser(newTrainee);
                 classUser.setStatus(TraineeStatus.Inactive);
                 newList.add(classUser);
-                newTrainee.setClassUsers(newList);
+                // newTrainee.setClassUsers(newList);
             }
 
-            listTrainee.add(newTrainee);
+            // em.persist(newTrainee);
+            // userRepository.save(newTrainee);
+            // em.persist(classUser);
+            // em.merge(newTrainee);
+            // em.merge(clazz);
+            classUserRepositories.save(classUser);
+            importResponse.setImportStatus("Successfully!");
+            importList.add(importResponse);
         }
 
-        userRepository.saveAll(listTrainee);
-        return ResponseEntity.ok("Import successful");
+        return ResponseEntity.ok(importList);
     }
 
     @Override
