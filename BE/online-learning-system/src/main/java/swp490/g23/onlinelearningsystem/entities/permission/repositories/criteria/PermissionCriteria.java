@@ -27,7 +27,6 @@ public class PermissionCriteria {
             }
 
         }
-        System.out.println(query.toString());
         TypedQuery<SettingPermission> typedQuery = em.createQuery(query.toString(), SettingPermission.class);
 
         return typedQuery;

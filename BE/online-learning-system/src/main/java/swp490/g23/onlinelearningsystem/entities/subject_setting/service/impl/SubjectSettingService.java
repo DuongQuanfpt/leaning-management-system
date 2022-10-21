@@ -28,6 +28,8 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.util.enumutil.Status;
+import swp490.g23.onlinelearningsystem.util.enumutil.SubjectSettingEnum.ComplexityEnum;
+import swp490.g23.onlinelearningsystem.util.enumutil.SubjectSettingEnum.QualityEnum;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
 
 @Service
@@ -78,9 +80,9 @@ public class SubjectSettingService implements ISubjectSettingService {
 
             if (subjectSetting.getType() != null) {
                 boolean canAdd = true;
-              
+
                 for (SubjectSettingFilterValue filterValue : typeFilter) {
-                
+
                     if (filterValue.getValue().equals(subjectSetting.getType().getSettingValue())) {
                         canAdd = false;
                         break;
@@ -155,13 +157,13 @@ public class SubjectSettingService implements ISubjectSettingService {
 
         if (request.getSubjectCode() != null) {
             subjectSetting.setSubject(subjecRepository.findBySubjectCode(request.getSubjectCode()));
-        }else{
+        } else {
             throw new CustomException("Must assign to a subject");
         }
 
         if (request.getTypeValue() != null) {
             subjectSetting.setType(settingRepositories.findBySettingValue(request.getTypeValue()));
-        }else{
+        } else {
             throw new CustomException("Must assign to a type");
         }
 
@@ -196,11 +198,66 @@ public class SubjectSettingService implements ISubjectSettingService {
         return ResponseEntity.ok(toDTO(subjectSetting));
     }
 
+    @Override
+    public ResponseEntity<SubjectSettingFilter> subjectSettingFilter() {
+        SubjectSettingFilter filter = new SubjectSettingFilter();
+        List<StatusEntity> statusFilter = new ArrayList<>();
+        List<Subject> subjects = subjecRepository.findAll();
+        List<Setting> types = settingRepositories.subjectSettingList();
+
+        for (Status status : new ArrayList<Status>(EnumSet.allOf(Status.class))) {
+            statusFilter.add(new StatusEntity(status));
+        }
+
+        List<String> subjectCodes = new ArrayList<>();
+        for (Subject subject : subjects) {
+            subjectCodes.add(subject.getSubjectCode());
+        }
+
+        List<SubjectSettingFilterValue> typeFilter = new ArrayList<>();
+        for (Setting type : types) {
+            typeFilter.add(new SubjectSettingFilterValue(type.getSettingTitle(), type.getSettingValue()));
+        }
+
+        List<String> complexity = new ArrayList<>();
+        for (ComplexityEnum complexityEnum : new ArrayList<ComplexityEnum>(EnumSet.allOf(ComplexityEnum.class))) {
+            complexity.add(complexityEnum.toString());
+        }
+
+        List<String> quality = new ArrayList<>();
+        for (QualityEnum qualityEnum : new ArrayList<QualityEnum>(EnumSet.allOf(QualityEnum.class))) {
+            quality.add(qualityEnum.toString());
+        }
+
+        filter.setStatusFilter(statusFilter);
+        filter.setSubjectFilter(subjectCodes);
+        filter.setTypeFilter(typeFilter);
+        filter.setQuality(quality);
+        filter.setComplexity(complexity);
+
+        return ResponseEntity.ok(filter);
+    }
+
+    @Override
+    public ResponseEntity<String> activateSubjectSetting(Long id) {
+        SubjectSetting subjectSetting = subjectSettingRepository.findById(id)
+                .orElseThrow(() -> new CustomException("Subject setting doesnt exist"));
+        if(subjectSetting.getStatus() == Status.Active){
+            subjectSetting.setStatus(Status.Inactive);      
+        } else {
+            subjectSetting.setStatus(Status.Active);      
+        }
+       
+        subjectSettingRepository.save(subjectSetting);
+        return ResponseEntity.ok("Setting status changed");
+    }
+
     public SubjectSettingResponse toDTO(SubjectSetting entity) {
         SubjectSettingResponse responseDTO = new SubjectSettingResponse();
 
         responseDTO.setSubjectSettingId(entity.getSubjectSettingId());
-        responseDTO.setTypeName(entity.getType().getSettingTitle());
+        responseDTO.setTypeName(
+                new SubjectSettingFilterValue(entity.getType().getSettingTitle(), entity.getType().getSettingValue()));
         responseDTO.setStatus(entity.getStatus().toString());
         if (entity.getSubject() != null) {
             responseDTO.setSubjectCode(entity.getSubject().getSubjectCode());
@@ -223,34 +280,6 @@ public class SubjectSettingService implements ISubjectSettingService {
         }
 
         return responseDTO;
-    }
-
-    @Override
-    public ResponseEntity<SubjectSettingFilter> subjectSettingFilter() {
-        SubjectSettingFilter filter = new SubjectSettingFilter();
-        List<StatusEntity> statusFilter = new ArrayList<>();
-        List<Subject> subjects = subjecRepository.findAll();
-        List<Setting> types = settingRepositories.subjectSettingList();
-
-        for (Status status : new ArrayList<Status>(EnumSet.allOf(Status.class))) {
-            statusFilter.add(new StatusEntity(status));
-        }
-
-        List<String> subjectCodes = new ArrayList<>();
-        for (Subject subject : subjects) {
-            subjectCodes.add(subject.getSubjectCode());
-        }
-
-        List<SubjectSettingFilterValue> typeFilter = new ArrayList<>();
-        for (Setting type : types) {
-            typeFilter.add(new SubjectSettingFilterValue(type.getSettingTitle(), type.getSettingValue()));
-        }
-
-        filter.setStatusFilter(statusFilter);
-        filter.setSubjectFilter(subjectCodes);
-        filter.setTypeFilter(typeFilter);
-
-        return ResponseEntity.ok(filter);
     }
 
 }

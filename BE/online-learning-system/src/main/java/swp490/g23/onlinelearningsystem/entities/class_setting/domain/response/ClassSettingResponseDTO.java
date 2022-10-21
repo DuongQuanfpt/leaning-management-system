@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import swp490.g23.onlinelearningsystem.entities.class_setting.domain.filter.ClassSettingFilterValue;
 
 @Getter
 @Setter
@@ -15,7 +16,7 @@ public class ClassSettingResponseDTO {
 
     private String classCode;
 
-    private String typeName;
+    private ClassSettingFilterValue typeName;
 
     private String settingTitle;
 

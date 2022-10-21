@@ -1,0 +1,7 @@
+"class_setting_id";"created_by";"created_date";"modified_by";"modified_date";"description";"display_order";"setting_title";"setting_value";"status";"class_id";"type_id"
+1;"";"";"xucxichbo@doivl.com";"2022-10-20 08:20:42.839000";"description for task 1";"2";"SE1320 Task";"task value";"0";1;281
+2;"";"";"";"";"description for defect 1";"1";"SE1320 Defect";"defect 1";"1";9;281
+3;"";"";"";"";"Q&a description 1";"1";"SE1320 Q&A";"Q&a 1";"1";1;281
+4;"";"";"";"";"idk";"";"SE1320 To do";"todo 1";"1";1;282
+5;"";"";"";"";"idk";"";"SE1320 Doing";"doing 1";"1";1;282
+7;"xucxichbo@doivl.com";"2022-10-20 08:33:05.185000";"xucxichbo@doivl.com";"2022-10-20 08:33:05.185000";"Description for slot 01";"2";"SE1501 slot";"Slot 01";"0";9;280

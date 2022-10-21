@@ -65,6 +65,12 @@ public class SubjectSettingController {
 		return subjectSettingService.updateSubjectSetting(id, request);
 	}
 
+	@PutMapping(value = "/subject-setting-status/{id}")
+	public ResponseEntity<String> activateSubjectSetting(@PathVariable Long id) {
+
+		return subjectSettingService.activateSubjectSetting(id);
+	}
+
 	@PostMapping(value = "/subject-setting-add")
 	public ResponseEntity<String> addSubjectSetting(@RequestBody SubjectSettingRequest request) {
 

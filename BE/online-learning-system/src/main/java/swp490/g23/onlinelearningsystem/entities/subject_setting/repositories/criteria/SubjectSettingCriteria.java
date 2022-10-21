@@ -27,13 +27,15 @@ public class SubjectSettingCriteria {
         for (Setting setting : settings) {
             roles.add(setting.getSettingValue());
         }
-        StringBuilder query = new StringBuilder("SELECT s FROM SubjectSetting s WHERE 1=1 ");
+        StringBuilder query = new StringBuilder(
+                "SELECT s FROM SubjectSetting s WHERE s.subject.subjectStatus = swp490.g23.onlinelearningsystem.util.enumutil.Status.Active");
 
         // if(roles.contains("ROLE_ADMIN")){
 
         // } else if (roles.contains("ROLE_MANAGER")){
-        //     query.append(" AND s.manager.accountName = '" + user.getAccountName() + "' ");
-        // } 
+        // query.append(" AND s.manager.accountName = '" + user.getAccountName() + "'
+        // ");
+        // }
 
         if (keyword != null) {
             query.append(" AND s.settingTitle LIKE '%" + keyword + "%' OR s.settingValue LIKE '%" + keyword + "%'");

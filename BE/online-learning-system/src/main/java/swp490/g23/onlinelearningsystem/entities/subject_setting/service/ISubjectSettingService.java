@@ -12,6 +12,7 @@ public interface ISubjectSettingService {
     ResponseEntity<SubjectSettingPaginate> getSubjectSetting(int limit, int page,String keyword, String filterStatus,
             String filterSubject, String filterType ,User user);
     ResponseEntity<SubjectSettingResponse> viewSubjectSetting(Long id);
+    ResponseEntity<String> activateSubjectSetting(Long id);
     ResponseEntity<String> updateSubjectSetting(Long id , SubjectSettingRequest request);
     ResponseEntity<String> addSubjectSetting( SubjectSettingRequest request);
     ResponseEntity<SubjectSettingFilter> subjectSettingFilter();

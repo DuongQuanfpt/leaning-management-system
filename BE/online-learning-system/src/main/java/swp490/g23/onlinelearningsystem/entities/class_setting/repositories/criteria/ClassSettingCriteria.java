@@ -27,14 +27,15 @@ public class ClassSettingCriteria {
         for (Setting setting : settings) {
             roles.add(setting.getSettingValue());
         }
-        StringBuilder query = new StringBuilder("SELECT cs FROM ClassSetting cs WHERE 1=1 ");
+        StringBuilder query = new StringBuilder(
+                "SELECT cs FROM ClassSetting cs WHERE cs.classes.status = swp490.g23.onlinelearningsystem.util.enumutil.ClassStatus.Active ");
 
-        if(roles.contains("ROLE_TRAINER")){
+        if (roles.contains("ROLE_TRAINER")) {
 
-        } else if (roles.contains("ROLE_SUPPORTER")){
+        } else if (roles.contains("ROLE_SUPPORTER")) {
             query.append(" AND  cs.classes.userSupporter.accountName = '" + user.getAccountName() + "' ");
-        } 
-        
+        }
+
         if (keyword != null) {
             query.append(" AND cs.settingTitle LIKE '%" + keyword + "%' OR cs.settingValue LIKE '%" + keyword + "%'");
         }
@@ -58,5 +59,5 @@ public class ClassSettingCriteria {
         ClassSettingQuery result = new ClassSettingQuery(typedQuery, countQuery);
         return result;
     }
-    
+
 }
