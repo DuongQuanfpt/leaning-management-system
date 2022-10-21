@@ -16,4 +16,6 @@ public class ClassSettingFilter {
     private List<ClassSettingFilterValue> typeFilter;
     private List<String> classFilter;
     private List<StatusEntity> statusFilter;
+    private List<String> issueType;
+    private List<String> issueStatus;
 }

@@ -13,7 +13,9 @@ import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SubjectSettingFilter {
-    private List<SubjectSettingFilterValue> typeFilter;
     private List<String> subjectFilter; 
     private List <StatusEntity> statusFilter;
+    private List<SubjectSettingFilterValue> typeFilter;
+    private List<String> quality;
+    private List<String> complexity;
 }

@@ -51,20 +51,26 @@ public class ClassSettingController {
 	}
 
 	@GetMapping(value = "/class-setting-filter")
-	public ResponseEntity<ClassSettingFilter> SubjectSettingFilter() {
+	public ResponseEntity<ClassSettingFilter> ClassSettingFilter() {
 
 		return classSettingService.getClassSettingFilter();
 	}
 
 	@PutMapping(value = "/class-setting-detail/{id}")
-	public ResponseEntity<String> editSubjectSetting(@PathVariable Long id,
+	public ResponseEntity<String> editClassSetting(@PathVariable Long id,
 			@RequestBody ClassSettingRequestDTO request) {
 
 		return classSettingService.editClassSetting(id, request);
 	}
 
+	@PutMapping(value = "/class-setting-status/{id}")
+	public ResponseEntity<String> activateClassSetting(@PathVariable Long id) {
+
+		return classSettingService.activateClassSetting(id);
+	}
+
 	@PostMapping(value = "/class-setting-add")
-	public ResponseEntity<String> addSubjectSetting(@RequestBody ClassSettingRequestDTO request) {
+	public ResponseEntity<String> addClassSetting(@RequestBody ClassSettingRequestDTO request) {
 
 		return classSettingService.addClassSetting(request);
 	}

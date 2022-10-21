@@ -28,6 +28,8 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.util.enumutil.Status;
+import swp490.g23.onlinelearningsystem.util.enumutil.ClassSettingEnum.IssueStatus;
+import swp490.g23.onlinelearningsystem.util.enumutil.ClassSettingEnum.IssueType;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
 
 @Service
@@ -80,7 +82,7 @@ public class ClassSettingService implements IClassSettingService {
             if (classSetting.getType() != null) {
                 boolean canAdd = true;
                 for (ClassSettingFilterValue filterValue : typeFilter) {
-                    System.out.println(filterValue.getValue() +" -------- " + classSetting.getType().getSettingValue());
+                    
                     if (filterValue.getValue().equals(classSetting.getType().getSettingValue())) {
                         canAdd = false;
                         break;
@@ -187,10 +189,24 @@ public class ClassSettingService implements IClassSettingService {
 
     @Override
     public ResponseEntity<ClassSettingFilter> getClassSettingFilter() {
-        ClassSettingFilter filter = new ClassSettingFilter();
-        List<StatusEntity> statusFilter = new ArrayList<>();
+        ClassSettingFilter filter = new ClassSettingFilter();  
         List<Classes> classes = classRepositories.findAll();
         List<Setting> types = settingRepositories.classSettingList();
+
+        List<StatusEntity> statusFilter = new ArrayList<>();
+        for (Status status : new ArrayList<Status>(EnumSet.allOf(Status.class))) {
+            statusFilter.add(new StatusEntity(status));
+        }
+
+        List<String> issueStatus = new ArrayList<>();
+        for (IssueStatus status  : new ArrayList<IssueStatus>(EnumSet.allOf(IssueStatus.class))) {
+            issueStatus.add(status.toString());
+        }
+
+        List<String> issueType = new ArrayList<>();
+        for (IssueType type : new ArrayList<IssueType>(EnumSet.allOf(IssueType.class))) {
+            issueType.add(type.toString());
+        }
 
         for (Status status : new ArrayList<Status>(EnumSet.allOf(Status.class))) {
             statusFilter.add(new StatusEntity(status));
@@ -209,16 +225,32 @@ public class ClassSettingService implements IClassSettingService {
         filter.setStatusFilter(statusFilter);
         filter.setClassFilter(classCodes);
         filter.setTypeFilter(typeFilter);
+        filter.setIssueStatus(issueStatus);
+        filter.setIssueType(issueType);
 
         return ResponseEntity.ok(filter);
     }
 
+    @Override
+    public ResponseEntity<String> activateClassSetting(Long id) {
+        ClassSetting classSetting = classSettingRepository.findById(id)
+                .orElseThrow(() -> new CustomException("Subject setting doesnt exist"));
+        if(classSetting.getStatus() == Status.Active){
+            classSetting.setStatus(Status.Inactive);      
+        } else {
+            classSetting.setStatus(Status.Active);      
+        }
+
+        classSettingRepository.save(classSetting);
+        return ResponseEntity.ok("Setting status changed");
+    }
 
     public ClassSettingResponseDTO toDTO(ClassSetting entity) {
         ClassSettingResponseDTO responseDTO = new ClassSettingResponseDTO();
 
         responseDTO.setClassSettingId(entity.getClassSettingId());
-        responseDTO.setTypeName(entity.getType().getSettingTitle());
+        responseDTO.setTypeName(
+                new ClassSettingFilterValue(entity.getType().getSettingTitle(), entity.getType().getSettingValue()));
         responseDTO.setStatus(entity.getStatus().toString());
         if (entity.getClasses() != null) {
             responseDTO.setClassCode(entity.getClasses().getCode());
@@ -244,4 +276,5 @@ public class ClassSettingService implements IClassSettingService {
     }
 
     
+
 }

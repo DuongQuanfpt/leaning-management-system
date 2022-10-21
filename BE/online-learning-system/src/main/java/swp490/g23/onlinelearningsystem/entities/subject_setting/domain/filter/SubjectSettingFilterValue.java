@@ -12,4 +12,5 @@ import lombok.Setter;
 public class SubjectSettingFilterValue {
     String title;
     String value;
+    
 }
