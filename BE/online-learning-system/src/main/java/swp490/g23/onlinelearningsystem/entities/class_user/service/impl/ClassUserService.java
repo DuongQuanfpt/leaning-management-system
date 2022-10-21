@@ -194,12 +194,12 @@ public class ClassUserService implements IClassUserService {
                     newTrainee.setAccountName(usernameRequest);
                 } else {
                     importResponse.setImportStatus("Failed!");
-                    importResponse.setImportMessage("username already existed!");
+                    importResponse.setImportMessage("Username have already existed!");
                     importList.add(importResponse);
                     continue;
                 }
             } else {
-                importResponse.setImportMessage("username empty!");
+                importResponse.setImportMessage("Username is empty!");
                 importResponse.setImportStatus("Failed!");
                 importList.add(importResponse);
                 continue;
@@ -211,19 +211,19 @@ public class ClassUserService implements IClassUserService {
                     if (matcher.find()) {
                         newTrainee.setEmail(emailRequest);
                     } else {
-                        importResponse.setImportMessage("email wrong format");
+                        importResponse.setImportMessage("Email is wrong format");
                         importResponse.setImportStatus("Failed!");
                         importList.add(importResponse);
                         continue;
                     }
                 } else {
-                    importResponse.setImportMessage("email already existed!");
+                    importResponse.setImportMessage("Email have already existed!");
                     importResponse.setImportStatus("Failed!");
                     importList.add(importResponse);
                     continue;
                 }
             } else {
-                importResponse.setImportMessage("email empty!");
+                importResponse.setImportMessage("Email is empty!");
                 importResponse.setImportStatus("Failed!");
                 importList.add(importResponse);
                 continue;

@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import swp490.g23.onlinelearningsystem.entities.assignment.domain.Assignment;
+import swp490.g23.onlinelearningsystem.entities.assignment.domain.filter.AssignmentFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.assignment.domain.request.AssignmentRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.assignment.domain.response.AssignmentPaginate;
 import swp490.g23.onlinelearningsystem.entities.assignment.domain.response.AssignmentResponseDTO;
@@ -54,7 +55,11 @@ public class AssignmentService implements IAssignmentService {
         }
 
         for (Assignment assignment : assignments) {
-            subjectList.add(assignment.getForSubject().getSubjectCode());
+            String subjectCode = assignment.getForSubject().getSubjectCode();
+            if (!subjectList.contains(subjectCode)) {
+                subjectList.add(subjectCode);
+            }
+
         }
 
         Long totalItem = countQuery.getSingleResult();
@@ -147,7 +152,39 @@ public class AssignmentService implements IAssignmentService {
         if (subjectRequest != null) {
             assignment.setForSubject(subject);
         }
+        if (dto.getIsOnGoing() == 1) {
+            assignment.setOnGoing(true);
+        } else {
+            assignment.setOnGoing(false);
+        }
+        if (dto.getIsTeamWork() == 1) {
+            assignment.setTeamWork(true);
+        } else {
+            assignment.setTeamWork(false);
+        }
+
+        assignmentRepository.save(assignment);
         return ResponseEntity.ok("Assignment add successfully!");
+    }
+
+    @Override
+    public ResponseEntity<AssignmentFilterDTO> getFilter() {
+        List<String> subjects = new ArrayList<>();
+        List<StatusEntity> statuses = new ArrayList<>();
+
+        for (Subject subject : subjecRepository.findAll()) {
+            subjects.add(subject.getSubjectCode());
+        }
+
+        for (Status status : new ArrayList<Status>(EnumSet.allOf(Status.class))) {
+            statuses.add(new StatusEntity(status));
+        }
+
+        AssignmentFilterDTO filterDTO = new AssignmentFilterDTO();
+        filterDTO.setStatusFilter(statuses);
+        filterDTO.setSubjectFilter(subjects);
+
+        return ResponseEntity.ok(filterDTO);
     }
 
     public AssignmentResponseDTO toDTO(Assignment entity) {
@@ -156,8 +193,8 @@ public class AssignmentService implements IAssignmentService {
         responseDTO.setAssId(entity.getAssId());
         responseDTO.setAssBody(entity.getAssBody());
         responseDTO.setEval_weight(entity.getEval_weight());
-        responseDTO.setOnGoing(entity.isOnGoing());
-        responseDTO.setTeamWork(entity.isTeamWork());
+        responseDTO.setIsOnGoing(entity.isOnGoing() ? 1 : 0);
+        responseDTO.setIsTeamWork(entity.isTeamWork() ? 1 : 0);
         responseDTO.setStatus(entity.getStatus());
         responseDTO.setTitle(entity.getTitle());
         responseDTO.setSubjectName(entity.getForSubject().getSubjectCode());

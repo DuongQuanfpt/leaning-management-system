@@ -11,7 +11,7 @@ import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AssignmentResponseDTO {
-    
+
     private Long assId;
 
     private String title;
@@ -20,9 +20,9 @@ public class AssignmentResponseDTO {
 
     private String eval_weight;
 
-    private boolean isTeamWork;
+    private int isTeamWork;
 
-    private boolean isOnGoing;
+    private int isOnGoing;
 
     private Status status;
 
