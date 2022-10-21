@@ -6,19 +6,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.mail.MessagingException;
-import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
 import net.bytebuddy.utility.RandomString;
 import swp490.g23.onlinelearningsystem.entities.auth.service.impl.AuthService;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.ClassUser;
@@ -42,8 +40,6 @@ import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.TraineeStatusEntity;
 
 @Service
-@RequiredArgsConstructor
-@Transactional
 public class ClassUserService implements IClassUserService {
 
     @Autowired
@@ -64,7 +60,8 @@ public class ClassUserService implements IClassUserService {
     @Autowired
     AuthService authService;
 
-    private final EntityManager em;
+    public static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
+            Pattern.CASE_INSENSITIVE);
 
     @Override
     public ResponseEntity<TraineeResponsePaginateDTP> displayTrainee(int limit, int currentPage, String keyword,
@@ -125,12 +122,18 @@ public class ClassUserService implements IClassUserService {
     @Override
     public ResponseEntity<TraineeResponseDTO> viewTrainee(Long userId, String classCode) {
         ClassUser classUser = classUserRepositories.findByClassesAndUser(userId, classCode);
+        if (classUser == null) {
+            throw new CustomException("Trainee doesn't exist!");
+        }
         return ResponseEntity.ok(toTraineeDTO(classUser));
     }
 
     @Override
     public ResponseEntity<String> updateTrainee(Long userId, String classCode, TraineeRequestDTO dto) {
         ClassUser classUser = classUserRepositories.findByClassesAndUser(userId, classCode);
+        if (classUser == null) {
+            throw new CustomException("Trainee doesn't exist!");
+        }
         if (dto.getStatus() != null) {
             classUser.setStatus(TraineeStatus.getFromValue(Integer.parseInt(dto.getStatus())).get());
         }
@@ -183,6 +186,7 @@ public class ClassUserService implements IClassUserService {
             String emailRequest = requestDTO.getEmail();
             String classRequest = requestDTO.getClasses();
             Classes clazz = classRepositories.findClassByCode(classRequest);
+            Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailRequest);
 
             importResponse.setUsername(usernameRequest);
             importResponse.setEmail(emailRequest);
@@ -204,15 +208,22 @@ public class ClassUserService implements IClassUserService {
 
             if (emailRequest != null) {
                 if (!userRepository.findByEmail(emailRequest).isPresent()) {
-                    newTrainee.setEmail(emailRequest);
+                    if (matcher.find()) {
+                        newTrainee.setEmail(emailRequest);
+                    } else {
+                        importResponse.setImportMessage("email wrong format");
+                        importResponse.setImportStatus("Failed!");
+                        importList.add(importResponse);
+                        continue;
+                    }
                 } else {
-                    importResponse.setImportMessage("username already existed!");
+                    importResponse.setImportMessage("email already existed!");
                     importResponse.setImportStatus("Failed!");
                     importList.add(importResponse);
                     continue;
                 }
             } else {
-                importResponse.setImportMessage("username empty!");
+                importResponse.setImportMessage("email empty!");
                 importResponse.setImportStatus("Failed!");
                 importList.add(importResponse);
                 continue;
@@ -256,7 +267,9 @@ public class ClassUserService implements IClassUserService {
     @Override
     public ResponseEntity<String> updateStatus(Long userId, String classCode) {
         ClassUser classUser = classUserRepositories.findByClassesAndUser(userId, classCode);
-
+        if (classUser == null) {
+            throw new CustomException("Trainee doesn't exist!");
+        }
         if (classUser.getStatus() == TraineeStatus.Active) {
             classUser.setStatus(TraineeStatus.Inactive);
         } else {
@@ -269,6 +282,9 @@ public class ClassUserService implements IClassUserService {
     @Override
     public ResponseEntity<String> setDropout(Long userId, String classCode, TraineeRequestDTO dto) {
         ClassUser classUser = classUserRepositories.findByClassesAndUser(userId, classCode);
+        if (classUser == null) {
+            throw new CustomException("Trainee doesn't exist!");
+        }
         LocalDate date = LocalDate.parse(dto.getDropoutDate());
         if (classUser.getStatus() == TraineeStatus.Active || classUser.getStatus() == TraineeStatus.Inactive) {
             classUser.setDropoutDate(date);

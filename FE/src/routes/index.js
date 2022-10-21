@@ -41,6 +41,9 @@ const ContactDetail = lazy(() => import('~/pages/supporter/ContactDetail'))
 const TraineeList = lazy(() => import('~/pages/trainer/TraineeList'))
 const TraineeDetail = lazy(() => import('~/pages/trainer/TraineeDetail'))
 const TraineeImport = lazy(() => import('~/pages/trainer/TraineeImport'))
+const ClassSettingList = lazy(() => import('~/pages/trainer/ClassSettingList'))
+const ClassSettingDetail = lazy(() => import('~/pages/trainer/ClassSettingDetail'))
+const ClassSettingAdd = lazy(() => import('~/pages/trainer/ClassSettingAdd'))
 
 //404 pages
 const PageNotFound = lazy(() => import('~/pages/common/PageNotFound'))
@@ -114,6 +117,12 @@ const traineeListRoutes = [
   { path: '/trainee-import', component: TraineeImport },
 ]
 
+const classSettingListRoutes = [
+  { path: '/class-setting-list', component: ClassSettingList },
+  { path: '/class-setting-detail/:id', component: ClassSettingDetail },
+  { path: '/class-setting-add', component: ClassSettingAdd },
+]
+
 export {
   commonRoutes,
   userRoutes,
@@ -125,4 +134,5 @@ export {
   subjectListRoutes,
   traineeListRoutes,
   classListRoutes,
+  classSettingListRoutes,
 }

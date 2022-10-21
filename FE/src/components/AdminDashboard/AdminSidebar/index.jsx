@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { setSidebarShow, setSidebarUnfoldable } from '~/redux/SidebarSlice/sidebarSlice'
 
@@ -45,4 +45,4 @@ const AdminSidebar = () => {
   )
 }
 
-export default React.memo(AdminSidebar)
+export default memo(AdminSidebar)
