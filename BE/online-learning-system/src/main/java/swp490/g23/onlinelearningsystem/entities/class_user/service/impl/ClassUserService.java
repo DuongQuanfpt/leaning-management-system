@@ -186,7 +186,6 @@ public class ClassUserService implements IClassUserService {
             String emailRequest = requestDTO.getEmail();
             String classRequest = requestDTO.getClasses();
             Classes clazz = classRepositories.findClassByCode(classRequest);
-            Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailRequest);
 
             importResponse.setUsername(usernameRequest);
             importResponse.setEmail(emailRequest);
@@ -207,6 +206,7 @@ public class ClassUserService implements IClassUserService {
             }
 
             if (emailRequest != null) {
+                Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailRequest);
                 if (!userRepository.findByEmail(emailRequest).isPresent()) {
                     if (matcher.find()) {
                         newTrainee.setEmail(emailRequest);
