@@ -35,6 +35,11 @@ const traineeListApi = {
     const url = `/api/trainee-dropout/${id}/${code}`
     return axiosClient.put(url, params, header)
   },
+
+  importTrainee: (code, params) => {
+    const url = `/api/trainee-import/${code}`
+    return axiosClient.post(url, params, header)
+  },
 }
 
 export default traineeListApi

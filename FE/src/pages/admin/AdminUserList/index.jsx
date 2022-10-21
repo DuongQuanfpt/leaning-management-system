@@ -161,7 +161,7 @@ const AdminUserList = () => {
                 break
               }
               case 'manager': {
-                color = 'volcano'
+                color = 'magenta'
                 break
               }
               case 'supporter': {
