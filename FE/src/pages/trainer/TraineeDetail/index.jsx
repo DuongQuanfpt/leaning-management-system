@@ -132,7 +132,10 @@ const TraineeDetail = () => {
                       <div>
                         <Radio.Group
                           value={trainee.status}
-                          onChange={(e) => setTrainee((prev) => ({ ...prev, status: e.target.value }))}
+                          onChange={(e) => {
+                            setError('')
+                            setTrainee((prev) => ({ ...prev, status: e.target.value }))
+                          }}
                           disabled={!isEditMode}
                         >
                           <Radio value={1}>Active</Radio>
@@ -150,7 +153,10 @@ const TraineeDetail = () => {
                             size={'large'}
                             format={'YYYY-MM-DD'}
                             value={trainee.dropDate ? moment(trainee.dropDate, 'YYYY-MM-DD') : ''}
-                            onChange={(dateString) => setTrainee((prev) => ({ ...prev, dropDate: dateString }))}
+                            onChange={(dateString) => {
+                              setError('')
+                              setTrainee((prev) => ({ ...prev, dropDate: dateString }))
+                            }}
                             disabled={!isEditMode}
                             allowClear={false}
                           />
@@ -164,7 +170,10 @@ const TraineeDetail = () => {
                           className="form-control"
                           type="text"
                           value={trainee.note}
-                          onChange={(e) => setTrainee((prev) => ({ ...prev, note: e.target.value }))}
+                          onChange={(e) => {
+                            setError('')
+                            setTrainee((prev) => ({ ...prev, note: e.target.value }))
+                          }}
                           disabled={!isEditMode}
                         />
                       </div>
