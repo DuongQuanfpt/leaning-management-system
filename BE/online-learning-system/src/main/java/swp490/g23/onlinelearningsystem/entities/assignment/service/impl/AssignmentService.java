@@ -115,6 +115,17 @@ public class AssignmentService implements IAssignmentService {
         if (dto.getStatus() != null) {
             assignment.setStatus(Status.getFromValue(Integer.parseInt(dto.getStatus())).get());
         }
+        if (dto.getIsOnGoing() == 1) {
+            assignment.setOnGoing(true);
+        } else {
+            assignment.setOnGoing(false);
+        }
+        if (dto.getIsTeamWork() == 1) {
+            assignment.setTeamWork(true);
+        } else {
+            assignment.setTeamWork(false);
+        }
+
         assignmentRepository.save(assignment);
         return ResponseEntity.ok("Assignment update successfully!");
     }
