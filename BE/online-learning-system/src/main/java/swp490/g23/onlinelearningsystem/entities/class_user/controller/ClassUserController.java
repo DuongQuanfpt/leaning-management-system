@@ -69,10 +69,11 @@ public class ClassUserController {
 		return classUserService.setDropout(userId, classCode, dto);
 	}
 
-	@PostMapping(value = "/trainee-import")
-	public ResponseEntity<List<TraineeImportResponse>> importTrainee(@RequestBody TraineeWrapper wrapper) {
+	@PostMapping(value = "/trainee-import/{classCode}")
+	public ResponseEntity<List<TraineeImportResponse>> importTrainee(@RequestBody TraineeWrapper wrapper,
+			@PathVariable("classCode") String classCode) {
 		List<TraineeRequestDTO> list = wrapper.getDto();
-		return classUserService.addTrainee(list);
+		return classUserService.addTrainee(list, classCode);
 	}
 
 	@GetMapping(value = "/trainee-detail/{userId}/{classCode}")
