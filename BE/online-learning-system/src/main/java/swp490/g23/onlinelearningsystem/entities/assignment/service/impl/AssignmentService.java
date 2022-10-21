@@ -11,12 +11,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import swp490.g23.onlinelearningsystem.entities.assignment.domain.Assignment;
+import swp490.g23.onlinelearningsystem.entities.assignment.domain.request.AssignmentRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.assignment.domain.response.AssignmentPaginate;
 import swp490.g23.onlinelearningsystem.entities.assignment.domain.response.AssignmentResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.assignment.repositories.AssignmentRepository;
 import swp490.g23.onlinelearningsystem.entities.assignment.repositories.criteria.AssignmentCriteria;
 import swp490.g23.onlinelearningsystem.entities.assignment.repositories.criteriaEntity.AssignmenQuery;
 import swp490.g23.onlinelearningsystem.entities.assignment.service.IAssignmentService;
+import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
+import swp490.g23.onlinelearningsystem.entities.subject.repositories.SubjecRepository;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
@@ -29,6 +32,9 @@ public class AssignmentService implements IAssignmentService {
 
     @Autowired
     private AssignmentRepository assignmentRepository;
+
+    @Autowired
+    private SubjecRepository subjecRepository;
 
     @Override
     public ResponseEntity<AssignmentPaginate> getAssignment(int limit, int page, String keyword, String subjectFilter,
@@ -48,7 +54,7 @@ public class AssignmentService implements IAssignmentService {
         }
 
         for (Assignment assignment : assignments) {
-
+            subjectList.add(assignment.getForSubject().getSubjectCode());
         }
 
         Long totalItem = countQuery.getSingleResult();
@@ -77,12 +83,71 @@ public class AssignmentService implements IAssignmentService {
     }
 
     @Override
+    public ResponseEntity<AssignmentResponseDTO> viewAssignment(Long assId) {
+        Assignment assignment = assignmentRepository.findById(assId).get();
+        if (assignment == null) {
+            throw new CustomException("Assignment doesn't exist!");
+        }
+        return ResponseEntity.ok(toDTO(assignment));
+    }
+
+    @Override
+    public ResponseEntity<String> updateAssignment(Long assId, AssignmentRequestDTO dto) {
+        Assignment assignment = assignmentRepository.findById(assId).get();
+        if (assignment == null) {
+            throw new CustomException("Assignment doesn't exist!");
+        }
+
+        if (dto.getTitle() != null) {
+            assignment.setTitle(dto.getTitle());
+        }
+        if (dto.getAssBody() != null) {
+            assignment.setAssBody(dto.getAssBody());
+        }
+        if (dto.getEval_weight() != null) {
+            assignment.setEval_weight(dto.getEval_weight());
+        }
+        if (dto.getStatus() != null) {
+            assignment.setStatus(Status.getFromValue(Integer.parseInt(dto.getStatus())).get());
+        }
+        assignmentRepository.save(assignment);
+        return ResponseEntity.ok("Assignment update successfully!");
+    }
+
+    @Override
     public ResponseEntity<String> updateStatus(Long assId) {
         Assignment assignment = assignmentRepository.findById(assId).get();
         if (assignment == null) {
             throw new CustomException("Assignment doesn't exist!");
         }
-        return null;
+        if (assignment.getStatus() == Status.Active) {
+            assignment.setStatus(Status.Inactive);
+        } else {
+            assignment.setStatus(Status.Active);
+        }
+        assignmentRepository.save(assignment);
+        return ResponseEntity.ok("Status update successfully!");
+    }
+
+    @Override
+    public ResponseEntity<String> addAssignment(AssignmentRequestDTO dto) {
+        Assignment assignment = new Assignment();
+        String subjectRequest = dto.getSubjectName();
+        Subject subject = subjecRepository.findBySubjectCode(subjectRequest);
+        if (dto.getAssBody() != null) {
+            assignment.setAssBody(dto.getAssBody());
+        }
+        if (dto.getEval_weight() != null) {
+            assignment.setEval_weight(dto.getEval_weight());
+        }
+        if (dto.getTitle() != null) {
+            assignment.setTitle(dto.getTitle());
+        }
+        assignment.setStatus(Status.getFromValue(Integer.parseInt(dto.getStatus())).get());
+        if (subjectRequest != null) {
+            assignment.setForSubject(subject);
+        }
+        return ResponseEntity.ok("Assignment add successfully!");
     }
 
     public AssignmentResponseDTO toDTO(Assignment entity) {

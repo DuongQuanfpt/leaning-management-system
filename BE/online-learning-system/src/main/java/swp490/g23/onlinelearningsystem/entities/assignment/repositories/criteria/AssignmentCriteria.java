@@ -26,9 +26,9 @@ public class AssignmentCriteria {
             query.append(" AND a.status = '" + filterStatus + "'");
         }
 
-        // if (filterManager != null) {
-        // query.append(" AND s.manager.accountName = '" + filterManager + "'");
-        // }
+        if (filterSubject != null) {
+            query.append(" AND a.forSubject.subjectCode = '" + filterSubject + "'");
+        }
 
         // if (filterExpert != null) {
         // query.append(" AND s.expert.accountName = '" + filterExpert + "'");

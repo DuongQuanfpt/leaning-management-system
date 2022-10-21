@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import swp490.g23.onlinelearningsystem.entities.subject_setting.domain.filter.SubjectSettingFilterValue;
 
 @Getter
 @Setter
@@ -14,7 +15,7 @@ public class SubjectSettingResponse {
 
     private String subjectCode;
 
-    private String typeName;
+    private SubjectSettingFilterValue typeName;
     
     private String settingTitle;
 

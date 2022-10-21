@@ -172,7 +172,8 @@ public class ClassUserService implements IClassUserService {
     }
 
     @Override
-    public ResponseEntity<List<TraineeImportResponse>> addTrainee(List<TraineeRequestDTO> listRequestDTO) {
+    public ResponseEntity<List<TraineeImportResponse>> addTrainee(List<TraineeRequestDTO> listRequestDTO,
+            String classCode) {
         String newPass = RandomString.make(10);
         List<ClassUser> newList = new ArrayList<>();
         PasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -184,9 +185,7 @@ public class ClassUserService implements IClassUserService {
             ClassUser classUser = new ClassUser();
             String usernameRequest = requestDTO.getUsername();
             String emailRequest = requestDTO.getEmail();
-            String classRequest = requestDTO.getClasses();
-            Classes clazz = classRepositories.findClassByCode(classRequest);
-            Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailRequest);
+            Classes clazz = classRepositories.findClassByCode(classCode);
 
             importResponse.setUsername(usernameRequest);
             importResponse.setEmail(emailRequest);
@@ -207,6 +206,7 @@ public class ClassUserService implements IClassUserService {
             }
 
             if (emailRequest != null) {
+                Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailRequest);
                 if (!userRepository.findByEmail(emailRequest).isPresent()) {
                     if (matcher.find()) {
                         newTrainee.setEmail(emailRequest);
@@ -243,7 +243,7 @@ public class ClassUserService implements IClassUserService {
             newTrainee.setSettings(settings);
 
             userRepository.save(newTrainee);
-            if (classRequest != null) {
+            if (classCode != null) {
                 classUser.setClasses(clazz);
                 classUser.setUser(newTrainee);
                 classUser.setStatus(TraineeStatus.Inactive);

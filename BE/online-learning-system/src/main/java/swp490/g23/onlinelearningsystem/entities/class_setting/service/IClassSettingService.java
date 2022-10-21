@@ -13,6 +13,7 @@ public interface IClassSettingService {
     String filterClass, String filterType ,User user);
 
     ResponseEntity<ClassSettingResponseDTO> viewClassSetting(Long id);
+    ResponseEntity<String> activateClassSetting(Long id);
     ResponseEntity<ClassSettingFilter> getClassSettingFilter();
     ResponseEntity<String> addClassSetting(ClassSettingRequestDTO requestDTO );
     ResponseEntity<String> editClassSetting(Long id , ClassSettingRequestDTO requestDTO );

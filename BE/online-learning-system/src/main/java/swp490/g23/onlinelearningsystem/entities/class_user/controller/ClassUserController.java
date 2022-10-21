@@ -1,7 +1,5 @@
 package swp490.g23.onlinelearningsystem.entities.class_user.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,10 +69,11 @@ public class ClassUserController {
 		return classUserService.setDropout(userId, classCode, dto);
 	}
 
-	@PostMapping(value = "/trainee-import")
-	public ResponseEntity<List<TraineeImportResponse>> importTrainee(@RequestBody TraineeWrapper wrapper) {
+	@PostMapping(value = "/trainee-import/{classCode}")
+	public ResponseEntity<List<TraineeImportResponse>> importTrainee(@RequestBody TraineeWrapper wrapper,
+			@PathVariable("classCode") String classCode) {
 		List<TraineeRequestDTO> list = wrapper.getDto();
-		return classUserService.addTrainee(list);
+		return classUserService.addTrainee(list, classCode);
 	}
 
 	@GetMapping(value = "/trainee-detail/{userId}/{classCode}")
