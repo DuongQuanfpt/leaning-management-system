@@ -16,7 +16,7 @@ public interface IClassUserService {
 
     ResponseEntity<TraineeFilterDTO> getFilter();
 
-    ResponseEntity<List<TraineeImportResponse>> addTrainee(List<TraineeRequestDTO> requestDTO);
+    ResponseEntity<List<TraineeImportResponse>> addTrainee(List<TraineeRequestDTO> requestDTO, String classCode);
 
     ResponseEntity<String> updateStatus(Long userId, String classCode);
 
