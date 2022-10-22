@@ -10,6 +10,7 @@ import traineeListApi from '~/api/traineeListApi'
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
+import { useEffect } from 'react'
 
 const TraineeImport = () => {
   const currentClass = useSelector((state) => state.profile.currentClass)
@@ -117,7 +118,19 @@ const TraineeImport = () => {
     })
   }
 
-  console.log(numberTraineeCountType)
+  const handleReset = () => {
+    setListTraineeImported([])
+    setListTrainee([])
+    setNumberTraineeCountType({
+      'Successfully!': 0,
+      'Failed!': 0,
+    })
+    setIsImported(false)
+  }
+
+  useEffect(() => {
+    handleReset()
+  }, [currentClass])
 
   const columnsTrainee = [
     {
@@ -254,13 +267,7 @@ const TraineeImport = () => {
                       </Button>
                     )}
                     {isImported && (
-                      <Button
-                        type="danger"
-                        onClick={() => {
-                          setListTrainee([])
-                          setListTraineeImported([])
-                        }}
-                      >
+                      <Button type="danger" onClick={handleReset}>
                         Reset
                       </Button>
                     )}

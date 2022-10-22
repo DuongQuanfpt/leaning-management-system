@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { Breadcrumb, DatePicker, Radio } from 'antd'
+import { Breadcrumb, DatePicker, Modal, Radio } from 'antd'
 import moment from 'moment'
 
 import { CButton } from '@coreui/react'
@@ -12,6 +12,7 @@ import ErrorMsg from '~/components/Common/ErrorMsg'
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
+import { ExclamationCircleOutlined } from '@ant-design/icons'
 
 const TraineeDetail = () => {
   const { classId, id } = useParams()
@@ -68,7 +69,7 @@ const TraineeDetail = () => {
     await traineeListApi
       .changeDetail(id, classId, params)
       .then((response) => {
-        console.log(response)
+        setIsEditMode(false)
         setError('You have successfully changed your trainee detail')
       })
       .catch((error) => {
@@ -82,6 +83,21 @@ const TraineeDetail = () => {
     setTrainee({
       ...traineeDetail,
       dropDate: moment(traineeDetail.dropDate, 'YYYY-MM-DD'),
+    })
+  }
+
+  const modalConfirm = () => {
+    setError('')
+    Modal.confirm({
+      title: `Are you want to edit this Trainee Detail?`,
+      icon: <ExclamationCircleOutlined />,
+      okText: 'OK',
+      cancelText: 'Cancel',
+      okType: 'danger',
+      onOk() {
+        handleSave()
+      },
+      onCancel() {},
     })
   }
 
@@ -185,7 +201,7 @@ const TraineeDetail = () => {
                     <div className="d-flex">
                       {isEditMode ? (
                         <>
-                          <CButton className="mr-3" size="md" color="warning" onClick={handleSave}>
+                          <CButton className="mr-3" size="md" color="warning" onClick={modalConfirm}>
                             Save
                           </CButton>
                           <CButton className="mr-3" size="md" color="warning" onClick={handleCancel}>

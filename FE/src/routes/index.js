@@ -24,6 +24,9 @@ const SystemPermission = lazy(() => import('~/pages/admin/SystemPermission'))
 const SubjectList = lazy(() => import('~/pages/manager/SubjectList'))
 const SubjectDetail = lazy(() => import('~/pages/manager/SubjectDetail'))
 const SubjectAdd = lazy(() => import('~/pages/manager/SubjectAdd'))
+const AssignmentList = lazy(() => import('~/pages/manager/AssignmentList'))
+const AssignmentDetail = lazy(() => import('~/pages/manager/AssignmentDetail'))
+const AssignmentAdd = lazy(() => import('~/pages/manager/AssignmentAdd'))
 
 //Manager pages
 const ClassList = lazy(() => import('~/pages/manager/ClassList'))
@@ -85,6 +88,9 @@ const managerRoutes = [
   { path: '/subject-setting-list', component: SubjectSettingList },
   { path: '/subject-setting-detail/:id', component: SubjectSettingDetail },
   { path: '/subject-setting-add', component: SubjectSettingAdd },
+  { path: '/assignment-list', component: AssignmentList },
+  { path: '/assignment-detail/:id', component: AssignmentDetail },
+  { path: '/assignment-add', component: AssignmentAdd },
 ]
 
 // Supporter routes

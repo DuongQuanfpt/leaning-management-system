@@ -33,6 +33,7 @@ const ClassSettingDetail = () => {
     displayOrder: 0,
     description: '',
   })
+  // eslint-disable-next-line no-unused-vars
   const [role, setRole] = useState({
     isSupporter: false,
     isTrainer: false,
@@ -269,31 +270,33 @@ const ClassSettingDetail = () => {
                       errorMsg={error}
                       isError={error === 'You have successfully changed your class setting detail' ? false : true}
                     />
-                    <div className="d-flex">
-                      {isEditMode ? (
-                        <>
-                          <CButton className="mr-3" size="md" color="warning" onClick={modalConfirm}>
-                            Save
-                          </CButton>
-                          <CButton className="mr-3" size="md" color="warning" onClick={handleCancel}>
-                            Cancel
-                          </CButton>
-                        </>
-                      ) : (
-                        <>
-                          <CButton
-                            size="md"
-                            color="warning"
-                            onClick={() => {
-                              setIsEditMode(true)
-                              setError('')
-                            }}
-                          >
-                            Edit
-                          </CButton>
-                        </>
-                      )}
-                    </div>
+                    {role.isTrainer && (
+                      <div className="d-flex">
+                        {isEditMode ? (
+                          <>
+                            <CButton className="mr-3" size="md" color="warning" onClick={modalConfirm}>
+                              Save
+                            </CButton>
+                            <CButton className="mr-3" size="md" color="warning" onClick={handleCancel}>
+                              Cancel
+                            </CButton>
+                          </>
+                        ) : (
+                          <>
+                            <CButton
+                              size="md"
+                              color="warning"
+                              onClick={() => {
+                                setIsEditMode(true)
+                                setError('')
+                              }}
+                            >
+                              Edit
+                            </CButton>
+                          </>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

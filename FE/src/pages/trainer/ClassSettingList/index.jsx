@@ -280,7 +280,7 @@ const ClassSettingList = () => {
                     </CButton>
                   </Tooltip>
                   {role.isTrainer && (
-                    <Tooltip title="Add New Subject Setting" placement="right">
+                    <Tooltip title="Add New Class Setting" placement="right">
                       <CButton color="danger" type="submit" className="text-light ml-4" onClick={handleAdd}>
                         <CIcon icon={cilPlus} />
                       </CButton>
