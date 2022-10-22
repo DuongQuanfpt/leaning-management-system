@@ -74,7 +74,7 @@ const ClassSettingList = () => {
   const loadData = async (page, filter, q = '') => {
     const params = { item: ITEM_PER_PAGE, page: page, filterClass: currentClass }
     if (q !== '') {
-      params.q = q
+      params.q = q.trim()
     }
     if (filter.type.title !== 'Select Type') {
       params.filterType = filter.type.value

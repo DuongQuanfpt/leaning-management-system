@@ -55,7 +55,7 @@ const SubjectList = () => {
       page: page,
     }
     if (q !== '') {
-      params.q = q
+      params.q = q.trim()
     }
     if (filter.managerUsername !== '') {
       params.filterManager = filter.managerUsername
@@ -131,35 +131,34 @@ const SubjectList = () => {
 
   const columns = [
     {
-      title: 'ID',
-      dataIndex: 'subjectId',
-      sorter: (a, b) => a.subjectId - b.subjectId,
-      width: 80,
-    },
-    {
       title: 'Code',
       dataIndex: 'subjectCode',
       sorter: (a, b) => a.subjectCode?.length - b.subjectCode?.length,
+      width: '15%',
     },
     {
       title: 'Name',
       dataIndex: 'subjectName',
       sorter: (a, b) => a.subjectName?.length - b.subjectName?.length,
+      width: '35%',
     },
     {
       title: 'Manager',
       dataIndex: 'managerUsername',
       sorter: (a, b) => a.managerUsername?.length - b.managerUsername?.length,
+      width: '15%',
     },
     {
       title: 'Expert',
       dataIndex: 'expertUsername',
       sorter: (a, b) => a.expertUsername?.length - b.expertUsername?.length,
+      width: '15%',
     },
     {
       title: 'Status',
       dataIndex: 'subjectStatus',
-      width: 90,
+      width: '10%',
+
       render: (_, { subjectStatus }) => (
         <Tag color={subjectStatus === 'Active' ? 'blue' : 'red'} key={subjectStatus}>
           {subjectStatus}
@@ -169,7 +168,8 @@ const SubjectList = () => {
     {
       title: 'Actions',
       dataIndex: 'actions',
-      width: 120,
+      width: '10%',
+
       render: (_, subject) => (
         <Space size="middle">
           <Tooltip title={subject.subjectStatus === 'Active' ? 'Deactivate' : 'Reactivate'} placement="top">

@@ -52,7 +52,7 @@ const AdminUserList = () => {
       page: page,
     }
     if (q !== '') {
-      params.q = q
+      params.q = q.trim()
     }
     if (filter.filterRole !== '') {
       params.filterRole = filter.filterRole
@@ -120,37 +120,35 @@ const AdminUserList = () => {
 
   const columns = [
     {
-      title: 'ID',
-      dataIndex: 'userId',
-      sorter: (a, b) => a.userId - b.userId,
-      width: 80,
-    },
-    {
       title: 'Username',
       dataIndex: 'username',
       sorter: (a, b) => a.username?.length - b.username?.length,
+      width: '15%',
     },
     {
       title: 'Fullname',
       dataIndex: 'fullName',
       sorter: (a, b) => a.fullName?.length - b.fullName?.length,
+      width: '15%',
     },
     {
       title: 'Email',
       dataIndex: 'email',
       sorter: (a, b) => a.email?.length - b.email?.length,
+      width: '20%',
     },
 
     {
       title: 'Mobile',
       dataIndex: 'mobile',
       sorter: (a, b) => a.mobile?.length - b.mobile?.length,
+      width: '15%',
     },
     {
       title: 'Role',
       dataIndex: 'roles',
       sorter: (a, b) => a.roles.length - b.roles.length,
-      width: 200,
+      width: '15%',
       render: (_, { roles }) => (
         <>
           {roles.map((role) => {
@@ -196,7 +194,7 @@ const AdminUserList = () => {
     {
       title: 'Status',
       dataIndex: 'status',
-      width: 90,
+      width: '10%',
       render: (_, { status }) => (
         <Tag color={status === 'Active' ? 'blue' : status === 'Inactive' ? 'red' : 'gold'} key={status}>
           {status}
@@ -206,7 +204,7 @@ const AdminUserList = () => {
     {
       title: 'Action',
       dataIndex: 'action',
-      width: 120,
+      width: '10%',
       render: (_, user) => (
         <Space size="middle">
           <Tooltip

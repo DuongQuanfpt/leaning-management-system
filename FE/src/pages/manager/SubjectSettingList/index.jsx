@@ -70,7 +70,7 @@ const SubjectSettingList = () => {
       page: page,
     }
     if (q !== '') {
-      params.q = q
+      params.q = q.trim()
     }
     if (filter?.subject !== 'Select Subject') {
       params.filterSubject = filter?.subject
@@ -154,36 +154,34 @@ const SubjectSettingList = () => {
 
   const columns = [
     {
-      title: 'ID',
-      dataIndex: 'subjectSettingId',
-      sorter: (a, b) => a.subjectSettingId - b.subjectSettingId,
-      width: 80,
-    },
-    {
       title: 'Code',
       dataIndex: 'subjectCode',
       sorter: (a, b) => a.subjectCode?.length - b.subjectCode?.length,
+      width: '10%',
     },
     {
       title: 'Setting title',
       dataIndex: 'settingTitle',
       sorter: (a, b) => a.settingTitle?.length - b.settingTitle?.length,
+      width: '15%',
     },
     {
       title: 'Setting value',
       dataIndex: 'settingValue',
       sorter: (a, b) => a.settingValue?.length - b.settingValue?.length,
+      width: '15%',
     },
     {
       title: 'Type',
       dataIndex: 'typeName',
       sorter: (a, b) => a.typeName?.length - b.typeName?.length,
+      width: '15%',
       render: (_, { typeName }) => typeName.title,
     },
     {
       title: 'Status',
       dataIndex: 'status',
-      width: 90,
+      width: '10%',
       render: (_, { status }) => (
         <Tag color={status === 'Active' ? 'blue' : 'red'} key={status}>
           {status}
@@ -193,12 +191,13 @@ const SubjectSettingList = () => {
     {
       title: 'Description',
       dataIndex: 'description',
+      width: '25%',
       sorter: (a, b) => a.description?.length - b.description?.length,
     },
     {
       title: 'Actions',
       dataIndex: 'actions',
-      width: 80,
+      width: '10%',
       render: (_, subject) => (
         <Space size="middle">
           <Tooltip title={subject.status === 'Active' ? 'Deactive' : 'Reactive'} placement="top">
