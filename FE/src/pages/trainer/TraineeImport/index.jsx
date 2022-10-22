@@ -1,21 +1,34 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Breadcrumb, Button, Modal, Table, Typography } from 'antd'
+import { useSelector } from 'react-redux'
 import { utils, writeFileXLSX, read } from 'xlsx'
-import { LoadingOutlined } from '@ant-design/icons'
+import { Breadcrumb, Button, Modal, Table, Tag, Typography } from 'antd'
+import { ExclamationCircleOutlined, LoadingOutlined } from '@ant-design/icons'
+
+import traineeListApi from '~/api/traineeListApi'
 
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 
 const TraineeImport = () => {
+  const currentClass = useSelector((state) => state.profile.currentClass)
+
+  const [listTrainee, setListTrainee] = useState([])
   const [listTraineeImported, setListTraineeImported] = useState([])
+
+  const [isImported, setIsImported] = useState(false)
+
+  const [numberTraineeCountType, setNumberTraineeCountType] = useState({
+    'Successfully!': 0,
+    'Failed!': 0,
+  })
 
   const handleDownloadTemplate = async () => {
     const listExport = []
     const ws = utils.json_to_sheet(listExport)
     const wb = utils.book_new()
-    utils.sheet_add_aoa(ws, [['User name', 'Email']], { origin: 'A1' })
+    utils.sheet_add_aoa(ws, [['Username', 'Email']], { origin: 'A1' })
     var wscols = [{ wch: 20 }, { wch: 20 }]
     ws['!cols'] = wscols
     utils.book_append_sheet(wb, ws, 'Data')
@@ -41,28 +54,46 @@ const TraineeImport = () => {
         const ws_name = wb.SheetNames[0]
         const ws = wb.Sheets[ws_name]
         const data = utils.sheet_to_json(ws)
-        if (!!!data[0]?.['User name'] && !!!data[0]?.['Email']) {
+        if (!!!data[0]?.['Username'] && !!!data[0]?.['Email']) {
           modalError('File data is invalid, follow the template please')
-          setListTraineeImported([])
+          setListTrainee([])
           return
         }
         resolve(data)
       }
 
       fileReader.onerror = (error) => {
-        setListTraineeImported([])
+        setListTrainee([])
         reject(error)
         modalError(error)
       }
     })
 
     readFile.then((data) => {
-      setListTraineeImported(data)
+      setListTrainee(data)
     })
   }
 
-  const handleImport = () => {
-    console.log(listTraineeImported)
+  const handleImport = async () => {
+    const params = {
+      dto: listTrainee.map((trainee) => ({
+        username: trainee.Username,
+        email: trainee.Email,
+      })),
+    }
+    await traineeListApi
+      .importTrainee(currentClass, params)
+      .then((response) => {
+        setListTraineeImported(response)
+        setIsImported(true)
+
+        // eslint-disable-next-line no-sequences
+        const objectStatus = response.reduce((c, { importStatus: key }) => ((c[key] = (c[key] || 0) + 1), c), {})
+        setNumberTraineeCountType((prev) => ({ ...prev, ...objectStatus }))
+      })
+      .catch((error) => {
+        console.log(error)
+      })
   }
 
   const modalError = (error) => {
@@ -72,11 +103,27 @@ const TraineeImport = () => {
     })
   }
 
-  const columns = [
+  const modalConfirm = () => {
+    Modal.confirm({
+      title: `Are you want to add a total of ${listTrainee.length} students to class ${currentClass}?`,
+      icon: <ExclamationCircleOutlined />,
+      okText: 'OK',
+      cancelText: 'Cancel',
+      okType: 'danger',
+      onOk() {
+        handleImport()
+      },
+      onCancel() {},
+    })
+  }
+
+  console.log(numberTraineeCountType)
+
+  const columnsTrainee = [
     {
-      title: 'User name',
-      dataIndex: 'User name',
-      sorter: (a, b) => a['User name']?.length - b['User name']?.length,
+      title: 'Username',
+      dataIndex: 'Username',
+      sorter: (a, b) => a['Username']?.length - b['Username']?.length,
       width: 300,
     },
     {
@@ -87,10 +134,49 @@ const TraineeImport = () => {
     },
     {
       title: 'Status',
+      dataIndex: 'importStatus',
       render: () => <LoadingOutlined />,
       width: 150,
     },
+    {
+      title: 'Message',
+      dataIndex: 'importMessage',
+      ellipsis: true,
+    },
   ]
+
+  const columnsTraineeImported = [
+    {
+      title: 'Username',
+      dataIndex: 'username',
+      sorter: (a, b) => a['username']?.length - b['username']?.length,
+      width: 300,
+    },
+    {
+      title: 'Email',
+      dataIndex: 'email',
+      sorter: (a, b) => a['email']?.length - b['email']?.length,
+      width: 300,
+    },
+    {
+      title: 'Status',
+      dataIndex: 'importStatus',
+      width: 150,
+      sorter: (a, b) => a['importStatus']?.length - b['importStatus']?.length,
+      render: (_, { importStatus }) => (
+        <Tag color={importStatus === 'Successfully!' ? 'blue' : 'red'} key={importStatus}>
+          {importStatus}
+        </Tag>
+      ),
+    },
+    {
+      title: 'Message',
+      dataIndex: 'importMessage',
+      sorter: (a, b) => a['importMessage']?.length - b['importMessage']?.length,
+      ellipsis: true,
+    },
+  ]
+
   return (
     <div>
       <AdminSidebar />
@@ -119,31 +205,65 @@ const TraineeImport = () => {
                   type="file"
                   accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                   onChange={(e) => {
+                    setListTrainee([])
+                    setListTraineeImported([])
                     e.target.files[0] && handleReadFile(e.target.files[0])
                   }}
                 />
               </div>
               <div className="col-12 d-flex justify-content-center"></div>
-              {listTraineeImported.length !== 0 && (
+              {listTrainee.length !== 0 && (
                 <>
-                  <div className="col-12 d-flex justify-content-center mb-2 mt-2">
-                    <Typography.Text
-                      italic
-                      type="success"
-                    >{`Total ${listTraineeImported.length} trainee data loaded`}</Typography.Text>
+                  {isImported ? (
+                    <div className="col-9 d-flex justify-content-start mb-2 mt-2">
+                      <Typography.Text type="success" className="mr-1">
+                        {`Total ${numberTraineeCountType['Successfully!']} trainee imported successfully`}
+                      </Typography.Text>
+                      <Typography.Text type="danger">
+                        {` - ${numberTraineeCountType['Failed!']} trainee imported failed!`}
+                      </Typography.Text>
+                    </div>
+                  ) : (
+                    <div className="col-9 d-flex justify-content-start mb-2 mt-2"></div>
+                  )}
+                  <div className="col-3 d-flex justify-content-end mb-2 mt-2">
+                    <Typography.Text strong>{`Total ${listTrainee.length} trainee data loaded`}</Typography.Text>
+                  </div>
+
+                  <div className="col-12 d-flex justify-content-center">
+                    {isImported ? (
+                      <Table
+                        bordered
+                        dataSource={listTraineeImported}
+                        columns={columnsTraineeImported}
+                        pagination={{ position: 'center' }}
+                      />
+                    ) : (
+                      <Table
+                        bordered
+                        dataSource={listTrainee}
+                        columns={columnsTrainee}
+                        pagination={{ position: 'center' }}
+                      />
+                    )}
                   </div>
                   <div className="col-12 d-flex justify-content-center">
-                    <Table
-                      bordered
-                      dataSource={listTraineeImported}
-                      columns={columns}
-                      pagination={{ position: 'center' }}
-                    />
-                  </div>
-                  <div className="col-12 d-flex justify-content-center">
-                    <Button type="primary" onClick={handleImport}>
-                      Import
-                    </Button>
+                    {!isImported && (
+                      <Button type="primary" onClick={modalConfirm}>
+                        Import
+                      </Button>
+                    )}
+                    {isImported && (
+                      <Button
+                        type="danger"
+                        onClick={() => {
+                          setListTrainee([])
+                          setListTraineeImported([])
+                        }}
+                      >
+                        Reset
+                      </Button>
+                    )}
                   </div>
                 </>
               )}

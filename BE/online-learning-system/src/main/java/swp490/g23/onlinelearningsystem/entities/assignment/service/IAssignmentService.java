@@ -2,6 +2,7 @@ package swp490.g23.onlinelearningsystem.entities.assignment.service;
 
 import org.springframework.http.ResponseEntity;
 
+import swp490.g23.onlinelearningsystem.entities.assignment.domain.filter.AssignmentFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.assignment.domain.request.AssignmentRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.assignment.domain.response.AssignmentPaginate;
 import swp490.g23.onlinelearningsystem.entities.assignment.domain.response.AssignmentResponseDTO;
@@ -17,4 +18,6 @@ public interface IAssignmentService {
     ResponseEntity<String> updateAssignment(Long assId, AssignmentRequestDTO dto);
 
     ResponseEntity<String> addAssignment(AssignmentRequestDTO dto);
+
+    ResponseEntity<AssignmentFilterDTO> getFilter();
 }

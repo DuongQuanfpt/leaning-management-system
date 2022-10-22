@@ -6,36 +6,36 @@ const header = {
   headers: { Authorization: `Bearer ${currentAccessToken}` },
 }
 
-const subjectListApi = {
+const classSettingListApi = {
   getPage: (params) => {
-    const url = `/api/subject-setting`
+    const url = `/api/class-setting`
     return axiosClient.get(url, { ...header, params })
   },
 
   getFilter: () => {
-    const url = `/api/subject-setting-filter`
+    const url = `/api/class-setting-filter`
     return axiosClient.get(url, header)
   },
 
   getDetail: (id) => {
-    const url = `/api/subject-setting-detail/${id}`
+    const url = `/api/class-setting-detail/${id}`
     return axiosClient.get(url, header)
   },
 
   changeDetail: (id, params) => {
-    const url = `/api/subject-setting-detail/${id}`
+    const url = `/api/class-setting-detail/${id}`
     return axiosClient.put(url, params, header)
   },
 
   changeStatus: (id) => {
-    const url = `/api/subject-setting-status/${id}`
+    const url = `/api/class-setting-status/${id}`
     return axiosClient.put(url, {}, header)
   },
 
-  addSubject: (params) => {
-    const url = `/api/subject-setting-add`
+  addClass: (params) => {
+    const url = `/api/class-setting-add`
     return axiosClient.post(url, params, header)
   },
 }
 
-export default subjectListApi
+export default classSettingListApi

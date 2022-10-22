@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
-import { Breadcrumb, Button, Pagination, Space, Table, Tag, Tooltip } from 'antd'
-import { EyeOutlined } from '@ant-design/icons'
+import { Breadcrumb, Button, Modal, Pagination, Space, Table, Tag, Tooltip } from 'antd'
+import { ExclamationCircleOutlined, CloseOutlined, CheckOutlined, EyeOutlined } from '@ant-design/icons'
 
 import { CButton, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
@@ -129,6 +129,29 @@ const SubjectSettingList = () => {
     navigateTo('/subject-setting-add')
   }
 
+  const handleActive = async (subject) => {
+    await subjectSettingListApi
+      .changeStatus(subject.subjectSettingId)
+      .then((response) => {
+        loadData(currentPage, filter)
+      })
+      .catch((error) => console.log(error))
+  }
+
+  const modalConfirm = (subject) => {
+    Modal.confirm({
+      title: `Are you want to ${subject.status === 'Active' ? 'deactivate' : 'reactivate'} "${subject.settingTitle}"?`,
+      icon: <ExclamationCircleOutlined />,
+      okText: 'OK',
+      cancelText: 'Cancel',
+      okType: 'danger',
+      onOk() {
+        handleActive(subject)
+      },
+      onCancel() {},
+    })
+  }
+
   const columns = [
     {
       title: 'ID',
@@ -155,6 +178,7 @@ const SubjectSettingList = () => {
       title: 'Type',
       dataIndex: 'typeName',
       sorter: (a, b) => a.typeName?.length - b.typeName?.length,
+      render: (_, { typeName }) => typeName.title,
     },
     {
       title: 'Status',
@@ -177,6 +201,16 @@ const SubjectSettingList = () => {
       width: 80,
       render: (_, subject) => (
         <Space size="middle">
+          <Tooltip title={subject.status === 'Active' ? 'Deactive' : 'Reactive'} placement="top">
+            <Button
+              type={subject.status === 'Active' ? 'danger' : 'primary'}
+              shape="circle"
+              icon={subject.status === 'Active' ? <CloseOutlined /> : <CheckOutlined />}
+              onClick={() => {
+                modalConfirm(subject)
+              }}
+            ></Button>
+          </Tooltip>
           <Tooltip title="View" placement="top">
             <Button
               shape="circle"
