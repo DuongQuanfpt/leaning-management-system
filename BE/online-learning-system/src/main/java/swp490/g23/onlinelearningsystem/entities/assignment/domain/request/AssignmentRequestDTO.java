@@ -19,9 +19,9 @@ public class AssignmentRequestDTO {
 
     private String eval_weight;
 
-    private boolean isTeamWork;
+    private int isTeamWork;
 
-    private boolean isOnGoing;
+    private int isOnGoing;
 
     private String status;
 

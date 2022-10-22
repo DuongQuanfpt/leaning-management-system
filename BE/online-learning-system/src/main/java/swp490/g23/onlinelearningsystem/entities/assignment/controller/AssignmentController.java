@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import swp490.g23.onlinelearningsystem.entities.assignment.domain.filter.AssignmentFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.assignment.domain.request.AssignmentRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.assignment.domain.response.AssignmentPaginate;
 import swp490.g23.onlinelearningsystem.entities.assignment.domain.response.AssignmentResponseDTO;
@@ -58,6 +59,12 @@ public class AssignmentController {
 	@PutMapping(value = "/assignment-detail/{id}")
 	public ResponseEntity<String> updateAssignment(@PathVariable("id") Long id, @RequestBody AssignmentRequestDTO dto) {
 		return assignmentService.updateAssignment(id, dto);
+	}
+
+	@GetMapping(value = "/assignment-filter")
+	public ResponseEntity<AssignmentFilterDTO> getUserFilter() {
+
+		return assignmentService.getFilter();
 	}
 
 }
