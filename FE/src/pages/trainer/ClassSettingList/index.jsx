@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Breadcrumb, Pagination, Table, Tooltip } from 'antd'
+import { useSelector } from 'react-redux'
+
+import { Breadcrumb, Button, Modal, Pagination, Space, Table, Tag, Tooltip } from 'antd'
+import { CheckOutlined, CloseOutlined, ExclamationCircleOutlined, EyeOutlined } from '@ant-design/icons'
 
 import { CButton, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
@@ -14,20 +17,25 @@ import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 
 const ClassSettingList = () => {
   const ITEM_PER_PAGE = 10
+  const { roles, currentClass } = useSelector((state) => state.profile)
+
   const navigateTo = useNavigate()
 
   const [listClassSetting, setListClassSetting] = useState([])
   const [totalItem, setTotalItem] = useState(1)
   const [currentPage, setCurrentPage] = useState(1)
 
+  const [role, setRole] = useState({
+    isSupporter: false,
+    isTrainer: false,
+  })
+
   const [search, setSearch] = useState('')
   const [listFilter, setListFilter] = useState({
-    classFilter: [],
     typeFilter: [],
     statusFilter: [],
   })
   const [filter, setFilter] = useState({
-    classes: 'Select Class',
     type: {
       title: 'Select Type',
       value: '',
@@ -39,21 +47,48 @@ const ClassSettingList = () => {
   })
 
   useEffect(() => {
-    loadData()
-  }, [])
-
-  const loadData = async () => {
-    await classSettingListApi
-      .getPage({ item: ITEM_PER_PAGE, page: 1 })
+    classSettingListApi
+      .getFilter()
       .then((response) => {
         console.log(response)
-        setListClassSetting(response.listResult)
         setListFilter((prev) => ({
           ...prev,
-          classFilter: response.classFilter,
           typeFilter: response.typeFilter,
           statusFilter: response.statusFilter,
         }))
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+    if (roles.includes('trainer')) {
+      setRole((prev) => ({ ...prev, isTrainer: true }))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    loadData(1, filter)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter, currentClass])
+
+  const loadData = async (page, filter, q = '') => {
+    const params = { item: ITEM_PER_PAGE, page: page, filterClass: currentClass }
+    if (q !== '') {
+      params.q = q
+    }
+    if (filter.type.title !== 'Select Type') {
+      params.filterType = filter.type.value
+    }
+    if (filter.status.name !== 'Select Status') {
+      params.filterStatus = filter.status.value
+    }
+    await classSettingListApi
+      .getPage(params)
+      .then((response) => {
+        console.log(response)
+        setListClassSetting(response.listResult)
+        setCurrentPage(page)
+        setTotalItem(response.totalItem)
       })
       .catch((error) => {
         console.log(error)
@@ -62,10 +97,6 @@ const ClassSettingList = () => {
 
   const handleSearch = () => {
     loadData(1, filter, search)
-  }
-
-  const handleFilterClasses = (classes) => {
-    setFilter((prev) => ({ ...prev, classes: classes }))
   }
 
   const handleFilterType = (type) => {
@@ -100,7 +131,101 @@ const ClassSettingList = () => {
     navigateTo('/class-setting-add')
   }
 
-  const columns = []
+  const handleActive = async (id) => {
+    await classSettingListApi
+      .changeStatus(id)
+      .then((response) => {
+        loadData(currentPage, filter)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+
+  const columns = [
+    {
+      title: 'Setting Title',
+      dataIndex: 'settingTitle',
+      sorter: (a, b) => a.settingTitle?.length - b.settingTitle?.length,
+      width: '15%',
+    },
+    {
+      title: 'Setting Value',
+      dataIndex: 'settingValue',
+      sorter: (a, b) => a.settingValue?.length - b.settingValue?.length,
+      width: '15%',
+    },
+    {
+      title: 'Type',
+      dataIndex: 'typeName',
+      sorter: (a, b) => a.typeName.title?.length - b.typeName.title?.length,
+      render: (_, { typeName }) => typeName.title,
+      width: '15%',
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      width: '10%',
+      sorter: (a, b) => a.status?.length - b.status?.length,
+      render: (_, { status }) => (
+        <Tag color={status === 'Active' ? 'blue' : status === 'Inactive' ? 'red' : 'grey'} key={status}>
+          {status}
+        </Tag>
+      ),
+    },
+    {
+      title: 'Description',
+      dataIndex: 'description',
+      sorter: (a, b) => a.description.length - b.description.length,
+      width: '35%',
+    },
+    {
+      title: 'Actions',
+      dataIndex: 'actions',
+      width: '10%',
+      render: (_, subject) => (
+        <Space size="middle" align="baseline">
+          {role.isTrainer && (
+            <Tooltip title={subject.status === 'Active' ? 'Deactivate' : 'Reactivate'} placement="top">
+              <Button
+                type={subject.status === 'Active' ? 'danger' : 'primary'}
+                shape="circle"
+                icon={subject.status === 'Active' ? <CloseOutlined /> : <CheckOutlined />}
+                onClick={() => {
+                  modalConfirm(subject)
+                }}
+              ></Button>
+            </Tooltip>
+          )}
+          <Tooltip title="View" placement="top">
+            <Button
+              shape="circle"
+              icon={<EyeOutlined />}
+              onClick={() => {
+                navigateTo(`/class-setting-detail/${subject?.classSettingId}`)
+              }}
+            ></Button>
+          </Tooltip>
+        </Space>
+      ),
+    },
+  ]
+
+  const modalConfirm = (subject) => {
+    Modal.confirm({
+      title: `Are you want to ${subject.classSettingId === 'Active' ? 'deactivate' : 'reactivate'} "${
+        subject.settingTitle
+      }" - "${subject.settingValue}" ?`,
+      icon: <ExclamationCircleOutlined />,
+      okText: 'OK',
+      cancelText: 'Cancel',
+      okType: 'danger',
+      onOk() {
+        handleActive(subject.classSettingId)
+      },
+      onCancel() {},
+    })
+  }
 
   return (
     <div>
@@ -134,14 +259,6 @@ const ClassSettingList = () => {
                 </div>
                 <div className="col-6 d-flex justify-content-end">
                   <CDropdown className="ml-4">
-                    <CDropdownToggle color="secondary">{filter.classes}</CDropdownToggle>
-                    <CDropdownMenu>
-                      {listFilter.classFilter.map((classes) => (
-                        <CDropdownItem onClick={() => handleFilterClasses(classes)}>{classes}</CDropdownItem>
-                      ))}
-                    </CDropdownMenu>
-                  </CDropdown>
-                  <CDropdown className="ml-4">
                     <CDropdownToggle color="secondary">{filter.type.title}</CDropdownToggle>
                     <CDropdownMenu>
                       {listFilter.typeFilter.map((type) => (
@@ -162,11 +279,13 @@ const ClassSettingList = () => {
                       <CIcon icon={cilSync} />
                     </CButton>
                   </Tooltip>
-                  <Tooltip title="Add New Subject Setting" placement="right">
-                    <CButton color="danger" type="submit" className="text-light ml-4" onClick={handleAdd}>
-                      <CIcon icon={cilPlus} />
-                    </CButton>
-                  </Tooltip>
+                  {role.isTrainer && (
+                    <Tooltip title="Add New Subject Setting" placement="right">
+                      <CButton color="danger" type="submit" className="text-light ml-4" onClick={handleAdd}>
+                        <CIcon icon={cilPlus} />
+                      </CButton>
+                    </Tooltip>
+                  )}
                 </div>
               </div>
             </div>
