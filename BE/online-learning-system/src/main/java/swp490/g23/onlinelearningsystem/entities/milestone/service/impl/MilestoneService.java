@@ -109,7 +109,8 @@ public class MilestoneService implements IMilestoneService {
         MilestoneResponseDTO responseDTO = new MilestoneResponseDTO();
 
         responseDTO.setMilestoneId(entity.getMilestoneId());
-        responseDTO.setAssignment(new AssignmentResponseDTO(entity.getAssignment().getAssId(), entity.getAssignment().getTitle()));
+        responseDTO.setAssignment(
+                new AssignmentResponseDTO(entity.getAssignment().getAssId(), entity.getAssignment().getTitle()));
         responseDTO.setClassesCode(entity.getClasses().getCode());
         responseDTO.setStatus(entity.getStatus().toString());
         if (entity.getDescription() != null) {

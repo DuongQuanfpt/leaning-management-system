@@ -12,7 +12,7 @@ import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class EvalPaginateResponseDTO {
+public class CriteriaPaginateResponseDTO {
     private int page;
     private int totalPage;
     private long totalItem;

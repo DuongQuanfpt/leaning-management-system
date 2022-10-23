@@ -4,21 +4,49 @@ import java.util.Arrays;
 import java.util.Optional;
 
 public enum TraineeStatus {
-    Inactive(0), Active(1), Dropout(-1);
+    Inactive(false), Active(true), Dropout(null);
 
-    TraineeStatus(int value) {
+    TraineeStatus(Boolean value) {
         this.value = value;
     }
 
-    private int value;
+    private Boolean value;
 
-    public String getValue() {
-        return Integer.toString(value);
+    public Boolean getValue() {
+        return value;
     }
 
-    public static Optional<TraineeStatus> getFromValue(int value) {
-        return Arrays.stream(values())
-                .filter(s -> s.value == value)
-                .findFirst();
+    public static TraineeStatus fromValue(Boolean value) {
+        if (value == null) {
+            return TraineeStatus.Dropout;
+        }
+
+        if (value == true) {
+            return TraineeStatus.Active;
+        }
+
+        if (value == false) {
+            return TraineeStatus.Inactive;
+        }
+
+        throw new IllegalArgumentException("Trainee [" + value + "] not supported.");
+
+    }
+
+    public static TraineeStatus fromInt(int value) {
+        if (value == 1) {
+            return TraineeStatus.Active;
+        }
+
+        if (value == 0) {
+            return TraineeStatus.Inactive;
+        }
+
+        if (value == -1) {
+            return TraineeStatus.Dropout;
+        }
+
+        throw new IllegalArgumentException("Trainee [" + value + "] not supported.");
+
     }
 }

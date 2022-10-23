@@ -54,7 +54,7 @@ public class MilestoneCriteria {
                 } else {
                     statusValue = "swp490.g23.onlinelearningsystem.util.enumutil.MilestoneStatusEnum.Open";
                 }
-                query.append(" AND m.status = "+statusValue+" ");
+                query.append(" AND m.status = " + statusValue + " ");
             }
 
         }
