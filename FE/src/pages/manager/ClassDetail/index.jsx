@@ -222,7 +222,7 @@ const ClassDetail = () => {
                               <CDropdownToggle color="warning" disabled={role.isManager ? !isEditMode : true}>
                                 {object.term.title}
                               </CDropdownToggle>
-                              <CDropdownMenu className="w-100">
+                              <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                                 {list.term.map((item) => (
                                   <CDropdownItem
                                     onClick={() =>
@@ -241,7 +241,7 @@ const ClassDetail = () => {
                               <CDropdownToggle color="warning" disabled={role.isManager ? !isEditMode : true}>
                                 {object.branch.title}
                               </CDropdownToggle>
-                              <CDropdownMenu className="w-100">
+                              <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                                 {list.branch.map((item) => (
                                   <CDropdownItem
                                     onClick={() =>
@@ -260,7 +260,7 @@ const ClassDetail = () => {
                               <CDropdownToggle color="warning" disabled={role.isManager ? !isEditMode : true}>
                                 {object.supporter}
                               </CDropdownToggle>
-                              <CDropdownMenu className="w-100">
+                              <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                                 {list.supporter.map((item) => (
                                   <CDropdownItem onClick={() => setObject((prev) => ({ ...prev, supporter: item }))}>
                                     {item}
@@ -278,7 +278,7 @@ const ClassDetail = () => {
                               >
                                 {object.trainer}
                               </CDropdownToggle>
-                              <CDropdownMenu className="w-100">
+                              <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                                 {list.trainer.map((item) => (
                                   <CDropdownItem onClick={() => setObject((prev) => ({ ...prev, trainer: item }))}>
                                     {item}

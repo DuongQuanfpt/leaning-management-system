@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
 
 import { Breadcrumb, Button, Modal, Pagination, Space, Table, Tag, Tooltip } from 'antd'
 import { CheckOutlined, CloseOutlined, ExclamationCircleOutlined, EyeOutlined } from '@ant-design/icons'
@@ -182,14 +181,14 @@ const AssignmentList = () => {
     {
       title: 'Is Teamwork',
       dataIndex: 'isTeamWork',
-      sorter: (a, b) => a.isTeamWork.length - b.isTeamWork.length,
+      sorter: (a, b) => a.isTeamWork - b.isTeamWork,
       width: '10%',
       render: (_, { isTeamWork }) => (isTeamWork === 1 ? 'Yes' : 'No'),
     },
     {
       title: 'Is Ongoing',
       dataIndex: 'isOnGoing',
-      sorter: (a, b) => a.isOnGoing.length - b.isOnGoing.length,
+      sorter: (a, b) => a.isOnGoing - b.isOnGoing,
       width: '10%',
       render: (_, { isOnGoing }) => (isOnGoing === 1 ? 'Yes' : 'No'),
     },
@@ -228,71 +227,73 @@ const AssignmentList = () => {
       <AdminSidebar />
       <div className="wrapper d-flex flex-column min-vh-100 bg-light">
         <AdminHeader />
-        <div className="col-lg-12 m-b30">
-          <div className="row">
-            <div className="col-lg-12 m-b30">
-              <div className="row">
-                <div className="col-2 d-flex align-items-center">
-                  <Breadcrumb>
-                    <Breadcrumb.Item>
-                      <Link to="/dashboard">Dashboard</Link>
-                    </Breadcrumb.Item>
-                    <Breadcrumb.Item>Class Setting List</Breadcrumb.Item>
-                  </Breadcrumb>
-                </div>
-                <div className="col-4 d-flex w-80">
-                  <input
-                    type="search"
-                    id="form1"
-                    className="form-control"
-                    placeholder="Searching by Class title..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                  />
-                  <CButton color="primary" type="submit" className="text-light ml-10" onClick={handleSearch}>
-                    <CIcon icon={cilSearch} />
-                  </CButton>
-                </div>
-                <div className="col-6 d-flex justify-content-end">
-                  <CDropdown className="ml-4">
-                    <CDropdownToggle color="secondary">{filter.subject}</CDropdownToggle>
-                    <CDropdownMenu>
-                      {listFilter?.subjectFilter?.map((subject) => (
-                        <CDropdownItem onClick={() => handleFilterSubject(subject)}>{subject}</CDropdownItem>
-                      ))}
-                    </CDropdownMenu>
-                  </CDropdown>
-                  <CDropdown className="ml-4">
-                    <CDropdownToggle color="secondary">{filter.status.name}</CDropdownToggle>
-                    <CDropdownMenu>
-                      {listFilter?.statusFilter?.map((status) => (
-                        <CDropdownItem onClick={() => handleFilterStatus(status)}>{status.name}</CDropdownItem>
-                      ))}
-                    </CDropdownMenu>
-                  </CDropdown>
-                  <Tooltip title="Reload" placement="top">
-                    <CButton color="success" type="submit" className="text-light ml-4" onClick={handleReload}>
-                      <CIcon icon={cilSync} />
+        <div className="body flex-grow-1 px-3">
+          <div className="col-lg-12 m-b30">
+            <div className="row">
+              <div className="col-lg-12 m-b30">
+                <div className="row">
+                  <div className="col-2 d-flex align-items-center">
+                    <Breadcrumb>
+                      <Breadcrumb.Item>
+                        <Link to="/dashboard">Dashboard</Link>
+                      </Breadcrumb.Item>
+                      <Breadcrumb.Item>Class Setting List</Breadcrumb.Item>
+                    </Breadcrumb>
+                  </div>
+                  <div className="col-4 d-flex w-80">
+                    <input
+                      type="search"
+                      id="form1"
+                      className="form-control"
+                      placeholder="Searching by Class title..."
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                    />
+                    <CButton color="primary" type="submit" className="text-light ml-10" onClick={handleSearch}>
+                      <CIcon icon={cilSearch} />
                     </CButton>
-                  </Tooltip>
-                  <Tooltip title="Add New Assignment" placement="right">
-                    <CButton color="danger" type="submit" className="text-light ml-4" onClick={handleAdd}>
-                      <CIcon icon={cilPlus} />
-                    </CButton>
-                  </Tooltip>
+                  </div>
+                  <div className="col-6 d-flex justify-content-end">
+                    <CDropdown className="ml-4">
+                      <CDropdownToggle color="secondary">{filter.subject}</CDropdownToggle>
+                      <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
+                        {listFilter?.subjectFilter?.map((subject) => (
+                          <CDropdownItem onClick={() => handleFilterSubject(subject)}>{subject}</CDropdownItem>
+                        ))}
+                      </CDropdownMenu>
+                    </CDropdown>
+                    <CDropdown className="ml-4">
+                      <CDropdownToggle color="secondary">{filter.status.name}</CDropdownToggle>
+                      <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
+                        {listFilter?.statusFilter?.map((status) => (
+                          <CDropdownItem onClick={() => handleFilterStatus(status)}>{status.name}</CDropdownItem>
+                        ))}
+                      </CDropdownMenu>
+                    </CDropdown>
+                    <Tooltip title="Reload" placement="top">
+                      <CButton color="success" type="submit" className="text-light ml-4" onClick={handleReload}>
+                        <CIcon icon={cilSync} />
+                      </CButton>
+                    </Tooltip>
+                    <Tooltip title="Add New Assignment" placement="right">
+                      <CButton color="danger" type="submit" className="text-light ml-4" onClick={handleAdd}>
+                        <CIcon icon={cilPlus} />
+                      </CButton>
+                    </Tooltip>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="col-lg-12">
-              <Table bordered dataSource={listAssignment} columns={columns} pagination={false} />
-            </div>
-            <div className="col-lg-12 d-flex justify-content-end">
-              <Pagination current={currentPage} total={totalItem} onChange={handleChangePage} />;
+              <div className="col-lg-12">
+                <Table bordered dataSource={listAssignment} columns={columns} pagination={false} />
+              </div>
+              <div className="col-lg-12 d-flex justify-content-end">
+                <Pagination current={currentPage} total={totalItem} onChange={handleChangePage} />;
+              </div>
             </div>
           </div>
         </div>
+        <AdminFooter />
       </div>
-      <AdminFooter />
     </div>
   )
 }

@@ -272,7 +272,7 @@ const ClassList = () => {
       <AdminSidebar />
       <div className="wrapper d-flex flex-column min-vh-100 bg-light">
         <AdminHeader />
-        <div className="body flex-grow-1 px-3">
+        <div className="body flex-grow-1 px-3 m-b30">
           <div className="col-lg-12 m-b30">
             <div className="row">
               <div className="col-2 d-flex align-items-center">
@@ -299,7 +299,7 @@ const ClassList = () => {
               <div className="col-7 d-flex justify-content-end">
                 <CDropdown className="ml-2">
                   <CDropdownToggle color="secondary">{term}</CDropdownToggle>
-                  <CDropdownMenu>
+                  <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
                     {listTerm.map((term) => (
                       <CDropdownItem onClick={() => handleFilterTerm(term)}>{term.title}</CDropdownItem>
                     ))}
@@ -307,7 +307,7 @@ const ClassList = () => {
                 </CDropdown>
                 <CDropdown className="ml-2">
                   <CDropdownToggle color="secondary">{branch}</CDropdownToggle>
-                  <CDropdownMenu>
+                  <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
                     {listBranch.map((branch) => (
                       <CDropdownItem onClick={() => handleFilterBranch(branch)}>{branch.title}</CDropdownItem>
                     ))}
@@ -316,7 +316,7 @@ const ClassList = () => {
                 {role.isTrainer ? null : (
                   <CDropdown className="ml-2">
                     <CDropdownToggle color="secondary">{trainer}</CDropdownToggle>
-                    <CDropdownMenu>
+                    <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
                       {listTrainer.map((trainer) => (
                         <CDropdownItem onClick={() => handleFilterTrainer(trainer)}>{trainer}</CDropdownItem>
                       ))}
@@ -326,7 +326,7 @@ const ClassList = () => {
                 {role.isSupporter ? null : (
                   <CDropdown className="ml-2">
                     <CDropdownToggle color="secondary">{supporter}</CDropdownToggle>
-                    <CDropdownMenu>
+                    <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
                       {listSupporter.map((supporter) => (
                         <CDropdownItem onClick={() => handleFilterSupporter(supporter)}>{supporter}</CDropdownItem>
                       ))}
@@ -335,7 +335,7 @@ const ClassList = () => {
                 )}
                 <CDropdown className="ml-2">
                   <CDropdownToggle color="secondary">{status}</CDropdownToggle>
-                  <CDropdownMenu>
+                  <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
                     {listStatus.map((status) => (
                       <CDropdownItem onClick={() => handleFilterStatus(status)}>{status.name}</CDropdownItem>
                     ))}

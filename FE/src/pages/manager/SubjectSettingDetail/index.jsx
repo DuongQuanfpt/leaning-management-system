@@ -173,7 +173,7 @@ const SubjectSettingDetail = () => {
                               <CDropdownToggle color="warning" disabled>
                                 {type.title}
                               </CDropdownToggle>
-                              <CDropdownMenu className="w-100">
+                              <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                                 {listFilter.typeFilter.map((type) => (
                                   <CDropdownItem onClick={() => setType(type)}>{type.title}</CDropdownItem>
                                 ))}
@@ -199,7 +199,7 @@ const SubjectSettingDetail = () => {
                                 <CDropdownToggle color="warning" disabled={!isEditMode}>
                                   {value}
                                 </CDropdownToggle>
-                                <CDropdownMenu className="w-100">
+                                <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                                   {listFilter.complexity.map((complexity) => (
                                     <CDropdownItem onClick={() => setValue(complexity)}>{complexity}</CDropdownItem>
                                   ))}
@@ -211,7 +211,7 @@ const SubjectSettingDetail = () => {
                                 <CDropdownToggle color="warning" disabled={!isEditMode}>
                                   {value}
                                 </CDropdownToggle>
-                                <CDropdownMenu className="w-100">
+                                <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                                   {listFilter.quality.map((quality) => (
                                     <CDropdownItem onClick={() => setValue(quality)}>{quality}</CDropdownItem>
                                   ))}

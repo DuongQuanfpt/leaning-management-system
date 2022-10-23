@@ -160,7 +160,7 @@ const SubjectAdd = () => {
                               <label className="col-form-label">Manager</label>
                               <CDropdown className="w-100">
                                 <CDropdownToggle color="warning">{manager}</CDropdownToggle>
-                                <CDropdownMenu className="w-100">
+                                <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                                   {listManager.map((manager) => (
                                     <CDropdownItem onClick={() => setManager(manager)}>{manager}</CDropdownItem>
                                   ))}
@@ -171,7 +171,7 @@ const SubjectAdd = () => {
                               <label className="col-form-label">Expert</label>
                               <CDropdown className="w-100">
                                 <CDropdownToggle color="warning">{expert}</CDropdownToggle>
-                                <CDropdownMenu className="w-100">
+                                <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                                   {listExpert.map((expert) => (
                                     <CDropdownItem onClick={() => setExpert(expert)}>{expert}</CDropdownItem>
                                   ))}

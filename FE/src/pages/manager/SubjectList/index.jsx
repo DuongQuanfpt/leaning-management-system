@@ -201,7 +201,7 @@ const SubjectList = () => {
       <AdminSidebar />
       <div className="wrapper d-flex flex-column min-vh-100 bg-light">
         <AdminHeader />
-        <div className="body flex-grow-1 px-3">
+        <div className="body flex-grow-1 px-3 m-b30">
           <div className="col-lg-12 m-b30">
             <div className="row">
               <div className="col-2 d-flex align-items-center">
@@ -228,7 +228,7 @@ const SubjectList = () => {
               <div className="col-5 d-flex justify-content-end">
                 <CDropdown className="ml-4">
                   <CDropdownToggle color="secondary">{manager}</CDropdownToggle>
-                  <CDropdownMenu>
+                  <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
                     {listManager.map((manager) => (
                       <CDropdownItem onClick={() => handleFilterManager(manager)}>{manager}</CDropdownItem>
                     ))}
@@ -236,7 +236,7 @@ const SubjectList = () => {
                 </CDropdown>
                 <CDropdown className="ml-4">
                   <CDropdownToggle color="secondary">{expert}</CDropdownToggle>
-                  <CDropdownMenu>
+                  <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
                     {listExpert.map((expert) => (
                       <CDropdownItem onClick={() => handleFilterExpert(expert)}>{expert}</CDropdownItem>
                     ))}
@@ -244,7 +244,7 @@ const SubjectList = () => {
                 </CDropdown>
                 <CDropdown className="ml-4">
                   <CDropdownToggle color="secondary">{status}</CDropdownToggle>
-                  <CDropdownMenu>
+                  <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
                     {listStatus.map((status) => (
                       <CDropdownItem onClick={() => handleFilterStatus(status)}>{status.name}</CDropdownItem>
                     ))}
