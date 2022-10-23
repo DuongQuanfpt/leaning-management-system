@@ -27,4 +27,9 @@ public class AssignmentResponseDTO {
     private Status status;
 
     private String subjectName;
+
+    public AssignmentResponseDTO(Long assId, String title) {
+        this.assId = assId;
+        this.title = title;
+    }
 }

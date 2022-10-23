@@ -158,8 +158,8 @@ public class ClassService implements IClassService {
         }
         String trainerUsername = dto.getTrainer();
         String supporterUsername = dto.getSupporter();
-        String term = dto.getTerm().getValue();
-        String branch = dto.getBranch().getValue();
+        String term = dto.getTerm();
+        String branch = dto.getBranch();
 
         User userTrainer = userRepository.findByAccountName(trainerUsername);
         User userSupportter = userRepository.findByAccountName(supporterUsername);
@@ -314,11 +314,11 @@ public class ClassService implements IClassService {
         }
 
         if (requestDTO.getTerm() != null) {
-            clazz.setSettingTerm(settingRepositories.findBySettingValue(requestDTO.getTerm().getValue()));
+            clazz.setSettingTerm(settingRepositories.findBySettingValue(requestDTO.getTerm()));
         }
 
         if (requestDTO.getBranch() != null) {
-            clazz.setSettingBranch(settingRepositories.findBySettingValue(requestDTO.getBranch().getValue()));
+            clazz.setSettingBranch(settingRepositories.findBySettingValue(requestDTO.getBranch()));
         }
 
         classRepositories.save(clazz);

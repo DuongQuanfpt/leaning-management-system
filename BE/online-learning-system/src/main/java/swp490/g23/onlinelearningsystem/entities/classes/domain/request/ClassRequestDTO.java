@@ -19,9 +19,9 @@ public class ClassRequestDTO {
 
     private String subjectCode;
 
-    private ClassTypeResponseDTO term;
+    private String term;
 
-    private ClassTypeResponseDTO branch;
+    private String branch;
 
     private String description;
 
