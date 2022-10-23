@@ -66,7 +66,7 @@ public class ClassSettingService implements IClassSettingService {
         TypedQuery<Long> countQuery = result.getCountQuery();
 
         List<ClassSetting> classSettings = queryResult.getResultList();
-        Long totalPage = countQuery.getSingleResult();
+        Long toltalItem = countQuery.getSingleResult();
 
         for (Status status : new ArrayList<Status>(EnumSet.allOf(Status.class))) {
             statusFilter.add(new StatusEntity(status));
@@ -96,13 +96,23 @@ public class ClassSettingService implements IClassSettingService {
             }
         }
 
-        for (ClassSetting classSetting : classSettings) {
+        int totalPage;
+        if (limit != 0) {
+            queryResult.setFirstResult((page - 1) * limit);
+            queryResult.setMaxResults(limit);
+            totalPage =  (int) Math.ceil((double) toltalItem / limit);
+        } else {
+            totalPage = 1;
+        }
+
+        for (ClassSetting classSetting :  queryResult.getResultList()) {
             resultList.add(toDTO(classSetting));
         }
 
         ClassSettingPaginate classSettingPaginate = new ClassSettingPaginate();
-        classSettingPaginate.setTotalItem(totalPage);
+        classSettingPaginate.setTotalItem(toltalItem);
         classSettingPaginate.setPage(page);
+        classSettingPaginate.setTotalPage(totalPage);
         classSettingPaginate.setListResult(resultList);
         classSettingPaginate.setStatusFilter(statusFilter);
         classSettingPaginate.setClassFilter(classFilter);
@@ -206,10 +216,6 @@ public class ClassSettingService implements IClassSettingService {
         List<String> issueType = new ArrayList<>();
         for (IssueType type : new ArrayList<IssueType>(EnumSet.allOf(IssueType.class))) {
             issueType.add(type.toString());
-        }
-
-        for (Status status : new ArrayList<Status>(EnumSet.allOf(Status.class))) {
-            statusFilter.add(new StatusEntity(status));
         }
 
         List<String> classCodes = new ArrayList<>();
