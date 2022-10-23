@@ -193,7 +193,7 @@ const ClassSettingDetail = () => {
                           <CDropdownToggle color="warning" disabled={!isEditMode}>
                             {detail.settingValue}
                           </CDropdownToggle>
-                          <CDropdownMenu className="w-100">
+                          <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                             {filter.issueStatus.map((status) => (
                               <CDropdownItem onClick={() => setDetail((prev) => ({ ...prev, settingValue: status }))}>
                                 {status}
@@ -208,7 +208,7 @@ const ClassSettingDetail = () => {
                           <CDropdownToggle color="warning" disabled={!isEditMode}>
                             {detail.settingValue}
                           </CDropdownToggle>
-                          <CDropdownMenu className="w-100">
+                          <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                             {filter.issueType.map((type) => (
                               <CDropdownItem onClick={() => setDetail((prev) => ({ ...prev, settingValue: type }))}>
                                 {type}

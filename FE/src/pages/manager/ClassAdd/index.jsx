@@ -184,7 +184,7 @@ const ClassAdd = () => {
                             <label className="col-form-label">Subject</label>
                             <CDropdown className="w-100">
                               <CDropdownToggle color="warning">{object.subject}</CDropdownToggle>
-                              <CDropdownMenu className="w-100">
+                              <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                                 {list.subject.map((item) => (
                                   <CDropdownItem onClick={() => setObject((prev) => ({ ...prev, subject: item }))}>
                                     {item}
@@ -197,7 +197,7 @@ const ClassAdd = () => {
                             <label className="col-form-label">Term</label>
                             <CDropdown className="w-100">
                               <CDropdownToggle color="warning">{object.term.title}</CDropdownToggle>
-                              <CDropdownMenu className="w-100">
+                              <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                                 {list.term.map((item) => (
                                   <CDropdownItem onClick={() => setObject((prev) => ({ ...prev, term: item }))}>
                                     {item.title}
@@ -210,7 +210,7 @@ const ClassAdd = () => {
                             <label className="col-form-label">Branch</label>
                             <CDropdown className="w-100">
                               <CDropdownToggle color="warning">{object.branch.title}</CDropdownToggle>
-                              <CDropdownMenu className="w-100">
+                              <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                                 {list.branch.map((item) => (
                                   <CDropdownItem onClick={() => setObject((prev) => ({ ...prev, branch: item }))}>
                                     {item.title}
@@ -223,7 +223,7 @@ const ClassAdd = () => {
                             <label className="col-form-label">Trainer</label>
                             <CDropdown className="w-100">
                               <CDropdownToggle color="warning">{object.trainer}</CDropdownToggle>
-                              <CDropdownMenu className="w-100">
+                              <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                                 {list.trainer.map((item) => (
                                   <CDropdownItem onClick={() => setObject((prev) => ({ ...prev, trainer: item }))}>
                                     {item}
@@ -236,7 +236,7 @@ const ClassAdd = () => {
                             <label className="col-form-label">Supporter</label>
                             <CDropdown className="w-100">
                               <CDropdownToggle color="warning">{object.supporter}</CDropdownToggle>
-                              <CDropdownMenu className="w-100">
+                              <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                                 {list.supporter.map((item) => (
                                   <CDropdownItem onClick={() => setObject((prev) => ({ ...prev, supporter: item }))}>
                                     {item}

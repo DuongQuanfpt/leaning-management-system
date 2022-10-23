@@ -142,7 +142,7 @@ const AdminSettingAdd = () => {
                               <div>
                                 <CDropdown className="w-100">
                                   <CDropdownToggle color="warning">{type.title}</CDropdownToggle>
-                                  <CDropdownMenu className="w-100">
+                                  <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                                     {listType.map((type) => (
                                       <CDropdownItem onClick={() => handleChangeType(type)}>{type.title}</CDropdownItem>
                                     ))}

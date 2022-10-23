@@ -141,7 +141,7 @@ const ContactUs = () => {
                 <div className="col-lg-12 mb-5">
                   <CDropdown className="w-100">
                     <CDropdownToggle color="warning">{subject.title}</CDropdownToggle>
-                    <CDropdownMenu className="w-100">
+                    <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                       {listSubject.map((subject) => (
                         <CDropdownItem onClick={() => handleChangeSubject(subject)}>{subject.title}</CDropdownItem>
                       ))}
