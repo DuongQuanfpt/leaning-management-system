@@ -60,7 +60,7 @@ const ContactList = () => {
     }
 
     if (q !== '') {
-      params.q = q
+      params.q = q.trim()
     }
     if (filter.filterSupporter !== '') {
       params.filterSupporter = filter.filterSupporter
@@ -111,55 +111,43 @@ const ContactList = () => {
 
   const columns = [
     {
-      title: 'ID',
-      dataIndex: 'contactId',
-      width: 80,
-    },
-    {
       title: 'Category',
       dataIndex: 'categoryName',
       sorter: (a, b) => a.categoryName?.length - b.categoryName?.length,
-      width: 180,
+      width: '15%',
     },
 
     {
       title: 'Fullname',
       dataIndex: 'fullName',
       sorter: (a, b) => a.fullName?.length - b.fullName?.length,
+      width: '15%',
     },
     {
       title: 'Email',
       dataIndex: 'email',
       sorter: (a, b) => a.email?.length - b.email?.length,
+      width: '20%',
     },
     {
       title: 'Mobile',
       dataIndex: 'mobile',
       sorter: (a, b) => a.mobile?.length - b.mobile?.length,
-      width: 120,
+      width: '10%',
     },
-    {
-      title: 'Message',
-      dataIndex: 'message',
-      sorter: (a, b) => a.message?.length - b.message?.length,
-      ellipsis: true,
-    },
+
     {
       title: 'Supporter',
       dataIndex: 'staffName',
       sorter: (a, b) => a.staffName?.length - b.staffName?.length,
-      ellipsis: true,
+      width: '10%',
     },
-    {
-      title: 'Response',
-      dataIndex: 'response',
-      sorter: (a, b) => a.response?.length - b.response?.length,
-      ellipsis: true,
-    },
+
     {
       title: 'Status',
       dataIndex: 'status',
-      width: 90,
+      width: '5%',
+
       render: (_, { status }) => (
         <Tag color={status === 'OPEN' ? 'blue' : 'red'} key={status}>
           {`${status.charAt(0).toUpperCase()}${status.slice(1).toLowerCase()}`}
@@ -169,7 +157,8 @@ const ContactList = () => {
     {
       title: 'Action',
       dataIndex: 'action',
-      width: 75,
+      width: '5%',
+
       render: (_, setting) => (
         <Space size="middle">
           <Tooltip title="View" placement="top">

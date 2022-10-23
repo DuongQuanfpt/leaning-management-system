@@ -87,7 +87,7 @@ const ClassList = () => {
       filterClass: currentClass,
     }
     if (q !== '') {
-      params.q = q
+      params.q = q.trim()
     }
     if (filter.filterTerm !== '') {
       params.filterTerm = filter.filterTerm
@@ -186,51 +186,47 @@ const ClassList = () => {
 
   const columns = [
     {
-      title: 'ID',
-      dataIndex: 'classId',
-      sorter: (a, b) => a.classId - b.classId,
-      width: 80,
-    },
-    {
       title: 'Class',
       dataIndex: 'code',
-      width: 100,
+      width: '10%',
     },
     {
       title: 'Subject',
       dataIndex: 'subjectCode',
       sorter: (a, b) => a.subjectCode?.length - b.subjectCode?.length,
+      width: '25%',
     },
     {
       title: 'Term',
       dataIndex: 'term',
       sorter: (a, b) => a.term - b.term,
-      width: 120,
+      width: '10%',
       render: (_, { term }) => term?.title,
     },
     {
       title: 'Branch',
       dataIndex: 'branch',
       sorter: (a, b) => a.branch?.length - b.branch?.length,
-      width: 120,
+      width: '10%',
+
       render: (_, { branch }) => branch?.title,
     },
     {
       title: 'Trainer',
       dataIndex: 'trainer',
       sorter: (a, b) => a.trainer?.length - b.trainer?.length,
-      width: 180,
+      width: '10%',
     },
     {
       title: 'Supporter',
       dataIndex: 'supporter',
       sorter: (a, b) => a.supporter?.length - b.supporter?.length,
-      width: 180,
+      width: '10%',
     },
     {
       title: 'Status',
       dataIndex: 'status',
-      width: 90,
+      width: '7.5%',
       sorter: (a, b) => a.status?.length - b.status?.length,
       render: (_, { status }) => (
         <Tag color={status === 'Active' ? 'blue' : status === 'Inactive' ? 'red' : 'grey'} key={status}>
@@ -242,7 +238,7 @@ const ClassList = () => {
     {
       title: 'Actions',
       dataIndex: 'actions',
-      width: 120,
+      width: '7.5%',
       render: (_, subject) => (
         <Space size="middle" align="baseline">
           {!role.isTrainer && (

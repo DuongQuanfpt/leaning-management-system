@@ -65,7 +65,7 @@ const TraineeList = () => {
     }
 
     if (q !== '') {
-      params.q = q
+      params.q = q.trim()
     }
     if (filter.statusFilter !== '') {
       params.filterStatus = filter.statusFilter
@@ -243,26 +243,26 @@ const TraineeList = () => {
       title: 'Username',
       dataIndex: 'username',
       sorter: (a, b) => a.username?.length - b.username?.length,
-      width: 180,
+      width: '12.5%',
     },
 
     {
       title: 'Fullname',
       dataIndex: 'fullName',
       sorter: (a, b) => a.fullName?.length - b.fullName?.length,
-      width: 220,
+      width: '12.5%',
     },
     {
       title: 'Email',
       dataIndex: 'email',
       sorter: (a, b) => a.email?.length - b.email?.length,
-      width: 220,
+      width: '20%',
     },
     {
       title: 'Status',
       dataIndex: 'status',
       sorter: (a, b) => a.status?.length - b.status?.length,
-      width: 90,
+      width: '10%',
       render: (_, { status }) => (
         <Tag color={status === 'Active' ? 'blue' : status === 'Inactive' ? 'red' : 'grey'} key={status}>
           {status}
@@ -273,17 +273,18 @@ const TraineeList = () => {
       title: 'Dropout Date',
       dataIndex: 'dropDate',
       sorter: (a, b) => a.dropDate?.length - b.dropDate?.length,
-      width: 150,
+      width: '12.5%',
     },
     {
       title: 'Note',
       dataIndex: 'note',
       sorter: (a, b) => a.note?.length - b.note?.length,
+      width: '22.5%',
     },
     {
       title: 'Action',
       dataIndex: 'action',
-      width: 100,
+      width: '10%',
       render: (_, setting) => (
         <Space size="middle">
           {setting.status !== 'Dropout' ? (
