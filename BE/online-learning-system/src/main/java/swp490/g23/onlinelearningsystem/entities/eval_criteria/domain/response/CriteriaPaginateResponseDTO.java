@@ -1,12 +1,13 @@
 package swp490.g23.onlinelearningsystem.entities.eval_criteria.domain.response;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import swp490.g23.onlinelearningsystem.util.enumutil.Status;
+import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
 
 @Getter
 @Setter
@@ -16,5 +17,6 @@ public class CriteriaPaginateResponseDTO {
     private int page;
     private int totalPage;
     private long totalItem;
-    private List<Status> statusFilter;
+    private List<CriteriaResponseDTO> listResult = new ArrayList<>();
+    private List<StatusEntity> statusFilter;
 }

@@ -15,7 +15,7 @@ public class CriteriaRepositories {
 
     private final EntityManager em;
 
-    public CriteriaQuery searchFilterAssignment(String keyword, String filterStatus, String filterSubject) {
+    public CriteriaQuery searchFilterCriteria(String keyword, String filterStatus) {
         StringBuilder query = new StringBuilder("SELECT e FROM EvalCriteria e WHERE 1=1 ");
 
         // if (keyword != null) {
