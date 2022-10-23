@@ -54,7 +54,7 @@ const AdminSettingList = () => {
       page: page,
     }
     if (q !== '') {
-      params.q = q
+      params.q = q.trim()
     }
     if (filter.filterType !== '') {
       params.filterType = filter.filterType
@@ -106,37 +106,32 @@ const AdminSettingList = () => {
 
   const columns = [
     {
-      title: 'ID',
-      dataIndex: 'settingId',
-      width: 80,
-    },
-    {
       title: 'Type',
       dataIndex: 'typeName',
       sorter: (a, b) => a.typeName?.length - b.typeName?.length,
-      ellipsis: true,
+      width: '20%',
     },
     {
       title: 'Title',
       dataIndex: 'settingTitle',
       sorter: (a, b) => a.settingTitle?.length - b.settingTitle?.length,
-      ellipsis: true,
+      width: '20%',
     },
 
     {
       title: 'Value',
       dataIndex: 'settingValue',
-      ellipsis: true,
+      width: '25%',
     },
     {
       title: 'Display Order',
       dataIndex: 'displayOrder',
-      width: 150,
+      width: '15%',
     },
     {
       title: 'Status',
       dataIndex: 'status',
-      width: 90,
+      width: '15%',
       render: (_, { status }) => (
         <Tag color={status === 'Active' ? 'blue' : 'red'} key={status}>
           {status}
@@ -146,7 +141,6 @@ const AdminSettingList = () => {
     {
       title: 'Action',
       dataIndex: 'action',
-      width: 120,
       render: (_, setting) => (
         <Space size="middle">
           <Tooltip title={setting.status === 'Active' ? 'Deactivate' : 'Reactivate'} placement="top">

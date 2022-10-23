@@ -9,37 +9,28 @@ import { CButton, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } fro
 import CIcon from '@coreui/icons-react'
 import { cilPlus, cilSearch, cilSync } from '@coreui/icons'
 
-import classSettingListApi from '~/api/classSettingListApi'
+import assignmentApi from '~/api/assignmentApi'
 
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 
-const ClassSettingList = () => {
+const AssignmentList = () => {
   const ITEM_PER_PAGE = 10
-  const { roles, currentClass } = useSelector((state) => state.profile)
-
   const navigateTo = useNavigate()
 
-  const [listClassSetting, setListClassSetting] = useState([])
+  const [listAssignment, setListAssignment] = useState([])
   const [totalItem, setTotalItem] = useState(1)
   const [currentPage, setCurrentPage] = useState(1)
 
-  const [role, setRole] = useState({
-    isSupporter: false,
-    isTrainer: false,
-  })
-
   const [search, setSearch] = useState('')
   const [listFilter, setListFilter] = useState({
-    typeFilter: [],
+    subjectFilter: [],
     statusFilter: [],
   })
+
   const [filter, setFilter] = useState({
-    type: {
-      title: 'Select Type',
-      value: '',
-    },
+    subject: 'Select Subject',
     status: {
       name: 'Select Status',
       value: '',
@@ -47,46 +38,44 @@ const ClassSettingList = () => {
   })
 
   useEffect(() => {
-    classSettingListApi
+    assignmentApi
       .getFilter()
       .then((response) => {
-        console.log(response)
         setListFilter((prev) => ({
           ...prev,
-          typeFilter: response.typeFilter,
+          subjectFilter: response.subjectFilter,
           statusFilter: response.statusFilter,
         }))
       })
       .catch((error) => {
         console.log(error)
       })
-    if (roles.includes('trainer')) {
-      setRole((prev) => ({ ...prev, isTrainer: true }))
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
     loadData(1, filter)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter, currentClass])
+  }, [filter])
 
-  const loadData = async (page, filter, q = '') => {
-    const params = { item: ITEM_PER_PAGE, page: page, filterClass: currentClass }
+  const loadData = async (page, fiter, q = '') => {
+    const params = {
+      item: ITEM_PER_PAGE,
+      page: page,
+    }
     if (q !== '') {
       params.q = q.trim()
     }
-    if (filter.type.title !== 'Select Type') {
-      params.filterType = filter.type.value
+    if (filter.subject !== 'Select Subject') {
+      params.filterSubject = filter.subject
     }
     if (filter.status.name !== 'Select Status') {
       params.filterStatus = filter.status.value
     }
-    await classSettingListApi
+
+    await assignmentApi
       .getPage(params)
       .then((response) => {
-        console.log(response)
-        setListClassSetting(response.listResult)
+        setListAssignment(response.listResult)
         setCurrentPage(page)
         setTotalItem(response.totalItem)
       })
@@ -99,27 +88,18 @@ const ClassSettingList = () => {
     loadData(1, filter, search)
   }
 
-  const handleFilterType = (type) => {
-    setFilter((prev) => ({ ...prev, type: type }))
+  const handleFilterSubject = (subject) => {
+    setFilter((prev) => ({ ...prev, subject: subject }))
   }
 
   const handleFilterStatus = (status) => {
-    setFilter((prev) => ({ ...prev, status: status }))
-  }
-
-  const handleChangePage = (pageNumber) => {
-    setCurrentPage(pageNumber)
-    loadData(pageNumber, filter)
+    setFilter((prev) => ({ ...prev, status: { ...prev.status, name: status.name, value: status.value } }))
   }
 
   const handleReload = () => {
     setSearch('')
     setFilter({
       subject: 'Select Subject',
-      type: {
-        title: 'Select Type',
-        value: '',
-      },
       status: {
         name: 'Select Status',
         value: '',
@@ -128,12 +108,17 @@ const ClassSettingList = () => {
   }
 
   const handleAdd = () => {
-    navigateTo('/class-setting-add')
+    navigateTo('/assignment-add')
+  }
+
+  const handleChangePage = (pageNumber) => {
+    setCurrentPage(pageNumber)
+    loadData(pageNumber, filter)
   }
 
   const handleActive = async (id) => {
-    await classSettingListApi
-      .changeStatus(id)
+    await assignmentApi
+      .changeActive(id)
       .then((response) => {
         loadData(currentPage, filter)
       })
@@ -142,25 +127,40 @@ const ClassSettingList = () => {
       })
   }
 
+  const modalConfirm = (subject) => {
+    Modal.confirm({
+      title: `Are you want to ${subject.status === 'Active' ? 'deactivate' : 'reactivate'} "${subject.title}" - "${
+        subject.assBody
+      }" ?`,
+      icon: <ExclamationCircleOutlined />,
+      okText: 'OK',
+      cancelText: 'Cancel',
+      okType: 'danger',
+      onOk() {
+        handleActive(subject.assId)
+      },
+      onCancel() {},
+    })
+  }
+
   const columns = [
     {
-      title: 'Setting Title',
-      dataIndex: 'settingTitle',
-      sorter: (a, b) => a.settingTitle?.length - b.settingTitle?.length,
+      title: 'Subject',
+      dataIndex: 'subjectName',
+      sorter: (a, b) => a.subjectName.length - b.subjectName.length,
+      width: '10%',
+    },
+    {
+      title: 'Title',
+      dataIndex: 'title',
+      sorter: (a, b) => a.title.length - b.title.length,
       width: '15%',
     },
     {
-      title: 'Setting Value',
-      dataIndex: 'settingValue',
-      sorter: (a, b) => a.settingValue?.length - b.settingValue?.length,
-      width: '15%',
-    },
-    {
-      title: 'Type',
-      dataIndex: 'typeName',
-      sorter: (a, b) => a.typeName.title?.length - b.typeName.title?.length,
-      render: (_, { typeName }) => typeName.title,
-      width: '15%',
+      title: 'Body',
+      dataIndex: 'assBody',
+      sorter: (a, b) => a.assBody.length - b.assBody.length,
+      width: '25%',
     },
     {
       title: 'Status',
@@ -174,10 +174,24 @@ const ClassSettingList = () => {
       ),
     },
     {
-      title: 'Description',
-      dataIndex: 'description',
-      sorter: (a, b) => a.description.length - b.description.length,
-      width: '35%',
+      title: 'Weight',
+      dataIndex: 'eval_weight',
+      sorter: (a, b) => a.eval_weight.length - b.eval_weight.length,
+      width: '10%',
+    },
+    {
+      title: 'Is Teamwork',
+      dataIndex: 'isTeamWork',
+      sorter: (a, b) => a.isTeamWork.length - b.isTeamWork.length,
+      width: '10%',
+      render: (_, { isTeamWork }) => (isTeamWork === 1 ? 'Yes' : 'No'),
+    },
+    {
+      title: 'Is Ongoing',
+      dataIndex: 'isOnGoing',
+      sorter: (a, b) => a.isOnGoing.length - b.isOnGoing.length,
+      width: '10%',
+      render: (_, { isOnGoing }) => (isOnGoing === 1 ? 'Yes' : 'No'),
     },
     {
       title: 'Actions',
@@ -185,24 +199,22 @@ const ClassSettingList = () => {
       width: '10%',
       render: (_, subject) => (
         <Space size="middle" align="baseline">
-          {role.isTrainer && (
-            <Tooltip title={subject.status === 'Active' ? 'Deactivate' : 'Reactivate'} placement="top">
-              <Button
-                type={subject.status === 'Active' ? 'danger' : 'primary'}
-                shape="circle"
-                icon={subject.status === 'Active' ? <CloseOutlined /> : <CheckOutlined />}
-                onClick={() => {
-                  modalConfirm(subject)
-                }}
-              ></Button>
-            </Tooltip>
-          )}
+          <Tooltip title={subject.status === 'Active' ? 'Deactivate' : 'Reactivate'} placement="top">
+            <Button
+              type={subject.status === 'Active' ? 'danger' : 'primary'}
+              shape="circle"
+              icon={subject.status === 'Active' ? <CloseOutlined /> : <CheckOutlined />}
+              onClick={() => {
+                modalConfirm(subject)
+              }}
+            ></Button>
+          </Tooltip>
           <Tooltip title="View" placement="top">
             <Button
               shape="circle"
               icon={<EyeOutlined />}
               onClick={() => {
-                navigateTo(`/class-setting-detail/${subject?.classSettingId}`)
+                navigateTo(`/assignment-detail/${subject?.assId}`)
               }}
             ></Button>
           </Tooltip>
@@ -210,22 +222,6 @@ const ClassSettingList = () => {
       ),
     },
   ]
-
-  const modalConfirm = (subject) => {
-    Modal.confirm({
-      title: `Are you want to ${subject.classSettingId === 'Active' ? 'deactivate' : 'reactivate'} "${
-        subject.settingTitle
-      }" - "${subject.settingValue}" ?`,
-      icon: <ExclamationCircleOutlined />,
-      okText: 'OK',
-      cancelText: 'Cancel',
-      okType: 'danger',
-      onOk() {
-        handleActive(subject.classSettingId)
-      },
-      onCancel() {},
-    })
-  }
 
   return (
     <div>
@@ -259,17 +255,17 @@ const ClassSettingList = () => {
                 </div>
                 <div className="col-6 d-flex justify-content-end">
                   <CDropdown className="ml-4">
-                    <CDropdownToggle color="secondary">{filter.type.title}</CDropdownToggle>
+                    <CDropdownToggle color="secondary">{filter.subject}</CDropdownToggle>
                     <CDropdownMenu>
-                      {listFilter.typeFilter.map((type) => (
-                        <CDropdownItem onClick={() => handleFilterType(type)}>{type.title}</CDropdownItem>
+                      {listFilter?.subjectFilter?.map((subject) => (
+                        <CDropdownItem onClick={() => handleFilterSubject(subject)}>{subject}</CDropdownItem>
                       ))}
                     </CDropdownMenu>
                   </CDropdown>
                   <CDropdown className="ml-4">
                     <CDropdownToggle color="secondary">{filter.status.name}</CDropdownToggle>
                     <CDropdownMenu>
-                      {listFilter.statusFilter.map((status) => (
+                      {listFilter?.statusFilter?.map((status) => (
                         <CDropdownItem onClick={() => handleFilterStatus(status)}>{status.name}</CDropdownItem>
                       ))}
                     </CDropdownMenu>
@@ -279,18 +275,16 @@ const ClassSettingList = () => {
                       <CIcon icon={cilSync} />
                     </CButton>
                   </Tooltip>
-                  {role.isTrainer && (
-                    <Tooltip title="Add New Class Setting" placement="right">
-                      <CButton color="danger" type="submit" className="text-light ml-4" onClick={handleAdd}>
-                        <CIcon icon={cilPlus} />
-                      </CButton>
-                    </Tooltip>
-                  )}
+                  <Tooltip title="Add New Assignment" placement="right">
+                    <CButton color="danger" type="submit" className="text-light ml-4" onClick={handleAdd}>
+                      <CIcon icon={cilPlus} />
+                    </CButton>
+                  </Tooltip>
                 </div>
               </div>
             </div>
             <div className="col-lg-12">
-              <Table bordered dataSource={listClassSetting} columns={columns} pagination={false} />
+              <Table bordered dataSource={listAssignment} columns={columns} pagination={false} />
             </div>
             <div className="col-lg-12 d-flex justify-content-end">
               <Pagination current={currentPage} total={totalItem} onChange={handleChangePage} />;
@@ -303,4 +297,4 @@ const ClassSettingList = () => {
   )
 }
 
-export default ClassSettingList
+export default AssignmentList
