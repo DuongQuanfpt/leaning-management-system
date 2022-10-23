@@ -36,7 +36,7 @@ public class SubjectRepositoriesCriteria {
         } 
 
         if (keyword != null) {
-            query.append(" AND s.subjectName LIKE '%" + keyword + "%' OR s.subjectCode LIKE '%" + keyword + "%'");
+            query.append(" AND (s.subjectName LIKE '%" + keyword + "%' OR s.subjectCode LIKE '%" + keyword + "%')");
         }
 
         if (filterStatus != null) {

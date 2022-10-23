@@ -23,8 +23,8 @@ public class UserRepositoriesCriteria {
         StringBuilder query = new StringBuilder("SELECT DISTINCT u FROM User u WHERE 1=1");
 
         if (keyword != null) {
-            query.append(" AND u.fullName LIKE '%" + keyword + "%'" + "OR u.mobile LIKE '%" + keyword
-                    + "%' OR u.email LIKE  '%" + keyword + "%'");
+            query.append(" AND (u.fullName LIKE '%" + keyword + "%'" + "OR u.mobile LIKE '%" + keyword
+                    + "%' OR u.email LIKE  '%" + keyword + "%')");
         }
 
         if (filterStatus != null) {

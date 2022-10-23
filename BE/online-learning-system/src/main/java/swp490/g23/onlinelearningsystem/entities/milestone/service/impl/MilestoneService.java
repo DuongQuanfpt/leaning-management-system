@@ -10,16 +10,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import swp490.g23.onlinelearningsystem.entities.assignment.domain.response.AssignmentResponseDTO;
-import swp490.g23.onlinelearningsystem.entities.class_setting.domain.ClassSetting;
+import swp490.g23.onlinelearningsystem.entities.assignment.domain.Assignment;
+import swp490.g23.onlinelearningsystem.entities.assignment.repositories.AssignmentRepository;
+import swp490.g23.onlinelearningsystem.entities.class_setting.repositories.ClassSettingRepository;
+import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
+import swp490.g23.onlinelearningsystem.entities.classes.repositories.ClassRepositories;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
+import swp490.g23.onlinelearningsystem.entities.milestone.domain.filter.MilestoneFilter;
+import swp490.g23.onlinelearningsystem.entities.milestone.domain.filter.MilestoneFilterValue;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestonePaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestoneResponseDTO;
+import swp490.g23.onlinelearningsystem.entities.milestone.repositories.MilestoneRepository;
 import swp490.g23.onlinelearningsystem.entities.milestone.repositories.criteria.MilestoneCriteria;
 import swp490.g23.onlinelearningsystem.entities.milestone.repositories.criteria_entity.MilestoneQuery;
 import swp490.g23.onlinelearningsystem.entities.milestone.service.IMilestoneService;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.util.enumutil.MilestoneStatusEnum;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.MilestoneStatusEntity;
 
@@ -30,7 +37,16 @@ public class MilestoneService implements IMilestoneService {
     private UserRepository userRepository;
 
     @Autowired
+    private ClassRepositories classRepositories;
+
+    @Autowired
+    private AssignmentRepository assignmentRepository;
+
+    @Autowired
     private MilestoneCriteria milestoneCriteria;
+
+    @Autowired
+    private MilestoneRepository milestoneRepository;
 
     @Override
     public ResponseEntity<MilestonePaginateDTO> displayMilestone(String keyword, int limit, int page,
@@ -38,7 +54,7 @@ public class MilestoneService implements IMilestoneService {
 
         List<MilestoneResponseDTO> resultList = new ArrayList<>();
         List<String> classFilter = new ArrayList<>();
-        List<AssignmentResponseDTO> typeFilter = new ArrayList<>();
+        List<MilestoneFilterValue> assFilter = new ArrayList<>();
         List<MilestoneStatusEntity> statusFilter = new ArrayList<>();
 
         User currentUser = userRepository.findById(user.getUserId()).get();
@@ -61,22 +77,22 @@ public class MilestoneService implements IMilestoneService {
                 }
             }
 
-            // if (subjectSetting.getType() != null) {
-            //     boolean canAdd = true;
+            if (milestone.getAssignment() != null) {
+                boolean canAdd = true;
 
-            //     for (SubjectSettingFilterValue filterValue : typeFilter) {
+                for (MilestoneFilterValue filterValue : assFilter) {
 
-            //         if (filterValue.getValue().equals(subjectSetting.getType().getSettingValue())) {
-            //             canAdd = false;
-            //             break;
-            //         }
-            //     }
+                    if (filterValue.getValue().equals(milestone.getAssignment().getAssId().toString())) {
+                        canAdd = false;
+                        break;
+                    }
+                }
 
-            //     if (canAdd == true) {
-            //         typeFilter.add(new SubjectSettingFilterValue(subjectSetting.getType().getSettingTitle(),
-            //                 subjectSetting.getType().getSettingValue()));
-            //     }
-            // }
+                if (canAdd == true) {
+                    assFilter.add(new MilestoneFilterValue(milestone.getAssignment().getTitle(),
+                            milestone.getAssignment().getAssId().toString()));
+                }
+            }
         }
 
         Long toltalItem = countQuery.getSingleResult();
@@ -100,8 +116,44 @@ public class MilestoneService implements IMilestoneService {
         dto.setListResult(resultList);
         dto.setStatusFilter(statusFilter);
         dto.setClassFilter(classFilter);
+        dto.setAssFilter(assFilter);
 
         return ResponseEntity.ok(dto);
+    }
+
+    @Override
+    public ResponseEntity<MilestoneResponseDTO> milestoneDetail(Long id) {
+        Milestone milestone = milestoneRepository.findById(id)
+                .orElseThrow(() -> new CustomException("Subject setting doesnt exist"));
+        return ResponseEntity.ok(toDTO(milestone));
+    }
+
+    @Override
+    public ResponseEntity<MilestoneFilter> milestoneFilter() {
+        MilestoneFilter filter = new MilestoneFilter();
+        List<Classes> classes = classRepositories.findAll();
+        List<Assignment> assignments = assignmentRepository.findAll();
+
+        List<MilestoneStatusEntity> statusFilter = new ArrayList<>();
+        for (MilestoneStatusEnum status : new ArrayList<MilestoneStatusEnum>(
+                EnumSet.allOf(MilestoneStatusEnum.class))) {
+            statusFilter.add(new MilestoneStatusEntity(status));
+        }
+
+        List<String> classCodes = new ArrayList<>();
+        for (Classes c : classes) {
+            classCodes.add(c.getCode());
+        }
+
+        List<MilestoneFilterValue> assFilter = new ArrayList<>();
+        for (Assignment assignment : assignments) {
+            assFilter.add(new MilestoneFilterValue(assignment.getTitle(), assignment.getAssId().toString()));
+        }
+
+        filter.setStatusFilter(statusFilter);
+        filter.setAssFilter(assFilter);
+        filter.setClassCode(classCodes);
+        return ResponseEntity.ok(filter);
     }
 
     public MilestoneResponseDTO toDTO(Milestone entity) {
@@ -109,7 +161,8 @@ public class MilestoneService implements IMilestoneService {
 
         responseDTO.setMilestoneId(entity.getMilestoneId());
         responseDTO.setAssignment(
-                new AssignmentResponseDTO(entity.getAssignment().getAssId(), entity.getAssignment().getTitle()));
+                new MilestoneFilterValue(entity.getAssignment().getTitle(),
+                        entity.getAssignment().getAssId().toString()));
         responseDTO.setClassesCode(entity.getClasses().getCode());
         responseDTO.setStatus(entity.getStatus().toString());
         if (entity.getDescription() != null) {
