@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import swp490.g23.onlinelearningsystem.entities.assignment.domain.response.AssignmentResponseDTO;
+import swp490.g23.onlinelearningsystem.entities.class_setting.domain.ClassSetting;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestonePaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestoneResponseDTO;
@@ -53,33 +54,30 @@ public class MilestoneService implements IMilestoneService {
             statusFilter.add(new MilestoneStatusEntity(status));
         }
 
-        // for (SubjectSetting subjectSetting : subjectSettings) {
-        // if (subjectSetting.getSubject() != null) {
-        // if (!subjectFilter.contains((subjectSetting.getSubject().getSubjectCode())))
-        // {
-        // subjectFilter.add((subjectSetting.getSubject().getSubjectCode()));
-        // }
-        // }
+        for (Milestone milestone : milestones) {
+            if (milestone.getClasses() != null) {
+                if (!classFilter.contains((milestone.getClasses().getCode()))) {
+                    classFilter.add((milestone.getClasses().getCode()));
+                }
+            }
 
-        // if (subjectSetting.getType() != null) {
-        // boolean canAdd = true;
+            // if (subjectSetting.getType() != null) {
+            //     boolean canAdd = true;
 
-        // for (SubjectSettingFilterValue filterValue : typeFilter) {
+            //     for (SubjectSettingFilterValue filterValue : typeFilter) {
 
-        // if
-        // (filterValue.getValue().equals(subjectSetting.getType().getSettingValue())) {
-        // canAdd = false;
-        // break;
-        // }
-        // }
+            //         if (filterValue.getValue().equals(subjectSetting.getType().getSettingValue())) {
+            //             canAdd = false;
+            //             break;
+            //         }
+            //     }
 
-        // if (canAdd == true) {
-        // typeFilter.add(new
-        // SubjectSettingFilterValue(subjectSetting.getType().getSettingTitle(),
-        // subjectSetting.getType().getSettingValue()));
-        // }
-        // }
-        // }
+            //     if (canAdd == true) {
+            //         typeFilter.add(new SubjectSettingFilterValue(subjectSetting.getType().getSettingTitle(),
+            //                 subjectSetting.getType().getSettingValue()));
+            //     }
+            // }
+        }
 
         Long toltalItem = countQuery.getSingleResult();
         int totalPage;
@@ -101,6 +99,7 @@ public class MilestoneService implements IMilestoneService {
         dto.setTotalPage(totalPage);
         dto.setListResult(resultList);
         dto.setStatusFilter(statusFilter);
+        dto.setClassFilter(classFilter);
 
         return ResponseEntity.ok(dto);
     }
