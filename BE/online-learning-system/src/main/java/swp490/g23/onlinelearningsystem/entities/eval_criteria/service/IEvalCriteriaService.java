@@ -15,7 +15,7 @@ public interface IEvalCriteriaService {
 
     ResponseEntity<CriteriaResponseDTO> viewCriteria(Long criteriaId);
 
-    ResponseEntity<String> updateCriteria(Long assId, CriteriaRequestDTO dto);
+    ResponseEntity<String> updateCriteria(Long criteriaId, CriteriaRequestDTO dto);
 
     ResponseEntity<String> addCriteria(CriteriaRequestDTO dto);
 
