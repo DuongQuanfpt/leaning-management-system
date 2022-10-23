@@ -147,7 +147,7 @@ const ClassSettingAdd = () => {
                       <div>
                         <CDropdown className="w-100">
                           <CDropdownToggle color="warning">{detail.classCode}</CDropdownToggle>
-                          <CDropdownMenu className="w-100">
+                          <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                             {filter.classFilter.map((classes) => (
                               <CDropdownItem onClick={() => setDetail((prev) => ({ ...prev, classCode: classes }))}>
                                 {classes}
@@ -162,7 +162,7 @@ const ClassSettingAdd = () => {
                       <div>
                         <CDropdown className="w-100">
                           <CDropdownToggle color="warning">{detail.typeName.title}</CDropdownToggle>
-                          <CDropdownMenu className="w-100">
+                          <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                             {filter.typeFilter.map((type) => (
                               <CDropdownItem onClick={() => setDetail((prev) => ({ ...prev, typeName: type }))}>
                                 {type.title}
@@ -189,7 +189,7 @@ const ClassSettingAdd = () => {
                       {detail.typeName.title === 'Issue status' && (
                         <CDropdown className="w-100">
                           <CDropdownToggle color="warning">{detail.settingValue}</CDropdownToggle>
-                          <CDropdownMenu className="w-100">
+                          <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                             {filter.issueStatus.map((status) => (
                               <CDropdownItem onClick={() => setDetail((prev) => ({ ...prev, settingValue: status }))}>
                                 {status}
@@ -202,7 +202,7 @@ const ClassSettingAdd = () => {
                       {detail.typeName.title === 'Issue type' && (
                         <CDropdown className="w-100">
                           <CDropdownToggle color="warning">{detail.settingValue}</CDropdownToggle>
-                          <CDropdownMenu className="w-100">
+                          <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                             {filter.issueType.map((type) => (
                               <CDropdownItem onClick={() => setDetail((prev) => ({ ...prev, settingValue: type }))}>
                                 {type}

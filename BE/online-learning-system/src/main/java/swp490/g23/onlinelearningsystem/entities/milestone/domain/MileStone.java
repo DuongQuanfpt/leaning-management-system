@@ -26,13 +26,13 @@ import swp490.g23.onlinelearningsystem.util.enumutil.MilestoneStatusEnum;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Milestone extends BaseEntity  {
+public class Milestone extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long milestoneId;
 
     @ManyToOne
-    @JoinColumn(name = "ass_id",unique = true)
+    @JoinColumn(name = "ass_id", unique = true)
     private Assignment assignment;
 
     @ManyToOne

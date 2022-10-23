@@ -135,7 +135,7 @@ public class ClassUserService implements IClassUserService {
             throw new CustomException("Trainee doesn't exist!");
         }
         if (dto.getStatus() != null) {
-            classUser.setStatus(TraineeStatus.getFromValue(Integer.parseInt(dto.getStatus())).get());
+            classUser.setStatus(TraineeStatus.fromInt(Integer.parseInt(dto.getStatus())));
         }
         if (dto.getDropoutDate() != null) {
             if (dto.getStatus().equals(TraineeStatus.Dropout.toString())) {

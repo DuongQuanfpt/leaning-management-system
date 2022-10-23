@@ -247,7 +247,7 @@ const AdminUserList = () => {
       <AdminSidebar />
       <div className="wrapper d-flex flex-column min-vh-100 bg-light">
         <AdminHeader />
-        <div className="body flex-grow-1 px-3">
+        <div className="body flex-grow-1 px-3 m-b30">
           <div className="col-lg-12 m-b30">
             <div className="row">
               <div className="col-2 d-flex align-items-center">
@@ -274,7 +274,7 @@ const AdminUserList = () => {
               <div className="col-4 d-flex justify-content-end">
                 <CDropdown className="ml-4">
                   <CDropdownToggle color="secondary">{role}</CDropdownToggle>
-                  <CDropdownMenu>
+                  <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
                     {listRoles.map((role) => (
                       <CDropdownItem onClick={() => handleFilterRole(role)}>{role.title}</CDropdownItem>
                     ))}
@@ -282,7 +282,7 @@ const AdminUserList = () => {
                 </CDropdown>
                 <CDropdown className="ml-4">
                   <CDropdownToggle color="secondary">{status}</CDropdownToggle>
-                  <CDropdownMenu>
+                  <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
                     {listStatus.map((status) => (
                       <CDropdownItem onClick={() => handleFilterStatus(status)}>{status.name}</CDropdownItem>
                     ))}

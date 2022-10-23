@@ -15,8 +15,18 @@ public class TraineeStatusEntity {
     String name;
     String value;
 
-    public TraineeStatusEntity (TraineeStatus status){
+    public TraineeStatusEntity(TraineeStatus status) {
         this.name = status.toString();
-        this.value = status.getValue();
+        if (status == TraineeStatus.Active) {
+            this.value = "1";
+        }
+
+        if (status == TraineeStatus.Inactive) {
+            this.value = "0";
+        }
+
+        if (status == TraineeStatus.Dropout) {
+            this.value = "-1";
+        }
     }
 }

@@ -167,7 +167,7 @@ const SubjectSettingAdd = () => {
                             <label className="col-form-label">Code</label>
                             <CDropdown className="w-100">
                               <CDropdownToggle color="warning">{result.subjectCode}</CDropdownToggle>
-                              <CDropdownMenu className="w-100">
+                              <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                                 {listFilter.subjectFilter.map((subject) => (
                                   <CDropdownItem
                                     onClick={() => setResult((prev) => ({ ...prev, subjectCode: subject }))}
@@ -182,7 +182,7 @@ const SubjectSettingAdd = () => {
                             <label className="col-form-label">Type</label>
                             <CDropdown className="w-100">
                               <CDropdownToggle color="warning">{result.typeName.title}</CDropdownToggle>
-                              <CDropdownMenu className="w-100">
+                              <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                                 {listFilter.typeFilter.map((type) => (
                                   <CDropdownItem onClick={() => setResult((prev) => ({ ...prev, typeName: type }))}>
                                     {type.title}
@@ -207,7 +207,7 @@ const SubjectSettingAdd = () => {
                             {result.typeName.title === 'Subject complexity' && (
                               <CDropdown className="w-100">
                                 <CDropdownToggle color="warning">{result.settingValue}</CDropdownToggle>
-                                <CDropdownMenu className="w-100">
+                                <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                                   {listFilter.complexity.map((complexity) => (
                                     <CDropdownItem
                                       onClick={() => setResult((prev) => ({ ...prev, settingValue: complexity }))}
@@ -221,7 +221,7 @@ const SubjectSettingAdd = () => {
                             {result.typeName.title === 'Subject quality' && (
                               <CDropdown className="w-100">
                                 <CDropdownToggle color="warning">{result.settingValue}</CDropdownToggle>
-                                <CDropdownMenu className="w-100">
+                                <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                                   {listFilter.quality.map((quality) => (
                                     <CDropdownItem
                                       onClick={() => setResult((prev) => ({ ...prev, settingValue: quality }))}

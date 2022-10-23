@@ -163,7 +163,7 @@ const SubjectDetail = () => {
                                 <CDropdownToggle color="warning" disabled={isAdmin ? !isEditMode : true}>
                                   {manager}
                                 </CDropdownToggle>
-                                <CDropdownMenu className="w-100">
+                                <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                                   {listManager.map((manager) => (
                                     <CDropdownItem onClick={() => setManager(manager)}>{manager}</CDropdownItem>
                                   ))}
@@ -176,7 +176,7 @@ const SubjectDetail = () => {
                                 <CDropdownToggle color="warning" disabled={!isEditMode}>
                                   {expert}
                                 </CDropdownToggle>
-                                <CDropdownMenu className="w-100">
+                                <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                                   {listExpert.map((expert) => (
                                     <CDropdownItem onClick={() => setExpert(expert)}>{expert}</CDropdownItem>
                                   ))}
