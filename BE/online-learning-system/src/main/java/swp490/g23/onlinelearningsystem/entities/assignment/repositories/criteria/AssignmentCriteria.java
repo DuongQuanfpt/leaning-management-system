@@ -17,10 +17,10 @@ public class AssignmentCriteria {
     public AssignmenQuery searchFilterAssignment(String keyword, String filterStatus, String filterSubject) {
         StringBuilder query = new StringBuilder("SELECT a FROM Assignment a WHERE a.forSubject.subjectStatus = '1' ");
 
-        // if (keyword != null) {
-        // query.append(" AND s.subjectName LIKE '%" + keyword + "%' OR s.subjectCode
-        // LIKE '%" + keyword + "%'");
-        // }
+        if (keyword != null) {
+            query.append(
+                    " AND (a.title LIKE '%" + keyword + "%' OR a.forSubject.subjectCode LIKE '%" + keyword + "%')");
+        }
 
         if (filterStatus != null) {
             query.append(" AND a.status = '" + filterStatus + "'");

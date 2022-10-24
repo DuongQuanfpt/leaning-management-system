@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import swp490.g23.onlinelearningsystem.entities.BaseEntity;
 import swp490.g23.onlinelearningsystem.entities.assignment.domain.Assignment;
 import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 
@@ -19,7 +20,7 @@ import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class EvalCriteria {
+public class EvalCriteria extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

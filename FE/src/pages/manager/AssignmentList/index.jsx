@@ -56,7 +56,7 @@ const AssignmentList = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter])
 
-  const loadData = async (page, fiter, q = '') => {
+  const loadData = async (page, filter, q = '') => {
     const params = {
       item: ITEM_PER_PAGE,
       page: page,
@@ -84,6 +84,7 @@ const AssignmentList = () => {
   }
 
   const handleSearch = () => {
+    console.log('1')
     loadData(1, filter, search)
   }
 
@@ -237,7 +238,7 @@ const AssignmentList = () => {
                       <Breadcrumb.Item>
                         <Link to="/dashboard">Dashboard</Link>
                       </Breadcrumb.Item>
-                      <Breadcrumb.Item>Class Setting List</Breadcrumb.Item>
+                      <Breadcrumb.Item>Assignment List</Breadcrumb.Item>
                     </Breadcrumb>
                   </div>
                   <div className="col-4 d-flex w-80">
@@ -245,7 +246,7 @@ const AssignmentList = () => {
                       type="search"
                       id="form1"
                       className="form-control"
-                      placeholder="Searching by Class title..."
+                      placeholder="Searching by Class code or Title..."
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
                     />
