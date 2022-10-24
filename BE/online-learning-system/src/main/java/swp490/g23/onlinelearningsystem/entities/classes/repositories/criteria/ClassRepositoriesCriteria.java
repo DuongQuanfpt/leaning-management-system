@@ -45,7 +45,7 @@ public class ClassRepositoriesCriteria {
         }
 
         if (keyword != null) {
-            query.append(" AND c.code LIKE '%" + keyword + "%' OR c.subject.subjectCode LIKE '%" + keyword + "%'");
+            query.append(" AND (c.code LIKE '%" + keyword + "%' OR c.subject.subjectCode LIKE '%" + keyword + "%')");
         }
 
         if (filterStatus != null) {

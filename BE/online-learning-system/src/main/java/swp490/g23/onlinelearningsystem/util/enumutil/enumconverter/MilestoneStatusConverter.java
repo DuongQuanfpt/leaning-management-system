@@ -11,6 +11,9 @@ public class MilestoneStatusConverter implements AttributeConverter<MilestoneSta
     @Override
     public Boolean convertToDatabaseColumn(MilestoneStatusEnum attribute) {
        
+        if(attribute.getValue() == null){
+            return null;
+        }
         return attribute.getValue();
     }
 

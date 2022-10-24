@@ -45,8 +45,8 @@ public class UserTraineeCriteria {
         }
 
         if (keyword != null) {
-            query.append(" AND u.user.fullName LIKE '%" + keyword + "%'" + "OR u.user.accountName LIKE '%" + keyword
-                    + "%' OR u.user.email LIKE  '%" + keyword + "%'");
+            query.append(" AND (u.user.fullName LIKE '%" + keyword + "%'" + "OR u.user.accountName LIKE '%" + keyword
+                    + "%' OR u.user.email LIKE  '%" + keyword + "%')");
         }
 
         if (filterStatus != null) {
