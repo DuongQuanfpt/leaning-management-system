@@ -16,7 +16,8 @@ public class CriteriaRepositories {
     private final EntityManager em;
 
     public CriteriaQuery searchFilterCriteria(String keyword, String filterStatus) {
-        StringBuilder query = new StringBuilder("SELECT e FROM EvalCriteria e WHERE 1=1 ");
+        StringBuilder query = new StringBuilder(
+                "SELECT e FROM EvalCriteria e WHERE e.assignment.forSubject.subjectStatus = '1' ");
 
         if (keyword != null) {
             query.append(" AND (e.criteriaName LIKE '%" + keyword + "%')");

@@ -183,7 +183,7 @@ public class AssignmentService implements IAssignmentService {
         List<String> subjects = new ArrayList<>();
         List<StatusEntity> statuses = new ArrayList<>();
 
-        for (Subject subject : subjecRepository.findAll()) {
+        for (Subject subject : subjecRepository.findSubjectActive()) {
             subjects.add(subject.getSubjectCode());
         }
 

@@ -232,7 +232,7 @@ public class ClassService implements IClassService {
         Setting roleSupporter = settingRepositories.findBySettingValue("ROLE_SUPPORTER");
         List<ClassStatusEntity> statuses = new ArrayList<>();
         List<User> users = userRepository.findTrainerAndSupporter();
-        List<Subject> subjects = subjecRepository.findAll();
+        List<Subject> subjects = subjecRepository.findSubjectActive();
         List<Classes> classes = classRepositories.findAll();
 
         for (Subject subject : subjects) {
