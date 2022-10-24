@@ -114,7 +114,10 @@ const Register = () => {
                 Sign Up <span>Now</span>
               </h2>
               <p>
-                Login Your Account <Link to="/login">Click here</Link>
+                Login Your Account{' '}
+                <Link to="/login" className="link-decoration">
+                  Click here
+                </Link>
               </p>
             </div>
             <form className="contact-bx" onSubmit={handleSubmit(submitForm)}>

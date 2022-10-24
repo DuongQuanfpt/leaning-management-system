@@ -39,10 +39,11 @@ const AssignmentList = () => {
   useEffect(() => {
     assignmentApi
       .getPage({
-        item: ITEM_PER_PAGE,
+        limit: ITEM_PER_PAGE,
         page: 1,
       })
       .then((response) => {
+        console.log(response)
         setListFilter((prev) => ({
           ...prev,
           subjectFilter: response.subjectFilter,
@@ -61,7 +62,7 @@ const AssignmentList = () => {
 
   const loadData = async (page, filter, q = '') => {
     const params = {
-      item: ITEM_PER_PAGE,
+      limit: ITEM_PER_PAGE,
       page: page,
     }
     if (q !== '') {

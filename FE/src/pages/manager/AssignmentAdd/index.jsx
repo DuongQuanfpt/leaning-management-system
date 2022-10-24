@@ -73,6 +73,7 @@ const AssignmentAdd = () => {
     }
 
     const params = {
+      subjectName: detail.subjectName.trim(),
       title: detail.title.trim(),
       assBody: detail.assBody.trim(),
       eval_weight: detail.eval_weight + '%',

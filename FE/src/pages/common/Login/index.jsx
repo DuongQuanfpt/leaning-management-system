@@ -153,7 +153,7 @@ const Login = () => {
               </h2>
               <p>
                 Don't have an account?{' '}
-                <Link to="/register" color="text-danger">
+                <Link to="/register" color="text-danger" className="link-decoration">
                   Create one here
                 </Link>
               </p>
@@ -204,7 +204,7 @@ const Login = () => {
                         Remember me
                       </label>
                     </div>
-                    <Link to="/forget-password" className="ml-auto text-primary">
+                    <Link to="/forget-password" className="ml-auto text-primary link-decoration">
                       Forgot Password?
                     </Link>
                   </div>

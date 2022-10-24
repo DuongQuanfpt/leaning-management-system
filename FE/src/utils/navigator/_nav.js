@@ -1,13 +1,9 @@
 import React from 'react'
 import CIcon from '@coreui/icons-react'
 import { cilSettings, cilUser, cilHome } from '@coreui/icons'
-import { CNavItem, CNavTitle } from '@coreui/react'
+import { CNavItem } from '@coreui/react'
 
 const _nav = [
-  {
-    component: CNavTitle,
-    name: 'Dashboard',
-  },
   {
     component: CNavItem,
     name: 'Dashboard',
