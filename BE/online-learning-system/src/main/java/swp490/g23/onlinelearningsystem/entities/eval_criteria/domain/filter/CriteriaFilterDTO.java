@@ -14,4 +14,5 @@ import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
 @AllArgsConstructor
 public class CriteriaFilterDTO {
     private List<StatusEntity> statusFilter;
+    private List<String> assignmentFilter;
 }

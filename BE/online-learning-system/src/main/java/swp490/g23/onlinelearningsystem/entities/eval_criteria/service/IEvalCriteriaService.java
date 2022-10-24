@@ -9,7 +9,8 @@ import swp490.g23.onlinelearningsystem.entities.eval_criteria.domain.response.Cr
 
 public interface IEvalCriteriaService {
 
-    ResponseEntity<CriteriaPaginateResponseDTO> getCriteria(int limit, int page, String keyword, String statusFilter);
+    ResponseEntity<CriteriaPaginateResponseDTO> getCriteria(int limit, int page, String keyword, String statusFilter,
+            String assignmentFilter);
 
     ResponseEntity<String> updateStatus(Long criteriaId);
 
