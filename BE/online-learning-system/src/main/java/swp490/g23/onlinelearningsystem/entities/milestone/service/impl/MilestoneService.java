@@ -1,5 +1,6 @@
 package swp490.g23.onlinelearningsystem.entities.milestone.service.impl;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -12,12 +13,12 @@ import org.springframework.stereotype.Service;
 
 import swp490.g23.onlinelearningsystem.entities.assignment.domain.Assignment;
 import swp490.g23.onlinelearningsystem.entities.assignment.repositories.AssignmentRepository;
-import swp490.g23.onlinelearningsystem.entities.class_setting.repositories.ClassSettingRepository;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.classes.repositories.ClassRepositories;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.filter.MilestoneFilter;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.filter.MilestoneFilterValue;
+import swp490.g23.onlinelearningsystem.entities.milestone.domain.request.MilestoneRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestonePaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestoneResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.milestone.repositories.MilestoneRepository;
@@ -156,6 +157,76 @@ public class MilestoneService implements IMilestoneService {
         return ResponseEntity.ok(filter);
     }
 
+    @Override
+    public ResponseEntity<String> milestonAdd(MilestoneRequestDTO dto) {
+        Milestone milestone = new Milestone();
+
+        if (dto.getAssignmentId() != null) {
+            milestone.setAssignment(assignmentRepository.findById(dto.getAssignmentId())
+                    .orElseThrow(() -> new CustomException("Assignment doesnt exist")));
+        }
+
+        if (dto.getClassesCode() != null) {
+            Classes classes = classRepositories.findClassByCode(dto.getClassesCode());
+            if (classes != null) {
+                milestone.setClasses(classes);
+            } else {
+                throw new CustomException("Classes doesnt exist");
+            }
+
+        }
+
+        if (dto.getTitle() != null) {
+            milestone.setTitle(dto.getTitle());
+        }
+
+        if (dto.getDescription() != null) {
+            milestone.setDescription(dto.getDescription());
+            ;
+        }
+
+        if (dto.getFromDate() != null) {
+            milestone.setFromDate(LocalDate.parse(dto.getFromDate()));
+        }
+
+        if (dto.getToDate() != null) {
+            milestone.setToDate(LocalDate.parse(dto.getToDate()));
+        }
+
+        if (dto.getStatus() != null) {
+            milestone.setStatus(MilestoneStatusEnum.fromInt(Integer.parseInt(dto.getStatus())));
+        } else {
+            throw new CustomException("Must asign a status");
+        }
+
+        milestoneRepository.save(milestone);
+        return ResponseEntity.ok("Milestone added");
+    }
+
+    @Override
+    public ResponseEntity<String> milestonEdit(MilestoneRequestDTO dto, Long id) {
+        Milestone milestone = milestoneRepository.findById(id)
+                .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
+        if(dto.getTitle() != null){
+            milestone.setTitle(dto.getTitle());
+        }    
+        
+        if(dto.getDescription() != null){
+            milestone.setDescription(dto.getDescription());
+        }        
+
+        if(dto.getToDate() != null) {
+            milestone.setToDate(LocalDate.parse(dto.getToDate()));
+        }
+
+        if(dto.getFromDate() != null) {
+            milestone.setFromDate(LocalDate.parse( dto.getFromDate()));
+        }
+
+        milestoneRepository.save(milestone);
+        return ResponseEntity.ok("milestone updated");
+    }
+
     public MilestoneResponseDTO toDTO(Milestone entity) {
         MilestoneResponseDTO responseDTO = new MilestoneResponseDTO();
 
@@ -163,7 +234,10 @@ public class MilestoneService implements IMilestoneService {
         responseDTO.setAssignment(
                 new MilestoneFilterValue(entity.getAssignment().getTitle(),
                         entity.getAssignment().getAssId().toString()));
-        responseDTO.setClassesCode(entity.getClasses().getCode());
+
+        if (entity.getClasses() != null) {
+            responseDTO.setClassesCode(entity.getClasses().getCode());
+        }
         responseDTO.setStatus(entity.getStatus().toString());
         if (entity.getDescription() != null) {
             responseDTO.setDescription(entity.getDescription());

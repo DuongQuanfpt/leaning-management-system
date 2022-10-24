@@ -8,11 +8,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.filter.MilestoneFilter;
+import swp490.g23.onlinelearningsystem.entities.milestone.domain.request.MilestoneRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestonePaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestoneResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.milestone.service.impl.MilestoneService;
@@ -41,28 +43,29 @@ public class MilestoneController {
         int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
         return milestoneService.displayMilestone(keyword, limit, page, classFilter, assFilter, statusFilter, user);
     }
-    
-	@GetMapping(value = "/milestone-detail/{id}")
-	public ResponseEntity<MilestoneResponseDTO> milestoneDetail(@PathVariable Long id) {
 
-		return milestoneService.milestoneDetail(id);
-	}
+    @GetMapping(value = "/milestone-detail/{id}")
+    public ResponseEntity<MilestoneResponseDTO> milestoneDetail(@PathVariable Long id) {
+
+        return milestoneService.milestoneDetail(id);
+    }
 
     @PutMapping(value = "/milestone-detail/{id}")
-	public ResponseEntity<MilestoneResponseDTO> milestoneEdit(@PathVariable Long id) {
+    public ResponseEntity<String> milestoneEdit(@RequestBody MilestoneRequestDTO dto,
+            @PathVariable Long id) {
 
-		return milestoneService.milestoneDetail(id);
-	}
+        return milestoneService.milestonEdit(dto,id);
+    }
 
     @PostMapping(value = "/milestone-add")
-	public ResponseEntity<MilestoneResponseDTO> milestoneAdd(@PathVariable Long id) {
+    public ResponseEntity<String> milestoneAdd(@RequestBody MilestoneRequestDTO dto) {
 
-		return milestoneService.milestoneDetail(id);
-	}
+        return milestoneService.milestonAdd(dto);
+    }
 
     @GetMapping(value = "/milestone-filter")
-	public ResponseEntity<MilestoneFilter> milestoneFilter() {
+    public ResponseEntity<MilestoneFilter> milestoneFilter() {
 
-		return milestoneService.milestoneFilter();
-	}
+        return milestoneService.milestoneFilter();
+    }
 }
