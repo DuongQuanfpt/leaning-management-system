@@ -37,7 +37,7 @@ public class ClassSettingCriteria {
         }
 
         if (keyword != null) {
-            query.append(" AND cs.settingTitle LIKE '%" + keyword + "%' OR cs.settingValue LIKE '%" + keyword + "%'");
+            query.append(" AND (cs.settingTitle LIKE '%" + keyword + "%' OR cs.settingValue LIKE '%" + keyword + "%')");
         }
 
         if (filterStatus != null) {

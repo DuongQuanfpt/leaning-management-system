@@ -38,10 +38,9 @@ public class MilestoneCriteria {
         // ");
         // }
 
-        // if (keyword != null) {
-        // query.append(" AND s.settingTitle LIKE '%" + keyword + "%' OR s.settingValue
-        // LIKE '%" + keyword + "%'");
-        // }
+        if (keyword != null) {
+            query.append(" AND m.title LIKE '%" + keyword + "%' OR m.description LIKE '%" + keyword + "%'");
+        }
 
         if (filterStatus != null) {
             MilestoneStatusEnum statusEnum = MilestoneStatusEnum.fromInt(Integer.parseInt(filterStatus));
@@ -59,13 +58,13 @@ public class MilestoneCriteria {
 
         }
 
-        // if (filterSubject != null) {
-        // query.append(" AND s.subject.subjectCode = '" + filterSubject + "'");
-        // }
+        if (filterAss != null) {
+            query.append(" AND m.assignment.assId = '" + filterAss + "'");
+        }
 
-        // if (filterType != null) {
-        // query.append(" AND s.type.settingValue = '" + filterType + "'");
-        // }
+        if (filterClass != null) {
+            query.append(" AND m.classes.code = '" + filterClass + "'");
+        }
 
         StringBuilder queryCount = new StringBuilder(query.toString().replaceAll("SELECT m", "SELECT COUNT(*)"));
         TypedQuery<Long> countQuery = em.createQuery(queryCount.toString(), Long.class);

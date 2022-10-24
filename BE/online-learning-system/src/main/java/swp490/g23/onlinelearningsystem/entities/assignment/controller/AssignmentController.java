@@ -62,7 +62,7 @@ public class AssignmentController {
 	}
 
 	@GetMapping(value = "/assignment-filter")
-	public ResponseEntity<AssignmentFilterDTO> getUserFilter() {
+	public ResponseEntity<AssignmentFilterDTO> getAssignmentFilter() {
 
 		return assignmentService.getFilter();
 	}

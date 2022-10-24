@@ -38,7 +38,7 @@ public class SubjectSettingCriteria {
         // }
 
         if (keyword != null) {
-            query.append(" AND s.settingTitle LIKE '%" + keyword + "%' OR s.settingValue LIKE '%" + keyword + "%'");
+            query.append(" AND ( s.settingTitle LIKE '%" + keyword + "%' OR s.settingValue LIKE '%" + keyword + "%') ");
         }
 
         if (filterStatus != null) {

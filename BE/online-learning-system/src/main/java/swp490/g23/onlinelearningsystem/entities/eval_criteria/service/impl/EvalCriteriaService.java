@@ -48,7 +48,6 @@ public class EvalCriteriaService implements IEvalCriteriaService {
 
         List<CriteriaResponseDTO> list = new ArrayList<>();
         List<StatusEntity> statusfilter = new ArrayList<>();
-        List<EvalCriteria> criterias = queryResult.getResultList();
 
         for (Status status : new ArrayList<Status>(EnumSet.allOf(Status.class))) {
             statusfilter.add(new StatusEntity(status));
@@ -191,6 +190,7 @@ public class EvalCriteriaService implements IEvalCriteriaService {
         responseDTO.setEvalWeight(entity.getEvalWeight());
         responseDTO.setExpectedWork(entity.getExpectedWork());
         responseDTO.setIsTeamEval(entity.isTeamEval() ? 1 : 0);
+        responseDTO.setAssignment(entity.getAssignment().getTitle());
 
         return responseDTO;
     }

@@ -5,11 +5,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import swp490.g23.onlinelearningsystem.entities.milestone.domain.filter.MilestoneFilter;
+import swp490.g23.onlinelearningsystem.entities.milestone.domain.request.MilestoneRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestonePaginateDTO;
+import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestoneResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.milestone.service.impl.MilestoneService;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
@@ -34,6 +41,31 @@ public class MilestoneController {
 
         int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
         int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
-        return milestoneService.displayMilestone(keyword, limit, page, assFilter, assFilter, statusFilter, user);
+        return milestoneService.displayMilestone(keyword, limit, page, classFilter, assFilter, statusFilter, user);
+    }
+
+    @GetMapping(value = "/milestone-detail/{id}")
+    public ResponseEntity<MilestoneResponseDTO> milestoneDetail(@PathVariable Long id) {
+
+        return milestoneService.milestoneDetail(id);
+    }
+
+    @PutMapping(value = "/milestone-detail/{id}")
+    public ResponseEntity<String> milestoneEdit(@RequestBody MilestoneRequestDTO dto,
+            @PathVariable Long id) {
+
+        return milestoneService.milestonEdit(dto,id);
+    }
+
+    @PostMapping(value = "/milestone-add")
+    public ResponseEntity<String> milestoneAdd(@RequestBody MilestoneRequestDTO dto) {
+
+        return milestoneService.milestonAdd(dto);
+    }
+
+    @GetMapping(value = "/milestone-filter")
+    public ResponseEntity<MilestoneFilter> milestoneFilter() {
+
+        return milestoneService.milestoneFilter();
     }
 }

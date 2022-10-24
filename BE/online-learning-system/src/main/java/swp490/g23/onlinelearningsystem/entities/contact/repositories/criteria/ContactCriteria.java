@@ -22,8 +22,8 @@ public class ContactCriteria {
         query.append(" AND s IS NULL OR s.accountName ='"+ user.getAccountName() +"'");
 
         if (keyword != null) {
-            query.append(" AND c.fullName LIKE '%" + keyword + "%' OR c.email LIKE '%" + keyword
-                    + "%' OR c.message LIKE '%" + keyword + "%' OR c.response LIKE '%" + keyword + "%'");
+            query.append(" AND (c.fullName LIKE '%" + keyword + "%' OR c.email LIKE '%" + keyword
+                    + "%' OR c.message LIKE '%" + keyword + "%' OR c.response LIKE '%" + keyword + "%')");
         }
 
         if (filterStatus != null) {
