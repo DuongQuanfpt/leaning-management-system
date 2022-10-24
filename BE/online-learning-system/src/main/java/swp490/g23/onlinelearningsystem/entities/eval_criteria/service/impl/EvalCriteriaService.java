@@ -39,18 +39,27 @@ public class EvalCriteriaService implements IEvalCriteriaService {
 
     @Override
     public ResponseEntity<CriteriaPaginateResponseDTO> getCriteria(int limit, int page, String keyword,
-            String statusFilter) {
+            String statusFilter, String assignmentFilter) {
 
-        CriteriaQuery result = criteriaRepositories.searchFilterCriteria(keyword, statusFilter);
+        CriteriaQuery result = criteriaRepositories.searchFilterCriteria(keyword, statusFilter, assignmentFilter);
 
         TypedQuery<EvalCriteria> queryResult = result.getResultQuery();
         TypedQuery<Long> countQuery = result.getCountQuery();
 
         List<CriteriaResponseDTO> list = new ArrayList<>();
         List<StatusEntity> statusfilter = new ArrayList<>();
+        List<String> filterAssignment = new ArrayList<>();
+        List<EvalCriteria> criteriaList = queryResult.getResultList();
 
         for (Status status : new ArrayList<Status>(EnumSet.allOf(Status.class))) {
             statusfilter.add(new StatusEntity(status));
+        }
+
+        for (EvalCriteria evalCriteria : criteriaList) {
+            if (!filterAssignment.contains(evalCriteria.getAssignment().getTitle())) {
+                filterAssignment.add(evalCriteria.getAssignment().getTitle());
+            }
+
         }
 
         Long totalItem = countQuery.getSingleResult();
@@ -73,6 +82,7 @@ public class EvalCriteriaService implements IEvalCriteriaService {
         dto.setListResult(list);
         dto.setTotalPage(totalPage);
         dto.setStatusFilter(statusfilter);
+        dto.setAssignmentFilter(filterAssignment);
 
         return ResponseEntity.ok(dto);
     }
@@ -169,13 +179,19 @@ public class EvalCriteriaService implements IEvalCriteriaService {
     @Override
     public ResponseEntity<CriteriaFilterDTO> getFilter() {
         List<StatusEntity> statuses = new ArrayList<>();
+        List<String> filterAssignment = new ArrayList<>();
+        List<Assignment> assignments = assignmentRepository.findAssigmentWithActiveSubject();
 
         for (Status status : new ArrayList<Status>(EnumSet.allOf(Status.class))) {
             statuses.add(new StatusEntity(status));
         }
+        for (Assignment assignment : assignments) {
+            filterAssignment.add(assignment.getTitle());
+        }
 
         CriteriaFilterDTO filterDTO = new CriteriaFilterDTO();
         filterDTO.setStatusFilter(statuses);
+        filterDTO.setAssignmentFilter(filterAssignment);
 
         return ResponseEntity.ok(filterDTO);
     }

@@ -32,12 +32,13 @@ public class EvalCriteriaController {
             @RequestParam(name = "page", required = false) String currentPage,
             @RequestParam(name = "limit", required = false) String requestLimit,
             @RequestParam(name = "q", required = false) String keyword,
-            @RequestParam(name = "filterStatus", required = false) String statusFilter) {
+            @RequestParam(name = "filterStatus", required = false) String statusFilter,
+            @RequestParam(name = "filterAssignment", required = false) String assignmentFilter) {
 
         int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
         int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
 
-        return criteriaService.getCriteria(limit, page, keyword, statusFilter);
+        return criteriaService.getCriteria(limit, page, keyword, statusFilter, assignmentFilter);
     }
 
     @GetMapping(value = "/criteria-detail/{id}")
