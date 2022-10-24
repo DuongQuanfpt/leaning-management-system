@@ -27,6 +27,9 @@ const SubjectAdd = lazy(() => import('~/pages/manager/SubjectAdd'))
 const AssignmentList = lazy(() => import('~/pages/manager/AssignmentList'))
 const AssignmentDetail = lazy(() => import('~/pages/manager/AssignmentDetail'))
 const AssignmentAdd = lazy(() => import('~/pages/manager/AssignmentAdd'))
+const EvalCriteriaList = lazy(() => import('~/pages/manager/EvalCriteriaList'))
+const EvalCriteriaDetail = lazy(() => import('~/pages/manager/EvalCriteriaDetail'))
+const EvalCriteriaAdd = lazy(() => import('~/pages/manager/EvalCriteriaAdd'))
 
 //Manager pages
 const ClassList = lazy(() => import('~/pages/manager/ClassList'))
@@ -47,6 +50,10 @@ const TraineeImport = lazy(() => import('~/pages/trainer/TraineeImport'))
 const ClassSettingList = lazy(() => import('~/pages/trainer/ClassSettingList'))
 const ClassSettingDetail = lazy(() => import('~/pages/trainer/ClassSettingDetail'))
 const ClassSettingAdd = lazy(() => import('~/pages/trainer/ClassSettingAdd'))
+
+const MilestoneList = lazy(() => import('~/pages/trainer/MilestoneList'))
+
+const GroupList = lazy(() => import('~/pages/trainer/GroupList'))
 
 //404 pages
 const PageNotFound = lazy(() => import('~/pages/common/PageNotFound'))
@@ -91,6 +98,9 @@ const managerRoutes = [
   { path: '/assignment-list', component: AssignmentList },
   { path: '/assignment-detail/:id', component: AssignmentDetail },
   { path: '/assignment-add', component: AssignmentAdd },
+  { path: '/criteria-list', component: EvalCriteriaList },
+  { path: '/criteria-detail/:id', component: EvalCriteriaDetail },
+  { path: '/criteria-add', component: EvalCriteriaAdd },
 ]
 
 // Supporter routes
@@ -129,6 +139,10 @@ const classSettingListRoutes = [
   { path: '/class-setting-add', component: ClassSettingAdd },
 ]
 
+const milestoneListRoutes = [{ path: '/milestone-list', component: MilestoneList }]
+
+const groupListRoutes = [{ path: '/group-list', component: GroupList }]
+
 export {
   commonRoutes,
   userRoutes,
@@ -141,4 +155,6 @@ export {
   traineeListRoutes,
   classListRoutes,
   classSettingListRoutes,
+  milestoneListRoutes,
+  groupListRoutes,
 }

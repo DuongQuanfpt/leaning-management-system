@@ -100,6 +100,18 @@ const ClassSettingDetail = () => {
     setIsEditMode(false)
   }
   const handleSave = async () => {
+    if (detail.settingTitle.trim() === '') {
+      setError('Class setting title must not empty')
+      return
+    }
+    if (detail.displayOrder.length === 0) {
+      setError('Display Order must not empty')
+      return
+    }
+    if (detail.description.trim() === '') {
+      setError('Desription must not empty')
+      return
+    }
     const params = {
       settingTitle: detail.settingTitle,
       settingValue: detail.settingValue,
@@ -107,7 +119,6 @@ const ClassSettingDetail = () => {
       description: detail.description,
       displayOrdeR: detail.displayOrder,
     }
-    console.log(params)
     await classSettingListApi
       .changeDetail(id, params)
       .then((response) => {

@@ -8,17 +8,17 @@ import { CButton, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } fro
 import CIcon from '@coreui/icons-react'
 import { cilPlus, cilSearch, cilSync } from '@coreui/icons'
 
-import assignmentApi from '~/api/assignmentApi'
+import evalCriteriaApi from '~/api/evalCriteriaApi'
 
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 
-const AssignmentList = () => {
+const EvalCriteriaList = () => {
   const ITEM_PER_PAGE = 10
   const navigateTo = useNavigate()
 
-  const [listAssignment, setListAssignment] = useState([])
+  const [listEval, setListEval] = useState([])
   const [totalItem, setTotalItem] = useState(1)
   const [currentPage, setCurrentPage] = useState(1)
 
@@ -37,7 +37,7 @@ const AssignmentList = () => {
   })
 
   useEffect(() => {
-    assignmentApi
+    evalCriteriaApi
       .getPage({
         item: ITEM_PER_PAGE,
         page: 1,
@@ -74,10 +74,10 @@ const AssignmentList = () => {
       params.filterStatus = filter.status.value
     }
 
-    await assignmentApi
+    await evalCriteriaApi
       .getPage(params)
       .then((response) => {
-        setListAssignment(response.listResult)
+        setListEval(response.listResult)
         setCurrentPage(page)
         setTotalItem(response.totalItem)
       })
@@ -120,7 +120,7 @@ const AssignmentList = () => {
   }
 
   const handleActive = async (id) => {
-    await assignmentApi
+    await evalCriteriaApi
       .changeActive(id)
       .then((response) => {
         loadData(currentPage, filter)
@@ -241,7 +241,7 @@ const AssignmentList = () => {
                       <Breadcrumb.Item>
                         <Link to="/dashboard">Dashboard</Link>
                       </Breadcrumb.Item>
-                      <Breadcrumb.Item>Assignment List</Breadcrumb.Item>
+                      <Breadcrumb.Item>Eval Criteria List</Breadcrumb.Item>
                     </Breadcrumb>
                   </div>
                   <div className="col-4 d-flex w-80">
@@ -291,7 +291,7 @@ const AssignmentList = () => {
                 </div>
               </div>
               <div className="col-lg-12">
-                <Table bordered dataSource={listAssignment} columns={columns} pagination={false} />
+                <Table bordered dataSource={listEval} columns={columns} pagination={false} />
               </div>
               <div className="col-lg-12 d-flex justify-content-end">
                 <Pagination current={currentPage} total={totalItem} onChange={handleChangePage} />;
@@ -305,4 +305,4 @@ const AssignmentList = () => {
   )
 }
 
-export default AssignmentList
+export default EvalCriteriaList
