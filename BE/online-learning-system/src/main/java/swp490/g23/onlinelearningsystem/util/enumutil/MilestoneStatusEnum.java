@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 public enum MilestoneStatusEnum {
-    Open(false), InProgress(true), Closed(null);
+    Open(false), In_Progress(true), Closed(null);
 
     MilestoneStatusEnum(Boolean value) {
         this.value = value;
@@ -22,7 +22,7 @@ public enum MilestoneStatusEnum {
         }
 
         if (value == true) {
-            return MilestoneStatusEnum.InProgress;
+            return MilestoneStatusEnum.In_Progress;
         }
 
         if (value == false) {
@@ -36,7 +36,7 @@ public enum MilestoneStatusEnum {
 
     public static MilestoneStatusEnum fromInt(int value) {
         if (value == 1) {
-            return MilestoneStatusEnum.InProgress;
+            return MilestoneStatusEnum.In_Progress;
         }
 
         if (value == 0) {

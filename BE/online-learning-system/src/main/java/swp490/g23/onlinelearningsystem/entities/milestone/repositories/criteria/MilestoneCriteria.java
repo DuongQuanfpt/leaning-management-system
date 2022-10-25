@@ -49,7 +49,7 @@ public class MilestoneCriteria {
             } else {
                 String statusValue;
                 if (statusEnum.getValue() == true) {
-                    statusValue = "swp490.g23.onlinelearningsystem.util.enumutil.MilestoneStatusEnum.InProgress";
+                    statusValue = "swp490.g23.onlinelearningsystem.util.enumutil.MilestoneStatusEnum.In_Progress";
                 } else {
                     statusValue = "swp490.g23.onlinelearningsystem.util.enumutil.MilestoneStatusEnum.Open";
                 }
