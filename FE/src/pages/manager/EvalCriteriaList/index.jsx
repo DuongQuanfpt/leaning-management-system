@@ -78,6 +78,7 @@ const EvalCriteriaList = () => {
     await evalCriteriaApi
       .getPage(params)
       .then((response) => {
+        console.log(response)
         setListEval(response.listResult)
         setCurrentPage(page)
         setTotalItem(response.totalItem)
@@ -148,10 +149,17 @@ const EvalCriteriaList = () => {
 
   const columns = [
     {
+      title: 'Subject',
+      dataIndex: 'subjectName',
+      sorter: (a, b) => a.subjectName.length - b.subjectName.length,
+      width: '7.5%',
+    },
+    {
       title: 'Assignment',
       dataIndex: 'assignment',
       sorter: (a, b) => a.assignment.length - b.assignment.length,
       width: '15%',
+      render: (_, { assignment }) => assignment.title,
     },
     {
       title: 'Name',

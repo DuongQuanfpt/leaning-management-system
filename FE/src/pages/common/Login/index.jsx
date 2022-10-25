@@ -22,7 +22,7 @@ import logoWhite2 from '~/assets/images/logo-white-2.png'
 import bannerImg from '~/assets/images/background/bg2.jpg'
 
 const Login = () => {
-  const clientId = '497995951211-5kk8b1qf0n1cjg5f97t2t0dkpv47arvs.apps.googleusercontent.com'
+  const clientId = '75646251109-9glq1hvj26fb2l15867ipc9cqqs3koeo.apps.googleusercontent.com'
 
   const schema = Yup.object().shape({
     email: Yup.string().required().email(),

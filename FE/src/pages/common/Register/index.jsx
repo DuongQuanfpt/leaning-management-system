@@ -19,7 +19,7 @@ import { setProfile } from '~/redux/ProfileSlice/profileSlice'
 import { setToken } from '~/redux/AuthSlice/authSlice'
 
 const Register = () => {
-  const clientId = '497995951211-5kk8b1qf0n1cjg5f97t2t0dkpv47arvs.apps.googleusercontent.com'
+  const clientId = '75646251109-9glq1hvj26fb2l15867ipc9cqqs3koeo.apps.googleusercontent.com'
 
   const navigateTo = useNavigate()
 

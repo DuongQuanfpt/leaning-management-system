@@ -26,4 +26,8 @@ public class CriteriaRequestDTO {
     private Status status;
 
     private String assignment;
+
+    private String milestone;
+
+    private String classCode;
 }
