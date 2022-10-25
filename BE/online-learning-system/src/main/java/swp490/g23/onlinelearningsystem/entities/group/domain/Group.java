@@ -1,6 +1,5 @@
-package swp490.g23.onlinelearningsystem.entities.milestone.domain;
+package swp490.g23.onlinelearningsystem.entities.group.domain;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -18,53 +17,43 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.BaseEntity;
-import swp490.g23.onlinelearningsystem.entities.assignment.domain.Assignment;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
-<<<<<<< HEAD
-import swp490.g23.onlinelearningsystem.entities.eval_criteria.domain.EvalCriteria;
-=======
+import swp490.g23.onlinelearningsystem.entities.groupMember.domain.GroupMember;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
->>>>>>> aaede3c9f4a258bf68cca44548477ac1eacb3d92
-import swp490.g23.onlinelearningsystem.util.enumutil.MilestoneStatusEnum;
+import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 
 @Entity
-@Table(name = "milestone")
+@Table(name = "group_tbl")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Milestone extends BaseEntity {
+public class Group extends BaseEntity{
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long milestoneId;
-
-    @ManyToOne
-    @JoinColumn(name = "ass_id", unique = true)
-    private Assignment assignment;
+    private Long groupId;
 
     @ManyToOne
     @JoinColumn(name = "class_id")
     private Classes classes;
 
     @Column
-    private LocalDate fromDate;
+    private String groupCode;
 
     @Column
-    private LocalDate toDate;
-
-    @Column
-    private String title;
+    private String topicName;
 
     @Column
     private String description;
 
     @Column
-    private MilestoneStatusEnum status;
-    
-    @OneToMany(mappedBy = "milestone")
-    private List<Submit> submits;
+    private Status status;
 
-    @OneToMany(mappedBy = "milestone")
-    private List<EvalCriteria> criteriaList;
+    @OneToMany(mappedBy = "group")
+    private List<GroupMember> groupMembers;
+
+    @OneToMany(mappedBy = "group")
+    private List<Submit> submits;
 
 }

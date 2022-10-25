@@ -16,7 +16,7 @@ public class MilestoneStatusEntity {
 
     public MilestoneStatusEntity(MilestoneStatusEnum status) {
         this.name = status.toString();
-        if (status == MilestoneStatusEnum.InProgress) {
+        if (status == MilestoneStatusEnum.In_Progress) {
             this.value = "1";
         }
 

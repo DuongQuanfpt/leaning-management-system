@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import swp490.g23.onlinelearningsystem.entities.assignment.domain.response.AssignmentResponseDTO;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.MilestoneStatusEntity;
 
 @Getter
@@ -15,7 +16,7 @@ import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.MilestoneStatu
 public class MilestoneFilter {
     private List<String> subjectFilter;
     private List<MilestoneStatusEntity> statusFilter;
-    private List<MilestoneFilterValue> assFilter;
+    private List<AssignmentResponseDTO> assFilter;
     private List<String> classCode;
     private List<String> complexity;
 }
