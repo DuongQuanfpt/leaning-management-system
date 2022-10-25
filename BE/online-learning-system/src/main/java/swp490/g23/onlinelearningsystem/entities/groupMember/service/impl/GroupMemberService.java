@@ -16,10 +16,6 @@ public class GroupMemberService implements IGroupMemberService {
             dto.setGroupCode(entity.getGroup().getGroupCode());
         }
 
-        if (entity.getMember() != null) {
-            dto.setMember(entity.getMember().getAccountName());
-        }
-
         if (entity.getIsLeader() != null) {
             dto.setIsLeader(entity.getIsLeader());
         }

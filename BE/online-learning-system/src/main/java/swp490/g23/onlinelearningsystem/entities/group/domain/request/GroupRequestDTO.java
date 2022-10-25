@@ -13,7 +13,7 @@ import swp490.g23.onlinelearningsystem.entities.groupMember.domain.response.Grou
 @NoArgsConstructor
 @AllArgsConstructor
 public class GroupRequestDTO {
-    private String classCode;
+    private Long milestoneId;
 
     private String groupCode;
 

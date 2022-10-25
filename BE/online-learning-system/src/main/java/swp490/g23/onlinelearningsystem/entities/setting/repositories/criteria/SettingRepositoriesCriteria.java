@@ -15,8 +15,8 @@ public class SettingRepositoriesCriteria {
 
     public TypedQuery<Setting> displaySetting(String keyword, String filterType, String filterStatus) {
         StringBuilder query = new StringBuilder("SELECT s FROM Setting s WHERE s.type IS NOT NULL " +
-        "AND s.type.settingValue != 'TYPE_ROLE' AND s.type.settingValue != 'TYPE_API' "+
-        "AND s.type.settingValue != 'TYPE_SCREEN'");
+                "AND s.type.settingValue != 'TYPE_ROLE' AND s.type.settingValue != 'TYPE_API' " +
+                "AND s.type.settingValue != 'TYPE_SCREEN' AND s.type.settingValue != 'TYPE_SUBJECT_SETTING' AND s.type.settingValue != 'TYPE_CLASS_SETTING'");
 
         if (keyword != null) {
             query.append(" AND s.settingTitle LIKE '%" + keyword + "%'");
@@ -26,7 +26,7 @@ public class SettingRepositoriesCriteria {
             query.append(" AND s.status = '" + filterStatus + "'");
         }
 
-        if( filterType != null){
+        if (filterType != null) {
             query.append(" AND s.type.settingValue = '" + filterType + "'");
         }
 

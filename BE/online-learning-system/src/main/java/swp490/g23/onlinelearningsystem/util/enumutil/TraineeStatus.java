@@ -1,8 +1,5 @@
 package swp490.g23.onlinelearningsystem.util.enumutil;
 
-import java.util.Arrays;
-import java.util.Optional;
-
 public enum TraineeStatus {
     Inactive(false), Active(true), Dropout(null);
 

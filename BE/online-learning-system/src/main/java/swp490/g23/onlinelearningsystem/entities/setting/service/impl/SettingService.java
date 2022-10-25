@@ -68,7 +68,9 @@ public class SettingService implements ISettingService {
         System.out.print("ACVVVVV : " + setting.getType().getSettingValue());
         if (setting.getType() == null || setting.getType().getSettingValue().equals("TYPE_ROLE")
                 || setting.getType().getSettingValue().equals("TYPE_API")
-                || setting.getType().getSettingValue().equals("TYPE_SCREEN")) {
+                || setting.getType().getSettingValue().equals("TYPE_SCREEN")
+                || setting.getType().getSettingValue().equals("TYPE_SUBJECT_SETTING")
+                || setting.getType().getSettingValue().equals("TYPE_CLASS_SETTING")) {
             throw new CustomException("this setting cant be view");
         }
 
@@ -81,10 +83,12 @@ public class SettingService implements ISettingService {
 
         if (setting.getType() == null || setting.getType().getSettingValue().equals("TYPE_ROLE")
                 || setting.getType().getSettingValue().equals("TYPE_API")
-                || setting.getType().getSettingValue().equals("TYPE_SCREEN")) {
+                || setting.getType().getSettingValue().equals("TYPE_SCREEN")
+                || setting.getType().getSettingValue().equals("TYPE_SUBJECT_SETTING")
+                || setting.getType().getSettingValue().equals("TYPE_CLASS_SETTING")) {
             throw new CustomException("this setting cant be update");
         }
-
+      
         if (dto.getSettingTitle() != null) {
             setting.setSettingTitle(dto.getSettingTitle());
         }

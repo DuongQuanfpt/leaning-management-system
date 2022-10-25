@@ -15,6 +15,7 @@ import swp490.g23.onlinelearningsystem.entities.assignment.domain.Assignment;
 import swp490.g23.onlinelearningsystem.entities.assignment.domain.response.AssignmentResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.assignment.repositories.AssignmentRepository;
 import swp490.g23.onlinelearningsystem.entities.assignment.service.impl.AssignmentService;
+import swp490.g23.onlinelearningsystem.entities.class_user.domain.ClassUser;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.classes.repositories.ClassRepositories;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
@@ -26,6 +27,8 @@ import swp490.g23.onlinelearningsystem.entities.milestone.repositories.Milestone
 import swp490.g23.onlinelearningsystem.entities.milestone.repositories.criteria.MilestoneCriteria;
 import swp490.g23.onlinelearningsystem.entities.milestone.repositories.criteria_entity.MilestoneQuery;
 import swp490.g23.onlinelearningsystem.entities.milestone.service.IMilestoneService;
+import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
+import swp490.g23.onlinelearningsystem.entities.submit.repositories.SubmitRepository;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
@@ -52,6 +55,9 @@ public class MilestoneService implements IMilestoneService {
 
     @Autowired
     private MilestoneRepository milestoneRepository;
+
+    @Autowired
+    private SubmitRepository submitRepository;
 
     @Override
     public ResponseEntity<MilestonePaginateDTO> displayMilestone(String keyword, int limit, int page,
@@ -167,16 +173,21 @@ public class MilestoneService implements IMilestoneService {
         if (dto.getAssignmentId() != null) {
             milestone.setAssignment(assignmentRepository.findById(dto.getAssignmentId())
                     .orElseThrow(() -> new CustomException("Assignment doesnt exist")));
+        } else {
+            throw new CustomException("Must assign a assignment to milestone");
         }
 
+        Classes classes = new Classes();
         if (dto.getClassesCode() != null) {
-            Classes classes = classRepositories.findClassByCode(dto.getClassesCode());
+            classes = classRepositories.findClassByCode(dto.getClassesCode());
             if (classes != null) {
                 milestone.setClasses(classes);
             } else {
-                throw new CustomException("Classes doesnt exist");
+                throw new CustomException("Class doesnt exist");
             }
 
+        } else {
+            throw new CustomException("Must assign a class to milestone");
         }
 
         if (dto.getTitle() != null) {
@@ -203,6 +214,15 @@ public class MilestoneService implements IMilestoneService {
         }
 
         milestoneRepository.save(milestone);
+
+        List<Submit> submits = new ArrayList<>();
+        for (ClassUser user : classes.getClassUsers()) {
+            Submit submit = new Submit();
+            submit.setClassUser(user);
+            submit.setMilestone(milestone);
+            submits.add(submit);
+        }
+        submitRepository.saveAll(submits);
         return ResponseEntity.ok("Milestone added");
     }
 
@@ -210,20 +230,20 @@ public class MilestoneService implements IMilestoneService {
     public ResponseEntity<String> milestonEdit(MilestoneRequestDTO dto, Long id) {
         Milestone milestone = milestoneRepository.findById(id)
                 .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
-        if(dto.getTitle() != null){
+        if (dto.getTitle() != null) {
             milestone.setTitle(dto.getTitle());
-        }    
-        
-        if(dto.getDescription() != null){
-            milestone.setDescription(dto.getDescription());
-        }        
+        }
 
-        if(dto.getToDate() != null) {
+        if (dto.getDescription() != null) {
+            milestone.setDescription(dto.getDescription());
+        }
+
+        if (dto.getToDate() != null) {
             milestone.setToDate(LocalDate.parse(dto.getToDate()));
         }
 
-        if(dto.getFromDate() != null) {
-            milestone.setFromDate(LocalDate.parse( dto.getFromDate()));
+        if (dto.getFromDate() != null) {
+            milestone.setFromDate(LocalDate.parse(dto.getFromDate()));
         }
 
         milestoneRepository.save(milestone);
@@ -239,6 +259,7 @@ public class MilestoneService implements IMilestoneService {
 
         if (entity.getClasses() != null) {
             responseDTO.setClassesCode(entity.getClasses().getCode());
+            responseDTO.setClassesSize(entity.getClasses().getClassUsers().size());
         }
         responseDTO.setStatus(entity.getStatus().toString());
         if (entity.getDescription() != null) {

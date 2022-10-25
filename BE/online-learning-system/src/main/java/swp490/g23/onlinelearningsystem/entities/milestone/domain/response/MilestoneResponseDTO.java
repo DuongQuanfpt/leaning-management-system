@@ -17,6 +17,8 @@ public class MilestoneResponseDTO {
 
     private String classesCode;
 
+    private int classesSize;
+
     private String fromDate;
 
     private String toDate;
