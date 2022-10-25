@@ -1,6 +1,7 @@
 package swp490.g23.onlinelearningsystem.entities.milestone.domain;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -18,6 +20,7 @@ import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.BaseEntity;
 import swp490.g23.onlinelearningsystem.entities.assignment.domain.Assignment;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
+import swp490.g23.onlinelearningsystem.entities.eval_criteria.domain.EvalCriteria;
 import swp490.g23.onlinelearningsystem.util.enumutil.MilestoneStatusEnum;
 
 @Entity
@@ -53,5 +56,8 @@ public class Milestone extends BaseEntity {
 
     @Column
     private MilestoneStatusEnum status;
+
+    @OneToMany(mappedBy = "milestone")
+    private List<EvalCriteria> criteriaList;
 
 }

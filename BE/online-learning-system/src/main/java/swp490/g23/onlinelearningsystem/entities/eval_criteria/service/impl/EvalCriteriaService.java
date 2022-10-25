@@ -211,7 +211,7 @@ public class EvalCriteriaService implements IEvalCriteriaService {
         responseDTO.setEvalWeight(entity.getEvalWeight());
         responseDTO.setExpectedWork(entity.getExpectedWork());
         responseDTO.setIsTeamEval(entity.isTeamEval() ? 1 : 0);
-        responseDTO.setAssignment(entity.getAssignment().getTitle());
+        responseDTO.setAssignment(assignmentService.toDTO(entity.getAssignment()));
         responseDTO.setSubjectName(entity.getAssignment().getForSubject().getSubjectCode());
 
         return responseDTO;

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import swp490.g23.onlinelearningsystem.entities.assignment.domain.response.AssignmentResponseDTO;
 import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 
 @Getter
@@ -25,7 +26,7 @@ public class CriteriaResponseDTO {
 
     private Status status;
 
-    private String assignment;
+    private AssignmentResponseDTO assignment;
 
     private String subjectName;
 }

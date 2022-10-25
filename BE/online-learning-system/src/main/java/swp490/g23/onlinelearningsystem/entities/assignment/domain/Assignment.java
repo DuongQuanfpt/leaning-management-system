@@ -54,6 +54,6 @@ public class Assignment extends BaseEntity {
     @JoinColumn(name = "subject_id")
     private Subject forSubject;
 
-    @OneToMany
+    @OneToMany(mappedBy = "assignment")
     private List<EvalCriteria> EvalCriteriaList;
 }
