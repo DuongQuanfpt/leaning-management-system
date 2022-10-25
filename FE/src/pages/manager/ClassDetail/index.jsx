@@ -156,6 +156,7 @@ const ClassDetail = () => {
 
   const handleEdit = () => {
     setIsEditMode(true)
+    setObject({ ...object, error: '' })
   }
 
   const modalConfirm = () => {

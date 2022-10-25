@@ -52,8 +52,11 @@ const ClassSettingDetail = lazy(() => import('~/pages/trainer/ClassSettingDetail
 const ClassSettingAdd = lazy(() => import('~/pages/trainer/ClassSettingAdd'))
 
 const MilestoneList = lazy(() => import('~/pages/trainer/MilestoneList'))
+const MilestoneDetail = lazy(() => import('~/pages/trainer/MilestoneDetail'))
+const NewMilestone = lazy(() => import('~/pages/trainer/NewMilestone'))
 
 const GroupList = lazy(() => import('~/pages/trainer/GroupList'))
+const NewGroup = lazy(() => import('~/pages/trainer/NewGroup'))
 
 //404 pages
 const PageNotFound = lazy(() => import('~/pages/common/PageNotFound'))
@@ -139,9 +142,16 @@ const classSettingListRoutes = [
   { path: '/class-setting-add', component: ClassSettingAdd },
 ]
 
-const milestoneListRoutes = [{ path: '/milestone-list', component: MilestoneList }]
+const milestoneListRoutes = [
+  { path: '/milestone-list', component: MilestoneList },
+  { path: '/milestone-detail/:id', component: MilestoneDetail },
+  { path: '/new-milestone', component: NewMilestone },
+]
 
-const groupListRoutes = [{ path: '/group-list', component: GroupList }]
+const groupListRoutes = [
+  { path: '/group-list', component: GroupList },
+  { path: '/new-group', component: NewGroup },
+]
 
 export {
   commonRoutes,

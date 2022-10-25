@@ -1,13 +1,14 @@
 import React from 'react'
-
 import { Link } from 'react-router-dom'
 
-import { Breadcrumb, Button, Table } from 'antd'
+import { Breadcrumb, Button, Table, Typography } from 'antd'
+import { EllipsisOutlined } from '@ant-design/icons'
+
+import { CDropdown, CDropdownMenu, CDropdownToggle } from '@coreui/react'
 
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
-import { BarsOutlined } from '@ant-design/icons'
 
 const GroupList = () => {
   const columns = [
@@ -21,13 +22,13 @@ const GroupList = () => {
       title: 'Student',
       dataIndex: 'student',
       key: 'student',
-      width: '43%',
+      width: '48%',
     },
     {
       title: 'Email',
       dataIndex: 'email',
       key: 'email',
-      width: '30%',
+      width: '25%',
     },
     {
       title: 'Status',
@@ -56,7 +57,7 @@ const GroupList = () => {
       action: (
         <Button
           shape="circle"
-          icon={<BarsOutlined />}
+          icon={<EllipsisOutlined />}
           onClick={() => {
             console.log('OK')
           }}
@@ -75,7 +76,7 @@ const GroupList = () => {
           action: (
             <Button
               shape="circle"
-              icon={<BarsOutlined />}
+              icon={<EllipsisOutlined />}
               onClick={() => {
                 console.log('OK')
               }}
@@ -90,7 +91,7 @@ const GroupList = () => {
           action: (
             <Button
               shape="circle"
-              icon={<BarsOutlined />}
+              icon={<EllipsisOutlined />}
               onClick={() => {
                 console.log('OK')
               }}
@@ -105,7 +106,7 @@ const GroupList = () => {
           action: (
             <Button
               shape="circle"
-              icon={<BarsOutlined />}
+              icon={<EllipsisOutlined />}
               onClick={() => {
                 console.log('OK')
               }}
@@ -113,6 +114,15 @@ const GroupList = () => {
           ),
         },
       ],
+      action: (
+        <Button
+          shape="circle"
+          icon={<EllipsisOutlined />}
+          onClick={() => {
+            console.log('OK')
+          }}
+        ></Button>
+      ),
     },
     {
       key: 2,
@@ -137,6 +147,15 @@ const GroupList = () => {
           email: 'London No. 1 Lake Park',
         },
       ],
+      action: (
+        <Button
+          shape="circle"
+          icon={<EllipsisOutlined />}
+          onClick={() => {
+            console.log('OK')
+          }}
+        ></Button>
+      ),
     },
   ]
 
@@ -160,7 +179,36 @@ const GroupList = () => {
                   </div>
                 </div>
               </div>
-              <div className="col-lg-12">
+              <div className="col-lg-12 m-b30">
+                <CDropdown className=" mr-4">
+                  <CDropdownToggle color="secondary">{'Assignment'}</CDropdownToggle>
+                  <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}></CDropdownMenu>
+                </CDropdown>
+                <CDropdown className=" mr-4">
+                  <CDropdownToggle color="secondary">{'Status'}</CDropdownToggle>
+                  <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}></CDropdownMenu>
+                </CDropdown>
+              </div>
+              <div className="col-lg-12 m-b30">
+                <Typography.Text className="mr-4" type="warning" strong>
+                  Trainee have not been grouped
+                </Typography.Text>
+                <Typography.Link strong underline>
+                  <Link to="/new-group">Create Groups</Link>
+                </Typography.Link>
+              </div>
+              <div className="col-lg-12 m-b30">
+                <Typography.Text className="mr-4" type="warning" strong>
+                  This milestone has groups already
+                </Typography.Text>
+                <Typography.Link strong underline className="mr-4">
+                  <Link to="/">Reset Groups</Link>
+                </Typography.Link>
+                <Typography.Link strong underline>
+                  <Link to="/">Remove Groups</Link>
+                </Typography.Link>
+              </div>
+              <div className="col-lg-12 m-b30">
                 <Table columns={columns} dataSource={data} rowClassName={(record) => record?.color?.replace('#', '')} />
               </div>
             </div>

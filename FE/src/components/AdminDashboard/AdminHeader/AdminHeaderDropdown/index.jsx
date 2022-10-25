@@ -5,7 +5,7 @@ import { cilAccountLogout, cilSettings, cilUser } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
 
 import avatar from '~/assets/images/profile/pic1.jpg'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const AdminHeaderDropdown = () => {
   const profileData = useSelector((state) => state.profile)
@@ -25,15 +25,21 @@ const AdminHeaderDropdown = () => {
       <CDropdownMenu className="pt-0" placement="bottom-end">
         <CDropdownItem href="/">
           <CIcon icon={cilUser} className="me-2" />
-          Homepage
+          <Link to="/" className="color-black">
+            Homepage
+          </Link>
         </CDropdownItem>
         <CDropdownItem href="/profile">
           <CIcon icon={cilSettings} className="me-2" />
-          User Profile
+          <Link to="/profile" className="color-black">
+            User Profile
+          </Link>
         </CDropdownItem>
         <CDropdownItem href="/change-password">
           <CIcon icon={cilSettings} className="me-2" />
-          Change Password
+          <Link to="/change-password" className="color-black">
+            Change Password
+          </Link>
         </CDropdownItem>
         <CDropdownDivider />
         <CDropdownItem onClick={handleLogout} className="text-danger">
