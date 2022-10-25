@@ -208,7 +208,6 @@ const EvalCriteriaAdd = () => {
                         </CDropdown>
                       </div>
                     )}
-                    {console.log(detail)}
                     <div className="form-group col-12">
                       <label className="col-form-label">Assignment</label>
                       <div>
