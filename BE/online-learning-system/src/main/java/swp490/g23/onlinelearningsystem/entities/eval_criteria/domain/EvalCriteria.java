@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.BaseEntity;
 import swp490.g23.onlinelearningsystem.entities.assignment.domain.Assignment;
+import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
 import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 
 @Entity
@@ -41,4 +42,8 @@ public class EvalCriteria extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "ass_id")
     private Assignment assignment;
+
+    @ManyToOne
+    @JoinColumn(name = "milestone_id")
+    private Milestone milestone;
 }

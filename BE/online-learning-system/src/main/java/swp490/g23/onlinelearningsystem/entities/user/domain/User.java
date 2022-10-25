@@ -27,6 +27,7 @@ import swp490.g23.onlinelearningsystem.entities.BaseEntity;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.ClassUser;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.contact.domain.WebContact;
+import swp490.g23.onlinelearningsystem.entities.groupMember.domain.GroupMember;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
 import swp490.g23.onlinelearningsystem.entities.user_roles.domain.UserRoles;
@@ -101,6 +102,8 @@ public class User extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy = "staff")
 	private List<WebContact> webContact;
 
+    @OneToMany(mappedBy = "member")
+    private List<GroupMember> groupMembers;
 
     public User(String email, String password, Setting settings) {
         this.email = email;

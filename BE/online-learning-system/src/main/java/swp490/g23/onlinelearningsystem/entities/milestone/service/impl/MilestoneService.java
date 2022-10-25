@@ -12,12 +12,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import swp490.g23.onlinelearningsystem.entities.assignment.domain.Assignment;
+import swp490.g23.onlinelearningsystem.entities.assignment.domain.response.AssignmentResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.assignment.repositories.AssignmentRepository;
+import swp490.g23.onlinelearningsystem.entities.assignment.service.impl.AssignmentService;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.classes.repositories.ClassRepositories;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.filter.MilestoneFilter;
-import swp490.g23.onlinelearningsystem.entities.milestone.domain.filter.MilestoneFilterValue;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.request.MilestoneRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestonePaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestoneResponseDTO;
@@ -38,6 +39,9 @@ public class MilestoneService implements IMilestoneService {
     private UserRepository userRepository;
 
     @Autowired
+    private AssignmentService assignmentService;
+
+    @Autowired
     private ClassRepositories classRepositories;
 
     @Autowired
@@ -55,7 +59,7 @@ public class MilestoneService implements IMilestoneService {
 
         List<MilestoneResponseDTO> resultList = new ArrayList<>();
         List<String> classFilter = new ArrayList<>();
-        List<MilestoneFilterValue> assFilter = new ArrayList<>();
+        List<AssignmentResponseDTO> assFilter = new ArrayList<>();
         List<MilestoneStatusEntity> statusFilter = new ArrayList<>();
 
         User currentUser = userRepository.findById(user.getUserId()).get();
@@ -81,17 +85,16 @@ public class MilestoneService implements IMilestoneService {
             if (milestone.getAssignment() != null) {
                 boolean canAdd = true;
 
-                for (MilestoneFilterValue filterValue : assFilter) {
+                for (AssignmentResponseDTO filterValue : assFilter) {
 
-                    if (filterValue.getValue().equals(milestone.getAssignment().getAssId().toString())) {
+                    if (filterValue.getAssId() == milestone.getAssignment().getAssId()) {
                         canAdd = false;
                         break;
                     }
                 }
 
                 if (canAdd == true) {
-                    assFilter.add(new MilestoneFilterValue(milestone.getAssignment().getTitle(),
-                            milestone.getAssignment().getAssId().toString()));
+                    assFilter.add(assignmentService.toDTO(milestone.getAssignment()));
                 }
             }
         }
@@ -146,9 +149,9 @@ public class MilestoneService implements IMilestoneService {
             classCodes.add(c.getCode());
         }
 
-        List<MilestoneFilterValue> assFilter = new ArrayList<>();
+        List<AssignmentResponseDTO> assFilter = new ArrayList<>();
         for (Assignment assignment : assignments) {
-            assFilter.add(new MilestoneFilterValue(assignment.getTitle(), assignment.getAssId().toString()));
+            assFilter.add(assignmentService.toDTO(assignment));
         }
 
         filter.setStatusFilter(statusFilter);
@@ -231,9 +234,8 @@ public class MilestoneService implements IMilestoneService {
         MilestoneResponseDTO responseDTO = new MilestoneResponseDTO();
 
         responseDTO.setMilestoneId(entity.getMilestoneId());
-        responseDTO.setAssignment(
-                new MilestoneFilterValue(entity.getAssignment().getTitle(),
-                        entity.getAssignment().getAssId().toString()));
+        Assignment assignment = entity.getAssignment();
+        responseDTO.setAssignment(assignmentService.toDTO(assignment));
 
         if (entity.getClasses() != null) {
             responseDTO.setClassesCode(entity.getClasses().getCode());

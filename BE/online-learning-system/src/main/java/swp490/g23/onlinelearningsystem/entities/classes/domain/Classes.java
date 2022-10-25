@@ -19,6 +19,7 @@ import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.BaseEntity;
 import swp490.g23.onlinelearningsystem.entities.class_setting.domain.ClassSetting;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.ClassUser;
+import swp490.g23.onlinelearningsystem.entities.group.domain.Group;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
@@ -70,4 +71,9 @@ public class Classes extends BaseEntity {
 
     @OneToMany(mappedBy = "classes")
     private List<Milestone> milestones;
+
+    @OneToMany(mappedBy = "classes")
+    private List<Group> groups;
+
+    
 }

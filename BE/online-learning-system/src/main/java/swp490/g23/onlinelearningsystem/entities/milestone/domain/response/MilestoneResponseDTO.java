@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import swp490.g23.onlinelearningsystem.entities.milestone.domain.filter.MilestoneFilterValue;
+import swp490.g23.onlinelearningsystem.entities.assignment.domain.response.AssignmentResponseDTO;
 
 @Getter
 @Setter
@@ -13,7 +13,7 @@ import swp490.g23.onlinelearningsystem.entities.milestone.domain.filter.Mileston
 public class MilestoneResponseDTO {
     private Long milestoneId;
 
-    private MilestoneFilterValue assignment;
+    private AssignmentResponseDTO assignment;
 
     private String classesCode;
 
