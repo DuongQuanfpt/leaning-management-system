@@ -28,7 +28,7 @@ const EvalCriteriaAdd = () => {
   })
   const [listEval, setListEval] = useState([])
 
-  const [currentClone, setCurrentClone] = useState('Select Eval Reuse')
+  const [currentClone, setCurrentClone] = useState('Subject - Assignment - Eval Criteria')
   const [mode, setMode] = useState('Add New')
   const [error, setError] = useState('')
 
@@ -38,10 +38,14 @@ const EvalCriteriaAdd = () => {
   }, [])
 
   useEffect(() => {
-    setCurrentClone('Select Eval Reuse')
+    setCurrentClone('Subject - Assignment - Eval Criteria')
     setDetail({
       criteriaName: '',
-      assignment: 'Select Assignment',
+      assignment: {
+        assId: '',
+        title: 'Assignment',
+        subjectName: 'Subject',
+      },
       expectedWork: '',
       description: '',
       evalWeight: '',
@@ -72,6 +76,10 @@ const EvalCriteriaAdd = () => {
   }
 
   const handleAdd = async () => {
+    if (detail.assignment.title === 'Assignment') {
+      setError('You must select one Assignment')
+      return
+    }
     if (detail.criteriaName.trim() === '') {
       setError('Eval criteria name must not empty')
       return
@@ -95,7 +103,7 @@ const EvalCriteriaAdd = () => {
 
     const params = {
       criteriaName: detail.criteriaName.trim(),
-      assignment: detail.assignment.trim(),
+      assignment: detail.assignment.title.trim(),
       evalWeight: detail.evalWeight + '%',
       expectedWork: detail.expectedWork,
       isTeamEval: detail.isTeamEval,
@@ -175,14 +183,16 @@ const EvalCriteriaAdd = () => {
                   <div className="row">
                     {mode === 'Reuse' && (
                       <div className="form-group col-12">
-                        <label className="col-form-label">Select Eval Criteria</label>
+                        <label className="col-form-label">Select Eval Criteria Reuse</label>
                         <CDropdown className="w-100">
                           <CDropdownToggle color="warning">{currentClone}</CDropdownToggle>
                           <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                             {listEval?.map((item) => (
                               <CDropdownItem
                                 onClick={() => {
-                                  setCurrentClone(`${item.assignment} - ${item.criteriaName}`)
+                                  setCurrentClone(
+                                    `${item.subjectName} - ${item.assignment.title} - ${item.criteriaName}`,
+                                  )
                                   setDetail((prev) => ({
                                     ...prev,
                                     ...item,
@@ -191,31 +201,30 @@ const EvalCriteriaAdd = () => {
                                   }))
                                 }}
                               >
-                                {item.assignment} - {item.criteriaName}
+                                {item.subjectName} - {item.assignment.title} - {item.criteriaName}
                               </CDropdownItem>
                             ))}
                           </CDropdownMenu>
                         </CDropdown>
                       </div>
                     )}
-                    <div className="form-group col-4">
+                    {console.log(detail)}
+                    <div className="form-group col-12">
                       <label className="col-form-label">Assignment</label>
                       <div>
                         <CDropdown className="w-100">
-                          <CDropdownToggle color="warning">{detail.assignment}</CDropdownToggle>
+                          <CDropdownToggle color="warning">{`${detail.assignment.subjectName} - ${detail.assignment.title}`}</CDropdownToggle>
                           <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                             {listFilter?.assignmentFilter?.map((assignment) => (
-                              <CDropdownItem
-                                onChange={() => setDetail((prev) => ({ ...prev, assignment: assignment }))}
-                              >
-                                {assignment}
+                              <CDropdownItem onClick={() => setDetail((prev) => ({ ...prev, assignment: assignment }))}>
+                                {`${assignment.subjectName} - ${assignment.title}`}
                               </CDropdownItem>
                             ))}
                           </CDropdownMenu>
                         </CDropdown>
                       </div>
                     </div>
-                    <div className="form-group col-4">
+                    <div className="form-group col-6">
                       <label className="col-form-label">Eval Criteria Name</label>
                       <div>
                         <input
@@ -226,7 +235,7 @@ const EvalCriteriaAdd = () => {
                         />
                       </div>
                     </div>
-                    <div className="form-group col-4">
+                    <div className="form-group col-6">
                       <label className="col-form-label">Evaluation Weight (%)</label>
                       <div>
                         <input
@@ -237,7 +246,7 @@ const EvalCriteriaAdd = () => {
                         />
                       </div>
                     </div>
-                    <div className="form-group col-4">
+                    <div className="form-group col-6">
                       <label className="col-form-label">Status</label>
                       <div>
                         <Radio.Group
@@ -249,7 +258,7 @@ const EvalCriteriaAdd = () => {
                         </Radio.Group>
                       </div>
                     </div>
-                    <div className="form-group col-4">
+                    <div className="form-group col-6">
                       <label className="col-form-label">Is Team Eval</label>
                       <div>
                         <Radio.Group

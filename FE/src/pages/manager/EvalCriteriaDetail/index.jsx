@@ -4,7 +4,7 @@ import { Link, useParams } from 'react-router-dom'
 import { Breadcrumb, Modal, Radio } from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 
-import { CButton, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
+import { CButton } from '@coreui/react'
 
 import evalCriteriaApi from '~/api/evalCriteriaApi'
 
@@ -19,15 +19,14 @@ const EvalCriteriaDetail = () => {
   const [defaultDetail, setDefaulDetail] = useState({})
   const [detail, setDetail] = useState({
     criteriaName: '',
-    assignment: '',
+    assignment: {
+      title: '',
+    },
     expectedWork: '',
     description: '',
     evalWeight: '',
     isTeamEval: 0,
     status: 0,
-  })
-  const [listFilter, setListFilter] = useState({
-    assignmentFilter: [],
   })
 
   const [error, setError] = useState('')
@@ -40,18 +39,9 @@ const EvalCriteriaDetail = () => {
 
   const loadData = async () => {
     await evalCriteriaApi
-      .getFilter()
-      .then((response) => {
-        console.log(response)
-        setListFilter(response)
-      })
-      .catch((error) => {
-        setError('Something went wrong, please try again')
-      })
-
-    await evalCriteriaApi
       .getDetail(id)
       .then((response) => {
+        console.log(response)
         setDefaulDetail(response)
         setDetail((prev) => ({
           ...prev,
@@ -89,15 +79,7 @@ const EvalCriteriaDetail = () => {
       setError('Description must not empty')
       return
     }
-    // const [detail, setDetail] = useState({
-    //   criteriaName: '',
-    //   assignment: '',
-    //   expectedWork: '',
-    //   description: '',
-    //   evalWeight: '',
-    //   isTeamEval: 0,
-    //   status: 0,
-    // })
+
     const params = {
       criteriaName: detail.criteriaName.trim(),
       assignment: detail.assignment.trim(),
@@ -174,23 +156,14 @@ const EvalCriteriaDetail = () => {
                 <div className="widget-inner">
                   <div className="row">
                     <div className="form-group col-4">
-                      <label className="col-form-label">Assignment</label>
                       <div>
-                        <CDropdown className="w-100">
-                          <CDropdownToggle color="warning" disabled={!isEditMode}>
-                            {detail.assignment}
-                          </CDropdownToggle>
-                          <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
-                            {listFilter?.assignmentFilter?.map((assignment) => (
-                              <CDropdownItem
-                                onChange={() => setDetail((prev) => ({ ...prev, assignment: assignment }))}
-                              >
-                                {assignment}
-                              </CDropdownItem>
-                            ))}
-                          </CDropdownMenu>
-                        </CDropdown>
+                        <label className="col-form-label">Subject</label>
+                        <input className="form-control" type="text" value={detail.subjectName} disabled />
                       </div>
+                    </div>
+                    <div className="form-group col-4">
+                      <label className="col-form-label">Assignment</label>
+                      <input className="form-control" type="text" value={detail.assignment.title} disabled />
                     </div>
                     <div className="form-group col-4">
                       <label className="col-form-label">Eval Criteria Name</label>
