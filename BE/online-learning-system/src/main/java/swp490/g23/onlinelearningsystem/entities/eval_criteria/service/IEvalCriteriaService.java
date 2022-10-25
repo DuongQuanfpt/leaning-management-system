@@ -21,4 +21,16 @@ public interface IEvalCriteriaService {
     ResponseEntity<String> addCriteria(CriteriaRequestDTO dto);
 
     ResponseEntity<CriteriaFilterDTO> getFilter();
+
+    ResponseEntity<CriteriaPaginateResponseDTO> getClassCriteria(int limit, int page, String keyword,
+            String statusFilter,
+            String classFilter, String milestoneFilter, Long userId);
+
+    ResponseEntity<String> updateClassCriteriaStatus(Long criteriaId);
+
+    ResponseEntity<CriteriaResponseDTO> viewClassCriteria(Long criteriaId);
+
+    ResponseEntity<String> updateClassCriteria(Long criteriaId, CriteriaRequestDTO dto);
+
+    ResponseEntity<String> addClassCriteria(CriteriaRequestDTO dto);
 }

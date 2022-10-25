@@ -162,6 +162,8 @@ public class AssignmentService implements IAssignmentService {
         assignment.setStatus(Status.getFromValue(Integer.parseInt(dto.getStatus())).get());
         if (subjectRequest != null) {
             assignment.setForSubject(subject);
+        } else {
+            throw new CustomException("You haven't assigned subject yet!");
         }
         if (dto.getIsOnGoing() == 1) {
             assignment.setOnGoing(true);
@@ -202,13 +204,21 @@ public class AssignmentService implements IAssignmentService {
         AssignmentResponseDTO responseDTO = new AssignmentResponseDTO();
 
         responseDTO.setAssId(entity.getAssId());
-        responseDTO.setAssBody(entity.getAssBody());
-        responseDTO.setEval_weight(entity.getEval_weight());
+        if (entity.getAssBody() != null) {
+            responseDTO.setAssBody(entity.getAssBody());
+        }
+        if (entity.getEval_weight() != null) {
+            responseDTO.setEval_weight(entity.getEval_weight());
+        }
+        if (entity.getTitle() != null) {
+            responseDTO.setTitle(entity.getTitle());
+        }
+        if (entity.getForSubject().getSubjectCode() != null) {
+            responseDTO.setSubjectName(entity.getForSubject().getSubjectCode());
+        }
         responseDTO.setIsOnGoing(entity.isOnGoing() ? 1 : 0);
         responseDTO.setIsTeamWork(entity.isTeamWork() ? 1 : 0);
         responseDTO.setStatus(entity.getStatus());
-        responseDTO.setTitle(entity.getTitle());
-        responseDTO.setSubjectName(entity.getForSubject().getSubjectCode());
 
         return responseDTO;
     }

@@ -20,4 +20,6 @@ public class CriteriaPaginateResponseDTO {
     private List<CriteriaResponseDTO> listResult = new ArrayList<>();
     private List<StatusEntity> statusFilter;
     private List<String> assignmentFilter;
+    private List<String> classFilter;
+    private List<String> milestoneFilter;
 }
