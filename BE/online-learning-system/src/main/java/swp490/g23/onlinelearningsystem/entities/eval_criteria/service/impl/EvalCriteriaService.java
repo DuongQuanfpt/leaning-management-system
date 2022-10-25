@@ -11,7 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import swp490.g23.onlinelearningsystem.entities.assignment.domain.Assignment;
+import swp490.g23.onlinelearningsystem.entities.assignment.domain.response.AssignmentResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.assignment.repositories.AssignmentRepository;
+import swp490.g23.onlinelearningsystem.entities.assignment.service.impl.AssignmentService;
 import swp490.g23.onlinelearningsystem.entities.eval_criteria.domain.EvalCriteria;
 import swp490.g23.onlinelearningsystem.entities.eval_criteria.domain.filter.CriteriaFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.eval_criteria.domain.request.CriteriaRequestDTO;
@@ -37,20 +39,32 @@ public class EvalCriteriaService implements IEvalCriteriaService {
     @Autowired
     private CriteriaRepositories criteriaRepositories;
 
+    @Autowired
+    private AssignmentService assignmentService;
+
     @Override
     public ResponseEntity<CriteriaPaginateResponseDTO> getCriteria(int limit, int page, String keyword,
-            String statusFilter) {
+            String statusFilter, String assignmentFilter) {
 
-        CriteriaQuery result = criteriaRepositories.searchFilterCriteria(keyword, statusFilter);
+        CriteriaQuery result = criteriaRepositories.searchFilterCriteria(keyword, statusFilter, assignmentFilter);
 
         TypedQuery<EvalCriteria> queryResult = result.getResultQuery();
         TypedQuery<Long> countQuery = result.getCountQuery();
 
         List<CriteriaResponseDTO> list = new ArrayList<>();
         List<StatusEntity> statusfilter = new ArrayList<>();
+        List<String> filterAssignment = new ArrayList<>();
+        List<EvalCriteria> criteriaList = queryResult.getResultList();
 
         for (Status status : new ArrayList<Status>(EnumSet.allOf(Status.class))) {
             statusfilter.add(new StatusEntity(status));
+        }
+
+        for (EvalCriteria evalCriteria : criteriaList) {
+            if (!filterAssignment.contains(evalCriteria.getAssignment().getTitle())) {
+                filterAssignment.add(evalCriteria.getAssignment().getTitle());
+            }
+
         }
 
         Long totalItem = countQuery.getSingleResult();
@@ -73,6 +87,7 @@ public class EvalCriteriaService implements IEvalCriteriaService {
         dto.setListResult(list);
         dto.setTotalPage(totalPage);
         dto.setStatusFilter(statusfilter);
+        dto.setAssignmentFilter(filterAssignment);
 
         return ResponseEntity.ok(dto);
     }
@@ -169,13 +184,19 @@ public class EvalCriteriaService implements IEvalCriteriaService {
     @Override
     public ResponseEntity<CriteriaFilterDTO> getFilter() {
         List<StatusEntity> statuses = new ArrayList<>();
+        List<AssignmentResponseDTO> filterAssignment = new ArrayList<>();
+        List<Assignment> assignments = assignmentRepository.findAssigmentWithActiveSubject();
 
         for (Status status : new ArrayList<Status>(EnumSet.allOf(Status.class))) {
             statuses.add(new StatusEntity(status));
         }
+        for (Assignment assignment : assignments) {
+            filterAssignment.add(assignmentService.toDTO(assignment));
+        }
 
         CriteriaFilterDTO filterDTO = new CriteriaFilterDTO();
         filterDTO.setStatusFilter(statuses);
+        filterDTO.setAssignmentFilter(filterAssignment);
 
         return ResponseEntity.ok(filterDTO);
     }
@@ -191,6 +212,7 @@ public class EvalCriteriaService implements IEvalCriteriaService {
         responseDTO.setExpectedWork(entity.getExpectedWork());
         responseDTO.setIsTeamEval(entity.isTeamEval() ? 1 : 0);
         responseDTO.setAssignment(entity.getAssignment().getTitle());
+        responseDTO.setSubjectName(entity.getAssignment().getForSubject().getSubjectCode());
 
         return responseDTO;
     }

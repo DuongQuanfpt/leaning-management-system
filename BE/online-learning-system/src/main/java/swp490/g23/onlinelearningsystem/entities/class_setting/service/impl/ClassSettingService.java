@@ -82,7 +82,7 @@ public class ClassSettingService implements IClassSettingService {
             if (classSetting.getType() != null) {
                 boolean canAdd = true;
                 for (ClassSettingFilterValue filterValue : typeFilter) {
-                    
+
                     if (filterValue.getValue().equals(classSetting.getType().getSettingValue())) {
                         canAdd = false;
                         break;
@@ -100,12 +100,12 @@ public class ClassSettingService implements IClassSettingService {
         if (limit != 0) {
             queryResult.setFirstResult((page - 1) * limit);
             queryResult.setMaxResults(limit);
-            totalPage =  (int) Math.ceil((double) toltalItem / limit);
+            totalPage = (int) Math.ceil((double) toltalItem / limit);
         } else {
             totalPage = 1;
         }
 
-        for (ClassSetting classSetting :  queryResult.getResultList()) {
+        for (ClassSetting classSetting : queryResult.getResultList()) {
             resultList.add(toDTO(classSetting));
         }
 
@@ -199,8 +199,8 @@ public class ClassSettingService implements IClassSettingService {
 
     @Override
     public ResponseEntity<ClassSettingFilter> getClassSettingFilter() {
-        ClassSettingFilter filter = new ClassSettingFilter();  
-        List<Classes> classes = classRepositories.findAll();
+        ClassSettingFilter filter = new ClassSettingFilter();
+        List<Classes> classes = classRepositories.findClassesActive();
         List<Setting> types = settingRepositories.classSettingList();
 
         List<StatusEntity> statusFilter = new ArrayList<>();
@@ -209,7 +209,7 @@ public class ClassSettingService implements IClassSettingService {
         }
 
         List<String> issueStatus = new ArrayList<>();
-        for (IssueStatus status  : new ArrayList<IssueStatus>(EnumSet.allOf(IssueStatus.class))) {
+        for (IssueStatus status : new ArrayList<IssueStatus>(EnumSet.allOf(IssueStatus.class))) {
             issueStatus.add(status.toString());
         }
 
@@ -241,10 +241,10 @@ public class ClassSettingService implements IClassSettingService {
     public ResponseEntity<String> activateClassSetting(Long id) {
         ClassSetting classSetting = classSettingRepository.findById(id)
                 .orElseThrow(() -> new CustomException("Subject setting doesnt exist"));
-        if(classSetting.getStatus() == Status.Active){
-            classSetting.setStatus(Status.Inactive);      
+        if (classSetting.getStatus() == Status.Active) {
+            classSetting.setStatus(Status.Inactive);
         } else {
-            classSetting.setStatus(Status.Active);      
+            classSetting.setStatus(Status.Active);
         }
 
         classSettingRepository.save(classSetting);
@@ -280,7 +280,5 @@ public class ClassSettingService implements IClassSettingService {
 
         return responseDTO;
     }
-
-    
 
 }

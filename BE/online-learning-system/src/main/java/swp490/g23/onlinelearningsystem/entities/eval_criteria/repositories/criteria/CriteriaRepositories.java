@@ -15,7 +15,7 @@ public class CriteriaRepositories {
 
     private final EntityManager em;
 
-    public CriteriaQuery searchFilterCriteria(String keyword, String filterStatus) {
+    public CriteriaQuery searchFilterCriteria(String keyword, String filterStatus, String filterAssignment) {
         StringBuilder query = new StringBuilder(
                 "SELECT e FROM EvalCriteria e WHERE e.assignment.forSubject.subjectStatus = '1' ");
 
@@ -27,9 +27,9 @@ public class CriteriaRepositories {
             query.append(" AND e.status = '" + filterStatus + "'");
         }
 
-        // if (filterSubject != null) {
-        // query.append(" AND a.forSubject.subjectCode = '" + filterSubject + "'");
-        // }
+        if (filterAssignment != null) {
+            query.append(" AND e.assignment.title = '" + filterAssignment + "'");
+        }
 
         // if (filterExpert != null) {
         // query.append(" AND s.expert.accountName = '" + filterExpert + "'");

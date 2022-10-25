@@ -17,4 +17,7 @@ public interface ClassRepositories extends JpaRepository<Classes, Long> {
     @Query(value = "SELECT c FROM Classes c WHERE c.userSupporter.accountName = :userName OR c.userTrainer.accountName = :userName")
     List<Classes> getClassByUser(String userName);
 
+    @Query(value = "SELECT c FROM Classes c WHERE c.status = '1'")
+    List<Classes> findClassesActive();
+
 }

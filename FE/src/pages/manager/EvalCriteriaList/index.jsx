@@ -24,12 +24,12 @@ const EvalCriteriaList = () => {
 
   const [search, setSearch] = useState('')
   const [listFilter, setListFilter] = useState({
-    subjectFilter: [],
+    assignmentFilter: [],
     statusFilter: [],
   })
 
   const [filter, setFilter] = useState({
-    subject: 'Select Subject',
+    assignment: 'Select Assignment',
     status: {
       name: 'Select Status',
       value: '',
@@ -39,13 +39,14 @@ const EvalCriteriaList = () => {
   useEffect(() => {
     evalCriteriaApi
       .getPage({
-        item: ITEM_PER_PAGE,
+        limit: ITEM_PER_PAGE,
         page: 1,
       })
       .then((response) => {
+        console.log(response)
         setListFilter((prev) => ({
           ...prev,
-          subjectFilter: response.subjectFilter,
+          assignmentFilter: response.assignmentFilter,
           statusFilter: response.statusFilter,
         }))
       })
@@ -61,14 +62,14 @@ const EvalCriteriaList = () => {
 
   const loadData = async (page, filter, q = '') => {
     const params = {
-      item: ITEM_PER_PAGE,
+      limit: ITEM_PER_PAGE,
       page: page,
     }
     if (q !== '') {
       params.q = q.trim()
     }
-    if (filter.subject !== 'Select Subject') {
-      params.filterSubject = filter.subject
+    if (filter.assignment !== 'Select Assignment') {
+      params.filterAssignment = filter.assignment
     }
     if (filter.status.name !== 'Select Status') {
       params.filterStatus = filter.status.value
@@ -87,12 +88,11 @@ const EvalCriteriaList = () => {
   }
 
   const handleSearch = () => {
-    console.log('1')
     loadData(1, filter, search)
   }
 
-  const handleFilterSubject = (subject) => {
-    setFilter((prev) => ({ ...prev, subject: subject }))
+  const handleFilterAssignment = (assignment) => {
+    setFilter((prev) => ({ ...prev, assignment: assignment }))
   }
 
   const handleFilterStatus = (status) => {
@@ -102,7 +102,7 @@ const EvalCriteriaList = () => {
   const handleReload = () => {
     setSearch('')
     setFilter({
-      subject: 'Select Subject',
+      assignment: 'Select Assignment',
       status: {
         name: 'Select Status',
         value: '',
@@ -111,7 +111,7 @@ const EvalCriteriaList = () => {
   }
 
   const handleAdd = () => {
-    navigateTo('/assignment-add')
+    navigateTo('/criteria-add')
   }
 
   const handleChangePage = (pageNumber) => {
@@ -132,15 +132,15 @@ const EvalCriteriaList = () => {
 
   const modalConfirm = (subject) => {
     Modal.confirm({
-      title: `Are you want to ${subject.status === 'Active' ? 'deactivate' : 'reactivate'} "${subject.title}" - "${
-        subject.assBody
+      title: `Are you want to ${subject.status === 'Active' ? 'deactivate' : 'reactivate'} "${subject.assignment}" - "${
+        subject.criteriaName
       }" ?`,
       icon: <ExclamationCircleOutlined />,
       okText: 'OK',
       cancelText: 'Cancel',
       okType: 'danger',
       onOk() {
-        handleActive(subject.assId)
+        handleActive(subject.criteriaId)
       },
       onCancel() {},
     })
@@ -148,21 +148,21 @@ const EvalCriteriaList = () => {
 
   const columns = [
     {
-      title: 'Subject',
-      dataIndex: 'subjectName',
-      sorter: (a, b) => a.subjectName.length - b.subjectName.length,
-      width: '10%',
-    },
-    {
-      title: 'Title',
-      dataIndex: 'title',
-      sorter: (a, b) => a.title.length - b.title.length,
+      title: 'Assignment',
+      dataIndex: 'assignment',
+      sorter: (a, b) => a.assignment.length - b.assignment.length,
       width: '15%',
     },
     {
-      title: 'Body',
-      dataIndex: 'assBody',
-      sorter: (a, b) => a.assBody.length - b.assBody.length,
+      title: 'Name',
+      dataIndex: 'criteriaName',
+      sorter: (a, b) => a.criteriaName.length - b.criteriaName.length,
+      width: '20%',
+    },
+    {
+      title: 'Expected Work',
+      dataIndex: 'expectedWork',
+      sorter: (a, b) => a.expectedWork.length - b.expectedWork.length,
       width: '25%',
     },
     {
@@ -177,24 +177,17 @@ const EvalCriteriaList = () => {
       ),
     },
     {
-      title: 'Weight',
-      dataIndex: 'eval_weight',
-      sorter: (a, b) => a.eval_weight.length - b.eval_weight.length,
+      title: 'Eval Weight',
+      dataIndex: 'evalWeight',
+      sorter: (a, b) => a.evalWeight.length - b.evalWeight.length,
       width: '10%',
     },
     {
-      title: 'Is Teamwork',
-      dataIndex: 'isTeamWork',
-      sorter: (a, b) => a.isTeamWork - b.isTeamWork,
+      title: 'Is Teameval',
+      dataIndex: 'isTeamEval',
+      sorter: (a, b) => a.isTeamEval - b.isTeamEval,
       width: '10%',
-      render: (_, { isTeamWork }) => (isTeamWork === 1 ? 'Yes' : 'No'),
-    },
-    {
-      title: 'Is Ongoing',
-      dataIndex: 'isOnGoing',
-      sorter: (a, b) => a.isOnGoing - b.isOnGoing,
-      width: '10%',
-      render: (_, { isOnGoing }) => (isOnGoing === 1 ? 'Yes' : 'No'),
+      render: (_, { isTeamEval }) => (isTeamEval === 1 ? 'Yes' : 'No'),
     },
     {
       title: 'Actions',
@@ -217,7 +210,7 @@ const EvalCriteriaList = () => {
               shape="circle"
               icon={<EyeOutlined />}
               onClick={() => {
-                navigateTo(`/assignment-detail/${subject?.assId}`)
+                navigateTo(`/criteria-detail/${subject?.criteriaId}`)
               }}
             ></Button>
           </Tooltip>
@@ -259,12 +252,12 @@ const EvalCriteriaList = () => {
                   </div>
                   <div className="col-6 d-flex justify-content-end">
                     <CDropdown className="ml-4">
-                      <CDropdownToggle color="secondary">{filter.subject}</CDropdownToggle>
+                      <CDropdownToggle color="secondary">{filter.assignment}</CDropdownToggle>
                       <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
-                        {listFilter?.subjectFilter?.map((subject) => (
-                          <CDropdownItem onClick={() => handleFilterSubject(subject)}>{subject}</CDropdownItem>
+                        {listFilter?.assignmentFilter?.map((assignment) => (
+                          <CDropdownItem onClick={() => handleFilterAssignment(assignment)}>{assignment}</CDropdownItem>
                         ))}
-                        {filter?.subjectFilter?.length === 0 && (
+                        {listFilter?.assignmentFilter?.length === 0 && (
                           <CDropdownItem disabled>No Subject Available</CDropdownItem>
                         )}
                       </CDropdownMenu>
@@ -282,7 +275,7 @@ const EvalCriteriaList = () => {
                         <CIcon icon={cilSync} />
                       </CButton>
                     </Tooltip>
-                    <Tooltip title="Add New Assignment" placement="right">
+                    <Tooltip title="Add New Eval Criteria" placement="right">
                       <CButton color="danger" type="submit" className="text-light ml-4" onClick={handleAdd}>
                         <CIcon icon={cilPlus} />
                       </CButton>

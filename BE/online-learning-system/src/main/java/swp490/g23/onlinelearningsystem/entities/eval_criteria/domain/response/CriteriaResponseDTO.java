@@ -26,4 +26,6 @@ public class CriteriaResponseDTO {
     private Status status;
 
     private String assignment;
+
+    private String subjectName;
 }

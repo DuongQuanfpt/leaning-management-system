@@ -19,4 +19,5 @@ public class CriteriaPaginateResponseDTO {
     private long totalItem;
     private List<CriteriaResponseDTO> listResult = new ArrayList<>();
     private List<StatusEntity> statusFilter;
+    private List<String> assignmentFilter;
 }
