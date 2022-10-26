@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
-import { Badge, Breadcrumb, Button, Menu, Space, Table, Tag, Typography, Dropdown, Avatar } from 'antd'
+import { Badge, Breadcrumb, Button, Space, Table, Tag, Typography, Avatar } from 'antd'
 import { CrownTwoTone, MoreOutlined } from '@ant-design/icons'
 
 import { CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
@@ -44,6 +44,7 @@ const GroupList = () => {
   })
 
   const [group, setGroup] = useState([])
+  // eslint-disable-next-line no-unused-vars
   const [waitingList, setWaitingList] = useState([])
   const [isHaveGroup, setIsHaveGroup] = useState(false)
 
@@ -123,46 +124,65 @@ const GroupList = () => {
         dataIndex: 'student',
         key: 'student',
         width: '42%',
-        render: (_, trainee) =>
-          trainee.empty ? (
-            <Space>
-              <Typography>No trainee here</Typography>
-            </Space>
-          ) : (
-            <Space>
-              <Avatar src={trainee?.memberInfo?.profileUrl} />
-              <Space className="flex-column pl-3" style={{ width: '250px' }}>
-                <p
-                  className="p-0 m-0 d-flex align-items-center "
-                  style={{ fontSize: '14px', lineHeight: '18px', fontWeight: '500' }}
-                >
-                  {trainee?.memberInfo?.fullName} {trainee.isLeader && <CrownTwoTone className="ml-2" />}
-                </p>
-                <p className="p-0 m-0" style={{ fontSize: '10px', lineHeight: '18px', fontWeight: '500' }}>
-                  {trainee?.memberInfo?.username}
-                </p>
+        render: (_, trainee) => {
+          return {
+            props: {
+              style: { padding: 0, margin: 0 },
+            },
+            children: trainee.empty ? (
+              <Space>
+                <Typography>No trainee here</Typography>
               </Space>
-            </Space>
-          ),
+            ) : (
+              <Space>
+                <Avatar src={trainee?.memberInfo?.profileUrl} />
+                <Space className="flex-column pl-3" style={{ width: '250px' }}>
+                  <p
+                    className="p-0 m-0 d-flex align-items-center "
+                    style={{ fontSize: '14px', lineHeight: '18px', fontWeight: '500' }}
+                  >
+                    {trainee?.memberInfo?.fullName} {trainee.isLeader && <CrownTwoTone className="ml-2" />}
+                  </p>
+                  <p className="p-0 m-0" style={{ fontSize: '10px', lineHeight: '18px', fontWeight: '500' }}>
+                    {trainee?.memberInfo?.username}
+                  </p>
+                </Space>
+              </Space>
+            ),
+          }
+        },
       },
       {
         title: 'Email',
         dataIndex: 'email',
         key: 'email',
         width: '30%',
-        render: (_, trainee) => trainee?.memberInfo?.email,
+        render: (_, trainee) => {
+          return {
+            props: {
+              style: { padding: 0, margin: 0 },
+            },
+            children: trainee?.memberInfo?.email,
+          }
+        },
       },
       {
         title: 'Status',
         dataIndex: 'status',
         key: 'status',
         width: '13%',
-        render: (_, trainee) =>
-          trainee.isActive && (
-            <Tag color={trainee?.isActive ? 'green' : 'red'} key={trainee?.isActive}>
-              {trainee?.isActive ? 'Active' : 'Inactive'}
-            </Tag>
-          ),
+        render: (_, trainee) => {
+          return {
+            props: {
+              style: { padding: 0, margin: 0 },
+            },
+            children: trainee.isActive && (
+              <Tag color={trainee?.isActive ? 'green' : 'red'} key={trainee?.isActive}>
+                {trainee?.isActive ? 'Active' : 'Inactive'}
+              </Tag>
+            ),
+          }
+        },
       },
       {
         title: 'Action',
@@ -209,12 +229,18 @@ const GroupList = () => {
       dataIndex: 'status',
       key: 'status',
       width: '13%',
-      render: (_, { status }) =>
-        status && (
-          <Tag color={status === 'Active' ? 'blue' : status === 'Inactive' ? 'red' : 'grey'} key={status}>
-            {status}
-          </Tag>
-        ),
+      render: (_, { status }) => {
+        return {
+          props: {
+            style: { padding: 0, margin: 0 },
+          },
+          children: status && (
+            <Tag color={status === 'Active' ? 'blue' : 'red'} key={status}>
+              {status}
+            </Tag>
+          ),
+        }
+      },
     },
     {
       title: 'Actions',
@@ -320,6 +346,7 @@ const GroupList = () => {
                     expandedRowRender={(record) => expandedRowRender(record)}
                     expandRowByClick={true}
                     dataSource={group}
+                    pagination={false}
                   />
                 </div>
               )}

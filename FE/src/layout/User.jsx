@@ -107,7 +107,7 @@ const User = () => {
             })}
           </Route>
 
-          <Route element={<RequireAuth allowedRoles={['supporter', 'trainer']} />}>
+          <Route element={<RequireAuth allowedRoles={['supporter', 'trainer', 'trainee']} />}>
             {groupListRoutes.map((route, index) => {
               const Page = route.component
               return <Route key={index} path={route.path} element={<Page />} />
