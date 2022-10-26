@@ -7,9 +7,14 @@ const header = {
 }
 
 const groupApi = {
-  getFilter: () => {
-    const url = `/api/group-filter`
+  getGroup: () => {
+    const url = `/api/group`
     return axiosClient.get(url, header)
+  },
+
+  getFilter: (params) => {
+    const url = `/api/group-filter`
+    return axiosClient.get(url, { ...header, params })
   },
 
   getDetail: (id) => {

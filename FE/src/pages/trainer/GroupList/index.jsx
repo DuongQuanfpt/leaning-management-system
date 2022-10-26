@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
-import { Badge, Breadcrumb, Button, Menu, Space, Table, Tag, Typography, Dropdown } from 'antd'
-import { EllipsisOutlined, DownOutlined } from '@ant-design/icons'
+import { Badge, Breadcrumb, Button, Menu, Space, Table, Tag, Typography, Dropdown, Avatar } from 'antd'
+import { CrownTwoTone } from '@ant-design/icons'
 
 import { CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
 
@@ -43,7 +43,8 @@ const GroupList = () => {
     },
   })
 
-  const [group, setGroup] = useState({})
+  const [group, setGroup] = useState([])
+  const [waitingList, setWaitingList] = useState([])
 
   useEffect(() => {
     loadData()
@@ -51,7 +52,7 @@ const GroupList = () => {
 
   const loadData = async () => {
     groupApi
-      .getFilter()
+      .getGroup()
       .then((response) => {
         setListFilter((prev) => ({
           ...prev,
@@ -62,18 +63,35 @@ const GroupList = () => {
   }
 
   const handleFilterMilestone = async (milestone) => {
-    const groupId = milestone.groupId
-
     setFilter((prev) => ({
       ...prev,
       milstone: milestone,
     }))
-
+    const params = {
+      filterMilestone: milestone.milestoneId,
+    }
     await groupApi
-      .getDetail(groupId)
+      .getGroup(params)
       .then((response) => {
-        console.log(response)
-        setGroup(response.listResult)
+        const group = response.listResult.map((item, index) => ({ ...item, key: index }))
+        setWaitingList(response.noGroup)
+        return group
+      })
+      .then((group) => {
+        const waitingGroup = {
+          classCode: '',
+          description: '',
+
+          groupCode: 'Waiting List',
+          topicName: 'These trainee would work personally',
+
+          groupId: '',
+          groupMembers: [{ key: '', empty: true }],
+          key: '',
+          milestone: [],
+          status: '',
+        }
+        setGroup([waitingGroup, ...group])
       })
       .catch((error) => {
         console.log(error)
@@ -87,83 +105,114 @@ const GroupList = () => {
     }))
   }
 
-  const menu = (
-    <Menu
-      items={[
-        { key: '1', label: 'Action 1' },
-        { key: '2', label: 'Action 2' },
-      ]}
-    />
-  )
+  const expandedRowRender = (group) => {
+    const listMember = group?.groupMembers.map((item, index) => ({ ...item, key: index + 1 }))
 
-  const expandedRowRender = () => {
     const columns = [
-      { title: 'Date', dataIndex: 'date', key: 'date' },
-      { title: 'Name', dataIndex: 'name', key: 'name' },
+      {
+        title: '#',
+        dataIndex: 'key',
+        key: 'key',
+        width: '8%',
+        render: (_, trainee) => (trainee.empty ? '' : trainee.key),
+      },
+      {
+        title: 'Student',
+        dataIndex: 'student',
+        key: 'student',
+        width: '42%',
+        render: (_, trainee) =>
+          trainee.empty ? (
+            <Space>
+              <Typography>No trainee here</Typography>
+            </Space>
+          ) : (
+            <Space>
+              <Avatar src={trainee?.memberInfo?.profileUrl} />
+              <Space className="flex-column pl-3" style={{ width: '250px' }}>
+                <p
+                  className="p-0 m-0 d-flex align-items-center "
+                  style={{ fontSize: '14px', lineHeight: '18px', fontWeight: '500' }}
+                >
+                  {trainee?.memberInfo?.fullName} {trainee.isLeader && <CrownTwoTone className="ml-2" />}
+                </p>
+                <p className="p-0 m-0" style={{ fontSize: '10px', lineHeight: '18px', fontWeight: '500' }}>
+                  {trainee?.memberInfo?.username}
+                </p>
+              </Space>
+            </Space>
+          ),
+      },
+      {
+        title: 'Email',
+        dataIndex: 'email',
+        key: 'email',
+        width: '30%',
+        render: (_, trainee) => trainee?.memberInfo?.email,
+      },
       {
         title: 'Status',
-        key: 'state',
-        render: () => (
-          <span>
-            <Badge status="success" />
-            Finished
-          </span>
-        ),
+        dataIndex: 'status',
+        key: 'status',
+        width: '10%',
+        render: (_, trainee) =>
+          trainee.isActive && (
+            <Tag color={trainee?.isActive ? 'green' : 'red'} key={trainee?.isActive}>
+              {trainee?.isActive ? 'Active' : 'Inactive'}
+            </Tag>
+          ),
       },
-      { title: 'Upgrade Status', dataIndex: 'upgradeNum', key: 'upgradeNum' },
-      {
-        title: 'Action',
-        dataIndex: 'operation',
-        key: 'operation',
-        render: () => (
-          <Space size="large">
-            {/* <Button.Link>Pause</Button.Link>
-            <Button.Link>Stop</Button.Link>
-            <Dropdown overlay={menu}>
-              <Button.Link>
-                More <DownOutlined />
-              </Button.Link>
-            </Dropdown> */}
-            <Button>a</Button>
-          </Space>
-        ),
-      },
+      { title: 'Action', key: Math.random(), width: '10%' },
     ]
 
-    const data = []
-    for (let i = 0; i < 3; ++i) {
-      data.push({
-        key: i.toString(),
-        date: '2014-12-24 23:12:00',
-        name: 'This is production name',
-        upgradeNum: 'Upgraded: 56',
-      })
-    }
-    return <Table showHeader={false} columns={columns} dataSource={data} pagination={false} />
+    return <Table showHeader={false} columns={columns} dataSource={listMember} pagination={false} />
   }
 
-  const columns = [
-    { title: 'Name', dataIndex: 'name', key: 'name' },
-    { title: 'Platform', dataIndex: 'platform', key: 'platform' },
-    { title: 'Version', dataIndex: 'version', key: 'version' },
-    { title: 'Upgraded', dataIndex: 'upgradeNum', key: 'upgradeNum' },
-    { title: 'Creator', dataIndex: 'creator', key: 'creator' },
-    { title: 'Date', dataIndex: 'createdAt', key: 'createdAt' },
-    { title: 'Action', key: 'operation', render: () => <a>Publish</a> },
+  const columnsGroup = [
+    { title: '#', dataIndex: 'groupId', key: 'groupId', width: '1%', render: () => '' },
+    {
+      title: 'topicName',
+      dataIndex: 'topicName',
+      key: 'topicName',
+      width: '79%',
+      render: (_, group) => (
+        <>
+          <Typography className="d-flex flex-row">
+            <Typography.Text className="mr-3" style={{ fontWeight: '500' }}>
+              {group.groupCode}
+            </Typography.Text>
+            <Typography.Text>{`    (${group.topicName}) `}</Typography.Text>
+          </Typography>
+        </>
+      ),
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      width: '10%',
+      render: (_, { status }) =>
+        status && (
+          <Tag color={status === 'Active' ? 'blue' : status === 'Inactive' ? 'red' : 'grey'} key={status}>
+            {status}
+          </Tag>
+        ),
+    },
+    {
+      title: 'Actions',
+      dataIndex: 'actions',
+      key: 'actions',
+      width: '10%',
+    },
   ]
 
-  const data = []
-  for (let i = 0; i < 3; ++i) {
-    data.push({
-      key: i.toString(),
-      name: 'Screem',
-      platform: 'iOS',
-      version: '10.3.4.5654',
-      upgradeNum: 500,
-      creator: 'Jack',
-      createdAt: '2014-12-24 23:12:00',
-    })
-  }
+  const columnsTrainee = [
+    { title: '#', dataIndex: 'key', key: 'key', width: '10%' },
+    { title: 'Student', dataIndex: 'student', key: 'student', width: '40%' },
+    { title: 'Email', dataIndex: 'email', key: 'email', width: '30%' },
+    { title: 'Status', dataIndex: 'status', key: 'status', width: '10%' },
+    { title: 'Action', key: Math.random(), width: '10%' },
+  ]
 
   return (
     <div>
@@ -223,20 +272,18 @@ const GroupList = () => {
                 </Typography.Link>
               </div>
               <div className="col-lg-12 m-b30">
-                {/* <Table
-                  bordered
-                  rowClassName={(record, index) => {
-                    return typeof record.key === 'number' ? 'bg-row-antd-table' : ''
-                  }}
-                  columns={columns}
-                  dataSource={data}
-                /> */}
-
                 <Table
-                  columns={columns}
-                  expandable={{ expandedRowRender, defaultExpandedRowKeys: ['0'] }}
+                  columns={columnsTrainee}
+                  dataSource={group}
+                  pagination={false}
+                  rowClassName={(record, index) => 'd-none'}
+                />
+                <Table
+                  columns={columnsGroup}
+                  showHeader={false}
+                  expandedRowRender={(record) => expandedRowRender(record)}
                   expandRowByClick={true}
-                  dataSource={data}
+                  dataSource={group}
                 />
               </div>
             </div>
