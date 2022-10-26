@@ -19,6 +19,8 @@ public class TraineeResponseDTO {
 
     private String username;
 
+    private String profileUrl;
+
     private String email;
 
     private String mobile;

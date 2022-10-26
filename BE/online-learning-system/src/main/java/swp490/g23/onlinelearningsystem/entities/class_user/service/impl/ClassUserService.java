@@ -307,6 +307,10 @@ public class ClassUserService implements IClassUserService {
             LocalDate date = entity.getDropoutDate();
             responseDTO.setDropDate(date);
         }
+
+        if (entity.getUser().getAvatar_url() != null) {
+            responseDTO.setProfileUrl(entity.getUser().getAvatar_url());
+        }
         responseDTO.setStatus(entity.getStatus());
         responseDTO.setClasses(entity.getClasses().getCode());
 

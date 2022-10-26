@@ -29,4 +29,8 @@ public class CriteriaResponseDTO {
     private AssignmentResponseDTO assignment;
 
     private String subjectName;
+
+    private String milestone;
+
+    private String classCode;
 }

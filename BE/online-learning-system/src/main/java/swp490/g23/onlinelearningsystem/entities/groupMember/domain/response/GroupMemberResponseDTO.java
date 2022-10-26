@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import swp490.g23.onlinelearningsystem.entities.class_user.domain.response.TraineeResponseDTO;
 
 @Getter
 @Setter
@@ -13,7 +14,7 @@ public class GroupMemberResponseDTO {
 
     private String groupCode;
 
-    private String member;
+    private TraineeResponseDTO memberInfo;
 
     private Boolean isLeader;
 
