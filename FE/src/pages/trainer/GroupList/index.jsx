@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 import { Badge, Breadcrumb, Button, Menu, Space, Table, Tag, Typography, Dropdown, Avatar } from 'antd'
-import { CrownTwoTone } from '@ant-design/icons'
+import { CrownTwoTone, MoreOutlined } from '@ant-design/icons'
 
 import { CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
 
@@ -45,6 +45,7 @@ const GroupList = () => {
 
   const [group, setGroup] = useState([])
   const [waitingList, setWaitingList] = useState([])
+  const [isHaveGroup, setIsHaveGroup] = useState(false)
 
   useEffect(() => {
     loadData()
@@ -73,6 +74,7 @@ const GroupList = () => {
     await groupApi
       .getGroup(params)
       .then((response) => {
+        setIsHaveGroup(response.listResult.length === 0 ? false : true)
         const group = response.listResult.map((item, index) => ({ ...item, key: index }))
         setWaitingList(response.noGroup)
         return group
@@ -154,7 +156,7 @@ const GroupList = () => {
         title: 'Status',
         dataIndex: 'status',
         key: 'status',
-        width: '10%',
+        width: '13%',
         render: (_, trainee) =>
           trainee.isActive && (
             <Tag color={trainee?.isActive ? 'green' : 'red'} key={trainee?.isActive}>
@@ -162,7 +164,23 @@ const GroupList = () => {
             </Tag>
           ),
       },
-      { title: 'Action', key: Math.random(), width: '10%' },
+      {
+        title: 'Action',
+        key: Math.random(),
+        width: '7%',
+
+        render: (_, trainee) =>
+          !trainee.empty && (
+            <Button
+              shape="circle"
+              icon={<MoreOutlined />}
+              onClick={(e) => {
+                console.log(trainee)
+                e.stopPropagation()
+              }}
+            ></Button>
+          ),
+      },
     ]
 
     return <Table showHeader={false} columns={columns} dataSource={listMember} pagination={false} />
@@ -190,7 +208,7 @@ const GroupList = () => {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
-      width: '10%',
+      width: '13%',
       render: (_, { status }) =>
         status && (
           <Tag color={status === 'Active' ? 'blue' : status === 'Inactive' ? 'red' : 'grey'} key={status}>
@@ -202,7 +220,18 @@ const GroupList = () => {
       title: 'Actions',
       dataIndex: 'actions',
       key: 'actions',
-      width: '10%',
+      width: '7%',
+      render: (_, group) =>
+        group.status && (
+          <Button
+            shape="circle"
+            icon={<MoreOutlined />}
+            onClick={(e) => {
+              console.log(group)
+              e.stopPropagation()
+            }}
+          ></Button>
+        ),
     },
   ]
 
@@ -210,8 +239,8 @@ const GroupList = () => {
     { title: '#', dataIndex: 'key', key: 'key', width: '10%' },
     { title: 'Student', dataIndex: 'student', key: 'student', width: '40%' },
     { title: 'Email', dataIndex: 'email', key: 'email', width: '30%' },
-    { title: 'Status', dataIndex: 'status', key: 'status', width: '10%' },
-    { title: 'Action', key: Math.random(), width: '10%' },
+    { title: 'Status', dataIndex: 'status', key: 'status', width: '13%' },
+    { title: 'Action', key: Math.random(), width: '7%' },
   ]
 
   return (
@@ -252,40 +281,48 @@ const GroupList = () => {
                   </CDropdownMenu>
                 </CDropdown>
               </div>
-              <div className="col-lg-12 m-b30">
-                <Typography.Text className="mr-4" type="warning" strong>
-                  Trainee have not been grouped
-                </Typography.Text>
-                <Typography.Link strong underline>
-                  <Link to="/new-group">Create Groups</Link>
-                </Typography.Link>
-              </div>
-              <div className="col-lg-12 m-b30">
-                <Typography.Text className="mr-4" type="warning" strong>
-                  This milestone has groups already
-                </Typography.Text>
-                <Typography.Link strong underline className="mr-4">
-                  <Link to="/">Reset Groups</Link>
-                </Typography.Link>
-                <Typography.Link strong underline>
-                  <Link to="/">Remove Groups</Link>
-                </Typography.Link>
-              </div>
-              <div className="col-lg-12 m-b30">
-                <Table
-                  columns={columnsTrainee}
-                  dataSource={group}
-                  pagination={false}
-                  rowClassName={(record, index) => 'd-none'}
-                />
-                <Table
-                  columns={columnsGroup}
-                  showHeader={false}
-                  expandedRowRender={(record) => expandedRowRender(record)}
-                  expandRowByClick={true}
-                  dataSource={group}
-                />
-              </div>
+              {filter.milstone.title !== 'Select Milestone' &&
+                (!isHaveGroup ? (
+                  <div className="col-lg-12">
+                    <Typography.Text className="mr-4" type="warning" strong>
+                      Trainee have not been grouped
+                    </Typography.Text>
+                    <Typography.Link strong underline>
+                      <Link to="/new-group">Create Groups</Link>
+                    </Typography.Link>
+                  </div>
+                ) : (
+                  <div className="col-lg-12">
+                    <Typography.Text className="mr-4" type="warning" strong>
+                      This milestone has groups already
+                    </Typography.Text>
+                    <Typography.Link strong underline className="mr-4">
+                      <Link to="/">Reset Groups</Link>
+                    </Typography.Link>
+                    <Typography.Link strong underline>
+                      <Link to="/">Remove Groups</Link>
+                    </Typography.Link>
+                  </div>
+                ))}
+              {filter.milstone.title !== 'Select Milestone' && (
+                <div className="col-lg-12 m-b30">
+                  <Table
+                    className="m-0 p-0"
+                    style={{ transform: `translate(0px, 20px)` }}
+                    columns={columnsTrainee}
+                    dataSource={group}
+                    pagination={false}
+                    rowClassName={(record, index) => 'd-none'}
+                  />
+                  <Table
+                    columns={columnsGroup}
+                    showHeader={false}
+                    expandedRowRender={(record) => expandedRowRender(record)}
+                    expandRowByClick={true}
+                    dataSource={group}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
