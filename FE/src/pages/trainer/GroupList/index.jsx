@@ -1,163 +1,169 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
-import { Breadcrumb, Button, Table, Typography } from 'antd'
-import { EllipsisOutlined } from '@ant-design/icons'
+import { Badge, Breadcrumb, Button, Menu, Space, Table, Tag, Typography, Dropdown } from 'antd'
+import { EllipsisOutlined, DownOutlined } from '@ant-design/icons'
 
-import { CDropdown, CDropdownMenu, CDropdownToggle } from '@coreui/react'
+import { CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
+
+import groupApi from '~/api/groupApi'
 
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 
 const GroupList = () => {
-  const columns = [
-    {
-      title: '#',
-      dataIndex: 'index',
-      key: 'index',
-      width: '7%',
-    },
-    {
-      title: 'Student',
-      dataIndex: 'student',
-      key: 'student',
-      width: '48%',
-    },
-    {
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email',
-      width: '25%',
-    },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-      width: '5%',
+  const [listFilter, setListFilter] = useState({
+    milstoneFilter: [],
+    statusFilter: [
+      {
+        name: 'All Member Statuses',
+        value: null,
+      },
+      {
+        name: 'Active',
+        value: 1,
+      },
+      {
+        name: 'Inactive',
+        value: 0,
+      },
+    ],
+  })
+
+  const [filter, setFilter] = useState({
+    milstone: {
+      milestoneId: '',
+      title: 'Select Milestone',
     },
 
-    {
-      title: 'Action',
-      dataIndex: 'action',
-      key: 'action',
-      width: '5%',
+    status: {
+      name: 'All Member Statuses',
+      value: null,
     },
+  })
+
+  const [group, setGroup] = useState({})
+
+  useEffect(() => {
+    loadData()
+  }, [])
+
+  const loadData = async () => {
+    groupApi
+      .getFilter()
+      .then((response) => {
+        setListFilter((prev) => ({
+          ...prev,
+          milstoneFilter: response.milstoneFilter,
+        }))
+      })
+      .catch((error) => console.log(error))
+  }
+
+  const handleFilterMilestone = async (milestone) => {
+    const groupId = milestone.groupId
+
+    setFilter((prev) => ({
+      ...prev,
+      milstone: milestone,
+    }))
+
+    await groupApi
+      .getDetail(groupId)
+      .then((response) => {
+        console.log(response)
+        setGroup(response.listResult)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+
+  const handleFilterStatus = (status) => {
+    setFilter((prev) => ({
+      ...prev,
+      status: status,
+    }))
+  }
+
+  const menu = (
+    <Menu
+      items={[
+        { key: '1', label: 'Action 1' },
+        { key: '2', label: 'Action 2' },
+      ]}
+    />
+  )
+
+  const expandedRowRender = () => {
+    const columns = [
+      { title: 'Date', dataIndex: 'date', key: 'date' },
+      { title: 'Name', dataIndex: 'name', key: 'name' },
+      {
+        title: 'Status',
+        key: 'state',
+        render: () => (
+          <span>
+            <Badge status="success" />
+            Finished
+          </span>
+        ),
+      },
+      { title: 'Upgrade Status', dataIndex: 'upgradeNum', key: 'upgradeNum' },
+      {
+        title: 'Action',
+        dataIndex: 'operation',
+        key: 'operation',
+        render: () => (
+          <Space size="large">
+            {/* <Button.Link>Pause</Button.Link>
+            <Button.Link>Stop</Button.Link>
+            <Dropdown overlay={menu}>
+              <Button.Link>
+                More <DownOutlined />
+              </Button.Link>
+            </Dropdown> */}
+            <Button>a</Button>
+          </Space>
+        ),
+      },
+    ]
+
+    const data = []
+    for (let i = 0; i < 3; ++i) {
+      data.push({
+        key: i.toString(),
+        date: '2014-12-24 23:12:00',
+        name: 'This is production name',
+        upgradeNum: 'Upgraded: 56',
+      })
+    }
+    return <Table showHeader={false} columns={columns} dataSource={data} pagination={false} />
+  }
+
+  const columns = [
+    { title: 'Name', dataIndex: 'name', key: 'name' },
+    { title: 'Platform', dataIndex: 'platform', key: 'platform' },
+    { title: 'Version', dataIndex: 'version', key: 'version' },
+    { title: 'Upgraded', dataIndex: 'upgradeNum', key: 'upgradeNum' },
+    { title: 'Creator', dataIndex: 'creator', key: 'creator' },
+    { title: 'Date', dataIndex: 'createdAt', key: 'createdAt' },
+    { title: 'Action', key: 'operation', render: () => <a>Publish</a> },
   ]
-  const data = [
-    {
-      key: 0,
-      student: 'Waiting List',
-      color: '#ddd',
-      children: [
-        {
-          student: 'No traiee available',
-        },
-      ],
-      action: (
-        <Button
-          shape="circle"
-          icon={<EllipsisOutlined />}
-          onClick={() => {
-            console.log('OK')
-          }}
-        ></Button>
-      ),
-    },
-    {
-      key: 1,
-      student: 'G1 (Group1)',
-      children: [
-        {
-          index: 11,
-          student: 'John Brown',
-          status: 'Active',
-          email: 'New York No. 2 Lake Park',
-          action: (
-            <Button
-              shape="circle"
-              icon={<EllipsisOutlined />}
-              onClick={() => {
-                console.log('OK')
-              }}
-            ></Button>
-          ),
-        },
-        {
-          index: 12,
-          student: 'John Brown jr.',
-          status: 'Active',
-          email: 'New York No. 3 Lake Park',
-          action: (
-            <Button
-              shape="circle"
-              icon={<EllipsisOutlined />}
-              onClick={() => {
-                console.log('OK')
-              }}
-            ></Button>
-          ),
-        },
-        {
-          index: 13,
-          student: 'Jim Green sr.',
-          status: 'Active',
-          email: 'London No. 1 Lake Park',
-          action: (
-            <Button
-              shape="circle"
-              icon={<EllipsisOutlined />}
-              onClick={() => {
-                console.log('OK')
-              }}
-            ></Button>
-          ),
-        },
-      ],
-      action: (
-        <Button
-          shape="circle"
-          icon={<EllipsisOutlined />}
-          onClick={() => {
-            console.log('OK')
-          }}
-        ></Button>
-      ),
-    },
-    {
-      key: 2,
-      student: 'G2 (Group2)',
-      children: [
-        {
-          index: 11,
-          student: 'John Brown',
-          status: 'Active',
-          email: 'New York No. 2 Lake Park',
-        },
-        {
-          index: 12,
-          student: 'John Brown jr.',
-          status: 'Active',
-          email: 'New York No. 3 Lake Park',
-        },
-        {
-          index: 13,
-          student: 'Jim Green sr.',
-          status: 'Active',
-          email: 'London No. 1 Lake Park',
-        },
-      ],
-      action: (
-        <Button
-          shape="circle"
-          icon={<EllipsisOutlined />}
-          onClick={() => {
-            console.log('OK')
-          }}
-        ></Button>
-      ),
-    },
-  ]
+
+  const data = []
+  for (let i = 0; i < 3; ++i) {
+    data.push({
+      key: i.toString(),
+      name: 'Screem',
+      platform: 'iOS',
+      version: '10.3.4.5654',
+      upgradeNum: 500,
+      creator: 'Jack',
+      createdAt: '2014-12-24 23:12:00',
+    })
+  }
 
   return (
     <div>
@@ -181,12 +187,20 @@ const GroupList = () => {
               </div>
               <div className="col-lg-12 m-b30">
                 <CDropdown className=" mr-4">
-                  <CDropdownToggle color="secondary">{'Assignment'}</CDropdownToggle>
-                  <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}></CDropdownMenu>
+                  <CDropdownToggle color="secondary">{filter.milstone.title}</CDropdownToggle>
+                  <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
+                    {listFilter.milstoneFilter.map((milestone) => (
+                      <CDropdownItem onClick={() => handleFilterMilestone(milestone)}>{milestone.title}</CDropdownItem>
+                    ))}
+                  </CDropdownMenu>
                 </CDropdown>
                 <CDropdown className=" mr-4">
-                  <CDropdownToggle color="secondary">{'Status'}</CDropdownToggle>
-                  <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}></CDropdownMenu>
+                  <CDropdownToggle color="secondary">{filter.status.name}</CDropdownToggle>
+                  <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
+                    {listFilter.statusFilter.map((status) => (
+                      <CDropdownItem onClick={() => handleFilterStatus(status)}>{status.name}</CDropdownItem>
+                    ))}
+                  </CDropdownMenu>
                 </CDropdown>
               </div>
               <div className="col-lg-12 m-b30">
@@ -209,7 +223,21 @@ const GroupList = () => {
                 </Typography.Link>
               </div>
               <div className="col-lg-12 m-b30">
-                <Table columns={columns} dataSource={data} rowClassName={(record) => record?.color?.replace('#', '')} />
+                {/* <Table
+                  bordered
+                  rowClassName={(record, index) => {
+                    return typeof record.key === 'number' ? 'bg-row-antd-table' : ''
+                  }}
+                  columns={columns}
+                  dataSource={data}
+                /> */}
+
+                <Table
+                  columns={columns}
+                  expandable={{ expandedRowRender, defaultExpandedRowKeys: ['0'] }}
+                  expandRowByClick={true}
+                  dataSource={data}
+                />
               </div>
             </div>
           </div>
