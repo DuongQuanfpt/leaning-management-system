@@ -57,7 +57,7 @@ public class Milestone extends BaseEntity {
 
     @Column
     private MilestoneStatusEnum status;
-    
+
     @OneToMany(mappedBy = "milestone")
     private List<Submit> submits;
 
