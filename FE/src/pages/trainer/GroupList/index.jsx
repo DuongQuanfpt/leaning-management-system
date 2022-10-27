@@ -1,27 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
-import {
-  Breadcrumb,
-  Button,
-  Space,
-  Table,
-  Tag,
-  Typography,
-  Avatar,
-  Dropdown,
-  Menu,
-  message,
-  Modal,
-  Radio,
-  Select,
-} from 'antd'
+import { Breadcrumb, Button, Space, Table, Tag, Typography, Avatar, Dropdown, Menu, message, Modal, Select } from 'antd'
 import { CrownTwoTone, ExclamationCircleOutlined, MoreOutlined } from '@ant-design/icons'
 
 import { CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
 
 import groupApi from '~/api/groupApi'
 
+import LocalizedModal from './LocalizedModal'
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
@@ -140,7 +127,7 @@ const GroupList = () => {
     Modal.confirm({
       title: message,
       icon: <ExclamationCircleOutlined />,
-      okText: 'OK',
+      okText: 'Confirm',
       cancelText: 'Cancel',
       okType: 'danger',
       onOk() {
@@ -150,29 +137,7 @@ const GroupList = () => {
     })
   }
 
-  const modalChangeGroup = (trainee) => {
-    Modal.confirm({
-      title: `Change Group`,
-      okText: 'Confirm',
-      cancelText: 'Cancel',
-      okType: 'danger',
-      onOk() {
-        console.log(choice)
-      },
-      onCancel() {},
-      width: '600px',
-      content: (
-        <>
-          <Typography>{`Choose to change group of <${trainee.memberInfo.fullName}> (${trainee.memberInfo.username})`}</Typography>
-          <Radio.Group className="w-100 mt-3 mb-3" value={choice} onChange={(e) => setChoice(e.target.value)}>
-            <Radio value={1}>Move to an existing group</Radio>
-            <Radio value={2}>Move to a newly created group</Radio>
-          </Radio.Group>
-          {choice === 1 ? <p>a</p> : <p>b</p>}
-        </>
-      ),
-    })
-  }
+  const modalChangeGroup = (trainee) => {}
 
   const modalAddStudentFromWaitingList = (group) => {
     let userName = ''
@@ -184,18 +149,14 @@ const GroupList = () => {
       okType: 'danger',
       onOk() {
         const handleAddStudentFromWaitingList = async () => {
-          console.log(userName)
-          console.log(group.groupId)
-          console.log(filter.milstone.milestoneId)
           await groupApi
             .addFromWaitingList(userName, group.groupId, filter.milstone.milestoneId)
-            .then((response) => {
+            .then(() => {
               toastMessage('success', 'Add Student Successfully!')
               loadGroup({ filterMilestone: filter.milstone.milestoneId })
             })
             .catch((error) => {
               console.log(error)
-              loadGroup({ filterMilestone: filter.milstone.milestoneId })
               toastMessage('error', 'Something went wrong, please try again')
             })
         }
@@ -226,6 +187,31 @@ const GroupList = () => {
     })
   }
 
+  // const modalDetachGroup = (group) => {
+  //   Modal.confirm({
+  //     title: `Detach Group`,
+  //     okText: 'Confirm',
+  //     cancelText: 'Cancel',
+  //     okType: 'danger',
+  //     onOk() {
+  //       groupApi
+  //         .detachGroup(group.groupId, filter.milstone.milestoneId)
+  //         .then(() => {
+  //           toastMessage('success', 'Detach Group Successfully!')
+  //           loadGroup({ filterMilestone: filter.milstone.milestoneId })
+  //         })
+  //         .catch((error) => {
+  //           console.log(error)
+  //           toastMessage('error', 'Something went wrong, please try again')
+  //         })
+  //     },
+  //     onCancel() {},
+  //     content: (
+  //       <Typography className="mt-1 mb-3">{`All student of this group will be moved to Waiting List. Are you sure want to detach group <${group.groupCode}> ? `}</Typography>
+  //     ),
+  //   })
+  // }
+
   const menuStudent = (trainee) => (
     <Menu
       items={[
@@ -237,7 +223,7 @@ const GroupList = () => {
             const handleChangeLeader = async () => {
               await groupApi
                 .setLeader(trainee.memberInfo.username, trainee.groupId)
-                .then((response) => {
+                .then(() => {
                   toastMessage('success', 'Change Leader Successfully!')
                   loadGroup({ filterMilestone: filter.milstone.milestoneId })
                 })
@@ -270,7 +256,7 @@ const GroupList = () => {
             const handleRemove = async () => {
               await groupApi
                 .remove(trainee.memberInfo.username, trainee.groupId, filter.milstone.milestoneId)
-                .then((response) => {
+                .then(() => {
                   toastMessage('success', 'Remove Student Successfully!')
                   loadGroup({ filterMilestone: filter.milstone.milestoneId })
                 })

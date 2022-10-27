@@ -34,6 +34,11 @@ const groupApi = {
 
   addFromWaitingList: (userName, groupId, milestoneId) => {
     const url = `/api/group-member-add/${userName}/${groupId}/${milestoneId}`
+    return axiosClient.post(url, {}, header)
+  },
+
+  detachGroup: (groupId, milestoneId) => {
+    const url = `/api/group-detach/${groupId}/${milestoneId}`
     return axiosClient.put(url, {}, header)
   },
 }
