@@ -57,7 +57,7 @@ const NewMilestone = lazy(() => import('~/pages/trainer/NewMilestone'))
 
 const GroupList = lazy(() => import('~/pages/trainer/GroupList'))
 const NewGroup = lazy(() => import('~/pages/trainer/NewGroup'))
-const GroupDetail = lazy(() => import('~/pages/trainer/NewGroup'))
+const GroupDetail = lazy(() => import('~/pages/trainer/GroupDetail'))
 
 //404 pages
 const PageNotFound = lazy(() => import('~/pages/common/PageNotFound'))
