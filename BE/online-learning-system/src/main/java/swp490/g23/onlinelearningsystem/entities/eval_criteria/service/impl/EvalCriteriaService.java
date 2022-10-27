@@ -234,7 +234,7 @@ public class EvalCriteriaService implements IEvalCriteriaService {
 
     @Override
     public ResponseEntity<CriteriaPaginateResponseDTO> getClassCriteria(int limit, int page, String keyword,
-            String statusFilter, String classFilter, String milestoneFilter, Long userId) {
+            String statusFilter, String milestoneFilter, String classFilter, Long userId) {
         User user = userRepository.findById(userId).get();
         CriteriaQuery result = classCriteriaRepositories.searchFilterClassCriteria(keyword, statusFilter,
                 milestoneFilter, classFilter, user);

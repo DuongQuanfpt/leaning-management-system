@@ -52,11 +52,11 @@ public class ClassCriteriaRepositories {
         }
 
         if (filterMilestone != null) {
-            query.append(" AND e.miletone.title = '" + filterMilestone + "'");
+            query.append(" AND e.miletone.title = '" + filterMilestone + "' AND e.milestone IS NOT NULL");
         }
 
         if (filterClass != null) {
-            query.append(" AND e.milestone.classes.code = '" + filterClass + "'");
+            query.append(" AND e.milestone.classes.code = '" + filterClass + "' AND e.milestone IS NOT NULL");
         }
         StringBuilder queryCount = new StringBuilder(query.toString().replaceAll("SELECT e", "SELECT COUNT(*)"));
         TypedQuery<Long> countQuery = em.createQuery(queryCount.toString(), Long.class);
