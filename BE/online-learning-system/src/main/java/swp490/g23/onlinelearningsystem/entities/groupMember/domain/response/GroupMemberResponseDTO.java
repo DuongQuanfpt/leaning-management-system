@@ -12,6 +12,8 @@ import swp490.g23.onlinelearningsystem.entities.class_user.domain.response.Train
 @AllArgsConstructor
 public class GroupMemberResponseDTO {
 
+    private Long groupId;
+
     private String groupCode;
 
     private TraineeResponseDTO memberInfo;

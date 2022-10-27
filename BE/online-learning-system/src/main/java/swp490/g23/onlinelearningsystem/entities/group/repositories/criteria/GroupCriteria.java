@@ -45,6 +45,7 @@ public class GroupCriteria {
         // if (filterStatus != null) {
         // query.append(" AND cs.status = '" + filterStatus + "'");
         // }
+        
         if (filterMilestone != null) {
             query.append(" AND s.milestone.milestoneId = '" + filterMilestone + "'");
         }

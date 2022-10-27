@@ -18,7 +18,6 @@ import swp490.g23.onlinelearningsystem.entities.assignment.service.impl.Assignme
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.ClassUser;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.classes.repositories.ClassRepositories;
-import swp490.g23.onlinelearningsystem.entities.group.domain.Group;
 import swp490.g23.onlinelearningsystem.entities.group.repositories.GroupRepository;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.filter.MilestoneFilter;
@@ -60,9 +59,6 @@ public class MilestoneService implements IMilestoneService {
 
     @Autowired
     private SubmitRepository submitRepository;
-
-    @Autowired
-    private GroupRepository groupRepository;
 
     @Override
     public ResponseEntity<MilestonePaginateDTO> displayMilestone(String keyword, int limit, int page,
@@ -261,7 +257,7 @@ public class MilestoneService implements IMilestoneService {
         responseDTO.setMilestoneId(entity.getMilestoneId());
         Assignment assignment = entity.getAssignment();
         responseDTO.setAssignment(assignmentService.toDTO(assignment));
-        Group groups = groupRepository.findGroupByMilestone(entity.getMilestoneId());
+        // Group groups = groupRepository.findGroupByMilestone(entity.getMilestoneId());
 
         if (entity.getClasses() != null) {
             responseDTO.setClassesCode(entity.getClasses().getCode());
@@ -284,11 +280,20 @@ public class MilestoneService implements IMilestoneService {
             responseDTO.setTitle(entity.getTitle());
         }
 
-        if (groups != null) {
-            responseDTO.setGroupId(groups.getGroupId());
-        }
+        // if (groups != null) {
+        //     responseDTO.setGroupId(groups.getGroupId());
+        // }
 
         return responseDTO;
+    }
+
+    public boolean isMilestoneOpen(Milestone milestone) {
+
+        if (milestone.getStatus() == MilestoneStatusEnum.Closed
+                || milestone.getStatus() == MilestoneStatusEnum.In_Progress) {
+            return false;
+        }
+        return true;
     }
 
 }

@@ -78,8 +78,18 @@ public class GroupService implements IGroupService {
         List<MilestoneResponseDTO> milestoneFilter = new ArrayList<>();
         for (Group group : groupsFilter) {
             for (Submit submit : group.getSubmits()) {
+                boolean isAdd = true;
+                for (MilestoneResponseDTO dto : milestoneFilter) {
 
-                milestoneFilter.add(milestoneService.toDTO(submit.getMilestone()));
+                    if (dto.getMilestoneId() == submit.getMilestone().getMilestoneId()) {
+                        isAdd = false;
+                        break;
+                    }
+                }
+
+                if (isAdd == true) {
+                    milestoneFilter.add(milestoneService.toDTO(submit.getMilestone()));
+                }
             }
 
         }
@@ -99,9 +109,10 @@ public class GroupService implements IGroupService {
             totalPage = 1;
         }
 
+        Long milestoneId = (filterMilestone == null) ? null : Long.parseLong(filterMilestone);
         List<GroupResponseDTO> responseDTOs = new ArrayList<>();
         for (Group group : queryResult.getResultList()) {
-            responseDTOs.add(toDTO(group));
+            responseDTOs.add(toDTO(group, milestoneId));
         }
 
         List<TraineeResponseDTO> noGroupMembers = new ArrayList<>();
@@ -128,13 +139,33 @@ public class GroupService implements IGroupService {
     public ResponseEntity<GroupResponseDTO> groupDetail(Long id) {
         Group group = groupRepository.findById(id).orElseThrow(() -> new CustomException("Group doesnt exist"));
 
-        return ResponseEntity.ok(toDTO(group));
+        return ResponseEntity.ok(toDTO(group, null));
     }
 
     @Override
-    public ResponseEntity<String> editGroup(Long id, GroupRequestDTO dto) {
+    public ResponseEntity<String> groupDetachAll(Long milestoneId) {
+        Milestone milestone = milestoneRepository.findById(milestoneId)
+                .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
+
+        if (!milestoneService.isMilestoneOpen(milestone)) {
+            throw new CustomException(
+                    "Milestone of this group is in progress or have been closed , edit is not possible");
+        }
+
+        List<Group> groups = groupRepository.findGroupByMilestone(milestoneId);
+
+        for (Group group : groups) {
+            List<Submit> submits = group.getSubmits();
+            List<GroupMember> groupMembers =group.getGroupMembers();
+        }
+
+        return ResponseEntity.ok("Group");
+    }
+
+    @Override
+    public ResponseEntity<String> editGroup(Long id, Long milestoneId, GroupRequestDTO dto) {
         Group group = groupRepository.findById(id).orElseThrow(() -> new CustomException("Group doesnt exist"));
-        Milestone milestone = milestoneRepository.findById(dto.getMilestoneId())
+        Milestone milestone = milestoneRepository.findById(milestoneId)
                 .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
         if (milestone.getStatus() == MilestoneStatusEnum.Closed
                 || milestone.getStatus() == MilestoneStatusEnum.In_Progress) {
@@ -182,7 +213,65 @@ public class GroupService implements IGroupService {
         return ResponseEntity.ok(filter);
     }
 
-    public GroupResponseDTO toDTO(Group entity) {
+    @Override
+    public ResponseEntity<String> groupCreate(Long milestoneId, GroupRequestDTO dto) {
+        Milestone milestone = milestoneRepository.findById(milestoneId)
+                .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
+
+        if (!milestoneService.isMilestoneOpen(milestone)) {
+            throw new CustomException(
+                    "Milestone of this group is in progress or have been closed , edit is not possible");
+        }
+        Group group = new Group();
+        if (dto.getGroupCode() != null) {
+            group.setGroupCode(dto.getGroupCode());
+        }
+
+        if (dto.getTopicName() != null) {
+            group.setTopicName(dto.getTopicName());
+        }
+
+        if (dto.getDescription() != null) {
+            group.setDescription(dto.getGroupCode());
+        }
+
+        group.setStatus(Status.Active);
+        group.setClasses(milestone.getClasses());
+
+        groupRepository.save(group);
+
+        Submit submit = new Submit();
+        submit.setGroup(group);
+        submit.setMilestone(milestone);
+
+        submitRepository.save(submit);
+        return ResponseEntity.ok("Group created");
+    }
+
+    @Override
+    public ResponseEntity<String> groupDetach(Long groupid, Long milestoneId) {
+        Group group = groupRepository.findById(groupid).orElseThrow(() -> new CustomException("Group doesnt exist"));
+
+        Milestone milestone = milestoneRepository.findById(milestoneId)
+                .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
+        if (!milestoneService.isMilestoneOpen(milestone)) {
+            throw new CustomException(
+                    "Milestone of this group is in progress or have been closed , edit is not possible");
+        }
+
+        List<Submit> submits = new ArrayList<>();
+        for (Submit submit : group.getSubmits()) {
+            if (submit.getClassUser() != null && submit.getMilestone().getMilestoneId() == milestoneId) {
+                submit.setGroup(null);
+            }
+            submits.add(submit);
+        }
+
+        submitRepository.saveAll(submits);
+        return ResponseEntity.ok("Group " + group.getGroupCode() + " remove from current milestone");
+    }
+
+    public GroupResponseDTO toDTO(Group entity, Long milestoneId) {
         GroupResponseDTO dto = new GroupResponseDTO();
 
         dto.setGroupId(entity.getGroupId());
@@ -225,21 +314,46 @@ public class GroupService implements IGroupService {
         }
 
         List<GroupMemberResponseDTO> memberResponseDTOs = new ArrayList<>();
+        if (milestoneId != null) {
+            if (!entity.getSubmits().isEmpty()) {
 
-        if (!entity.getGroupMembers().isEmpty()) {
-            GroupMemberResponseDTO groupResponseDTO = new GroupMemberResponseDTO();
-            for (GroupMember groupMember : entity.getGroupMembers()) {
-                groupResponseDTO = memberService.toDTO(groupMember);
-                for (ClassUser user : groupMember.getMember().getClassUsers()) {
-                    if (user.getClasses().getClassId() == entity.getClasses().getClassId()) {
-                        groupResponseDTO.setMemberInfo(classUserService.toTraineeDTO(user));
-                        break;
+                for (Submit submit : entity.getSubmits()) {
+
+                    if (submit.getClassUser() != null && submit.getMilestone().getMilestoneId() == milestoneId) {
+                        GroupMemberResponseDTO groupResponseDTO = new GroupMemberResponseDTO();
+                        for (GroupMember member : entity.getGroupMembers()) {
+                            if (member.getMember().getAccountName()
+                                    .equals(submit.getClassUser().getUser().getAccountName())) {
+                                groupResponseDTO = memberService.toDTO(member);
+                            }
+
+                        }
+
+                        groupResponseDTO.setMemberInfo(classUserService.toTraineeDTO(submit.getClassUser()));
+                        memberResponseDTOs.add(groupResponseDTO);
                     }
+
                 }
-                memberResponseDTOs.add(groupResponseDTO);
+
+                dto.setGroupMembers(memberResponseDTOs);
+            }
+        } else {
+            if (!entity.getGroupMembers().isEmpty()) {
+                GroupMemberResponseDTO groupResponseDTO = new GroupMemberResponseDTO();
+                for (GroupMember groupMember : entity.getGroupMembers()) {
+                    groupResponseDTO = memberService.toDTO(groupMember);
+                    for (ClassUser user : groupMember.getMember().getClassUsers()) {
+                        if (user.getClasses().getClassId() == entity.getClasses().getClassId()) {
+                            groupResponseDTO.setMemberInfo(classUserService.toTraineeDTO(user));
+                            break;
+                        }
+                    }
+                    memberResponseDTOs.add(groupResponseDTO);
+                }
+
+                dto.setGroupMembers(memberResponseDTOs);
             }
 
-            dto.setGroupMembers(memberResponseDTOs);
         }
 
         return dto;
