@@ -193,8 +193,8 @@ public class EvalCriteriaService implements IEvalCriteriaService {
         } else {
             evalCriteria.setTeamEval(false);
         }
-        if (dto.getAssignment() != null) {
-            Assignment assignment = assignmentRepository.findByTitle(dto.getAssignment());
+        if (dto.getAssignmentId() != null) {
+            Assignment assignment = assignmentRepository.findById(dto.getAssignmentId()).get();
             evalCriteria.setAssignment(assignment);
         }
         evalCriteriaRepositories.save(evalCriteria);
@@ -364,12 +364,12 @@ public class EvalCriteriaService implements IEvalCriteriaService {
         } else {
             evalCriteria.setTeamEval(false);
         }
-        if (dto.getAssignment() != null) {
-            Assignment assignment = assignmentRepository.findByTitle(dto.getAssignment());
+        if (dto.getAssignmentId() != null) {
+            Assignment assignment = assignmentRepository.findById(dto.getAssignmentId()).get();
             evalCriteria.setAssignment(assignment);
         }
-        if (dto.getMilestone() != null) {
-            Milestone milestone = milestoneRepository.findByTitle(dto.getMilestone());
+        if (dto.getMilestoneId() != null) {
+            Milestone milestone = milestoneRepository.findById(dto.getMilestoneId()).get();
             evalCriteria.setMilestone(milestone);
         }
         evalCriteriaRepositories.save(evalCriteria);
