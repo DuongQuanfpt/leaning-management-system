@@ -57,6 +57,18 @@ public class MilestoneController {
         return milestoneService.milestonEdit(dto,id);
     }
 
+    @PutMapping(value = "/milestone-inprogess/{id}")
+    public ResponseEntity<String> milestoneToInprogress(@PathVariable Long id) {
+
+        return milestoneService.milestoneInProgess(id);
+    }
+
+    @PutMapping(value = "/milestone-closed/{id}")
+    public ResponseEntity<String> milestoneClosed(@PathVariable Long id) {
+
+        return milestoneService.milestoneClosed(id);
+    }
+
     @PostMapping(value = "/milestone-add")
     public ResponseEntity<String> milestoneAdd(@RequestBody MilestoneRequestDTO dto) {
 

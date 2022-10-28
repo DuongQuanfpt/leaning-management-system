@@ -18,5 +18,7 @@ public interface IGroupService {
     ResponseEntity<String> groupCreate(Long milestoneId,GroupRequestDTO dto);
     ResponseEntity<String> groupDetach(Long id , Long milestoneId);
     ResponseEntity<String> groupRemoveAll(Long milestoneId);
+    ResponseEntity<String> groupStatus(Long groupId);
+    
     
 }

@@ -10,6 +10,10 @@ import swp490.g23.onlinelearningsystem.entities.group.domain.Group;
 public interface GroupRepository extends JpaRepository<Group, Long> {
     Group findByGroupCode(String groupCode);
 
+    List<Group> findBySubmitsIsNull();
+
     @Query(value = "SELECT g FROM Group g JOIN g.submits as s WHERE s.milestone.milestoneId = :id AND s.classUser IS NULL")
     List<Group> findGroupByMilestone(Long id);
+
+    
 }

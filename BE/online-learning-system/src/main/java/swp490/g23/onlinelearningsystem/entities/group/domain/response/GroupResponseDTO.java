@@ -25,8 +25,10 @@ public class GroupResponseDTO {
     private String description;
 
     private String status;
+    
+    private List<GroupMemberResponseDTO> groupMembers; 
 
     private List<MilestoneResponseDTO> milestone;
 
-    private List<GroupMemberResponseDTO> groupMembers; 
+    
 }

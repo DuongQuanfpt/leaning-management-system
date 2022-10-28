@@ -175,12 +175,12 @@ public class GroupService implements IGroupService {
             submitRepository.saveAll(submitNew);
         }
 
-        for (Group group : groups) {
-            if (group.getSubmits().isEmpty()) {
+      List<Group> deleteGroups = groupRepository.findBySubmitsIsNull();
+        for (Group group : deleteGroups) {
+           
                 List<GroupMember> groupMembers = group.getGroupMembers();
                 memberRepositories.deleteAll(groupMembers);
                 groupRepository.delete(group);
-            }
 
         }
 
@@ -265,11 +265,26 @@ public class GroupService implements IGroupService {
 
         groupRepository.save(group);
 
-        Submit submit = new Submit();
-        submit.setGroup(group);
-        submit.setMilestone(milestone);
+        List<Group> groups = groupRepository.findGroupByMilestone(milestoneId);
+        if (groups.isEmpty()) {
+            Submit submit = new Submit();
+            submit.setGroup(group);
+            submit.setMilestone(milestone);
 
-        submitRepository.save(submit);
+            submitRepository.save(submit);
+        } else {
+            List<Milestone> affectedMilestones = milestoneRepository
+                    .milestoneOfGroup(groups.get(0).getGroupId());
+
+            for (Milestone tempM : affectedMilestones) {
+                Submit submit = new Submit();
+                submit.setGroup(group);
+                submit.setMilestone(tempM);
+
+                submitRepository.save(submit);
+            }
+        }
+
         return ResponseEntity.ok("Group created");
     }
 
@@ -294,6 +309,18 @@ public class GroupService implements IGroupService {
 
         submitRepository.saveAll(submits);
         return ResponseEntity.ok("Group " + group.getGroupCode() + " remove from current milestone");
+    }
+
+    @Override
+    public ResponseEntity<String> groupStatus(Long groupId) {
+        Group group = groupRepository.findById(groupId).orElseThrow(() -> new CustomException("Group doesnt exist"));
+        if (group.getStatus() == Status.Active) {
+            group.setStatus(Status.Inactive);
+        } else {
+            group.setStatus(Status.Active);
+        }
+        groupRepository.save(group);
+        return ResponseEntity.ok("Group status changed");
     }
 
     public GroupResponseDTO toDTO(Group entity, Long milestoneId) {
