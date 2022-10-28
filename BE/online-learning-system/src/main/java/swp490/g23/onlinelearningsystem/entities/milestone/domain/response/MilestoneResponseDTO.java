@@ -7,8 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.assignment.domain.response.AssignmentResponseDTO;
-import swp490.g23.onlinelearningsystem.entities.group.domain.response.GroupResponseDTO;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -32,5 +30,7 @@ public class MilestoneResponseDTO {
 
     private String status;
 
-    private Long groupId;
+    private List<MilestoneGroupDTO> groups;
+
+    private List<MilestoneMemberDTO>noGroup;
 }

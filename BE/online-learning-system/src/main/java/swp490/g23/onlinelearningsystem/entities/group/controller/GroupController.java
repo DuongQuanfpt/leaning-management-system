@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,10 +27,10 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 @CrossOrigin
 public class GroupController {
 
-    @Autowired
-    private GroupService groupService; 
+	@Autowired
+	private GroupService groupService;
 
-    @GetMapping(value = "/group")
+	@GetMapping(value = "/group")
 	public ResponseEntity<GroupPaginateDTO> getGroupList(
 			@RequestParam(name = "page", required = false) String currentPage,
 			@RequestParam(name = "limit", required = false) String requestLimit,
@@ -54,9 +56,39 @@ public class GroupController {
 		return groupService.groupFilter();
 	}
 
-	@PutMapping(value = "/group-detail/{id}")
-	public ResponseEntity<String> editGroup(@RequestBody GroupRequestDTO dto,@PathVariable("id") Long id) {
+	@PutMapping(value = "/group-status/{groupId}")
+	public ResponseEntity<String> groupStatus(@PathVariable("groupId") Long groupId) {
 
-		return groupService.editGroup(id, dto);
+		return groupService.groupStatus(groupId);
 	}
+
+	@PutMapping(value = "/group-detail/{id}/{milestoneId}")
+	public ResponseEntity<String> editGroup(@RequestBody GroupRequestDTO dto,
+			@PathVariable("id") Long id,
+			@PathVariable("milestoneId") Long milestoneId) {
+
+		return groupService.editGroup(id, milestoneId, dto);
+	}
+
+	@PutMapping(value = "/group-detach/{id}/{milestoneId}")
+	public ResponseEntity<String> detachGroup(@PathVariable("id") Long id,
+			@PathVariable("milestoneId") Long milestoneId) {
+
+		return groupService.groupDetach(id, milestoneId);
+	}
+
+	@DeleteMapping(value = "/group-removes/{milestoneId}")
+	public ResponseEntity<String> removesAllGroup(@PathVariable("milestoneId") Long milestoneId) {
+
+		return groupService.groupRemoveAll(milestoneId);
+	}
+
+	@PostMapping(value = "/group-add/{milestoneId}")
+	public ResponseEntity<String> addGroup(@RequestBody GroupRequestDTO dto,
+			@PathVariable("milestoneId") Long milestoneId) {
+
+		return groupService.groupCreate(milestoneId,dto);
+	}
+
+	
 }

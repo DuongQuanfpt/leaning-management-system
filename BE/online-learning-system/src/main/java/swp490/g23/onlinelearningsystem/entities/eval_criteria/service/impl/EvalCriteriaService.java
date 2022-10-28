@@ -193,8 +193,8 @@ public class EvalCriteriaService implements IEvalCriteriaService {
         } else {
             evalCriteria.setTeamEval(false);
         }
-        if (dto.getAssignment() != null) {
-            Assignment assignment = assignmentRepository.findByTitle(dto.getAssignment());
+        if (dto.getAssignmentId() != null) {
+            Assignment assignment = assignmentRepository.findById(dto.getAssignmentId()).get();
             evalCriteria.setAssignment(assignment);
         }
         evalCriteriaRepositories.save(evalCriteria);
@@ -234,7 +234,7 @@ public class EvalCriteriaService implements IEvalCriteriaService {
 
     @Override
     public ResponseEntity<CriteriaPaginateResponseDTO> getClassCriteria(int limit, int page, String keyword,
-            String statusFilter, String classFilter, String milestoneFilter, Long userId) {
+            String statusFilter, String milestoneFilter, String classFilter, Long userId) {
         User user = userRepository.findById(userId).get();
         CriteriaQuery result = classCriteriaRepositories.searchFilterClassCriteria(keyword, statusFilter,
                 milestoneFilter, classFilter, user);
@@ -364,12 +364,12 @@ public class EvalCriteriaService implements IEvalCriteriaService {
         } else {
             evalCriteria.setTeamEval(false);
         }
-        if (dto.getAssignment() != null) {
-            Assignment assignment = assignmentRepository.findByTitle(dto.getAssignment());
+        if (dto.getAssignmentId() != null) {
+            Assignment assignment = assignmentRepository.findById(dto.getAssignmentId()).get();
             evalCriteria.setAssignment(assignment);
         }
-        if (dto.getMilestone() != null) {
-            Milestone milestone = milestoneRepository.findByTitle(dto.getMilestone());
+        if (dto.getMilestoneId() != null) {
+            Milestone milestone = milestoneRepository.findById(dto.getMilestoneId()).get();
             evalCriteria.setMilestone(milestone);
         }
         evalCriteriaRepositories.save(evalCriteria);
@@ -400,6 +400,7 @@ public class EvalCriteriaService implements IEvalCriteriaService {
         }
         if (entity.getMilestone() != null) {
             responseDTO.setMilestone(entity.getMilestone().getTitle());
+            responseDTO.setMilestoneId(entity.getMilestone().getMilestoneId());
             responseDTO.setClassCode(entity.getMilestone().getClasses().getCode());
         }
         responseDTO.setStatus(entity.getStatus());
