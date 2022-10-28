@@ -13,6 +13,10 @@ public interface IGroupService {
             String filterMilestone, User user);
 
     ResponseEntity<GroupResponseDTO> groupDetail(Long id);
-    ResponseEntity<String> editGroup(Long id, GroupRequestDTO dto);
+    ResponseEntity<String> editGroup(Long id, Long milestoneId ,GroupRequestDTO dto);
     ResponseEntity<GroupFilter> groupFilter();
+    ResponseEntity<String> groupCreate(Long milestoneId,GroupRequestDTO dto);
+    ResponseEntity<String> groupDetach(Long id , Long milestoneId);
+    ResponseEntity<String> groupRemoveAll(Long milestoneId);
+    
 }

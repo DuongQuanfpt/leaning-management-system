@@ -20,8 +20,6 @@ import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.classes.repositories.ClassRepositories;
 import swp490.g23.onlinelearningsystem.entities.eval_criteria.domain.EvalCriteria;
 import swp490.g23.onlinelearningsystem.entities.eval_criteria.repositories.EvalCriteriaRepositories;
-import swp490.g23.onlinelearningsystem.entities.group.domain.Group;
-import swp490.g23.onlinelearningsystem.entities.group.repositories.GroupRepository;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.filter.MilestoneFilter;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.request.MilestoneRequestDTO;
@@ -62,9 +60,6 @@ public class MilestoneService implements IMilestoneService {
 
     @Autowired
     private SubmitRepository submitRepository;
-
-    @Autowired
-    private GroupRepository groupRepository;
 
     @Autowired
     private EvalCriteriaRepositories evalCriteriaRepositories;
@@ -179,7 +174,6 @@ public class MilestoneService implements IMilestoneService {
     @Override
     public ResponseEntity<String> milestonAdd(MilestoneRequestDTO dto) {
         Milestone milestone = new Milestone();
-
         if (dto.getAssignmentId() != null) {
             milestone.setAssignment(assignmentRepository.findById(dto.getAssignmentId())
                     .orElseThrow(() -> new CustomException("Assignment doesnt exist")));
@@ -272,7 +266,7 @@ public class MilestoneService implements IMilestoneService {
         responseDTO.setMilestoneId(entity.getMilestoneId());
         Assignment assignment = entity.getAssignment();
         responseDTO.setAssignment(assignmentService.toDTO(assignment));
-        Group groups = groupRepository.findGroupByMilestone(entity.getMilestoneId());
+        // Group groups = groupRepository.findGroupByMilestone(entity.getMilestoneId());
 
         if (entity.getClasses() != null) {
             responseDTO.setClassesCode(entity.getClasses().getCode());
@@ -295,11 +289,20 @@ public class MilestoneService implements IMilestoneService {
             responseDTO.setTitle(entity.getTitle());
         }
 
-        if (groups != null) {
-            responseDTO.setGroupId(groups.getGroupId());
-        }
+        // if (groups != null) {
+        //     responseDTO.setGroupId(groups.getGroupId());
+        // }
 
         return responseDTO;
+    }
+
+    public boolean isMilestoneOpen(Milestone milestone) {
+
+        if (milestone.getStatus() == MilestoneStatusEnum.Closed
+                || milestone.getStatus() == MilestoneStatusEnum.In_Progress) {
+            return false;
+        }
+        return true;
     }
 
 }

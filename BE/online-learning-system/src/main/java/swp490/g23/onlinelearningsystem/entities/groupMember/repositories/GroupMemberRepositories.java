@@ -15,4 +15,7 @@ public interface GroupMemberRepositories extends JpaRepository<GroupMember,Long>
 
     @Query(value = "SELECT gm FROM GroupMember gm WHERE gm.member.accountName = :userName AND gm.group.groupCode = :groupCode ")
     GroupMember getMember(String userName, String groupCode);
+
+    @Query(value = "SELECT gm FROM GroupMember gm WHERE gm.member.accountName = :userName AND gm.group.groupId = :groupId ")
+    GroupMember getMemberByGroup(String userName, Long groupId);
 }
