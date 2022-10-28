@@ -18,7 +18,8 @@ import swp490.g23.onlinelearningsystem.entities.assignment.service.impl.Assignme
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.ClassUser;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.classes.repositories.ClassRepositories;
-import swp490.g23.onlinelearningsystem.entities.group.repositories.GroupRepository;
+import swp490.g23.onlinelearningsystem.entities.eval_criteria.domain.EvalCriteria;
+import swp490.g23.onlinelearningsystem.entities.eval_criteria.repositories.EvalCriteriaRepositories;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.filter.MilestoneFilter;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.request.MilestoneRequestDTO;
@@ -59,6 +60,9 @@ public class MilestoneService implements IMilestoneService {
 
     @Autowired
     private SubmitRepository submitRepository;
+
+    @Autowired
+    private EvalCriteriaRepositories evalCriteriaRepositories;
 
     @Override
     public ResponseEntity<MilestonePaginateDTO> displayMilestone(String keyword, int limit, int page,
@@ -173,6 +177,12 @@ public class MilestoneService implements IMilestoneService {
         if (dto.getAssignmentId() != null) {
             milestone.setAssignment(assignmentRepository.findById(dto.getAssignmentId())
                     .orElseThrow(() -> new CustomException("Assignment doesnt exist")));
+            List<EvalCriteria> evalCriterias = milestone.getAssignment().getEvalCriteriaList();
+
+            for (EvalCriteria evalCriteria : evalCriterias) {
+                evalCriteria.setMilestone(milestone);
+                evalCriteriaRepositories.save(evalCriteria);
+            }
         } else {
             throw new CustomException("Must assign a assignment to milestone");
         }
