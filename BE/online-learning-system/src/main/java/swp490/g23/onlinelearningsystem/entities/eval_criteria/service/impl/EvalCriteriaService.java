@@ -400,6 +400,7 @@ public class EvalCriteriaService implements IEvalCriteriaService {
         }
         if (entity.getMilestone() != null) {
             responseDTO.setMilestone(entity.getMilestone().getTitle());
+            responseDTO.setMilestoneId(entity.getMilestone().getMilestoneId());
             responseDTO.setClassCode(entity.getMilestone().getClasses().getCode());
         }
         responseDTO.setStatus(entity.getStatus());
