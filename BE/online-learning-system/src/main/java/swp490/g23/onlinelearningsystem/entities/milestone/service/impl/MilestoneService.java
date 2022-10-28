@@ -170,7 +170,6 @@ public class MilestoneService implements IMilestoneService {
     @Override
     public ResponseEntity<String> milestonAdd(MilestoneRequestDTO dto) {
         Milestone milestone = new Milestone();
-
         if (dto.getAssignmentId() != null) {
             milestone.setAssignment(assignmentRepository.findById(dto.getAssignmentId())
                     .orElseThrow(() -> new CustomException("Assignment doesnt exist")));

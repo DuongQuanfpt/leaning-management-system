@@ -24,6 +24,7 @@ import swp490.g23.onlinelearningsystem.entities.group.repositories.criteria_enti
 import swp490.g23.onlinelearningsystem.entities.group.service.IGroupService;
 import swp490.g23.onlinelearningsystem.entities.groupMember.domain.GroupMember;
 import swp490.g23.onlinelearningsystem.entities.groupMember.domain.response.GroupMemberResponseDTO;
+import swp490.g23.onlinelearningsystem.entities.groupMember.repositories.GroupMemberRepositories;
 import swp490.g23.onlinelearningsystem.entities.groupMember.service.impl.GroupMemberService;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestoneResponseDTO;
@@ -49,6 +50,9 @@ public class GroupService implements IGroupService {
 
     @Autowired
     private GroupRepository groupRepository;
+
+    @Autowired
+    private GroupMemberRepositories memberRepositories;
 
     @Autowired
     private GroupMemberService memberService;
@@ -143,7 +147,7 @@ public class GroupService implements IGroupService {
     }
 
     @Override
-    public ResponseEntity<String> groupDetachAll(Long milestoneId) {
+    public ResponseEntity<String> groupRemoveAll(Long milestoneId) {
         Milestone milestone = milestoneRepository.findById(milestoneId)
                 .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
 
@@ -156,10 +160,31 @@ public class GroupService implements IGroupService {
 
         for (Group group : groups) {
             List<Submit> submits = group.getSubmits();
-            List<GroupMember> groupMembers =group.getGroupMembers();
+            List<Submit> submitNew = new ArrayList<>();
+            for (Submit submit : submits) {
+                if (submit.getMilestone().getMilestoneId() == milestoneId) {
+                    if (submit.getClassUser() == null) {
+                        submitRepository.delete(submit);
+                    } else {
+                        submit.setGroup(null);
+                        submitNew.add(submit);
+                    }
+                }
+
+            }
+            submitRepository.saveAll(submitNew);
         }
 
-        return ResponseEntity.ok("Group");
+        for (Group group : groups) {
+            if (group.getSubmits().isEmpty()) {
+                List<GroupMember> groupMembers = group.getGroupMembers();
+                memberRepositories.deleteAll(groupMembers);
+                groupRepository.delete(group);
+            }
+
+        }
+
+        return ResponseEntity.ok("Group configuration of milestone " + milestone.getTitle() + " have been reset");
     }
 
     @Override

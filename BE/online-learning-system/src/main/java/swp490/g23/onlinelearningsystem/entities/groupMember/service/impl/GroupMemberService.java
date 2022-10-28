@@ -45,7 +45,7 @@ public class GroupMemberService implements IGroupMemberService {
     private MilestoneService milestoneService;
 
     @Override
-    public ResponseEntity<String> removeMember(String userName,Long groupId, Long milestoneId) {
+    public ResponseEntity<String> removeMember(String userName, Long groupId, Long milestoneId) {
 
         if (milestoneRepository.findById(milestoneId).get().getStatus() != MilestoneStatusEnum.Open) {
             throw new CustomException("Cant apply changes , Milestone of this group is in progress or have been close");
@@ -57,13 +57,13 @@ public class GroupMemberService implements IGroupMemberService {
         }
         memberRepositories.delete(member);
 
-        List<Submit> submits = submitRepository.getFromGroupAndUserName( groupId, userName);
+        List<Submit> submits = submitRepository.getFromGroupAndUserName(groupId, userName);
         List<Submit> submitNews = new ArrayList<>();
         for (Submit submit : submits) {
             submit.setGroup(null);
             submitNews.add(submit);
         }
-       
+
         submitRepository.saveAll(submitNews);
         return ResponseEntity.ok("delete success");
     }
@@ -97,7 +97,7 @@ public class GroupMemberService implements IGroupMemberService {
             }
         }
 
-        if(groupMember.getGroup().getClasses().getClassId() != newGroup.getClasses().getClassId()){
+        if (groupMember.getGroup().getClasses().getClassId() != newGroup.getClasses().getClassId()) {
             throw new CustomException("member not in class of new group");
         }
 
@@ -170,20 +170,20 @@ public class GroupMemberService implements IGroupMemberService {
             throw new CustomException("Group not in this milestone class");
         }
 
-       
-
         ClassUser classUser = classUserRepositories.findByClassesAndUserName(userName,
                 milestone.getClasses().getCode());
         List<Submit> submits = submitRepository.findByClassUserAndGroupIsNull(classUser);
 
-        if(submits.isEmpty()){
+        if (submits.isEmpty()) {
             throw new CustomException(userName + " already have group");
         }
 
         List<Submit> submitNew = new ArrayList<>();
         for (Submit submit : submits) {
-            submit.setGroup(group);
-            submitNew.add(submit);
+            if (submit.getMilestone().equals(milestone)) {
+                submit.setGroup(group);
+                submitNew.add(submit);
+            }
         }
         submitRepository.saveAll(submitNew);
 

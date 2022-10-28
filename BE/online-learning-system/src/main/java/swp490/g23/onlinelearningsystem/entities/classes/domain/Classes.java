@@ -21,6 +21,7 @@ import swp490.g23.onlinelearningsystem.entities.class_setting.domain.ClassSettin
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.ClassUser;
 import swp490.g23.onlinelearningsystem.entities.group.domain.Group;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
+import swp490.g23.onlinelearningsystem.entities.schedule.domain.Schedule;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
@@ -60,11 +61,11 @@ public class Classes extends BaseEntity {
     private User userSupporter;
 
     @ManyToOne
-	@JoinColumn(name = "subject_id")
-	private Subject subject;
-    
+    @JoinColumn(name = "subject_id")
+    private Subject subject;
+
     @OneToMany(mappedBy = "type")
-	private List<ClassSetting> types;
+    private List<ClassSetting> types;
 
     @OneToMany(mappedBy = "classes")
     private List<ClassUser> classUsers;
@@ -75,5 +76,7 @@ public class Classes extends BaseEntity {
     @OneToMany(mappedBy = "classes")
     private List<Group> groups;
 
-    
+    @OneToMany(mappedBy = "classes")
+    private List<Schedule> schedules;
+
 }

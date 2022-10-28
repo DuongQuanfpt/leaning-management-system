@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -70,11 +71,10 @@ public class GroupController {
 		return groupService.groupDetach(id, milestoneId);
 	}
 
-	@PutMapping(value = "/group-removes/{id}/{milestoneId}")
-	public ResponseEntity<String> detachAllGroup(@PathVariable("id") Long id,
-			@PathVariable("milestoneId") Long milestoneId) {
+	@DeleteMapping(value = "/group-removes/{milestoneId}")
+	public ResponseEntity<String> removesAllGroup(@PathVariable("milestoneId") Long milestoneId) {
 
-		return groupService.groupDetachAll(milestoneId);
+		return groupService.groupRemoveAll(milestoneId);
 	}
 
 	@PostMapping(value = "/group-add/{milestoneId}")
