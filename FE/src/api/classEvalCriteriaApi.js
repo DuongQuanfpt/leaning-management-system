@@ -32,7 +32,7 @@ const classEvalCriteriaApi = {
     return axiosClient.get(url, header)
   },
 
-  addCriteria: (params) => {
+  addClassCriteria: (params) => {
     const url = `/api/class-criteria-add`
     return axiosClient.post(url, params, header)
   },

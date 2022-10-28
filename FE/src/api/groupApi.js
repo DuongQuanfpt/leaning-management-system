@@ -41,6 +41,16 @@ const groupApi = {
     const url = `/api/group-detach/${groupId}/${milestoneId}`
     return axiosClient.put(url, {}, header)
   },
+
+  moveFromGroupToExistGroup: (userName, groupId, newGroupId) => {
+    const url = `/api/group-change/${userName}/${groupId}/${newGroupId}`
+    return axiosClient.put(url, {}, header)
+  },
+
+  moveFromWaitingListToExistGroup: (userName, newGroupId) => {
+    const url = `/api/group-change/${userName}/${newGroupId}`
+    return axiosClient.put(url, {}, header)
+  },
 }
 
 export default groupApi

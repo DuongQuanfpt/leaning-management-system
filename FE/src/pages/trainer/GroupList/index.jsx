@@ -8,7 +8,6 @@ import { CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreu
 
 import groupApi from '~/api/groupApi'
 
-import LocalizedModal from './LocalizedModal'
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
@@ -49,7 +48,6 @@ const GroupList = () => {
   const [group, setGroup] = useState([])
   const [waitingList, setWaitingList] = useState([])
   const [isHaveGroup, setIsHaveGroup] = useState(false)
-  const [choice, setChoice] = useState(1)
 
   useEffect(() => {
     loadMilestone()
@@ -137,7 +135,74 @@ const GroupList = () => {
     })
   }
 
-  const modalChangeGroup = (trainee) => {}
+  const modalMoveToExist = (trainee) => {
+    const listGroup = [...group.slice(1, group.length)].filter((group) => group.groupId !== trainee.groupId)
+
+    let targetGroupId = null
+    console.log(trainee.groupId)
+    Modal.confirm({
+      title: `Move student to existed group`,
+      okText: 'Confirm',
+      cancelText: 'Cancel',
+      okType: 'danger',
+      onOk() {
+        const handleFromGroupMoveToExistGroup = async () => {
+          await groupApi
+            .moveFromGroupToExistGroup(trainee.memberInfo.username, trainee.groupId, targetGroupId)
+            .then(() => {
+              toastMessage('success', 'Add Student Successfully!')
+              loadGroup({ filterMilestone: filter.milstone.milestoneId })
+            })
+            .catch((error) => {
+              console.log(error)
+              toastMessage('error', 'Something went wrong, please try again')
+            })
+        }
+
+        const handleFromWaitingListMoveToExistGroup = async () => {
+          await groupApi
+            .moveFromWaitingListToExistGroup(trainee.memberInfo.username, targetGroupId)
+            .then(() => {
+              toastMessage('success', 'Add Student Successfully!')
+              loadGroup({ filterMilestone: filter.milstone.milestoneId })
+            })
+            .catch((error) => {
+              console.log(error)
+              toastMessage('error', 'Something went wrong, please try again')
+            })
+        }
+
+        if (targetGroupId === null) {
+          toastMessage('error', 'You must select group')
+          return
+        }
+        modalConfirm(
+          trainee.groupId === undefined ? handleFromWaitingListMoveToExistGroup : handleFromGroupMoveToExistGroup,
+          `Are you sure want to add?`,
+        )
+      },
+      onCancel() {},
+      width: '600px',
+      content: (
+        <>
+          <Typography className="mt-1 mb-3">{`Select group you want <${trainee.memberInfo.username}> (${trainee.memberInfo.fullName}) coming `}</Typography>
+          <Select
+            defaultValue="Select Group"
+            style={{
+              width: 400,
+            }}
+            onChange={(e) => (targetGroupId = e)}
+          >
+            {listGroup.map((item, index) => (
+              <Select.Option value={item.groupId}>{`<${item.groupId}> (${item.groupCode})`}</Select.Option>
+            ))}
+          </Select>
+        </>
+      ),
+    })
+  }
+
+  const modalMoveToNew = (trainee) => {}
 
   const modalAddStudentFromWaitingList = (group) => {
     let userName = ''
@@ -179,7 +244,7 @@ const GroupList = () => {
             onChange={(e) => (userName = e)}
           >
             {waitingList.map((item, index) => (
-              <Select.Option value={item.username}>{`${item.username} - ${item.fullName}`}</Select.Option>
+              <Select.Option value={item.username}>{`<${item.username}> (${item.fullName})`}</Select.Option>
             ))}
           </Select>
         </>
@@ -240,16 +305,23 @@ const GroupList = () => {
         },
         {
           key: '2',
-          label: 'Change Group',
+          label: 'Move to existing group',
           onClick: () => {
-            modalChangeGroup(trainee)
+            modalMoveToExist(trainee)
+          },
+        },
+        {
+          key: '3',
+          label: 'Move to new group',
+          onClick: () => {
+            modalMoveToNew(trainee)
           },
         },
         {
           type: 'divider',
         },
         {
-          key: '3',
+          key: '4',
           label: 'Remove',
           disabled: !trainee.groupId,
           onClick: () => {
