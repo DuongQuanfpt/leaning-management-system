@@ -18,7 +18,13 @@ import { memo } from 'react'
 
 const AdminHeader = () => {
   const location = useLocation()
-  const showDropdownClassPathname = ['/trainee-list', '/trainee-import', '/class-setting-list', '/class-criteria-list']
+  const showDropdownClassPathname = [
+    '/trainee-list',
+    '/trainee-import',
+    '/class-setting-list',
+    '/class-criteria-list',
+    '/milestone-list',
+  ]
 
   const dispatch = useDispatch()
   const sidebarShow = useSelector((state) => state.sidebar.sidebarShow)
