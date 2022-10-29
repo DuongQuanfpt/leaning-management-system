@@ -29,12 +29,26 @@ public class GroupMemberController {
         return groupMemberService.removeMember(userName, groupId, milestoneId);
     }
 
-    @PostMapping(value = "/group-member-add/{userName}/{groupId}/{milestoneId}")
+    @PostMapping(value = "/group-member-add/{userName}/{groupId}")
     public ResponseEntity<String> addMember(@PathVariable("userName") String userName,
-            @PathVariable("groupId") Long groupId,
-            @PathVariable("milestoneId") Long milestoneId) {
+            @PathVariable("groupId") Long groupId) {
 
-        return groupMemberService.memberAdd(userName, groupId, milestoneId);
+        return groupMemberService.memberAdd(userName, groupId);
+    }
+
+    @PostMapping(value = "/group-change/{userName}/{newGroupId}")
+    public ResponseEntity<String> changeWaitlistToGroup(@PathVariable("userName") String userName,
+            @PathVariable("newGroupId") Long newGroupId) {
+
+        return groupMemberService.memberAdd(userName, newGroupId);
+    }
+
+    @PutMapping(value = "/group-change/{userName}/{groupId}/{newGroupId}")
+    public ResponseEntity<String> changeGroup(@PathVariable("userName") String userName,
+            @PathVariable("groupId") Long groupId,
+            @PathVariable("newGroupId") Long newGroupId) {
+
+        return groupMemberService.groupChange(userName, groupId, newGroupId);
     }
 
     @PutMapping(value = "/group-set-leader/{userName}/{groupId}")
@@ -48,14 +62,7 @@ public class GroupMemberController {
     public ResponseEntity<String> changeMemberStatus(@PathVariable("userName") String userName,
             @PathVariable("groupId") Long groupId) {
 
-        return groupMemberService.changeMemberStatus( userName , groupId);
+        return groupMemberService.changeMemberStatus(userName, groupId);
     }
 
-    @PutMapping(value = "/group-change/{userName}/{groupId}/{newGroupId}")
-    public ResponseEntity<String> changeGroup(@PathVariable("userName") String userName,
-            @PathVariable("groupId") Long groupId,
-            @PathVariable("newGroupId") Long newGroupId) {
-
-        return groupMemberService.groupChange(userName, groupId, newGroupId);
-    }
 }

@@ -31,12 +31,12 @@ public class MilestoneCriteria {
         StringBuilder query = new StringBuilder(
                 "SELECT m FROM Milestone m WHERE 1=1");
 
-        // if(roles.contains("ROLE_ADMIN")){
+        // if (roles.contains("ROLE_TRAINER")) {
 
-        // } else if (roles.contains("ROLE_MANAGER")){
-        // query.append(" AND s.manager.accountName = '" + user.getAccountName() + "'
-        // ");
-        // }
+        // } else 
+        if (roles.contains("ROLE_SUPPORTER")) {
+            query.append(" AND m.classes.userSupporter.accountName = '" + user.getAccountName() + "'");
+        }
 
         if (keyword != null) {
             query.append(" AND m.title LIKE '%" + keyword + "%' OR m.description LIKE '%" + keyword + "%'");

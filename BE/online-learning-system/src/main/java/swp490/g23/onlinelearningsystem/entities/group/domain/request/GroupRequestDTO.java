@@ -6,15 +6,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import swp490.g23.onlinelearningsystem.entities.groupMember.domain.response.GroupMemberResponseDTO;
+import swp490.g23.onlinelearningsystem.entities.groupMember.domain.request.GroupMemberRequestDTO;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class GroupRequestDTO {
-
-    private Long groupId;
 
     private String groupCode;
 
@@ -24,5 +22,5 @@ public class GroupRequestDTO {
 
     private String status;
 
-    private List<GroupMemberResponseDTO> memberResponseDTOs; 
+    private List<GroupMemberRequestDTO> memberResponseDTOs; 
 }

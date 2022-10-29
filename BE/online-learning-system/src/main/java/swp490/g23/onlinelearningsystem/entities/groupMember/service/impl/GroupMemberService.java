@@ -60,7 +60,7 @@ public class GroupMemberService implements IGroupMemberService {
         }
         memberRepositories.delete(member);
 
-        if (member.getIsLeader() == true && group.getGroupMembers().size() == 1) {
+        if (member.getIsLeader() == true && group.getGroupMembers().size() >= 1) {
             GroupMember newLeader = group.getGroupMembers().get(0);
             newLeader.setIsLeader(true);
             memberRepositories.save(newLeader);
@@ -111,7 +111,20 @@ public class GroupMemberService implements IGroupMemberService {
         }
 
         memberRepositories.delete(groupMember);
+        if(groupMember.getIsLeader() && oldGroup.getGroupMembers().size() >= 1){
+            GroupMember newLeader = oldGroup.getGroupMembers().get(0);
+            newLeader.setIsLeader(true);
+            memberRepositories.save(newLeader);
+        }
         groupMember.setGroup(newGroup);
+        groupMember.setIsLeader(true);
+        for (GroupMember member : newGroup.getGroupMembers()) {
+            if(member.getIsLeader() == true){
+                groupMember.setIsLeader(false);
+                break;
+            }
+        }
+        
         memberRepositories.save(groupMember);
 
         List<Submit> oldSubmits = submitRepository.getFromGroupAndUserName(groupId, userName);
@@ -162,29 +175,28 @@ public class GroupMemberService implements IGroupMemberService {
     }
 
     @Override
-    public ResponseEntity<String> memberAdd(String userName, Long groupId, Long milestoneId) {
-
-        Milestone milestone = milestoneRepository.findById(milestoneId)
-                .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
-
-        if (!milestoneService.isMilestoneOpen(milestone)) {
-            throw new CustomException(
-                    "Milestone of this group is in progress or have been closed , edit is not possible");
-        }
+    public ResponseEntity<String> memberAdd(String userName, Long groupId) {
 
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException("Group doesnt exist"));
 
-        if (!group.getClasses().equals(milestone.getClasses())) {
-            throw new CustomException("Group not in this milestone class");
+        List<Milestone> milestoneOfGroup = milestoneRepository.milestoneOfGroup(groupId);
+        for (Milestone milestone : milestoneOfGroup) {
+            if (!milestoneService.isMilestoneOpen(milestone)) {
+                throw new CustomException(
+                        "Milestone of this group is in progress or have been closed , edit is not possible");
+            }
+
+            if (!group.getClasses().equals(milestone.getClasses())) {
+                throw new CustomException("Group not in this milestone class");
+            }
         }
 
         ClassUser classUser = classUserRepositories.findByClassesAndUserName(userName,
-                milestone.getClasses().getCode());
+                group.getClasses().getCode());
 
         List<Submit> submitNew = new ArrayList<>();
-        List<Milestone> milestoneOfGroup = milestoneRepository.milestoneOfGroup(groupId);
-        List<Submit> submits = submitRepository.getByClassUserInMilestones(milestoneOfGroup,classUser);
+        List<Submit> submits = submitRepository.getByClassUserInMilestones(milestoneOfGroup, classUser);
 
         if (submits.isEmpty()) {
             throw new CustomException(userName + " already have group");

@@ -32,4 +32,5 @@ public class TraineeResponseDTO {
     private String note;
 
     private String classes;
+
 }

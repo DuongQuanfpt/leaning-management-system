@@ -48,10 +48,10 @@ public class User extends BaseEntity implements UserDetails {
     @Column
     private String fullName;
 
-    @Column(name= "username", unique = true , nullable = false)
+    @Column(name = "username", unique = true, nullable = false)
     private String accountName;
 
-    @Column(name = "email", length = 40, unique = true , nullable = false)
+    @Column(name = "email", length = 40, unique = true, nullable = false)
     private String email;
 
     @Column
@@ -94,13 +94,13 @@ public class User extends BaseEntity implements UserDetails {
     }
 
     @OneToMany(mappedBy = "manager")
-	private List<Subject> managedSubject;
+    private List<Subject> managedSubject;
 
     @OneToMany(mappedBy = "expert")
-	private List<Subject> expertSubject;
+    private List<Subject> expertSubject;
 
     @OneToMany(mappedBy = "staff")
-	private List<WebContact> webContact;
+    private List<WebContact> webContact;
 
     @OneToMany(mappedBy = "member")
     private List<GroupMember> groupMembers;
