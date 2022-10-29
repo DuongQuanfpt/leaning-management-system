@@ -327,15 +327,9 @@ public class MilestoneService implements IMilestoneService {
             responseDTO.setTitle(entity.getTitle());
         }
 
-<<<<<<< HEAD
-        // if (groups != null) {
-        // responseDTO.setGroupId(groups.getGroupId());
-        // }
-=======
         List<MilestoneGroupDTO> groupResponseDTOs = new ArrayList<>();
         List<MilestoneMemberDTO> noGroupDTOs = new ArrayList<>();
         List<Submit> submits = entity.getSubmits();
->>>>>>> 410e62a363f08374ff63580bb0d4d5e6427e6a3b
 
         if (!submits.isEmpty()) {
             for (Submit submit : submits) {

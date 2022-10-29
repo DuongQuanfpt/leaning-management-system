@@ -65,8 +65,8 @@ public class ScheduleController {
     }
 
     @GetMapping(value = "/schedule-filter")
-    public ResponseEntity<ScheduleFilter> scheduleFilter() {
+    public ResponseEntity<ScheduleFilter> scheduleFilter(@AuthenticationPrincipal User user) {
 
-        return scheduleService.getFilter();
+        return scheduleService.getFilter(user.getUserId());
     }
 }

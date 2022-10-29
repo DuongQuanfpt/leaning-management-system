@@ -20,7 +20,7 @@ public interface SettingRepositories extends JpaRepository<Setting, Long> {
     Setting findBySettingTitle(String name);
 
     @Query(value = "SELECT s FROM Setting s WHERE s.type.settingValue = 'TYPE_ROLE' " +
-    "AND s.status = swp490.g23.onlinelearningsystem.util.enumutil.Status.Active")
+            "AND s.status = swp490.g23.onlinelearningsystem.util.enumutil.Status.Active")
     List<Setting> findAllRole();
 
     @Query(value = "SELECT s FROM Setting s WHERE s.type.settingValue = 'TYPE_SCREEN' ")
@@ -28,7 +28,6 @@ public interface SettingRepositories extends JpaRepository<Setting, Long> {
 
     @Query(value = "SELECT s FROM Setting s WHERE s.type.settingValue = 'TYPE_CONTACT' ")
     List<Setting> findAllCategory();
-
 
     @Query(value = "SELECT s FROM Setting s WHERE s.settingValue = ?1 " +
             "AND s.status = swp490.g23.onlinelearningsystem.util.enumutil.Status.Active")
@@ -38,8 +37,8 @@ public interface SettingRepositories extends JpaRepository<Setting, Long> {
     List<Setting> findAllType();
 
     @Query(value = "SELECT s FROM Setting s WHERE s.type IS NULL " +
-    "AND s.settingValue != 'TYPE_ROLE' AND s.settingValue != 'TYPE_API' "+
-    "AND s.settingValue != 'TYPE_SCREEN' AND s.settingValue != 'TYPE_SUBJECT_SETTING' AND s.settingValue != 'TYPE_CLASS_SETTING'")
+            "AND s.settingValue != 'TYPE_ROLE' AND s.settingValue != 'TYPE_API' " +
+            "AND s.settingValue != 'TYPE_SCREEN' AND s.settingValue != 'TYPE_SUBJECT_SETTING' AND s.settingValue != 'TYPE_CLASS_SETTING'")
     List<Setting> findFilteredType();
 
     @Query(value = "SELECT s FROM Setting s WHERE s.type.settingValue = 'TYPE_TERM'")
@@ -53,4 +52,7 @@ public interface SettingRepositories extends JpaRepository<Setting, Long> {
 
     @Query(value = "SELECT s FROM Setting s WHERE s.type.settingValue = 'TYPE_CLASS_SETTING'")
     List<Setting> classSettingList();
+
+    @Query(value = "SELECT s FROM Setting s WHERE s.type.settingValue = 'TYPE_ROOM'")
+    List<Setting> findAllRoom();
 }
