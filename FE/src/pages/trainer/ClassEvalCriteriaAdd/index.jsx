@@ -6,13 +6,12 @@ import { ExclamationCircleOutlined } from '@ant-design/icons'
 
 import { CButton, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
 
-import evalCriteriaApi from '~/api/evalCriteriaApi'
+import classEvalCriteriaApi from '~/api/classEvalCriteriaApi'
 
 import ErrorMsg from '~/components/Common/ErrorMsg'
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
-import classEvalCriteriaApi from '~/api/classEvalCriteriaApi'
 
 const ClassEvalCriteriaAdd = () => {
   const [detail, setDetail] = useState({

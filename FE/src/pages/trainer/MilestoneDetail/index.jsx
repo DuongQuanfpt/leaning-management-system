@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-
+import moment from 'moment'
 import { Link, useParams } from 'react-router-dom'
 import { Breadcrumb, DatePicker, Modal, Radio } from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
@@ -12,7 +12,6 @@ import ErrorMsg from '~/components/Common/ErrorMsg'
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
-import moment from 'moment'
 
 const MilestoneDetail = () => {
   const { id } = useParams()
@@ -82,6 +81,7 @@ const MilestoneDetail = () => {
     }
 
     const params = {
+      title: detail.title,
       fromDate: detail.fromDate,
       toDate: detail.toDate,
       status: detail.status,
@@ -161,7 +161,13 @@ const MilestoneDetail = () => {
                     </div>
                     <div className="form-group col-4">
                       <label className="col-form-label">Title</label>
-                      <input className="form-control" type="text" value={detail.title} disabled />
+                      <input
+                        className="form-control"
+                        type="text"
+                        value={detail.title}
+                        onChange={(e) => setDetail((prev) => ({ ...prev, title: e.target.value }))}
+                        disabled={!isEditMode}
+                      />
                     </div>
                     <div className="form-group col-4">
                       <label className="col-form-label">Assignment</label>
@@ -190,7 +196,7 @@ const MilestoneDetail = () => {
                     <div className="form-group col-4">
                       <label className="col-form-label">Status</label>
                       <div>
-                        <Radio.Group value={detail.status} disabled={!isEditMode}>
+                        <Radio.Group value={detail.status} disabled>
                           <Radio value={1}>Open</Radio>
                           <Radio value={0}>In_Progress</Radio>
                           <Radio value={-1}>Closed</Radio>
@@ -218,6 +224,7 @@ const MilestoneDetail = () => {
                     />
                     <div className="d-flex">
                       {detail.status !== -1 &&
+                        detail.status !== 0 &&
                         (isEditMode ? (
                           <>
                             <CButton size="md" className="mr-3" color="warning" onClick={modalConfirm}>

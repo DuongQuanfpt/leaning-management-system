@@ -36,6 +36,16 @@ const milestoneApi = {
     const url = `/api/milestone-add`
     return axiosClient.post(url, params, header)
   },
+
+  changeToInProgress: (id) => {
+    const url = `/api/milestone-inprogess/${id}`
+    return axiosClient.put(url, {}, header)
+  },
+
+  changeToClosed: (id) => {
+    const url = `/api/milestone-closed/${id}`
+    return axiosClient.put(url, {}, header)
+  },
 }
 
 export default milestoneApi
