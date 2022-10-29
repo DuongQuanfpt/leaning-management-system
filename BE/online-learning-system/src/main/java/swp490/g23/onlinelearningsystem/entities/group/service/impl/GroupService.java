@@ -16,6 +16,8 @@ import swp490.g23.onlinelearningsystem.entities.class_user.service.impl.ClassUse
 import swp490.g23.onlinelearningsystem.entities.group.domain.Group;
 import swp490.g23.onlinelearningsystem.entities.group.domain.filter.GroupFilter;
 import swp490.g23.onlinelearningsystem.entities.group.domain.request.GroupRequestDTO;
+import swp490.g23.onlinelearningsystem.entities.group.domain.request.GroupRequestWrapper;
+import swp490.g23.onlinelearningsystem.entities.group.domain.response.GroupMilestoneDTO;
 import swp490.g23.onlinelearningsystem.entities.group.domain.response.GroupPaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.group.domain.response.GroupResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.group.repositories.GroupRepository;
@@ -81,26 +83,6 @@ public class GroupService implements IGroupService {
         TypedQuery<Group> queryResult = result.getResultQuery();
         TypedQuery<Long> countQuery = result.getCountQuery();
 
-        List<Group> groupsFilter = queryResult.getResultList();
-        List<MilestoneResponseDTO> milestoneFilter = new ArrayList<>();
-        for (Group group : groupsFilter) {
-            for (Submit submit : group.getSubmits()) {
-                boolean isAdd = true;
-                for (MilestoneResponseDTO dto : milestoneFilter) {
-
-                    if (dto.getMilestoneId() == submit.getMilestone().getMilestoneId()) {
-                        isAdd = false;
-                        break;
-                    }
-                }
-
-                if (isAdd == true) {
-                    milestoneFilter.add(milestoneService.toDTO(submit.getMilestone()));
-                }
-            }
-
-        }
-
         List<StatusEntity> statusFilter = new ArrayList<>();
         for (Status status : new ArrayList<Status>(EnumSet.allOf(Status.class))) {
             statusFilter.add(new StatusEntity(status));
@@ -138,7 +120,6 @@ public class GroupService implements IGroupService {
         paginateDTO.setListResult(responseDTOs);
         paginateDTO.setNoGroup(noGroupMembers);
         paginateDTO.setStatusFilter(statusFilter);
-        paginateDTO.setMilstoneFilter(milestoneFilter);
         return ResponseEntity.ok(paginateDTO);
     }
 
@@ -241,24 +222,27 @@ public class GroupService implements IGroupService {
 
         List<Milestone> milestones = milestoneRepository.getActiveMilestone();
         List<MilestoneResponseDTO> responseDTOs = new ArrayList<>();
+        List<GroupMilestoneDTO> groupMilestoneDTOs = new ArrayList<>();
         for (Milestone milestone : milestones) {
-            if (roles.contains("ROLE_TRAINER") || roles.contains("ROLE_SUPPORTER")) {
-                if (milestone.getClasses().getUserSupporter().equals(currentUser)
-                        || (milestone.getClasses().getUserTrainer().equals(currentUser))) {
-                    responseDTOs.add(milestoneService.toDTO(milestone));
-                }
-            } 
-            else if (roles.contains("ROLE_TRAINEE")) {
-                for (ClassUser classUser : milestone.getClasses().getClassUsers()) {
-                    if (classUser.getUser().equals(currentUser)) {
-                        responseDTOs.add(milestoneService.toDTO(milestone));
-                    }
-                }
-            }
+            // if (roles.contains("ROLE_TRAINER") || roles.contains("ROLE_SUPPORTER")) {
+            //     if (milestone.getClasses().getUserSupporter().equals(currentUser)
+            //             || (milestone.getClasses().getUserTrainer().equals(currentUser))) {
+            //         responseDTOs.add(milestoneService.toDTO(milestone));
+            //     }
+            // } 
+            // else if (roles.contains("ROLE_TRAINEE")) {
+            //     for (ClassUser classUser : milestone.getClasses().getClassUsers()) {
+            //         if (classUser.getUser().equals(currentUser)) {
+            //             responseDTOs.add(milestoneService.toDTO(milestone));
+            //         }
+            //     }
+            // }
+            responseDTOs.add(milestoneService.toDTO(milestone));
+            groupMilestoneDTOs.add(toMilestoneDTO(milestone));
             
         }
 
-        filter.setMilstoneFilter(responseDTOs);
+        filter.setMilstoneFilter(groupMilestoneDTOs);
         filter.setStatusFilter(statusFilter);
         return ResponseEntity.ok(filter);
     }
@@ -348,6 +332,25 @@ public class GroupService implements IGroupService {
         return ResponseEntity.ok("Group status changed");
     }
 
+    @Override
+    public ResponseEntity<String> groupSet(Long milestoneId, GroupRequestWrapper requestDto) {
+        groupRemoveAll(milestoneId);
+        
+        return ResponseEntity.ok("Milestone group configuration overridden");
+    }
+
+    public GroupMilestoneDTO toMilestoneDTO (Milestone milestone){
+        GroupMilestoneDTO dto = new GroupMilestoneDTO();
+        if(milestone.getTitle() != null) {
+            dto.setTitle(milestone.getTitle());
+        }
+        dto.setMilestoneId(milestone.getMilestoneId());
+        dto.setStatus(milestone.getStatus().toString());
+        dto.setClassesCode(milestone.getClasses().getCode());
+        
+        return dto;
+    }
+
     public GroupResponseDTO toDTO(Group entity, Long milestoneId, String filterActive) {
         GroupResponseDTO dto = new GroupResponseDTO();
 
@@ -371,24 +374,6 @@ public class GroupService implements IGroupService {
         if (entity.getClasses() != null) {
             dto.setClassCode(entity.getClasses().getCode());
         }
-
-        // List<MilestoneResponseDTO> milestoneResponseDTOs = new ArrayList<>();
-        // if (entity.getSubmits() != null) {
-        //     for (Submit submit : entity.getSubmits()) {
-        //         boolean canAdd = true;
-        //         for (MilestoneResponseDTO responseDTO : milestoneResponseDTOs) {
-        //             if (responseDTO.getMilestoneId() == submit.getMilestone().getMilestoneId()) {
-        //                 canAdd = false;
-        //                 break;
-        //             }
-        //         }
-
-        //         if (canAdd == true) {
-        //             milestoneResponseDTOs.add(milestoneService.toDTO(submit.getMilestone()));
-        //         }
-        //     }
-        //     dto.setMilestone(milestoneResponseDTOs);
-        // }
 
         List<GroupMemberResponseDTO> memberResponseDTOs = new ArrayList<>();
         if (milestoneId != null) {
@@ -444,5 +429,7 @@ public class GroupService implements IGroupService {
 
         return dto;
     }
+
+   
 
 }

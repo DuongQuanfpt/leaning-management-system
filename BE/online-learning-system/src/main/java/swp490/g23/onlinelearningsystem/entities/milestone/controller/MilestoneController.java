@@ -54,7 +54,7 @@ public class MilestoneController {
     public ResponseEntity<String> milestoneEdit(@RequestBody MilestoneRequestDTO dto,
             @PathVariable Long id) {
 
-        return milestoneService.milestonEdit(dto,id);
+        return milestoneService.milestonEdit(dto, id);
     }
 
     @PutMapping(value = "/milestone-inprogess/{id}")

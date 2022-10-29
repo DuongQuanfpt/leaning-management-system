@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.groupMember.domain.response.GroupMemberResponseDTO;
-import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestoneResponseDTO;
 
 @Getter
 @Setter
@@ -28,5 +27,4 @@ public class GroupResponseDTO {
     
     private List<GroupMemberResponseDTO> groupMembers; 
 
-    // private List<MilestoneResponseDTO> milestone;
 }

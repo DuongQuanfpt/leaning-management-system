@@ -16,5 +16,5 @@ import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.MilestoneStatu
 public class MilestoneFilter {
     private List<MilestoneStatusEntity> statusFilter;
     private List<AssignmentResponseDTO> assFilter;
-    private List<String> classCode;
+    private List<MilestoneFilterClass> classFilter;
 }

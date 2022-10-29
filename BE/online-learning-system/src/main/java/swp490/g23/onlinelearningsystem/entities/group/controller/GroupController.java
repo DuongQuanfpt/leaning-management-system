@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import swp490.g23.onlinelearningsystem.entities.group.domain.filter.GroupFilter;
 import swp490.g23.onlinelearningsystem.entities.group.domain.request.GroupRequestDTO;
+import swp490.g23.onlinelearningsystem.entities.group.domain.request.GroupRequestWrapper;
 import swp490.g23.onlinelearningsystem.entities.group.domain.response.GroupPaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.group.domain.response.GroupResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.group.service.impl.GroupService;
@@ -90,5 +91,11 @@ public class GroupController {
 		return groupService.groupCreate(milestoneId,dto);
 	}
 
+	@PutMapping(value = "/group-set/{milestoneId}")
+	public ResponseEntity<String> setGroups(@PathVariable("milestoneId") Long milestoneId,
+		@RequestBody GroupRequestWrapper groupDtos) {
+
+		return groupService.groupSet(milestoneId,groupDtos);
+	}
 	
 }

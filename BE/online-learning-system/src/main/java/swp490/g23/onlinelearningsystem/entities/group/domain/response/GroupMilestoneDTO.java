@@ -16,12 +16,6 @@ public class GroupMilestoneDTO {
 
     private String classesCode;
 
-    private String fromDate;
-
-    private String toDate;
-
-    private String description;
-
     private String status;
     
 }

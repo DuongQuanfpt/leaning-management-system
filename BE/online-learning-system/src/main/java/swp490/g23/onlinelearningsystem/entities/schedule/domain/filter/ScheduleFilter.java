@@ -15,4 +15,5 @@ import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.ScheduleStatus
 public class ScheduleFilter {
     private List<ScheduleStatusEntity> statusFilter;
     private List<String> dateFilter;
+    private List<String> yearFilter;
 }

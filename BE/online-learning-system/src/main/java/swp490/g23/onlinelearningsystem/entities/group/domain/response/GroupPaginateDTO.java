@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.response.TraineeResponseDTO;
-import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestoneResponseDTO;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
 
 @Getter
@@ -20,7 +19,7 @@ public class GroupPaginateDTO {
 	private long totalItem;
     private List<GroupResponseDTO> listResult ;
     private List<TraineeResponseDTO> noGroup;
-    private List<MilestoneResponseDTO> milstoneFilter;
+    // private List<MilestoneResponseDTO> milstoneFilter;
     private List<StatusEntity> statusFilter;
     private List<GroupMilestoneDTO> linkedMilestone;
     
