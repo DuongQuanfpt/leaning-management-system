@@ -300,7 +300,7 @@ const MilestoneList = () => {
     {
       title: 'Assignment',
       dataIndex: 'assignment',
-      sorter: (a, b) => a.assignment.length - b.assignment.length,
+      sorter: (a, b) => a.assignment.title.length - b.assignment.title.length,
       width: '15',
       render: (_, { assignment }) => assignment.title,
     },

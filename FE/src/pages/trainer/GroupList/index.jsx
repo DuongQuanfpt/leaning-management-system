@@ -138,6 +138,19 @@ const GroupList = () => {
     }))
   }
 
+  useEffect(() => {
+    const params = {
+      filterMilestone: filter.milstone.milestoneId,
+    }
+    if (filter.status.value !== null) {
+      params.filterStatus = filter.status.value === 1 ? true : false
+    }
+    if (filter.milstone.title !== 'Select Milestone') {
+      loadGroup(params)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter.status.value])
+
   const handleRemoveGroups = () => {
     const removeGroup = async () => {
       await groupApi
