@@ -10,6 +10,6 @@ import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 
 public interface ClassSettingRepository extends JpaRepository<ClassSetting, Long> {
 
-    @Query(value = "SELECT c FROM ClassSetting c WHERE c.type.settingValue = 'TYPE_CLASS_SLOT' AND c.classes = :clazz")
+    @Query(value = "SELECT c FROM ClassSetting c WHERE c.type.settingValue = 'TYPE_CLASS_MODULE' AND c.classes = :clazz")
     List<ClassSetting> findByClassAndSlot(Classes clazz);
 }

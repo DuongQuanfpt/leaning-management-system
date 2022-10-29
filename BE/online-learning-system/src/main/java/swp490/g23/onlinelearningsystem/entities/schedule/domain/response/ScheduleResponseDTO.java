@@ -18,9 +18,7 @@ public class ScheduleResponseDTO {
 
     private Long id;
 
-    private List<String> slot;
-
-    private List<String> topic;
+    private ModuleTypeResponseDTO modules;
 
     private LocalDate date;
 
@@ -31,4 +29,6 @@ public class ScheduleResponseDTO {
     private String classCode;
 
     private ScheduleStatus status;
+
+    private SettingTypeResponseDTO room;
 }

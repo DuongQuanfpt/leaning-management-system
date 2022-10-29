@@ -20,4 +20,6 @@ public interface ClassRepositories extends JpaRepository<Classes, Long> {
     @Query(value = "SELECT c FROM Classes c WHERE c.status = '1'")
     List<Classes> findClassesActive();
 
+    @Query(value = "SELECT c FROM Classes c JOIN c.userTrainer as t WHERE t.accountName = :trainer")
+    List<Classes> findClassTrainerAssigned(String trainer);
 }

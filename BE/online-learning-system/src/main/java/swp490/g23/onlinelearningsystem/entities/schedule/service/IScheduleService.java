@@ -9,7 +9,8 @@ import swp490.g23.onlinelearningsystem.entities.schedule.domain.response.Schedul
 
 public interface IScheduleService {
 
-    ResponseEntity<SchedulePaginateDTO> displaySchedule(String keyword, int limit, int page, String filterStatus);
+    ResponseEntity<SchedulePaginateDTO> displaySchedule(String keyword, int limit, int page, String filterStatus,
+            String filterDate, String filterYear, Long userId);
 
     ResponseEntity<ScheduleResponseDTO> scheduleDetail(Long id);
 

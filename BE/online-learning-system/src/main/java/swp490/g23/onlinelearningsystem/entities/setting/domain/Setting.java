@@ -24,6 +24,7 @@ import swp490.g23.onlinelearningsystem.entities.class_setting.domain.ClassSettin
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.contact.domain.WebContact;
 import swp490.g23.onlinelearningsystem.entities.permission.domain.SettingPermission;
+import swp490.g23.onlinelearningsystem.entities.schedule.domain.Schedule;
 import swp490.g23.onlinelearningsystem.entities.subject_setting.domain.SubjectSetting;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user_roles.domain.UserRoles;
@@ -87,16 +88,19 @@ public class Setting extends BaseEntity {
     private List<SettingPermission> screens;
 
     @OneToMany(mappedBy = "category")
-	private List<WebContact> webContact = new ArrayList<>();
+    private List<WebContact> webContact = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
-	private List<UserRoles> userRoles = new ArrayList<>();
+    private List<UserRoles> userRoles = new ArrayList<>();
 
     @OneToMany(mappedBy = "subject")
-	private List<SubjectSetting> subjects = new ArrayList<>();
+    private List<SubjectSetting> subjects = new ArrayList<>();
 
     @OneToMany(mappedBy = "classes")
-	private List<ClassSetting> classes = new ArrayList<>();
+    private List<ClassSetting> classes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "setting")
+    private List<Schedule> schedules;
 
     // @OneToMany(mappedBy = "api" ,cascade = CascadeType.ALL)
     // private List<SettingPermission> apis;
@@ -118,14 +122,14 @@ public class Setting extends BaseEntity {
     }
 
     public Setting(String settingTitle, String settingValue, Status status, String description,
-            String displayOrder, Setting type,Setting screen) {
+            String displayOrder, Setting type, Setting screen) {
         this.settingTitle = settingTitle;
         this.settingValue = settingValue;
         this.status = status;
         this.description = description;
         this.displayOrder = displayOrder;
         this.type = type;
-        this.screen=screen;
+        this.screen = screen;
     }
 
     @Override
