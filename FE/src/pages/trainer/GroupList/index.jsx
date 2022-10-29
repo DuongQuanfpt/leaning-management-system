@@ -39,11 +39,11 @@ const GroupList = () => {
       },
       {
         name: 'Active',
-        value: 1,
+        value: true,
       },
       {
         name: 'Inactive',
-        value: 0,
+        value: false,
       },
     ],
   })
@@ -68,6 +68,16 @@ const GroupList = () => {
   useEffect(() => {
     loadMilestone()
   }, [])
+
+  useEffect(() => {
+    const params = {
+      filterMilestone: filter.milstone.milestoneId,
+    }
+    if (filter.status.value !== null) {
+      params.filterStatus = filter.status.value
+    }
+    loadGroup(params)
+  }, [filter])
 
   const loadMilestone = async () => {
     groupApi
@@ -114,14 +124,6 @@ const GroupList = () => {
       ...prev,
       milstone: milestone,
     }))
-    const params = {
-      filterMilestone: milestone.milestoneId,
-    }
-    if (filter.status.value !== null) {
-      params.filterStatus = milestone.status.value === 1 ? true : false
-    }
-
-    loadGroup(params)
   }
 
   const handleFilterStatus = (status) => {
@@ -135,8 +137,14 @@ const GroupList = () => {
     const removeGroup = async () => {
       await groupApi
         .removeAllGroups(filter.milstone.milestoneId)
-        .then((response) => {
-          loadGroup({ filterMilestone: filter.milstone.milestoneId })
+        .then(() => {
+          const params = {
+            filterMilestone: filter.milstone.milestoneId,
+          }
+          if (filter.status.value !== null) {
+            params.filterStatus = filter.status.value
+          }
+          loadGroup(params)
           toastMessage('success', 'Remove Groups Successfully!')
         })
         .catch((error) => {
@@ -188,7 +196,13 @@ const GroupList = () => {
             .moveFromGroupToExistGroup(trainee.memberInfo.username, trainee.groupId, targetGroupId)
             .then(() => {
               toastMessage('success', 'Add Student Successfully!')
-              loadGroup({ filterMilestone: filter.milstone.milestoneId })
+              const params = {
+                filterMilestone: filter.milstone.milestoneId,
+              }
+              if (filter.status.value !== null) {
+                params.filterStatus = filter.status.value
+              }
+              loadGroup(params)
             })
             .catch((error) => {
               console.log(error)
@@ -201,7 +215,13 @@ const GroupList = () => {
             .moveFromWaitingListToExistGroup(trainee.memberInfo.username, targetGroupId)
             .then(() => {
               toastMessage('success', 'Add Student Successfully!')
-              loadGroup({ filterMilestone: filter.milstone.milestoneId })
+              const params = {
+                filterMilestone: filter.milstone.milestoneId,
+              }
+              if (filter.status.value !== null) {
+                params.filterStatus = filter.status.value
+              }
+              loadGroup(params)
             })
             .catch((error) => {
               console.log(error)
@@ -232,7 +252,10 @@ const GroupList = () => {
             onChange={(e) => (targetGroupId = e)}
           >
             {listGroup.map((item, index) => (
-              <Select.Option key={index} value={item.groupId}>{`<${item.groupId}> (${item.groupCode})`}</Select.Option>
+              <Select.Option
+                key={index}
+                value={item.groupId}
+              >{`<${item.groupCode}> (${item.topicName})`}</Select.Option>
             ))}
           </Select>
         </>
@@ -266,13 +289,19 @@ const GroupList = () => {
               //   .moveFromGroupToExistGroup(trainee.memberInfo.username, trainee.groupId, targetGroupId)
               //   .then(() => {
               //     toastMessage('success', 'Add Student Successfully!')
-              //     loadGroup({ filterMilestone: filter.milstone.milestoneId })
+              //     loadGroup(filter)
               //   })
               //   .catch((error) => {
               //     console.log(error)
               //     toastMessage('error', 'Something went wrong, please try again')
               //   })
-              loadGroup({ filterMilestone: filter.milstone.milestoneId })
+              const params = {
+                filterMilestone: filter.milstone.milestoneId,
+              }
+              if (filter.status.value !== null) {
+                params.filterStatus = filter.status.value
+              }
+              loadGroup(params)
             })
             .catch((error) => {
               console.log(error)
@@ -311,7 +340,13 @@ const GroupList = () => {
             .addFromWaitingList(userName, group.groupId)
             .then(() => {
               toastMessage('success', 'Add Student Successfully!')
-              loadGroup({ filterMilestone: filter.milstone.milestoneId })
+              const params = {
+                filterMilestone: filter.milstone.milestoneId,
+              }
+              if (filter.status.value !== null) {
+                params.filterStatus = filter.status.value
+              }
+              loadGroup(params)
             })
             .catch((error) => {
               console.log(error)
@@ -356,9 +391,15 @@ const GroupList = () => {
       async onOk() {
         await groupApi
           .changeActiveStudent(trainee.memberInfo.username, trainee.groupId)
-          .then((response) => {
+          .then(() => {
             toastMessage('success', 'Change Status Student Successfully!')
-            loadGroup({ filterMilestone: filter.milstone.milestoneId })
+            const params = {
+              filterMilestone: filter.milstone.milestoneId,
+            }
+            if (filter.status.value !== null) {
+              params.filterStatus = filter.status.value
+            }
+            loadGroup(params)
           })
           .catch((error) => {
             console.log(error)
@@ -382,7 +423,13 @@ const GroupList = () => {
           .changeActiveGroup(group.groupId)
           .then(() => {
             toastMessage('success', 'Change Status Group Successfully!')
-            loadGroup({ filterMilestone: filter.milstone.milestoneId })
+            const params = {
+              filterMilestone: filter.milstone.milestoneId,
+            }
+            if (filter.status.value !== null) {
+              params.filterStatus = filter.status.value
+            }
+            loadGroup(params)
           })
           .catch((error) => {
             console.log(error)
@@ -404,7 +451,13 @@ const GroupList = () => {
           .detachGroup(group.groupId, filter.milstone.milestoneId)
           .then(() => {
             toastMessage('success', 'Detach Group Successfully!')
-            loadGroup({ filterMilestone: filter.milstone.milestoneId })
+            const params = {
+              filterMilestone: filter.milstone.milestoneId,
+            }
+            if (filter.status.value !== null) {
+              params.filterStatus = filter.status.value
+            }
+            loadGroup(params)
           })
           .catch((error) => {
             console.log(error)
@@ -431,7 +484,13 @@ const GroupList = () => {
                 .setLeader(trainee.memberInfo.username, trainee.groupId)
                 .then(() => {
                   toastMessage('success', 'Change Leader Successfully!')
-                  loadGroup({ filterMilestone: filter.milstone.milestoneId })
+                  const params = {
+                    filterMilestone: filter.milstone.milestoneId,
+                  }
+                  if (filter.status.value !== null) {
+                    params.filterStatus = filter.status.value
+                  }
+                  loadGroup(params)
                 })
                 .catch((error) => {
                   console.log(error)
@@ -479,7 +538,13 @@ const GroupList = () => {
                 .remove(trainee.memberInfo.username, trainee.groupId, filter.milstone.milestoneId)
                 .then(() => {
                   toastMessage('success', 'Remove Student Successfully!')
-                  loadGroup({ filterMilestone: filter.milstone.milestoneId })
+                  const params = {
+                    filterMilestone: filter.milstone.milestoneId,
+                  }
+                  if (filter.status.value !== null) {
+                    params.filterStatus = filter.status.value
+                  }
+                  loadGroup(params)
                 })
                 .catch((error) => {
                   console.log(error)
