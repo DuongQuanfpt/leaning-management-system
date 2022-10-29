@@ -19,8 +19,7 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 public class GroupCriteria {
     private final EntityManager em;
 
-    public GroupQuery searchFilterGroup(String keyword, String filterActive,
-            String filterMilestone, User user) {
+    public GroupQuery searchFilterGroup(String keyword,String filterMilestone, User user) {
 
         List<Setting> settings = user.getSettings();
         List<String> roles = new ArrayList<>();
@@ -50,9 +49,9 @@ public class GroupCriteria {
             query.append(" AND s.milestone.milestoneId = '" + filterMilestone + "'");
         }
 
-        if (filterActive != null) {
-            query.append(" AND g.status = '" + filterActive + "'");
-        }
+        // if (filterActive != null) {
+        //     query.append(" AND g.status = '" + filterActive + "'");
+        // }
 
         StringBuilder queryCount = new StringBuilder(
                 query.toString().replaceAll("SELECT DISTINCT g", "SELECT COUNT(DISTINCT g)"));

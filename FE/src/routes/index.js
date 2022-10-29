@@ -101,6 +101,7 @@ const adminRoutes = [
 // Manager routes
 const managerRoutes = [
   { path: '/class-add', component: ClassAdd },
+
   { path: '/subject-setting-list', component: SubjectSettingList },
   { path: '/subject-setting-detail/:id', component: SubjectSettingDetail },
   { path: '/subject-setting-add', component: SubjectSettingAdd },
@@ -119,7 +120,10 @@ const supporterRoutes = [
 ]
 
 // Trainer routes
-const trainerRoutes = []
+const trainerRoutes = [
+  { path: '/new-milestone', component: NewMilestone },
+  { path: '/new-group/:id', component: NewGroup },
+]
 
 // Trainee routes
 const traineeRoutes = []
@@ -151,7 +155,6 @@ const classSettingListRoutes = [
 const milestoneListRoutes = [
   { path: '/milestone-list', component: MilestoneList },
   { path: '/milestone-detail/:id', component: MilestoneDetail },
-  { path: '/new-milestone', component: NewMilestone },
 ]
 
 const classEvalCriteriaListRoutes = [
@@ -163,7 +166,6 @@ const classEvalCriteriaListRoutes = [
 const groupListRoutes = [
   { path: '/group-list', component: GroupList },
   { path: '/group-detail/:id', component: GroupDetail },
-  { path: '/new-group', component: NewGroup },
 ]
 
 export {

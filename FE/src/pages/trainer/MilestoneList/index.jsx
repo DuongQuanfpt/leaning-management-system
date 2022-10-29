@@ -1,8 +1,30 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
-import { Breadcrumb, Button, Modal, Pagination, Space, Table, Tag, Tooltip } from 'antd'
-import { CheckOutlined, CloseOutlined, ExclamationCircleOutlined, EyeOutlined } from '@ant-design/icons'
+import {
+  Breadcrumb,
+  Button,
+  Card,
+  Col,
+  message,
+  Modal,
+  Pagination,
+  Row,
+  Space,
+  Table,
+  Tag,
+  Tooltip,
+  Typography,
+} from 'antd'
+import {
+  CheckOutlined,
+  CloseOutlined,
+  CrownTwoTone,
+  ExclamationCircleOutlined,
+  EyeOutlined,
+  UsergroupAddOutlined,
+} from '@ant-design/icons'
 
 import { CButton, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
@@ -16,10 +38,11 @@ import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 
 const MilestoneList = () => {
   const ITEM_PER_PAGE = 10
+  const { currentClass } = useSelector((state) => state.profile)
   const navigateTo = useNavigate()
+
   const [listFilter, setListFilter] = useState({
     assFilter: [],
-    classFilter: [],
     statusFilter: [],
   })
 
@@ -28,7 +51,6 @@ const MilestoneList = () => {
       title: 'Select Assignment',
       value: '',
     },
-    class: 'Select Class',
     status: {
       name: 'Select Status',
       value: '',
@@ -44,8 +66,6 @@ const MilestoneList = () => {
     milestoneApi.getPage().then((response) => {
       setListFilter((prev) => ({
         ...prev,
-        assFilter: response.assFilter,
-        classFilter: response.classFilter,
         statusFilter: response.statusFilter,
       }))
     })
@@ -55,12 +75,13 @@ const MilestoneList = () => {
   useEffect(() => {
     loadData(1, filter)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter])
+  }, [filter, currentClass])
 
   const loadData = async (page, filter, q = '') => {
     const params = {
       limit: ITEM_PER_PAGE,
       page: currentPage,
+      filterClass: currentClass,
     }
 
     if (q !== '') {
@@ -69,9 +90,6 @@ const MilestoneList = () => {
     if (filter.assignment.title !== 'Select Assignment') {
       params.filterAssignment = filter.assignment.assId
     }
-    if (filter.class !== 'Select Class') {
-      params.filterClass = filter.filterClass
-    }
     if (filter.status.name !== 'Select Status') {
       params.filterStatus = filter.status.value
     }
@@ -79,7 +97,6 @@ const MilestoneList = () => {
     await milestoneApi
       .getPage(params)
       .then((response) => {
-        console.log(response.listResult)
         setListMilestone(response.listResult)
         setCurrentPage(page)
         setTotalItem(response.totalItem)
@@ -89,26 +106,16 @@ const MilestoneList = () => {
       })
   }
 
-  console.log(filter)
-
   const handleSearch = () => {
     loadData(1, filter, search)
-  }
-  const handleFilterAssignment = (assignment) => {
-    setFilter((prev) => ({ ...prev, assignment: assignment }))
-  }
-  const handleFilterClass = (classes) => {
-    setFilter((prev) => ({ ...prev, class: classes }))
   }
   const handleFilterStatus = (status) => {
     setFilter((prev) => ({ ...prev, status: status }))
   }
-
   const handleChangePage = (pageNumber) => {
     setCurrentPage(pageNumber)
     loadData(pageNumber, filter)
   }
-
   const handleReload = () => {
     setSearch('')
     setFilter({
@@ -127,55 +134,191 @@ const MilestoneList = () => {
     navigateTo('/new-milestone')
   }
 
-  const handleActive = () => {}
+  const modalOpen = (allGroup) => {
+    const listGroup = [
+      {
+        groupCode: 'Individually',
+        topicName: '',
+        memberList: allGroup.noGroup,
+      },
+      ...allGroup.groups,
+    ]
 
-  const modalConfirm = (subject) => {
     Modal.confirm({
-      title: `Are you want to ${subject.status === 'Active' ? 'deactivate' : 'reactivate'} "${subject.assignment}" - "${
-        subject.criteriaName
-      }" ?`,
+      title: 'Are you want to confirm configure groups of this milestone?',
       icon: <ExclamationCircleOutlined />,
-      okText: 'OK',
+      okText: 'Confirm',
       cancelText: 'Cancel',
       okType: 'danger',
-      onOk() {
-        handleActive(subject.criteriaId)
+      async onOk() {
+        await milestoneApi
+          .changeToInProgress(allGroup.milestoneId)
+          .then(() => {
+            message.success({
+              content: 'Change Milestone Status Successfully',
+              style: {
+                marginTop: '8vh',
+              },
+            })
+            loadData(currentPage, filter)
+          })
+          .catch(() => {
+            message.error({
+              content: 'Something went wrong, please try again',
+              style: {
+                marginTop: '8vh',
+              },
+            })
+          })
       },
       onCancel() {},
+      width: 900,
+      content: (
+        <div className="pt-3 m-0 site-card-wrapper">
+          <Row gutter={24}>
+            {listGroup.map((group) => (
+              <Col span={12} className="pb-3">
+                <Card
+                  title={group.groupCode}
+                  bordered
+                  style={{ backgroundColor: '#ededed', minHeight: '200px', maxHeight: '200px', overflow: 'auto' }}
+                  bodyStyle={{ paddingTop: 0 }}
+                  extra={
+                    <Space>
+                      <UsergroupAddOutlined style={{ fontSize: '20px' }} />
+                      <Typography>{group.memberList.length}</Typography>
+                    </Space>
+                  }
+                >
+                  {group.memberList.map((student) => (
+                    <Typography className="p-0 m-0 d-flex align-items-center">
+                      {student.fullName} - {student.userName} {student.leader && <CrownTwoTone className="ml-2 " />}
+                    </Typography>
+                  ))}
+                </Card>
+              </Col>
+            ))}
+          </Row>
+          <Space className="pt-3 d-flex flex-row aligns-item-start">
+            <Typography.Title
+              level={5}
+              className="d-flex"
+              style={{
+                fontFamily:
+                  '-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji',
+              }}
+            >
+              Once you have opened it, group configuration of this milestone cannot be changed anymore!
+            </Typography.Title>
+          </Space>
+          <Space>
+            <Button
+              className="p-0 m-0 d-flex flex-row aligns-item-start"
+              type="link"
+              onClick={() => {
+                Modal.destroyAll()
+                navigateTo('/group-list')
+              }}
+            >
+              Click here to configure group
+            </Button>
+          </Space>
+        </div>
+      ),
+    })
+  }
+
+  const modalClose = (allGroup) => {
+    console.log(allGroup)
+
+    Modal.confirm({
+      title: 'Are you want to close this milestone?',
+      icon: <ExclamationCircleOutlined />,
+      okText: 'Confirm',
+      cancelText: 'Cancel',
+      okType: 'danger',
+      async onOk() {
+        await milestoneApi
+          .changeToClosed(allGroup.milestoneId)
+          .then(() => {
+            message.success({
+              content: 'Change Milestone Status Successfully',
+              style: {
+                marginTop: '8vh',
+              },
+            })
+            loadData(currentPage, filter)
+          })
+          .catch((error) => {
+            message.error({
+              content: 'Something went wrong, please try again',
+              style: {
+                marginTop: '8vh',
+              },
+            })
+          })
+      },
+      onCancel() {},
+      width: 900,
+      content: (
+        <div className="pt-3 m-0 site-card-wrapper">
+          <Space className="pt-3 d-flex flex-row aligns-item-start">
+            <Typography.Title
+              level={5}
+              className="d-flex"
+              style={{
+                fontFamily:
+                  '-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji',
+              }}
+            >
+              Once you have closed it, milestone evaluation cannot be changed anymore!
+            </Typography.Title>
+          </Space>
+          <Space>
+            <Button
+              className="p-0 m-0 d-flex flex-row aligns-item-start"
+              type="link"
+              onClick={() => {
+                console.log('move to milestone evaluation page')
+              }}
+            >
+              Click here to assign milestone evaluation page
+            </Button>
+          </Space>
+        </div>
+      ),
     })
   }
 
   const columns = [
     {
-      title: 'Class',
-      dataIndex: 'classesCode',
-      sorter: (a, b) => a.classesCode.length - b.classesCode.length,
-      width: '10%',
-    },
-    {
       title: 'Title',
       dataIndex: 'title',
       sorter: (a, b) => a.title.length - b.title.length,
-      width: '22.5%',
+      width: '15',
     },
     {
       title: 'Assignment',
       dataIndex: 'assignment',
-      sorter: (a, b) => a.assignment.length - b.assignment.length,
-      width: '22.5%',
+      sorter: (a, b) => a.assignment.title.length - b.assignment.title.length,
+      width: '15',
       render: (_, { assignment }) => assignment.title,
     },
     {
       title: 'From Date',
       dataIndex: 'fromDate',
-      sorter: (a, b) => a.fromDate.length - b.fromDate.length,
-      width: '13%',
+      width: '12.5%',
     },
     {
       title: 'To Date',
       dataIndex: 'toDate',
-      sorter: (a, b) => a.toDate.length - b.toDate.length,
-      width: '13%',
+      width: '12.5%',
+    },
+    {
+      title: 'Description',
+      dataIndex: 'description',
+      sorter: (a, b) => a.description.length - b.description.length,
+      width: '35%',
     },
     {
       title: 'Status',
@@ -193,24 +336,30 @@ const MilestoneList = () => {
       dataIndex: 'actions',
       render: (_, subject) => (
         <Space size="middle" align="baseline">
-          {subject.status === 'Closed' ? (
-            <Button></Button>
-          ) : (
-            <Tooltip
-              title={
-                subject.status === 'Open' ? 'Open Milestone' : subject.status === 'In_Progress' ? 'Close Milestone' : ''
-              }
-              placement="top"
-            >
+          {subject.status === 'Open' ? (
+            <Tooltip title={'Open Milestone'} placement="top">
               <Button
-                type={subject.status === 'Open' ? 'primary' : 'danger'}
+                type={'primary'}
                 shape="circle"
-                icon={subject.status === 'Open' ? <CheckOutlined /> : <CloseOutlined />}
+                icon={<CheckOutlined />}
                 onClick={() => {
-                  modalConfirm(subject)
+                  modalOpen(subject)
                 }}
               ></Button>
             </Tooltip>
+          ) : subject.status === 'In_Progress' ? (
+            <Tooltip title={'Close Milestone'} placement="top">
+              <Button
+                type={'danger'}
+                shape="circle"
+                icon={<CloseOutlined />}
+                onClick={() => {
+                  modalClose(subject)
+                }}
+              ></Button>
+            </Tooltip>
+          ) : (
+            <Button></Button>
           )}
           <Tooltip title="View" placement="top">
             <Button
@@ -244,7 +393,7 @@ const MilestoneList = () => {
                       <Breadcrumb.Item>Milestone List</Breadcrumb.Item>
                     </Breadcrumb>
                   </div>
-                  <div className="col-4 d-flex w-80">
+                  <div className="col-5 d-flex w-80">
                     <input
                       type="search"
                       id="form1"
@@ -257,27 +406,7 @@ const MilestoneList = () => {
                       <CIcon icon={cilSearch} />
                     </CButton>
                   </div>
-                  <div className="col-6 d-flex justify-content-end">
-                    <CDropdown className="ml-4">
-                      <CDropdownToggle color="secondary">{filter.assignment.title}</CDropdownToggle>
-                      <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
-                        {listFilter?.assFilter?.map((assignment) => (
-                          <CDropdownItem onClick={() => handleFilterAssignment(assignment)}>
-                            {assignment.title}
-                          </CDropdownItem>
-                        ))}
-                      </CDropdownMenu>
-                    </CDropdown>
-
-                    <CDropdown className="ml-4">
-                      <CDropdownToggle color="secondary">{filter.class}</CDropdownToggle>
-                      <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
-                        {listFilter.classFilter.map((classes) => (
-                          <CDropdownItem onClick={() => handleFilterClass(classes)}>{classes}</CDropdownItem>
-                        ))}
-                      </CDropdownMenu>
-                    </CDropdown>
-
+                  <div className="col-5 d-flex justify-content-end">
                     <CDropdown className="ml-4">
                       <CDropdownToggle color="secondary">{filter.status.name}</CDropdownToggle>
                       <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
@@ -286,7 +415,6 @@ const MilestoneList = () => {
                         ))}
                       </CDropdownMenu>
                     </CDropdown>
-
                     <Tooltip title="Reload" placement="top">
                       <CButton color="success" type="submit" className="text-light ml-4" onClick={handleReload}>
                         <CIcon icon={cilSync} />

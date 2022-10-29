@@ -12,14 +12,19 @@ const groupApi = {
     return axiosClient.get(url, { ...header, params })
   },
 
-  getFilter: (params) => {
+  getFilter: () => {
     const url = `/api/group-filter`
-    return axiosClient.get(url, { ...header, params })
+    return axiosClient.get(url, header)
   },
 
   getDetail: (id) => {
     const url = `/api/group-detail/${id}`
     return axiosClient.get(url, header)
+  },
+
+  changeDetail: (id, params) => {
+    const url = `/api/group-detail/${id}`
+    return axiosClient.put(url, params, header)
   },
 
   setLeader: (username, groupId) => {
@@ -33,7 +38,7 @@ const groupApi = {
   },
 
   addFromWaitingList: (userName, groupId, milestoneId) => {
-    const url = `/api/group-member-add/${userName}/${groupId}/${milestoneId}`
+    const url = `/api/group-member-add/${userName}/${groupId}`
     return axiosClient.post(url, {}, header)
   },
 
@@ -49,7 +54,27 @@ const groupApi = {
 
   moveFromWaitingListToExistGroup: (userName, newGroupId) => {
     const url = `/api/group-change/${userName}/${newGroupId}`
+    return axiosClient.post(url, {}, header)
+  },
+
+  changeActiveStudent: (userName, groupId) => {
+    const url = `/api/group-member-status/${userName}/${groupId}`
     return axiosClient.put(url, {}, header)
+  },
+
+  changeActiveGroup: (groupId) => {
+    const url = `/api/group-status/${groupId}`
+    return axiosClient.put(url, {}, header)
+  },
+
+  createGroup: (username, milestoneId, params) => {
+    const url = `/api/group-add/${username}/${milestoneId}`
+    return axiosClient.post(url, params, header)
+  },
+
+  removeAllGroups: (id) => {
+    const url = `/api/group-removes/${id}`
+    return axiosClient.delete(url, header)
   },
 }
 

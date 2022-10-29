@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import swp490.g23.onlinelearningsystem.entities.group.domain.filter.GroupFilter;
 import swp490.g23.onlinelearningsystem.entities.group.domain.request.GroupRequestDTO;
+import swp490.g23.onlinelearningsystem.entities.group.domain.request.GroupRequestWrapper;
 import swp490.g23.onlinelearningsystem.entities.group.domain.response.GroupPaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.group.domain.response.GroupResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.group.service.impl.GroupService;
@@ -36,7 +37,7 @@ public class GroupController {
 			@RequestParam(name = "limit", required = false) String requestLimit,
 			@RequestParam(name = "q", required = false) String keyword,
 			@RequestParam(name = "filterStatus", required = false) String statusFilter,
-			@RequestParam(name = "filterMilestone", required = false) String milestoneFilter,
+			@RequestParam(name = "filterMilestone", required = true) String milestoneFilter,
 			@AuthenticationPrincipal User user) {
 
 		int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
@@ -51,9 +52,9 @@ public class GroupController {
 	}
 
 	@GetMapping(value = "/group-filter")
-	public ResponseEntity<GroupFilter> getGroupFilter() {
+	public ResponseEntity<GroupFilter> getGroupFilter(@AuthenticationPrincipal User user) {
 
-		return groupService.groupFilter();
+		return groupService.groupFilter(user.getUserId());
 	}
 
 	@PutMapping(value = "/group-status/{groupId}")
@@ -90,5 +91,11 @@ public class GroupController {
 		return groupService.groupCreate(milestoneId,dto);
 	}
 
+	@PutMapping(value = "/group-set/{milestoneId}")
+	public ResponseEntity<String> setGroups(@PathVariable("milestoneId") Long milestoneId,
+		@RequestBody GroupRequestWrapper groupDtos) {
+
+		return groupService.groupSet(milestoneId,groupDtos);
+	}
 	
 }

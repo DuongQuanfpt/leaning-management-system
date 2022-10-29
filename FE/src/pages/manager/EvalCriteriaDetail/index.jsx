@@ -82,7 +82,6 @@ const EvalCriteriaDetail = () => {
 
     const params = {
       criteriaName: detail.criteriaName.trim(),
-      assignment: detail.assignment.trim(),
       evalWeight: detail.evalWeight + '%',
       expectedWork: detail.expectedWork,
       isTeamEval: detail.isTeamEval,
