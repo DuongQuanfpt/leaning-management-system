@@ -18,6 +18,10 @@ const Random = () => {
       .getGroup({ filterMilestone: id })
       .then((response) => {
         console.log(response)
+        const listStudent = []
+        response.listResult.groupMembers.forEach((item) => listStudent.push(item))
+        console.log(listStudent)
+        console.log(response)
         setGroupDetail(response)
       })
       .catch((error) => {

@@ -74,18 +74,21 @@ const MilestoneDetail = () => {
       setError('From Date can not bigger than To Date')
       return
     }
-
-    if (detail.description === '') {
+    if (detail.title.trim() === '') {
+      setError('Title must not empty')
+      return
+    }
+    if (detail.description.trim() === '') {
       setError('Description must not empty')
       return
     }
 
     const params = {
-      title: detail.title,
+      title: detail.title.trim(),
       fromDate: detail.fromDate,
       toDate: detail.toDate,
       status: detail.status,
-      description: detail.description,
+      description: detail.description.trim(),
     }
 
     await milestoneApi
