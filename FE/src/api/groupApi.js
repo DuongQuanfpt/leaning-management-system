@@ -62,8 +62,8 @@ const groupApi = {
     return axiosClient.put(url, {}, header)
   },
 
-  createGroup: (milestoneId, params) => {
-    const url = `/api/group-add/${milestoneId}`
+  createGroup: (username, milestoneId, params) => {
+    const url = `/api/group-add/${username}/${milestoneId}`
     return axiosClient.post(url, params, header)
   },
 

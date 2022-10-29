@@ -83,8 +83,9 @@ const NewMilestone = () => {
       setError('Description must not empty')
       return
     }
+
     const params = {
-      classesCode: detail.classesCode,
+      classesCode: detail.class.classCode,
       assignmentId: detail.assignment.assId,
       title: detail.title,
       fromDate: detail.fromDate,
@@ -92,6 +93,8 @@ const NewMilestone = () => {
       status: 0,
       description: detail.description,
     }
+
+    console.log(params)
 
     await milestoneApi
       .addMilestone(params)

@@ -120,7 +120,10 @@ const supporterRoutes = [
 ]
 
 // Trainer routes
-const trainerRoutes = [{ path: '/new-milestone', component: NewMilestone }]
+const trainerRoutes = [
+  { path: '/new-milestone', component: NewMilestone },
+  { path: '/new-group/:id', component: NewGroup },
+]
 
 // Trainee routes
 const traineeRoutes = []
@@ -163,7 +166,6 @@ const classEvalCriteriaListRoutes = [
 const groupListRoutes = [
   { path: '/group-list', component: GroupList },
   { path: '/group-detail/:id', component: GroupDetail },
-  { path: '/new-group/:id', component: NewGroup },
 ]
 
 export {
