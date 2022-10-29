@@ -14,9 +14,7 @@ import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.MilestoneStatu
 @NoArgsConstructor
 @AllArgsConstructor
 public class MilestoneFilter {
-    private List<String> subjectFilter;
     private List<MilestoneStatusEntity> statusFilter;
     private List<AssignmentResponseDTO> assFilter;
-    private List<String> classCode;
-    private List<String> complexity;
+    private List<MilestoneFilterClass> classFilter;
 }

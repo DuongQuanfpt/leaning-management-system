@@ -22,6 +22,7 @@ import swp490.g23.onlinelearningsystem.entities.eval_criteria.domain.EvalCriteri
 import swp490.g23.onlinelearningsystem.entities.eval_criteria.repositories.EvalCriteriaRepositories;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.filter.MilestoneFilter;
+import swp490.g23.onlinelearningsystem.entities.milestone.domain.filter.MilestoneFilterClass;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.request.MilestoneRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestonePaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestoneResponseDTO;
@@ -29,6 +30,7 @@ import swp490.g23.onlinelearningsystem.entities.milestone.repositories.Milestone
 import swp490.g23.onlinelearningsystem.entities.milestone.repositories.criteria.MilestoneCriteria;
 import swp490.g23.onlinelearningsystem.entities.milestone.repositories.criteria_entity.MilestoneQuery;
 import swp490.g23.onlinelearningsystem.entities.milestone.service.IMilestoneService;
+import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.SubmitRepository;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
@@ -144,9 +146,10 @@ public class MilestoneService implements IMilestoneService {
     }
 
     @Override
-    public ResponseEntity<MilestoneFilter> milestoneFilter() {
+    public ResponseEntity<MilestoneFilter> milestoneFilter(Long id) {
+        User user = userRepository.findById(id).get();
         MilestoneFilter filter = new MilestoneFilter();
-        List<Classes> classes = classRepositories.findAll();
+        List<Classes> classes = classRepositories.findClassTrainerAssigned(user.getAccountName());
         List<Assignment> assignments = assignmentRepository.findAll();
 
         List<MilestoneStatusEntity> statusFilter = new ArrayList<>();
@@ -155,9 +158,9 @@ public class MilestoneService implements IMilestoneService {
             statusFilter.add(new MilestoneStatusEntity(status));
         }
 
-        List<String> classCodes = new ArrayList<>();
+        List<MilestoneFilterClass> classFilter = new ArrayList<>();
         for (Classes c : classes) {
-            classCodes.add(c.getCode());
+            classFilter.add(new MilestoneFilterClass(c.getCode(), c.getSubject().getSubjectCode()));
         }
 
         List<AssignmentResponseDTO> assFilter = new ArrayList<>();
@@ -167,7 +170,7 @@ public class MilestoneService implements IMilestoneService {
 
         filter.setStatusFilter(statusFilter);
         filter.setAssFilter(assFilter);
-        filter.setClassCode(classCodes);
+        filter.setClassFilter(classFilter);
         return ResponseEntity.ok(filter);
     }
 
@@ -290,7 +293,7 @@ public class MilestoneService implements IMilestoneService {
         }
 
         // if (groups != null) {
-        //     responseDTO.setGroupId(groups.getGroupId());
+        // responseDTO.setGroupId(groups.getGroupId());
         // }
 
         return responseDTO;

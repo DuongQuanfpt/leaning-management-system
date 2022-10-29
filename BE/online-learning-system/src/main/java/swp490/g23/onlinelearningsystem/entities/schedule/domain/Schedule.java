@@ -14,7 +14,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import swp490.g23.onlinelearningsystem.entities.class_setting.domain.ClassSetting;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
+import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.util.enumutil.ScheduleStatus;
 
 @Entity
@@ -39,4 +41,12 @@ public class Schedule {
     @ManyToOne
     @JoinColumn(name = "class_id")
     private Classes classes;
+
+    @ManyToOne
+    @JoinColumn(name = "module_id")
+    private ClassSetting classSetting;
+
+    @ManyToOne
+    @JoinColumn(name = "room_id")
+    private Setting setting;
 }

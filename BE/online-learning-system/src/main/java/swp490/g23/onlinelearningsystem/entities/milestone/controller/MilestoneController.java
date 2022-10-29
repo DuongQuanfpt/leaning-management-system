@@ -54,7 +54,7 @@ public class MilestoneController {
     public ResponseEntity<String> milestoneEdit(@RequestBody MilestoneRequestDTO dto,
             @PathVariable Long id) {
 
-        return milestoneService.milestonEdit(dto,id);
+        return milestoneService.milestonEdit(dto, id);
     }
 
     @PostMapping(value = "/milestone-add")
@@ -64,8 +64,8 @@ public class MilestoneController {
     }
 
     @GetMapping(value = "/milestone-filter")
-    public ResponseEntity<MilestoneFilter> milestoneFilter() {
+    public ResponseEntity<MilestoneFilter> milestoneFilter(@AuthenticationPrincipal User user) {
 
-        return milestoneService.milestoneFilter();
+        return milestoneService.milestoneFilter(user.getUserId());
     }
 }

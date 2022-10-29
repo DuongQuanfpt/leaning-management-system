@@ -22,4 +22,8 @@ public class ScheduleRequestDTO {
     private String fromTime;
 
     private String toTime;
+
+    private String status;
+
+    private String room;
 }

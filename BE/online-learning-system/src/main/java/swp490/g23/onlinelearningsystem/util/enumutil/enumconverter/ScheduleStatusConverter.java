@@ -10,7 +10,9 @@ public class ScheduleStatusConverter implements AttributeConverter<ScheduleStatu
 
     @Override
     public Boolean convertToDatabaseColumn(ScheduleStatus attribute) {
-
+        if (attribute.getValue() == null) {
+            return null;
+        }
         return attribute.getValue();
     }
 

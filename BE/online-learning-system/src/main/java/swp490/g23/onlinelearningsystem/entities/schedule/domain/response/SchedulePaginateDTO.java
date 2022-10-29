@@ -18,4 +18,6 @@ public class SchedulePaginateDTO {
     private long totalItem;
     private List<ScheduleResponseDTO> listResult;
     private List<ScheduleStatusEntity> statusFilter;
+    private List<String> dateFilter;
+    private List<String> yearFilter;
 }
