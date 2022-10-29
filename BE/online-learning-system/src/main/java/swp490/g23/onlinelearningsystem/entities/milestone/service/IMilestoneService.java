@@ -13,7 +13,7 @@ public interface IMilestoneService {
             String filterAss, String filterStatus, User user);
 
     ResponseEntity<MilestoneResponseDTO> milestoneDetail(Long id);
-    ResponseEntity<MilestoneFilter> milestoneFilter();
+    ResponseEntity<MilestoneFilter> milestoneFilter(Long userId);
     ResponseEntity<String> milestonAdd(MilestoneRequestDTO dto);
     ResponseEntity<String> milestonEdit(MilestoneRequestDTO dto , Long id);
     ResponseEntity<String> milestoneInProgess(Long id);

@@ -36,7 +36,7 @@ public class GroupController {
 			@RequestParam(name = "limit", required = false) String requestLimit,
 			@RequestParam(name = "q", required = false) String keyword,
 			@RequestParam(name = "filterStatus", required = false) String statusFilter,
-			@RequestParam(name = "filterMilestone", required = false) String milestoneFilter,
+			@RequestParam(name = "filterMilestone", required = true) String milestoneFilter,
 			@AuthenticationPrincipal User user) {
 
 		int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
@@ -51,9 +51,9 @@ public class GroupController {
 	}
 
 	@GetMapping(value = "/group-filter")
-	public ResponseEntity<GroupFilter> getGroupFilter() {
+	public ResponseEntity<GroupFilter> getGroupFilter(@AuthenticationPrincipal User user) {
 
-		return groupService.groupFilter();
+		return groupService.groupFilter(user.getUserId());
 	}
 
 	@PutMapping(value = "/group-status/{groupId}")

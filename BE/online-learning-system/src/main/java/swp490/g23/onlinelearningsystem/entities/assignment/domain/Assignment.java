@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.BaseEntity;
 import swp490.g23.onlinelearningsystem.entities.eval_criteria.domain.EvalCriteria;
+import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
 import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
 import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 
@@ -56,4 +57,7 @@ public class Assignment extends BaseEntity {
 
     @OneToMany(mappedBy = "assignment")
     private List<EvalCriteria> EvalCriteriaList;
+
+    @OneToMany(mappedBy = "assignment")
+    private List<Milestone> milestones;
 }

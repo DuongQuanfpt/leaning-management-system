@@ -76,8 +76,8 @@ public class MilestoneController {
     }
 
     @GetMapping(value = "/milestone-filter")
-    public ResponseEntity<MilestoneFilter> milestoneFilter() {
+    public ResponseEntity<MilestoneFilter> milestoneFilter(@AuthenticationPrincipal User user) {
 
-        return milestoneService.milestoneFilter();
+        return milestoneService.milestoneFilter(user.getUserId());
     }
 }

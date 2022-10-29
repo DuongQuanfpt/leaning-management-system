@@ -28,7 +28,5 @@ public class GroupResponseDTO {
     
     private List<GroupMemberResponseDTO> groupMembers; 
 
-    private List<MilestoneResponseDTO> milestone;
-
-    
+    // private List<MilestoneResponseDTO> milestone;
 }
