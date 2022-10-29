@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
-import { Badge, Breadcrumb, Button, Menu, Space, Table, Tag, Typography, Dropdown, Avatar } from 'antd'
-import { CrownTwoTone, MoreOutlined } from '@ant-design/icons'
+import { Breadcrumb, Button, Space, Table, Tag, Typography, Avatar, Dropdown, Menu, message, Modal, Select } from 'antd'
+import { CrownTwoTone, ExclamationCircleOutlined, MoreOutlined } from '@ant-design/icons'
 
 import { CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
 
@@ -13,6 +13,8 @@ import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 
 const GroupList = () => {
+  const navigateTo = useNavigate()
+
   const [listFilter, setListFilter] = useState({
     milstoneFilter: [],
     statusFilter: [
@@ -48,10 +50,10 @@ const GroupList = () => {
   const [isHaveGroup, setIsHaveGroup] = useState(false)
 
   useEffect(() => {
-    loadData()
+    loadMilestone()
   }, [])
 
-  const loadData = async () => {
+  const loadMilestone = async () => {
     groupApi
       .getGroup()
       .then((response) => {
@@ -63,23 +65,12 @@ const GroupList = () => {
       .catch((error) => console.log(error))
   }
 
-  const handleFilterMilestone = async (milestone) => {
-    setFilter((prev) => ({
-      ...prev,
-      milstone: milestone,
-    }))
-    const params = {
-      filterMilestone: milestone.milestoneId,
-    }
+  const loadGroup = async (params) => {
     await groupApi
       .getGroup(params)
       .then((response) => {
         setIsHaveGroup(response.listResult.length === 0 ? false : true)
-        const group = response.listResult.map((item, index) => ({ ...item, key: index }))
         setWaitingList(response.noGroup)
-        return group
-      })
-      .then((group) => {
         const waitingGroup = {
           classCode: '',
           description: '',
@@ -88,16 +79,30 @@ const GroupList = () => {
           topicName: 'These trainee would work personally',
 
           groupId: '',
-          groupMembers: [{ key: '', empty: true }],
+          groupMembers: response.noGroup.map((item, index) => ({ key: 'index', memberInfo: item })),
           key: '',
           milestone: [],
           status: '',
         }
-        setGroup([waitingGroup, ...group])
+        const group = [waitingGroup, ...response.listResult.map((item, index) => ({ ...item, key: index }))]
+        setGroup(group)
       })
+
       .catch((error) => {
         console.log(error)
       })
+  }
+
+  const handleFilterMilestone = async (milestone) => {
+    setFilter((prev) => ({
+      ...prev,
+      milstone: milestone,
+    }))
+    const params = {
+      filterMilestone: milestone.milestoneId,
+    }
+
+    loadGroup(params)
   }
 
   const handleFilterStatus = (status) => {
@@ -107,9 +112,279 @@ const GroupList = () => {
     }))
   }
 
-  const expandedRowRender = (group) => {
-    const listMember = group?.groupMembers.map((item, index) => ({ ...item, key: index + 1 }))
+  const toastMessage = (type, mes) => {
+    message[type]({
+      content: mes,
+      style: {
+        marginTop: '8vh',
+      },
+    })
+  }
 
+  const modalConfirm = (callbackHandler, message) => {
+    Modal.confirm({
+      title: message,
+      icon: <ExclamationCircleOutlined />,
+      okText: 'Confirm',
+      cancelText: 'Cancel',
+      okType: 'danger',
+      onOk() {
+        callbackHandler()
+      },
+      onCancel() {},
+    })
+  }
+
+  const modalMoveToExist = (trainee) => {
+    const listGroup = [...group.slice(1, group.length)].filter((group) => group.groupId !== trainee.groupId)
+
+    let targetGroupId = null
+    console.log(trainee.groupId)
+    Modal.confirm({
+      title: `Move student to existed group`,
+      okText: 'Confirm',
+      cancelText: 'Cancel',
+      okType: 'danger',
+      onOk() {
+        const handleFromGroupMoveToExistGroup = async () => {
+          await groupApi
+            .moveFromGroupToExistGroup(trainee.memberInfo.username, trainee.groupId, targetGroupId)
+            .then(() => {
+              toastMessage('success', 'Add Student Successfully!')
+              loadGroup({ filterMilestone: filter.milstone.milestoneId })
+            })
+            .catch((error) => {
+              console.log(error)
+              toastMessage('error', 'Something went wrong, please try again')
+            })
+        }
+
+        const handleFromWaitingListMoveToExistGroup = async () => {
+          await groupApi
+            .moveFromWaitingListToExistGroup(trainee.memberInfo.username, targetGroupId)
+            .then(() => {
+              toastMessage('success', 'Add Student Successfully!')
+              loadGroup({ filterMilestone: filter.milstone.milestoneId })
+            })
+            .catch((error) => {
+              console.log(error)
+              toastMessage('error', 'Something went wrong, please try again')
+            })
+        }
+
+        if (targetGroupId === null) {
+          toastMessage('error', 'You must select group')
+          return
+        }
+        modalConfirm(
+          trainee.groupId === undefined ? handleFromWaitingListMoveToExistGroup : handleFromGroupMoveToExistGroup,
+          `Are you sure want to add?`,
+        )
+      },
+      onCancel() {},
+      width: '600px',
+      content: (
+        <>
+          <Typography className="mt-1 mb-3">{`Select group you want <${trainee.memberInfo.username}> (${trainee.memberInfo.fullName}) coming `}</Typography>
+          <Select
+            defaultValue="Select Group"
+            style={{
+              width: 400,
+            }}
+            onChange={(e) => (targetGroupId = e)}
+          >
+            {listGroup.map((item, index) => (
+              <Select.Option value={item.groupId}>{`<${item.groupId}> (${item.groupCode})`}</Select.Option>
+            ))}
+          </Select>
+        </>
+      ),
+    })
+  }
+
+  const modalMoveToNew = (trainee) => {}
+
+  const modalAddStudentFromWaitingList = (group) => {
+    let userName = ''
+
+    Modal.confirm({
+      title: `Add Student From Waiting List`,
+      okText: 'Confirm',
+      cancelText: 'Cancel',
+      okType: 'danger',
+      onOk() {
+        const handleAddStudentFromWaitingList = async () => {
+          await groupApi
+            .addFromWaitingList(userName, group.groupId, filter.milstone.milestoneId)
+            .then(() => {
+              toastMessage('success', 'Add Student Successfully!')
+              loadGroup({ filterMilestone: filter.milstone.milestoneId })
+            })
+            .catch((error) => {
+              console.log(error)
+              toastMessage('error', 'Something went wrong, please try again')
+            })
+        }
+        if (userName === '') {
+          toastMessage('error', 'You must select one student')
+          return
+        }
+        modalConfirm(handleAddStudentFromWaitingList, `Are you sure want to add <${userName}> to <${group.groupCode}>?`)
+      },
+      onCancel() {},
+      width: '600px',
+      content: (
+        <>
+          <Typography className="mt-1 mb-3">{`Select student you want add to <${group.groupCode}> `}</Typography>
+          <Select
+            defaultValue="Select Student from Waiting List"
+            style={{
+              width: 400,
+            }}
+            onChange={(e) => (userName = e)}
+          >
+            {waitingList.map((item, index) => (
+              <Select.Option value={item.username}>{`<${item.username}> (${item.fullName})`}</Select.Option>
+            ))}
+          </Select>
+        </>
+      ),
+    })
+  }
+
+  // const modalDetachGroup = (group) => {
+  //   Modal.confirm({
+  //     title: `Detach Group`,
+  //     okText: 'Confirm',
+  //     cancelText: 'Cancel',
+  //     okType: 'danger',
+  //     onOk() {
+  //       groupApi
+  //         .detachGroup(group.groupId, filter.milstone.milestoneId)
+  //         .then(() => {
+  //           toastMessage('success', 'Detach Group Successfully!')
+  //           loadGroup({ filterMilestone: filter.milstone.milestoneId })
+  //         })
+  //         .catch((error) => {
+  //           console.log(error)
+  //           toastMessage('error', 'Something went wrong, please try again')
+  //         })
+  //     },
+  //     onCancel() {},
+  //     content: (
+  //       <Typography className="mt-1 mb-3">{`All student of this group will be moved to Waiting List. Are you sure want to detach group <${group.groupCode}> ? `}</Typography>
+  //     ),
+  //   })
+  // }
+
+  const menuStudent = (trainee) => (
+    <Menu
+      items={[
+        {
+          key: '1',
+          label: 'Set as Leader',
+          disabled: trainee.isLeader || !trainee.groupId,
+          onClick: () => {
+            const handleChangeLeader = async () => {
+              await groupApi
+                .setLeader(trainee.memberInfo.username, trainee.groupId)
+                .then(() => {
+                  toastMessage('success', 'Change Leader Successfully!')
+                  loadGroup({ filterMilestone: filter.milstone.milestoneId })
+                })
+                .catch((error) => {
+                  console.log(error)
+                  toastMessage('error', 'Something went wrong, please try again')
+                })
+            }
+            modalConfirm(
+              handleChangeLeader,
+              `Are you sure want to promote <${trainee.memberInfo.username}> (${trainee.memberInfo.fullName}) to leader ?`,
+            )
+          },
+        },
+        {
+          key: '2',
+          label: 'Move to existing group',
+          onClick: () => {
+            modalMoveToExist(trainee)
+          },
+        },
+        {
+          key: '3',
+          label: 'Move to new group',
+          onClick: () => {
+            modalMoveToNew(trainee)
+          },
+        },
+        {
+          type: 'divider',
+        },
+        {
+          key: '4',
+          label: 'Remove',
+          disabled: !trainee.groupId,
+          onClick: () => {
+            const handleRemove = async () => {
+              await groupApi
+                .remove(trainee.memberInfo.username, trainee.groupId, filter.milstone.milestoneId)
+                .then(() => {
+                  toastMessage('success', 'Remove Student Successfully!')
+                  loadGroup({ filterMilestone: filter.milstone.milestoneId })
+                })
+                .catch((error) => {
+                  console.log(error)
+                  toastMessage('error', 'Something went wrong, please try again')
+                })
+            }
+
+            modalConfirm(
+              handleRemove,
+              `${trainee.memberInfo.username} will be moved to Waiting List. Are you sure want to remove ${trainee.memberInfo.username} ?`,
+            )
+          },
+        },
+      ]}
+    />
+  )
+
+  const menuGroup = (group) => (
+    <Menu
+      items={[
+        {
+          key: Math.random(),
+          label: 'Add New Student',
+          disabled: waitingList.length === 0,
+          onClick: () => {
+            modalAddStudentFromWaitingList(group)
+          },
+        },
+        {
+          key: Math.random(),
+          label: 'Group Detail',
+          onClick: () => {
+            console.log(group)
+            navigateTo(`/group-detail/${group.groupId}`)
+          },
+        },
+        { type: 'divider' },
+        {
+          key: Math.random(),
+          label: group.status === 'Active' ? 'Deactivate' : 'Reactivate',
+          onClick: () => {
+            console.log(group)
+            // const handleActivate = async () => {}
+          },
+        },
+      ]}
+    />
+  )
+
+  const expandedRowRender = (group) => {
+    const listMember = group?.groupMembers?.map((item, index) => ({
+      ...item,
+      key: index + 1,
+    }))
     const columns = [
       {
         title: '#',
@@ -123,46 +398,65 @@ const GroupList = () => {
         dataIndex: 'student',
         key: 'student',
         width: '42%',
-        render: (_, trainee) =>
-          trainee.empty ? (
-            <Space>
-              <Typography>No trainee here</Typography>
-            </Space>
-          ) : (
-            <Space>
-              <Avatar src={trainee?.memberInfo?.profileUrl} />
-              <Space className="flex-column pl-3" style={{ width: '250px' }}>
-                <p
-                  className="p-0 m-0 d-flex align-items-center "
-                  style={{ fontSize: '14px', lineHeight: '18px', fontWeight: '500' }}
-                >
-                  {trainee?.memberInfo?.fullName} {trainee.isLeader && <CrownTwoTone className="ml-2" />}
-                </p>
-                <p className="p-0 m-0" style={{ fontSize: '10px', lineHeight: '18px', fontWeight: '500' }}>
-                  {trainee?.memberInfo?.username}
-                </p>
+        render: (_, trainee) => {
+          return {
+            props: {
+              style: { padding: 0, margin: 0 },
+            },
+            children: trainee.empty ? (
+              <Space>
+                <Typography>No trainee here</Typography>
               </Space>
-            </Space>
-          ),
+            ) : (
+              <Space>
+                <Avatar src={trainee?.memberInfo?.profileUrl} />
+                <Space className="flex-column pl-3" style={{ width: '250px' }}>
+                  <p
+                    className="p-0 m-0 d-flex align-items-center "
+                    style={{ fontSize: '14px', lineHeight: '18px', fontWeight: '500' }}
+                  >
+                    {trainee?.memberInfo?.fullName} {trainee.isLeader && <CrownTwoTone className="ml-2" />}
+                  </p>
+                  <p className="p-0 m-0" style={{ fontSize: '10px', lineHeight: '18px', fontWeight: '500' }}>
+                    {trainee?.memberInfo?.username}
+                  </p>
+                </Space>
+              </Space>
+            ),
+          }
+        },
       },
       {
         title: 'Email',
         dataIndex: 'email',
         key: 'email',
         width: '30%',
-        render: (_, trainee) => trainee?.memberInfo?.email,
+        render: (_, trainee) => {
+          return {
+            props: {
+              style: { padding: 0, margin: 0 },
+            },
+            children: trainee?.memberInfo?.email,
+          }
+        },
       },
       {
         title: 'Status',
         dataIndex: 'status',
         key: 'status',
         width: '13%',
-        render: (_, trainee) =>
-          trainee.isActive && (
-            <Tag color={trainee?.isActive ? 'green' : 'red'} key={trainee?.isActive}>
-              {trainee?.isActive ? 'Active' : 'Inactive'}
-            </Tag>
-          ),
+        render: (_, trainee) => {
+          return {
+            props: {
+              style: { padding: 0, margin: 0 },
+            },
+            children: trainee.isActive && (
+              <Tag color={trainee?.isActive ? 'green' : 'red'} key={trainee?.isActive}>
+                {trainee?.isActive ? 'Active' : 'Inactive'}
+              </Tag>
+            ),
+          }
+        },
       },
       {
         title: 'Action',
@@ -171,19 +465,29 @@ const GroupList = () => {
 
         render: (_, trainee) =>
           !trainee.empty && (
-            <Button
-              shape="circle"
-              icon={<MoreOutlined />}
-              onClick={(e) => {
-                console.log(trainee)
-                e.stopPropagation()
-              }}
-            ></Button>
+            <Space>
+              <Dropdown overlay={menuStudent(trainee)} placement="left" trigger={['click']}>
+                <Button
+                  shape="circle"
+                  icon={<MoreOutlined />}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                  }}
+                ></Button>
+              </Dropdown>
+            </Space>
           ),
       },
     ]
 
-    return <Table showHeader={false} columns={columns} dataSource={listMember} pagination={false} />
+    const customLocale = {
+      emptyText: 'No trainee here',
+    }
+
+    return (
+      <Table locale={customLocale} pagination={false} showHeader={false} columns={columns} dataSource={listMember} />
+    )
   }
 
   const columnsGroup = [
@@ -209,12 +513,18 @@ const GroupList = () => {
       dataIndex: 'status',
       key: 'status',
       width: '13%',
-      render: (_, { status }) =>
-        status && (
-          <Tag color={status === 'Active' ? 'blue' : status === 'Inactive' ? 'red' : 'grey'} key={status}>
-            {status}
-          </Tag>
-        ),
+      render: (_, { status }) => {
+        return {
+          props: {
+            style: { padding: 0, margin: 0 },
+          },
+          children: status && (
+            <Tag color={status === 'Active' ? 'blue' : 'red'} key={status}>
+              {status}
+            </Tag>
+          ),
+        }
+      },
     },
     {
       title: 'Actions',
@@ -222,15 +532,19 @@ const GroupList = () => {
       key: 'actions',
       width: '7%',
       render: (_, group) =>
-        group.status && (
-          <Button
-            shape="circle"
-            icon={<MoreOutlined />}
-            onClick={(e) => {
-              console.log(group)
-              e.stopPropagation()
-            }}
-          ></Button>
+        group.groupCode !== 'Waiting List' && (
+          <Space>
+            <Dropdown overlay={menuGroup(group)} placement="left" trigger={['click']}>
+              <Button
+                shape="circle"
+                icon={<MoreOutlined />}
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                }}
+              ></Button>
+            </Dropdown>
+          </Space>
         ),
     },
   ]
@@ -253,7 +567,7 @@ const GroupList = () => {
             <div className="row">
               <div className="col-lg-12 m-b30">
                 <div className="row">
-                  <div className="col-2 d-flex align-items-center">
+                  <div className="col-12 d-flex align-items-center">
                     <Breadcrumb>
                       <Breadcrumb.Item>
                         <Link to="/dashboard">Dashboard</Link>
@@ -317,9 +631,10 @@ const GroupList = () => {
                   <Table
                     columns={columnsGroup}
                     showHeader={false}
-                    expandedRowRender={(record) => expandedRowRender(record)}
-                    expandRowByClick={true}
+                    expandable={{ expandedRowRender, defaultExpandedRowKeys: [''] }}
+                    // expandRowByClick={true}
                     dataSource={group}
+                    pagination={false}
                   />
                 </div>
               )}

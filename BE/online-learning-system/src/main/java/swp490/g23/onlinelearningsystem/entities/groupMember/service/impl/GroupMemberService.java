@@ -47,6 +47,9 @@ public class GroupMemberService implements IGroupMemberService {
     @Override
     public ResponseEntity<String> removeMember(String userName, Long groupId, Long milestoneId) {
 
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new CustomException("group doesnt exist"));
+
         if (milestoneRepository.findById(milestoneId).get().getStatus() != MilestoneStatusEnum.Open) {
             throw new CustomException("Cant apply changes , Milestone of this group is in progress or have been close");
         }
@@ -56,6 +59,12 @@ public class GroupMemberService implements IGroupMemberService {
             throw new CustomException("member doesnt exist");
         }
         memberRepositories.delete(member);
+
+        if (member.getIsLeader() == true && group.getGroupMembers().size() == 1) {
+            GroupMember newLeader = group.getGroupMembers().get(0);
+            newLeader.setIsLeader(true);
+            memberRepositories.save(newLeader);
+        }
 
         List<Submit> submits = submitRepository.getFromGroupAndUserName(groupId, userName);
         List<Submit> submitNews = new ArrayList<>();
@@ -172,29 +181,54 @@ public class GroupMemberService implements IGroupMemberService {
 
         ClassUser classUser = classUserRepositories.findByClassesAndUserName(userName,
                 milestone.getClasses().getCode());
-        List<Submit> submits = submitRepository.findByClassUserAndGroupIsNull(classUser);
+
+        List<Submit> submitNew = new ArrayList<>();
+        List<Milestone> milestoneOfGroup = milestoneRepository.milestoneOfGroup(groupId);
+        List<Submit> submits = submitRepository.getByClassUserInMilestones(milestoneOfGroup,classUser);
 
         if (submits.isEmpty()) {
             throw new CustomException(userName + " already have group");
         }
-
-        List<Submit> submitNew = new ArrayList<>();
         for (Submit submit : submits) {
-            if (submit.getMilestone().equals(milestone)) {
-                submit.setGroup(group);
-                submitNew.add(submit);
+            for (Milestone groupMilestone : milestoneOfGroup) {
+                if (submit.getMilestone().equals(groupMilestone)) {
+                    submit.setGroup(group);
+                    submitNew.add(submit);
+                }
             }
+
         }
         submitRepository.saveAll(submitNew);
 
         GroupMember member = new GroupMember();
         member.setMember(classUser.getUser());
         member.setGroup(group);
-        member.setIsLeader(false);
+        member.setIsLeader(true);
+        for (GroupMember groupMember : group.getGroupMembers()) {
+            if (groupMember.getIsLeader() == true) {
+                member.setIsLeader(false);
+            }
+        }
         member.setIsActive(true);
         memberRepositories.save(member);
 
         return ResponseEntity.ok(userName + " moved to group " + group.getGroupCode());
+    }
+
+    @Override
+    public ResponseEntity<String> changeMemberStatus(String userName, Long groupId) {
+        GroupMember groupMember = memberRepositories.getMemberByGroup(userName, groupId);
+        if (groupMember == null) {
+            throw new CustomException("Member not in this group ");
+        }
+
+        if (groupMember.getIsActive()) {
+            groupMember.setIsActive(false);
+        } else {
+            groupMember.setIsActive(true);
+        }
+        memberRepositories.save(groupMember);
+        return ResponseEntity.ok("Member status changed");
     }
 
     public GroupMemberResponseDTO toDTO(GroupMember entity) {

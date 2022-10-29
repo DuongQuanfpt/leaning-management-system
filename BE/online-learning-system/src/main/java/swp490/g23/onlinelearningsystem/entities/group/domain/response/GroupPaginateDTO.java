@@ -18,8 +18,8 @@ public class GroupPaginateDTO {
     private int page;
 	private int totalPage;
 	private long totalItem;
+    private List<GroupResponseDTO> listResult ;
     private List<TraineeResponseDTO> noGroup;
-	private List<GroupResponseDTO> listResult ;
     private List<MilestoneResponseDTO> milstoneFilter;
     private List<StatusEntity> statusFilter;
     

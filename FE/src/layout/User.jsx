@@ -13,6 +13,7 @@ import {
   traineeListRoutes,
   classSettingListRoutes,
   milestoneListRoutes,
+  classEvalCriteriaListRoutes,
   groupListRoutes,
 } from '~/routes'
 import RequireAuth from '~/utils/RequireAuth'
@@ -84,9 +85,6 @@ const User = () => {
               const Page = route.component
               return <Route key={index} path={route.path} element={<Page />} />
             })}
-          </Route>
-
-          <Route element={<RequireAuth allowedRoles={['manager', 'supporter', 'trainer']} />}>
             {traineeListRoutes.map((route, index) => {
               const Page = route.component
               return <Route key={index} path={route.path} element={<Page />} />
@@ -98,16 +96,17 @@ const User = () => {
               const Page = route.component
               return <Route key={index} path={route.path} element={<Page />} />
             })}
-          </Route>
-
-          <Route element={<RequireAuth allowedRoles={['supporter', 'trainer']} />}>
             {milestoneListRoutes.map((route, index) => {
+              const Page = route.component
+              return <Route key={index} path={route.path} element={<Page />} />
+            })}
+            {classEvalCriteriaListRoutes.map((route, index) => {
               const Page = route.component
               return <Route key={index} path={route.path} element={<Page />} />
             })}
           </Route>
 
-          <Route element={<RequireAuth allowedRoles={['supporter', 'trainer']} />}>
+          <Route element={<RequireAuth allowedRoles={['supporter', 'trainer', 'trainee']} />}>
             {groupListRoutes.map((route, index) => {
               const Page = route.component
               return <Route key={index} path={route.path} element={<Page />} />

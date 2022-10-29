@@ -19,4 +19,8 @@ public interface IMilestoneService {
     ResponseEntity<String> milestonAdd(MilestoneRequestDTO dto);
 
     ResponseEntity<String> milestonEdit(MilestoneRequestDTO dto, Long id);
+
+    ResponseEntity<String> milestoneInProgess(Long id);
+
+    ResponseEntity<String> milestoneClosed(Long id);
 }

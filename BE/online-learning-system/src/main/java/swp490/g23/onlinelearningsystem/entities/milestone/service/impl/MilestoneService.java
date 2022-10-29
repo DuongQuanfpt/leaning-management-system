@@ -20,10 +20,14 @@ import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.classes.repositories.ClassRepositories;
 import swp490.g23.onlinelearningsystem.entities.eval_criteria.domain.EvalCriteria;
 import swp490.g23.onlinelearningsystem.entities.eval_criteria.repositories.EvalCriteriaRepositories;
+import swp490.g23.onlinelearningsystem.entities.group.domain.Group;
+import swp490.g23.onlinelearningsystem.entities.groupMember.domain.GroupMember;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.filter.MilestoneFilter;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.filter.MilestoneFilterClass;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.request.MilestoneRequestDTO;
+import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestoneGroupDTO;
+import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestoneMemberDTO;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestonePaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestoneResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.milestone.repositories.MilestoneRepository;
@@ -263,6 +267,37 @@ public class MilestoneService implements IMilestoneService {
         return ResponseEntity.ok("milestone updated");
     }
 
+    @Override
+    public ResponseEntity<String> milestoneInProgess(Long id) {
+        Milestone milestone = milestoneRepository.findById(id)
+                .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
+        if (milestone.getStatus() == MilestoneStatusEnum.In_Progress) {
+            milestone.setStatus(MilestoneStatusEnum.Open);
+
+        } else {
+            milestone.setStatus(MilestoneStatusEnum.In_Progress);
+        }
+
+        milestoneRepository.save(milestone);
+        return ResponseEntity.ok("Milestone swich to " + milestone.getStatus().toString());
+    }
+
+    @Override
+    public ResponseEntity<String> milestoneClosed(Long id) {
+        Milestone milestone = milestoneRepository.findById(id)
+                .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
+
+        if (milestone.getStatus() == MilestoneStatusEnum.Closed) {
+            milestone.setStatus(MilestoneStatusEnum.Open);
+
+        } else {
+            milestone.setStatus(MilestoneStatusEnum.Closed);
+        }
+
+        milestoneRepository.save(milestone);
+        return ResponseEntity.ok("Milestone swich to " + milestone.getStatus().toString());
+    }
+
     public MilestoneResponseDTO toDTO(Milestone entity) {
         MilestoneResponseDTO responseDTO = new MilestoneResponseDTO();
 
@@ -292,11 +327,86 @@ public class MilestoneService implements IMilestoneService {
             responseDTO.setTitle(entity.getTitle());
         }
 
+<<<<<<< HEAD
         // if (groups != null) {
         // responseDTO.setGroupId(groups.getGroupId());
         // }
+=======
+        List<MilestoneGroupDTO> groupResponseDTOs = new ArrayList<>();
+        List<MilestoneMemberDTO> noGroupDTOs = new ArrayList<>();
+        List<Submit> submits = entity.getSubmits();
+>>>>>>> 410e62a363f08374ff63580bb0d4d5e6427e6a3b
 
+        if (!submits.isEmpty()) {
+            for (Submit submit : submits) {
+                if (submit.getGroup() == null) {
+                    MilestoneMemberDTO noGroupDto = toMilestoneMemberDTO(submit.getClassUser().getUser());
+                    noGroupDTOs.add(noGroupDto);
+                }
+
+                MilestoneGroupDTO milestoneGroupDTO = toMilestoneGroupDTO(submit);
+                if (milestoneGroupDTO != null) {
+                    groupResponseDTOs.add(milestoneGroupDTO);
+                }
+            }
+        }
+
+        responseDTO.setNoGroup(noGroupDTOs);
+        responseDTO.setGroups(groupResponseDTOs);
         return responseDTO;
+    }
+
+    public MilestoneGroupDTO toMilestoneGroupDTO(Submit submit) {
+        Group group = submit.getGroup();
+        if (group == null) {
+            return null;
+        }
+        MilestoneGroupDTO groupDTO = new MilestoneGroupDTO();
+        if (group.getGroupCode() != null) {
+            groupDTO.setGroupCode(group.getGroupCode());
+        }
+
+        if (group.getTopicName() != null) {
+            groupDTO.setTopicName(group.getTopicName());
+        }
+        groupDTO.setGroupId(group.getGroupId());
+
+        List<GroupMember> groupMembers = group.getGroupMembers();
+        List<MilestoneMemberDTO> memberDTOs = new ArrayList<>();
+        if (!groupMembers.isEmpty()) {
+            for (GroupMember groupMember : groupMembers) {
+                MilestoneMemberDTO memberDTO = toMilestoneMemberDTO(groupMember.getMember());
+
+                memberDTO.setActive(groupMember.getIsActive());
+                memberDTO.setLeader(groupMember.getIsLeader());
+                memberDTOs.add(memberDTO);
+            }
+        }
+
+        groupDTO.setMemberList(memberDTOs);
+        return groupDTO;
+    }
+
+    public MilestoneMemberDTO toMilestoneMemberDTO(User user) {
+        MilestoneMemberDTO memberDTO = new MilestoneMemberDTO();
+        if (user.getAccountName() != null) {
+            memberDTO.setUserName(user.getAccountName());
+        }
+
+        if (user.getAvatar_url() != null) {
+            memberDTO.setAvatarUrl(user.getAvatar_url());
+        }
+
+        if (user.getAccountName() != null) {
+            memberDTO.setUserName(user.getAccountName());
+        }
+
+        if (user.getFullName() != null) {
+            memberDTO.setFullName(user.getFullName());
+        }
+
+        memberDTO.setEmail(user.getEmail());
+        return memberDTO;
     }
 
     public boolean isMilestoneOpen(Milestone milestone) {

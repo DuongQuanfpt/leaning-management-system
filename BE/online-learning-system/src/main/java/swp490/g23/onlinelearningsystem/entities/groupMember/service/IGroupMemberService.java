@@ -7,5 +7,6 @@ public interface IGroupMemberService {
     ResponseEntity<String> setLeader(String userName ,Long groupId);
     ResponseEntity<String> groupChange(String userName ,Long groupId ,Long newGroupId);
     ResponseEntity<String> memberAdd(String userName ,Long groupId ,Long milestoneId);
+    ResponseEntity<String> changeMemberStatus(String userName ,Long groupId);
     
 }

@@ -44,6 +44,13 @@ public class GroupMemberController {
         return groupMemberService.setLeader(userName, groupId);
     }
 
+    @PutMapping(value = "/group-member-status/{userName}/{groupId}")
+    public ResponseEntity<String> changeMemberStatus(@PathVariable("userName") String userName,
+            @PathVariable("groupId") Long groupId) {
+
+        return groupMemberService.changeMemberStatus( userName , groupId);
+    }
+
     @PutMapping(value = "/group-change/{userName}/{groupId}/{newGroupId}")
     public ResponseEntity<String> changeGroup(@PathVariable("userName") String userName,
             @PathVariable("groupId") Long groupId,

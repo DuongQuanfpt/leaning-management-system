@@ -56,6 +56,12 @@ public class GroupController {
 		return groupService.groupFilter();
 	}
 
+	@PutMapping(value = "/group-status/{groupId}")
+	public ResponseEntity<String> groupStatus(@PathVariable("groupId") Long groupId) {
+
+		return groupService.groupStatus(groupId);
+	}
+
 	@PutMapping(value = "/group-detail/{id}/{milestoneId}")
 	public ResponseEntity<String> editGroup(@RequestBody GroupRequestDTO dto,
 			@PathVariable("id") Long id,
@@ -83,4 +89,6 @@ public class GroupController {
 
 		return groupService.groupCreate(milestoneId,dto);
 	}
+
+	
 }
