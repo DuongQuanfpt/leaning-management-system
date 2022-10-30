@@ -16,7 +16,7 @@ public interface IScheduleService {
 
     ResponseEntity<ScheduleFilter> getFilter(Long id);
 
-    ResponseEntity<String> addSchedule(ScheduleRequestDTO dto);
+    ResponseEntity<String> addSchedule(ScheduleRequestDTO dto, Long id);
 
     ResponseEntity<String> updateSchedule(ScheduleRequestDTO dto, Long id);
 

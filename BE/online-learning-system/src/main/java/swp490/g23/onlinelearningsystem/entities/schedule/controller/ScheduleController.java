@@ -59,9 +59,9 @@ public class ScheduleController {
     }
 
     @PostMapping(value = "/schedule-add")
-    public ResponseEntity<String> addSchedule(@RequestBody ScheduleRequestDTO dto) {
+    public ResponseEntity<String> addSchedule(@RequestBody ScheduleRequestDTO dto, @AuthenticationPrincipal User user) {
 
-        return scheduleService.addSchedule(dto);
+        return scheduleService.addSchedule(dto, user.getUserId());
     }
 
     @GetMapping(value = "/schedule-filter")
