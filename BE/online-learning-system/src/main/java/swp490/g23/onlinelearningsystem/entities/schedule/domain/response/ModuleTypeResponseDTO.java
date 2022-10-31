@@ -12,4 +12,5 @@ import lombok.Setter;
 public class ModuleTypeResponseDTO {
     private String slot;
     private String topic;
+    private String classCode;
 }
