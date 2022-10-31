@@ -2,7 +2,6 @@ package swp490.g23.onlinelearningsystem.entities.schedule.domain.response;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -12,7 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import swp490.g23.onlinelearningsystem.entities.class_setting.domain.ClassSetting;
+import swp490.g23.onlinelearningsystem.entities.class_setting.repositories.ClassSettingRepository;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
+import swp490.g23.onlinelearningsystem.entities.classes.repositories.ClassRepositories;
 import swp490.g23.onlinelearningsystem.entities.schedule.domain.Schedule;
 import swp490.g23.onlinelearningsystem.entities.schedule.domain.filter.ScheduleFilter;
 import swp490.g23.onlinelearningsystem.entities.schedule.domain.request.ScheduleRequestDTO;
@@ -30,6 +33,7 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.util.enumutil.ScheduleStatus;
+import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.ScheduleStatusEntity;
 
 @Service
@@ -46,6 +50,12 @@ public class ScheduleService implements IScheduleService {
 
     @Autowired
     private SettingRepositories settingRepositories;
+
+    @Autowired
+    private ClassRepositories classRepositories;
+
+    @Autowired
+    private ClassSettingRepository classSettingRepository;
 
     @Override
     public ResponseEntity<SchedulePaginateDTO> displaySchedule(String keyword, int limit, int page,
@@ -112,11 +122,16 @@ public class ScheduleService implements IScheduleService {
     }
 
     @Override
-    public ResponseEntity<ScheduleFilter> getFilter() {
+    public ResponseEntity<ScheduleFilter> getFilter(Long id) {
+        User user = userRepository.findById(id).get();
         List<String> trainingDate = new ArrayList<>();
         List<String> yearList = new ArrayList<>();
+        List<Classes> classList = classRepositories.findClassSupporterAssigned(user.getAccountName());
+        List<SettingTypeResponseDTO> roomList = new ArrayList<>();
         List<ScheduleStatusEntity> statuses = new ArrayList<>();
+        List<ModuleTypeResponseDTO> slotFilter = new ArrayList<>();
         List<Schedule> schedules = scheduleRepositories.findAll();
+        List<Setting> rooms = settingRepositories.findAllRoom();
 
         for (Schedule schedule : schedules) {
             if (!trainingDate.contains(schedule.getTrainingDate().toString())) {
@@ -127,46 +142,141 @@ public class ScheduleService implements IScheduleService {
             }
         }
 
+        for (Classes clazz : classList) {
+            for (ClassSetting classSetting : clazz.getTypes()) {
+                slotFilter
+                        .add(new ModuleTypeResponseDTO(classSetting.getSettingValue(), classSetting.getSettingTitle()));
+            }
+        }
+
         for (ScheduleStatus status : new ArrayList<ScheduleStatus>(EnumSet.allOf(ScheduleStatus.class))) {
             statuses.add(new ScheduleStatusEntity(status));
+        }
+
+        for (Setting room : rooms) {
+            roomList.add(new SettingTypeResponseDTO(room.getSettingTitle(), room.getSettingValue()));
         }
 
         ScheduleFilter filterDTO = new ScheduleFilter();
         filterDTO.setStatusFilter(statuses);
         filterDTO.setDateFilter(trainingDate);
         filterDTO.setYearFilter(yearList);
+        filterDTO.setRoomFilter(roomList);
+        filterDTO.setSlotFilter(slotFilter);
 
         return ResponseEntity.ok(filterDTO);
     }
 
     @Override
-    public ResponseEntity<String> addSchedule(ScheduleRequestDTO dto) {
-        // TODO Auto-generated method stub
-        return null;
+    public ResponseEntity<String> addSchedule(ScheduleRequestDTO dto, Long id) {
+        Schedule schedule = new Schedule();
+        // ClassSetting settingClass = new ClassSetting();
+        // User user = userRepository.findById(id).get();
+        // List<Classes> classList =
+        // classRepositories.findClassSupporterAssigned(user.getAccountName());
+        Setting setting = settingRepositories.findBySettingValue(dto.getRoom());
+        LocalDate dateNow = LocalDate.now();
+        LocalTime timeNow = LocalTime.now();
+        LocalDate requestDate = LocalDate.parse(dto.getDate());
+        LocalTime requestFromTime = LocalTime.parse(dto.getFromTime());
+        LocalTime requestToTime = LocalTime.parse(dto.getToTime());
+
+        // for (Classes clazz : classList) {
+        // for (ClassSetting classSetting : clazz.getTypes()) {
+        // if (dto.getSlot().equals(classSetting.getSettingValue())) {
+        // throw new CustomException("Class had this slot already! Try again!");
+        // } else {
+        // settingClass.setSettingValue(dto.getSlot());
+        // settingClass.setSettingTitle(dto.getTopic());
+        // settingClass.setClasses(clazz);
+        // settingClass.setStatus(Status.Active);
+        // classSettingRepository.save(settingClass);
+        // schedule.setClassSetting(settingClass);
+        // schedule.setClasses(clazz);
+        // }
+        // }
+        // }
+
+        if (dto.getRoom() != null && setting != null) {
+            if (setting.getSchedules() != null) {
+                for (Schedule sche : setting.getSchedules()) {
+                    if (requestDate.equals(sche.getTrainingDate())
+                            && requestFromTime.equals(sche.getFromTime())
+                            && requestToTime.equals(sche.getToTime())) {
+                        throw new CustomException("Room already have slots, cannot assign!");
+                    }
+                }
+            }
+            schedule.setSetting(setting);
+        }
+        if (dto.getDate() != null) {
+            if (requestDate.isBefore(dateNow)) {
+                throw new CustomException("Date is before now, ilegal to udpate!");
+            } else if (requestDate.equals(dateNow)
+                    && (requestFromTime.isBefore(timeNow) || requestToTime.isBefore(timeNow))) {
+                throw new CustomException("Time is before now, ilegal to udpate!");
+            } else {
+                if (requestFromTime.isAfter(requestToTime)) {
+                    throw new CustomException("From Time must before To Time");
+                } else {
+                    schedule.setTrainingDate(LocalDate.parse(dto.getDate()));
+                    schedule.setFromTime(LocalTime.parse(dto.getFromTime()));
+                    schedule.setToTime(LocalTime.parse(dto.getToTime()));
+                }
+            }
+        }
+        schedule.setStatus(ScheduleStatus.Inactive);
+        scheduleRepositories.save(schedule);
+        return ResponseEntity.ok("Schedule add successfully!");
     }
 
     @Override
     public ResponseEntity<String> updateSchedule(ScheduleRequestDTO dto, Long id) {
         Schedule schedule = scheduleRepositories.findById(id).get();
         Setting setting = settingRepositories.findBySettingValue(dto.getRoom());
+        LocalDate dateNow = LocalDate.now();
+        LocalTime timeNow = LocalTime.now();
+        LocalDate requestDate = LocalDate.parse(dto.getDate());
+        LocalTime requestFromTime = LocalTime.parse(dto.getFromTime());
+        LocalTime requestToTime = LocalTime.parse(dto.getToTime());
+
         if (schedule == null) {
             throw new CustomException("schedule doesn't exist!");
         }
-        if (dto.getStatus().equals("-1")) {
+        if (schedule.getStatus().equals(null)) {
             throw new CustomException("schedule had taken attendence, can't change information!");
         }
-        if (dto.getFromTime() != null) {
-            schedule.setFromTime(LocalTime.parse(dto.getFromTime()));
-        }
-        if (dto.getToTime() != null) {
-            schedule.setToTime(LocalTime.parse(dto.getToTime()));
-        }
-        if (dto.getDate() != null) {
-            schedule.setTrainingDate(LocalDate.parse(dto.getDate()));
-        }
-        if (dto.getRoom() != null) {
+
+        if (dto.getRoom() != null && setting != null) {
+            if (setting.getSchedules() != null) {
+                for (Schedule sche : setting.getSchedules()) {
+                    if (requestDate.equals(sche.getTrainingDate())
+                            && requestFromTime.equals(sche.getFromTime())
+                            && requestToTime.equals(sche.getToTime())) {
+                        throw new CustomException("Room already have slots, cannot assign!");
+                    }
+                }
+            }
             schedule.setSetting(setting);
         }
+        if (dto.getDate() != null) {
+            if (requestDate.isBefore(dateNow)) {
+                throw new CustomException("Date is before now, ilegal to udpate!");
+            } else if (requestDate.equals(dateNow)
+                    && (requestFromTime.isBefore(timeNow) || requestToTime.isBefore(timeNow))) {
+                throw new CustomException("Time is before now, ilegal to udpate!");
+            } else {
+                if (requestFromTime.isAfter(requestToTime)) {
+                    throw new CustomException("From Time must before To Time");
+                } else {
+                    schedule.setTrainingDate(LocalDate.parse(dto.getDate()));
+                    schedule.setFromTime(LocalTime.parse(dto.getFromTime()));
+                    schedule.setToTime(LocalTime.parse(dto.getToTime()));
+                }
+            }
+
+        }
+        scheduleRepositories.save(schedule);
         return ResponseEntity.ok("Update Schedule successfully");
     }
 

@@ -32,5 +32,5 @@ public class MilestoneResponseDTO {
 
     private List<MilestoneGroupDTO> groups;
 
-    private List<MilestoneMemberDTO>noGroup;
+    private List<MilestoneNoGroupDTO>noGroup;
 }

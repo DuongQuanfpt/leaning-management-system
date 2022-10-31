@@ -11,4 +11,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class GroupMemberRequestDTO {
     private String memberName;
+    private String isLeader;
 }

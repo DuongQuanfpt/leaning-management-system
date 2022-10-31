@@ -22,6 +22,7 @@ import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.SubmitRepository;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.util.enumutil.MilestoneStatusEnum;
+import swp490.g23.onlinelearningsystem.util.enumutil.TraineeStatus;
 
 @Service
 public class GroupMemberService implements IGroupMemberService {
@@ -50,8 +51,22 @@ public class GroupMemberService implements IGroupMemberService {
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException("group doesnt exist"));
 
-        if (milestoneRepository.findById(milestoneId).get().getStatus() != MilestoneStatusEnum.Open) {
-            throw new CustomException("Cant apply changes , Milestone of this group is in progress or have been close");
+        // if (milestoneRepository.findById(milestoneId).get().getStatus() !=
+        // MilestoneStatusEnum.Open) {
+        // throw new CustomException("Cant apply changes , Milestone of this group is in
+        // progress or have been close");
+        // }
+
+        List<Milestone> milestoneOfGroup = milestoneRepository.milestoneOfGroup(groupId);
+        for (Milestone milestone : milestoneOfGroup) {
+            if (!milestoneService.isMilestoneOpen(milestone)) {
+                throw new CustomException(
+                        "Cant apply changes ,Some milestone of this group is in progress or have been close");
+            }
+
+            if (!group.getClasses().equals(milestone.getClasses())) {
+                throw new CustomException("Group not in this milestone class");
+            }
         }
 
         GroupMember member = memberRepositories.getMemberByGroup(userName, groupId);
@@ -79,19 +94,13 @@ public class GroupMemberService implements IGroupMemberService {
 
     @Override
     public ResponseEntity<String> groupChange(String userName, Long groupId, Long newGroupId) {
-        GroupMember groupMember = memberRepositories.getMemberByGroup(userName, groupId);
-        if (groupMember == null) {
-            throw new CustomException("member doesnt exist");
-        }
-
         Group oldGroup = groupRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException("current group doesnt exist"));
 
         for (Submit submit : oldGroup.getSubmits()) {
             if (submit.getMilestone().getStatus() != MilestoneStatusEnum.Open) {
                 throw new CustomException(
-                        "Cant apply changes ,Some milestone of group " + oldGroup.getGroupCode()
-                                + " is in progress or have been close");
+                        "Cant apply changes ,Some milestone of this group is in progress or have been close");
             }
         }
 
@@ -101,30 +110,46 @@ public class GroupMemberService implements IGroupMemberService {
         for (Submit submit : newGroup.getSubmits()) {
             if (submit.getMilestone().getStatus() != MilestoneStatusEnum.Open) {
                 throw new CustomException(
-                        "Cant apply changes ,Some milestone of group " + newGroup.getGroupCode()
-                                + " is in progress or have been close");
+                        "Cant apply changes ,Some milestone of this group is in progress or have been close");
             }
         }
 
-        if (groupMember.getGroup().getClasses().getClassId() != newGroup.getClasses().getClassId()) {
-            throw new CustomException("member not in class of new group");
+        if (oldGroup.getClasses().getClassId() != newGroup.getClasses().getClassId()) {
+            throw new CustomException("Cant move member to group of other classes");
         }
 
-        memberRepositories.delete(groupMember);
-        if(groupMember.getIsLeader() && oldGroup.getGroupMembers().size() >= 1){
-            GroupMember newLeader = oldGroup.getGroupMembers().get(0);
-            newLeader.setIsLeader(true);
-            memberRepositories.save(newLeader);
+        ClassUser classUser = classUserRepositories.findByClassesAndUserName(userName, oldGroup.getClasses().getCode());
+        if (classUser == null) {
+            throw new CustomException("Trainee not found in this class");
         }
+
+        for (GroupMember oldMember : oldGroup.getGroupMembers()) {
+            if (oldMember.getMember().equals(classUser.getUser())) {
+                memberRepositories.removeMemberByGroup(oldMember.getMember(), oldMember.getGroup());
+
+                if (oldMember.getIsLeader() && oldGroup.getGroupMembers().size() >= 1) {
+                    GroupMember newLeader = oldGroup.getGroupMembers().get(0);
+                    newLeader.setIsLeader(true);
+                    memberRepositories.save(newLeader);
+                }
+
+                break;
+            }
+        }
+
+        GroupMember groupMember = new GroupMember();
+        groupMember.setMember(classUser.getUser());
         groupMember.setGroup(newGroup);
         groupMember.setIsLeader(true);
+        groupMember.setIsActive(setMemberStatus(classUser.getStatus()));
+
         for (GroupMember member : newGroup.getGroupMembers()) {
-            if(member.getIsLeader() == true){
+            if (member.getIsLeader() == true) {
                 groupMember.setIsLeader(false);
                 break;
             }
         }
-        
+
         memberRepositories.save(groupMember);
 
         List<Submit> oldSubmits = submitRepository.getFromGroupAndUserName(groupId, userName);
@@ -137,7 +162,6 @@ public class GroupMemberService implements IGroupMemberService {
             }
         }
 
-        ClassUser classUser = classUserRepositories.findByClassesAndUserName(userName, newGroup.getClasses().getCode());
         List<Submit> newSubmit = new ArrayList<>();
         for (Milestone milestone : milestones) {
             Submit submit = new Submit();
@@ -184,7 +208,7 @@ public class GroupMemberService implements IGroupMemberService {
         for (Milestone milestone : milestoneOfGroup) {
             if (!milestoneService.isMilestoneOpen(milestone)) {
                 throw new CustomException(
-                        "Milestone of this group is in progress or have been closed , edit is not possible");
+                        "Cant apply changes ,Some milestone of this group is in progress or have been close");
             }
 
             if (!group.getClasses().equals(milestone.getClasses())) {
@@ -199,7 +223,7 @@ public class GroupMemberService implements IGroupMemberService {
         List<Submit> submits = submitRepository.getByClassUserInMilestones(milestoneOfGroup, classUser);
 
         if (submits.isEmpty()) {
-            throw new CustomException(userName + " already have group");
+            throw new CustomException(userName + " already have group or not in this class");
         }
         for (Submit submit : submits) {
             for (Milestone groupMilestone : milestoneOfGroup) {
@@ -221,7 +245,7 @@ public class GroupMemberService implements IGroupMemberService {
                 member.setIsLeader(false);
             }
         }
-        member.setIsActive(true);
+        member.setIsActive(setMemberStatus(classUser.getStatus()));
         memberRepositories.save(member);
 
         return ResponseEntity.ok(userName + " moved to group " + group.getGroupCode());
@@ -241,6 +265,13 @@ public class GroupMemberService implements IGroupMemberService {
         }
         memberRepositories.save(groupMember);
         return ResponseEntity.ok("Member status changed");
+    }
+
+    public boolean setMemberStatus(TraineeStatus status) {
+        if (status == TraineeStatus.Active) {
+            return true;
+        }
+        return false;
     }
 
     public GroupMemberResponseDTO toDTO(GroupMember entity) {

@@ -16,6 +16,9 @@ public interface SubmitRepository extends JpaRepository<Submit, Long> {
     @Query(value = "SELECT s FROM Submit s WHERE s.milestone.milestoneId = :milestoneId AND s.group IS NULL")
     List<Submit> getNoGroupMember(Long milestoneId);
 
+    @Query(value = "SELECT s FROM Submit s WHERE s.milestone.milestoneId = :milestoneId AND s.classUser.user.accountName = :username AND s.group IS NULL")
+    Submit getByMilestoneAndUsername(Long milestoneId , String username);
+
     @Query(value = "SELECT s FROM Submit s WHERE s.milestone.milestoneId = :milestoneId AND s.group.groupId = :groupId AND s.classUser.user.accountName = :userName")
     Submit getMemberFromMilestone(Long milestoneId, Long groupId, String userName);
 

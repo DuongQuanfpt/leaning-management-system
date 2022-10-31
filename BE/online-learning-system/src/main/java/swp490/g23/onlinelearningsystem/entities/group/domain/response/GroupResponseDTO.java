@@ -27,4 +27,8 @@ public class GroupResponseDTO {
     
     private List<GroupMemberResponseDTO> groupMembers; 
 
+    private List<GroupMilestoneDTO> linkedMilestone;
+
+    private boolean Editable;
+
 }

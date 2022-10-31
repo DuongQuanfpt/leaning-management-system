@@ -64,7 +64,7 @@ public class Classes extends BaseEntity {
     @JoinColumn(name = "subject_id")
     private Subject subject;
 
-    @OneToMany(mappedBy = "type")
+    @OneToMany(mappedBy = "classes")
     private List<ClassSetting> types;
 
     @OneToMany(mappedBy = "classes")
