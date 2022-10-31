@@ -22,5 +22,5 @@ public class GroupRequestDTO {
 
     private String status;
 
-    private List<GroupMemberRequestDTO> memberResponseDTOs; 
+    private List<GroupMemberRequestDTO> members; 
 }

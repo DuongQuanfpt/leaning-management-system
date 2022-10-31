@@ -30,8 +30,13 @@ import swp490.g23.onlinelearningsystem.entities.class_user.repositories.criteria
 import swp490.g23.onlinelearningsystem.entities.class_user.service.IClassUserService;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.classes.repositories.ClassRepositories;
+import swp490.g23.onlinelearningsystem.entities.groupMember.domain.GroupMember;
+import swp490.g23.onlinelearningsystem.entities.groupMember.repositories.GroupMemberRepositories;
+import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
+import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
+import swp490.g23.onlinelearningsystem.entities.submit.repositories.SubmitRepository;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
@@ -44,6 +49,12 @@ public class ClassUserService implements IClassUserService {
 
     @Autowired
     UserTraineeCriteria traineeCriteria;
+
+    @Autowired
+    SubmitRepository submitRepository;
+
+    @Autowired
+    GroupMemberRepositories memberRepositories;
 
     @Autowired
     ClassRepositories classRepositories;
@@ -257,6 +268,7 @@ public class ClassUserService implements IClassUserService {
             // em.merge(newTrainee);
             // em.merge(clazz);
             classUserRepositories.save(classUser);
+            importSubmit(classUser);
             importResponse.setImportStatus("Successfully!");
             importList.add(importResponse);
         }
@@ -272,11 +284,44 @@ public class ClassUserService implements IClassUserService {
         }
         if (classUser.getStatus() == TraineeStatus.Active) {
             classUser.setStatus(TraineeStatus.Inactive);
+
         } else {
             classUser.setStatus(TraineeStatus.Active);
         }
         classUserRepositories.save(classUser);
+        updateSubmit(classUser);
         return ResponseEntity.ok("Trainee status updated");
+    }
+
+    public void importSubmit(ClassUser classUser) {
+        if (classUser.getSubmits() == null) {
+            List<Milestone> milestones = classUser.getClasses().getMilestones();
+            List<Submit> newSubmits = new ArrayList<>();
+            for (Milestone milestone : milestones) {
+                Submit submit = new Submit();
+                submit.setClassUser(classUser);
+                submit.setGroup(null);
+                submit.setMilestone(milestone);
+
+                newSubmits.add(submit);
+
+            }
+            submitRepository.saveAll(newSubmits);
+        }
+    }
+
+    public void updateSubmit(ClassUser classUser) {
+
+        List<GroupMember> memberToUpdate = new ArrayList<>();
+        for (GroupMember groupMember : classUser.getUser().getGroupMembers()) {
+            if (classUser.getStatus() != TraineeStatus.Active) {
+                groupMember.setIsActive(false);
+            } else {
+                groupMember.setIsActive(true);
+            }
+            memberToUpdate.add(groupMember);
+        }
+        memberRepositories.saveAll(memberToUpdate);
     }
 
     @Override
@@ -291,6 +336,7 @@ public class ClassUserService implements IClassUserService {
             classUser.setStatus(TraineeStatus.Dropout);
         }
         classUserRepositories.save(classUser);
+        updateSubmit(classUser);
         return ResponseEntity.ok("Trainee has been dropped out");
     }
 

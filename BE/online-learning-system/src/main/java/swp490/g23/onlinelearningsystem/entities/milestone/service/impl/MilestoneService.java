@@ -34,13 +34,13 @@ import swp490.g23.onlinelearningsystem.entities.milestone.repositories.Milestone
 import swp490.g23.onlinelearningsystem.entities.milestone.repositories.criteria.MilestoneCriteria;
 import swp490.g23.onlinelearningsystem.entities.milestone.repositories.criteria_entity.MilestoneQuery;
 import swp490.g23.onlinelearningsystem.entities.milestone.service.IMilestoneService;
-import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.SubmitRepository;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.util.enumutil.MilestoneStatusEnum;
+import swp490.g23.onlinelearningsystem.util.enumutil.TraineeStatus;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.MilestoneStatusEntity;
 
 @Service
@@ -237,10 +237,10 @@ public class MilestoneService implements IMilestoneService {
 
         List<Submit> submits = new ArrayList<>();
         for (ClassUser user : classes.getClassUsers()) {
-            Submit submit = new Submit();
-            submit.setClassUser(user);
-            submit.setMilestone(milestone);
-            submits.add(submit);
+                Submit submit = new Submit();
+                submit.setClassUser(user);
+                submit.setMilestone(milestone);
+                submits.add(submit);
         }
         submitRepository.saveAll(submits);
         return ResponseEntity.ok("Milestone added");

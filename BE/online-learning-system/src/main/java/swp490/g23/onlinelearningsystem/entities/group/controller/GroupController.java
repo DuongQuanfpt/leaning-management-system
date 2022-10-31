@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import swp490.g23.onlinelearningsystem.entities.group.domain.filter.GroupFilter;
 import swp490.g23.onlinelearningsystem.entities.group.domain.request.GroupRequestDTO;
-import swp490.g23.onlinelearningsystem.entities.group.domain.request.GroupRequestWrapper;
+import swp490.g23.onlinelearningsystem.entities.group.domain.request.GroupSetWrapper;
+import swp490.g23.onlinelearningsystem.entities.group.domain.response.GroupClassDTO;
 import swp490.g23.onlinelearningsystem.entities.group.domain.response.GroupPaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.group.domain.response.GroupResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.group.service.impl.GroupService;
@@ -44,6 +45,7 @@ public class GroupController {
 		int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
 		return groupService.getGroup(limit, page, keyword, statusFilter, milestoneFilter, user);
 	}
+	
 
 	@GetMapping(value = "/group-detail/{id}")
 	public ResponseEntity<GroupResponseDTO> getGroup(@PathVariable("id") Long id) {
@@ -51,10 +53,17 @@ public class GroupController {
 		return groupService.groupDetail(id);
 	}
 
-	@GetMapping(value = "/group-filter")
-	public ResponseEntity<GroupFilter> getGroupFilter(@AuthenticationPrincipal User user) {
+	@GetMapping(value = "/group-filter/{classCode}")
+	public ResponseEntity<GroupFilter> getGroupFilter(@AuthenticationPrincipal User user,
+		@PathVariable("classCode") String classCode) {
 
-		return groupService.groupFilter(user.getUserId());
+		return groupService.groupFilter(user.getUserId() , classCode);
+	}
+
+	@GetMapping(value = "/group-set-filter/{milestoneId}")
+	public ResponseEntity<GroupClassDTO> getGroupSetFilter(@PathVariable("milestoneId") Long milestoneId) {
+
+		return groupService.groupSetFilter(milestoneId);
 	}
 
 	@PutMapping(value = "/group-status/{groupId}")
@@ -63,12 +72,11 @@ public class GroupController {
 		return groupService.groupStatus(groupId);
 	}
 
-	@PutMapping(value = "/group-detail/{id}/{milestoneId}")
+	@PutMapping(value = "/group-detail/{id}")
 	public ResponseEntity<String> editGroup(@RequestBody GroupRequestDTO dto,
-			@PathVariable("id") Long id,
-			@PathVariable("milestoneId") Long milestoneId) {
+			@PathVariable("id") Long id) {
 
-		return groupService.editGroup(id, milestoneId, dto);
+		return groupService.editGroup(id , dto);
 	}
 
 	@PutMapping(value = "/group-detach/{id}/{milestoneId}")
@@ -84,18 +92,19 @@ public class GroupController {
 		return groupService.groupRemoveAll(milestoneId);
 	}
 
-	@PostMapping(value = "/group-add/{milestoneId}")
-	public ResponseEntity<String> addGroup(@RequestBody GroupRequestDTO dto,
-			@PathVariable("milestoneId") Long milestoneId) {
+	@PostMapping(value = "/group-add/{memberName}/{milestoneId}")
+	public ResponseEntity<String> addMemberToNewGroup(@RequestBody GroupRequestDTO dto,
+			@PathVariable("milestoneId") Long milestoneId,
+			@PathVariable("memberName") String memberName) {
 
-		return groupService.groupCreate(milestoneId,dto);
+		return groupService.groupCreate(milestoneId, dto, memberName);
 	}
 
 	@PutMapping(value = "/group-set/{milestoneId}")
 	public ResponseEntity<String> setGroups(@PathVariable("milestoneId") Long milestoneId,
-		@RequestBody GroupRequestWrapper groupDtos) {
+			@RequestBody GroupSetWrapper groupDtos) {
 
-		return groupService.groupSet(milestoneId,groupDtos);
+		return groupService.groupSet(milestoneId, groupDtos);
 	}
-	
+
 }
