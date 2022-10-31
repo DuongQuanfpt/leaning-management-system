@@ -4,7 +4,8 @@ import { Space, Divider, Radio } from 'antd'
 import groupApi from '~/api/groupApi'
 
 const ReuseGroup = () => {
-  const [listReuse, setListReuse] = useState([])
+  const [listReuse, setListReuse] = useState([{ milestoneId: 0 }])
+  const [reuse, setReuse] = useState({})
   const { id } = useParams()
 
   useEffect(() => {
@@ -14,7 +15,7 @@ const ReuseGroup = () => {
 
   const loadData = async () => {
     await groupApi
-      .getReuseGroup(id)
+      .getReuseFilter(id)
       .then((response) => {
         console.log(response)
         setListReuse(response)
@@ -40,35 +41,11 @@ const ReuseGroup = () => {
           }}
         >
           <Radio.Group defaultValue={1} className="d-flex flex-column align-items-start w-100">
-            <Radio className="ant-radio-custom" value={1}>
-              The actor click the “Add new” button to access “Add New” tag, click the “Reuse” button to access “Reuse”
-              tag.
-            </Radio>
-            <Radio className="ant-radio-custom" value={2}>
-              The actor click the “Status” select button to select status, click “Is Teameval” select button to select
-              is teameval, click “Subject-Assignment” dropdown list to sval Criteria Name field, Eval Criteria Weight
-              field, Expected Work field and Description field to change them.elect a subject-assignment.
-            </Radio>
-            <Radio className="ant-radio-custom" value={3}>
-              In the “Reuse” tag, the actor click “Subjecval Criteria Name field, Eval Criteria Weight field, Expected
-              Work field and Description field to change them.t-Assignment-Eval Criteria” dropdown list to select a
-              subject-assignment-eval criteria.
-            </Radio>
-            <Radio className="ant-radio-custom" value={4}>
-              The actor enter text to Eval Criteria Nval Criteria Name field, Eval Criteria Weight field, Expected Work
-              field and Description field to change them.ame field, Eval Criteria Weight field, Expected Work field and
-              Description field to change them.
-            </Radio>
-            <Radio className="ant-radio-custom" value={5}>
-              The actor enter text to Eval Criteriaval Criteria Name field, Eval Criteria Weight field, Expected Work
-              field and Description field to change them. Name field, Eval Criteria Weight field, Expected Work field
-              and Description field to change them.
-            </Radio>
-            <Radio className="ant-radio-custom" value={6}>
-              The actor enter text to Eval Criterival Criteria Name field, Eval Criteria Weight field, Expected Work
-              field and Description field to change them.a Name field, Eval Criteria Weight field, Expected Work field
-              and Description field to change them.
-            </Radio>
+            {listReuse.map((item) => (
+              <Radio defaultChecked={true} defaultValue={0} value={item.milestoneId} onChange={() => setReuse(item)}>
+                {`${item.classesCode} - ${item.title}`}
+              </Radio>
+            ))}
           </Radio.Group>
         </Space>
         <Divider />

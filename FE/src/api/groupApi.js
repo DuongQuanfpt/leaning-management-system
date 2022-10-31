@@ -87,6 +87,11 @@ const groupApi = {
     return axiosClient.put(url, params, header)
   },
 
+  getReuseFilter: (id) => {
+    const url = `/api/group-reuse-filter/${id}`
+    return axiosClient.get(url, header)
+  },
+
   overrideReuse: (milsId, newMilsId) => {
     const url = `/api/group-reuse/${milsId}/${newMilsId}`
     return axiosClient.put(url, {}, header)
