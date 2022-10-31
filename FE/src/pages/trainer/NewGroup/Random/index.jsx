@@ -112,11 +112,9 @@ const Random = () => {
     await groupApi
       .overrideGroup(id, params)
       .then((response) => {
-        console.log(response)
         toastMessage('success', 'Create Group Successfully!')
       })
       .catch((error) => {
-        console.log(error)
         toastMessage('error', 'Something went wrong, please try again')
       })
   }
@@ -125,8 +123,6 @@ const Random = () => {
     loadData()
     setIsClickedNextStep(false)
   }
-
-  console.log(listGroup)
 
   return (
     <div className="widget-inner">
@@ -244,7 +240,8 @@ const Random = () => {
                 >
                   {group.members.map((student) => (
                     <Typography className="p-0 m-0 d-flex flex-row">
-                      {student.fullName} - {student.username} {student.isLeader && <CrownTwoTone className="ml-2 " />}
+                      {student.fullName} - {student.username}{' '}
+                      {student.isLeader && <CrownTwoTone className="ml-2 d-flex align-items-center" />}
                     </Typography>
                   ))}
                 </Card>
