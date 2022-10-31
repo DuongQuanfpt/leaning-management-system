@@ -6,8 +6,8 @@ import logoWhite2 from '~/assets/images/logo-white-2.png'
 import bannerImg from '~/assets/images/background/bg2.jpg'
 import { CButton } from '@coreui/react'
 import { useEffect } from 'react'
-import axios from 'axios'
 import { useState } from 'react'
+import registerApi from '~/api/registerApi'
 
 const Verify = () => {
   const { search } = useLocation()
@@ -16,18 +16,21 @@ const Verify = () => {
   const [verifySuccess, setVerifySuccess] = useState(false)
 
   useEffect(() => {
-    try {
-      // eslint-disable-next-line no-unused-vars
-      const res = axios
-        .get('https://lms-app-1.herokuapp.com/auth/verify', {
-          params: {
-            token: token,
-          },
-        })
-        .then((res) => setVerifySuccess(true))
-    } catch (error) {
-      setVerifySuccess(false)
+    const params = {
+      params: {
+        token: token,
+      },
     }
+
+    registerApi
+      .verify(params)
+      .then(() => {
+        setVerifySuccess(true)
+      })
+      .catch((error) => {
+        console.log(error)
+        setVerifySuccess(false)
+      })
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

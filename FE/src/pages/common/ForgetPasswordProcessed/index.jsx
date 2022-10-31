@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import axios from 'axios'
 
 // Images
 import logoWhite2 from '~/assets/images/logo-white-2.png'
 import bannerImg from '~/assets/images/background/bg2.jpg'
 import { CButton } from '@coreui/react'
 import ErrorMsg from '~/components/Common/ErrorMsg'
+import forgetPasswordApi from '~/api/forgetPasswordApi'
 
 const ForgetPasswordProcessed = () => {
   const { search } = useLocation()
@@ -29,19 +29,18 @@ const ForgetPasswordProcessed = () => {
 
     const data = {
       newPassword: password,
+      token: token,
     }
-    try {
-      // eslint-disable-next-line no-unused-vars
-      const response = await axios
-        .put(`https://lms-app-1.herokuapp.com/user/forgot-processing?token=${token}`, data, {
-          headers: { 'Content-Type': 'application/json; charset=UTF-8' },
-        })
-        .then((response) => {
-          setIsResetSuccess(true)
-        })
-    } catch (error) {
-      setError('Something went wrong, please try again later')
-    }
+
+    await forgetPasswordApi
+      .forgetPassword(data)
+      .then(() => {
+        setIsResetSuccess(true)
+      })
+      .catch((error) => {
+        console.log(error)
+        setError('Something went wrong, please try again later')
+      })
   }
 
   return (

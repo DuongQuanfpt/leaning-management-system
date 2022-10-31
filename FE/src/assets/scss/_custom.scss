@@ -101,6 +101,8 @@
 .ant-radio-custom{
   width: 100% !important;
   height: 50px !important;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
   border: 1px #ECECEC solid !important;
   border-radius: 6px !important;
   align-content: flex-start !important;
@@ -109,6 +111,7 @@
   overflow-x: auto !important;
   text-overflow: ellipsis !important; 
   align-items: center !important;
+  
 }
 
 .ant-space-item{

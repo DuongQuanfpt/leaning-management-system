@@ -12,6 +12,8 @@ const CloneGroup = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  console.log(listReuse)
+
   const loadData = async () => {
     await groupApi
       .getReuseGroup(id)
