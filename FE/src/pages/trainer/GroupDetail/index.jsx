@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 import { Link, useParams } from 'react-router-dom'
-import { Breadcrumb, Modal, Radio } from 'antd'
+import { Breadcrumb, Modal } from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 
 import { CButton } from '@coreui/react'
@@ -20,7 +20,6 @@ const GroupDetail = () => {
   const [detail, setDetail] = useState({
     groupCode: '',
     topicName: '',
-    status: 1,
     description: '',
   })
 
@@ -63,7 +62,6 @@ const GroupDetail = () => {
     const params = {
       groupCode: detail.groupCode.trim(),
       topicName: detail.topicName.trim(),
-      status: detail.status,
       description: detail.description.trim(),
     }
 
@@ -152,19 +150,6 @@ const GroupDetail = () => {
                           disabled={!isEditMode}
                           onChange={(e) => setDetail((prev) => ({ ...prev, topicName: e.target.value }))}
                         />
-                      </div>
-                    </div>
-                    <div className="form-group col-4">
-                      <label className="col-form-label">Status</label>
-                      <div>
-                        <Radio.Group
-                          value={detail.status}
-                          disabled={!isEditMode}
-                          onChange={(e) => setDetail((prev) => ({ ...prev, status: e.target.value }))}
-                        >
-                          <Radio value={1}>Active</Radio>
-                          <Radio value={0}>Inactive</Radio>
-                        </Radio.Group>
                       </div>
                     </div>
 

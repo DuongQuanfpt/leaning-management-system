@@ -16,13 +16,10 @@ import {
   Modal,
   Select,
   Input,
-  Tooltip,
 } from 'antd'
 import { CrownTwoTone, ExclamationCircleOutlined, MoreOutlined } from '@ant-design/icons'
 
-import { CButton, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
-import CIcon from '@coreui/icons-react'
-import { cilSync } from '@coreui/icons'
+import { CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
 
 import groupApi from '~/api/groupApi'
 
@@ -32,7 +29,7 @@ import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 
 const GroupList = () => {
   const navigateTo = useNavigate()
-  const roles = useSelector((state) => state.profile.roles)
+  const { roles, currentClass } = useSelector((state) => state.profile)
 
   const [listFilter, setListFilter] = useState({
     milstoneFilter: [],
@@ -71,14 +68,42 @@ const GroupList = () => {
   const topicNameRef = useRef(null)
 
   useEffect(() => {
+    setListFilter({
+      milstoneFilter: [],
+      statusFilter: [
+        {
+          name: 'All Member Statuses',
+          value: null,
+        },
+        {
+          name: 'Active',
+          value: 1,
+        },
+        {
+          name: 'Inactive',
+          value: 0,
+        },
+      ],
+    })
+    setFilter({
+      milstone: {
+        milestoneId: '',
+        title: 'Select Milestone',
+      },
+
+      status: {
+        name: 'All Member Statuses',
+        value: null,
+      },
+    })
     loadMilestone()
     setIsTrainer(roles.includes('trainer'))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [currentClass])
 
   const loadMilestone = async () => {
-    groupApi
-      .getFilter()
+    await groupApi
+      .getFilter(currentClass)
       .then((response) => {
         setListFilter((prev) => ({
           ...prev,
@@ -170,13 +195,11 @@ const GroupList = () => {
     )
   }
 
-  const handleSync = () => {}
-
   const toastMessage = (type, mes) => {
     message[type]({
       content: mes,
       style: {
-        marginTop: '8vh',
+        transform: `translate(0, 8vh)`,
       },
     })
   }
@@ -355,53 +378,53 @@ const GroupList = () => {
     })
   }
 
-  const modalChangeActiveStudent = (trainee, listMember) => {
-    Modal.confirm({
-      title: `Are you sure want to ${trainee.status === 'Active' ? 'Reactive' : 'Deactive'} <${
-        trainee.memberInfo.username
-      }> (${trainee.memberInfo.fullName}) ?`,
-      okText: 'Confirm',
-      cancelText: 'Cancel',
-      okType: 'danger',
-      async onOk() {
-        await groupApi
-          .changeActiveStudent(trainee.memberInfo.username, trainee.groupId)
-          .then((response) => {
-            toastMessage('success', 'Change Status Student Successfully!')
-            loadGroup({ filterMilestone: filter.milstone.milestoneId })
-          })
-          .catch((error) => {
-            console.log(error)
-            toastMessage('error', 'Something went wrong, please try again')
-          })
-      },
-      onCancel() {},
-    })
-  }
+  // const modalChangeActiveStudent = (trainee, listMember) => {
+  //   Modal.confirm({
+  //     title: `Are you sure want to ${trainee.status === 'Active' ? 'Reactive' : 'Deactive'} <${
+  //       trainee.memberInfo.username
+  //     }> (${trainee.memberInfo.fullName}) ?`,
+  //     okText: 'Confirm',
+  //     cancelText: 'Cancel',
+  //     okType: 'danger',
+  //     async onOk() {
+  //       await groupApi
+  //         .changeActiveStudent(trainee.memberInfo.username, trainee.groupId)
+  //         .then((response) => {
+  //           toastMessage('success', 'Change Status Student Successfully!')
+  //           loadGroup({ filterMilestone: filter.milstone.milestoneId })
+  //         })
+  //         .catch((error) => {
+  //           console.log(error)
+  //           toastMessage('error', 'Something went wrong, please try again')
+  //         })
+  //     },
+  //     onCancel() {},
+  //   })
+  // }
 
-  const modalChangeActiveGroup = (group) => {
-    Modal.confirm({
-      title: `Are you sure want to ${group.status === 'Active' ? 'Deactive' : 'Reactive'} <${group.groupCode}> (${
-        group.topicName
-      }) ?`,
-      okText: 'Confirm',
-      cancelText: 'Cancel',
-      okType: 'danger',
-      async onOk() {
-        await groupApi
-          .changeActiveGroup(group.groupId)
-          .then(() => {
-            toastMessage('success', 'Change Status Group Successfully!')
-            loadGroup({ filterMilestone: filter.milstone.milestoneId })
-          })
-          .catch((error) => {
-            console.log(error)
-            toastMessage('error', 'Something went wrong, please try again')
-          })
-      },
-      onCancel() {},
-    })
-  }
+  // const modalChangeActiveGroup = (group) => {
+  //   Modal.confirm({
+  //     title: `Are you sure want to ${group.status === 'Active' ? 'Deactive' : 'Reactive'} <${group.groupCode}> (${
+  //       group.topicName
+  //     }) ?`,
+  //     okText: 'Confirm',
+  //     cancelText: 'Cancel',
+  //     okType: 'danger',
+  //     async onOk() {
+  //       await groupApi
+  //         .changeActiveGroup(group.groupId)
+  //         .then(() => {
+  //           toastMessage('success', 'Change Status Group Successfully!')
+  //           loadGroup({ filterMilestone: filter.milstone.milestoneId })
+  //         })
+  //         .catch((error) => {
+  //           console.log(error)
+  //           toastMessage('error', 'Something went wrong, please try again')
+  //         })
+  //     },
+  //     onCancel() {},
+  //   })
+  // }
 
   const modalDetachGroup = (group) => {
     Modal.confirm({
@@ -472,14 +495,6 @@ const GroupList = () => {
           type: 'divider',
         },
         trainee.groupId && {
-          key: '4',
-          label: trainee.status === 'Active' ? 'Reactive' : 'Deactive',
-          onClick: () => {
-            modalChangeActiveStudent(trainee, listMember)
-          },
-        },
-
-        trainee.groupId && {
           key: '5',
           label: 'Remove',
           disabled: !trainee.groupId,
@@ -528,14 +543,7 @@ const GroupList = () => {
         isTrainer && { type: 'divider' },
         isTrainer && {
           key: Math.random(),
-          label: group.status === 'Active' ? 'Deactivate' : 'Reactivate',
-          onClick: () => {
-            modalChangeActiveGroup(group)
-          },
-        },
-        isTrainer && {
-          key: Math.random(),
-          label: 'Detach',
+          label: 'Remove',
           onClick: () => {
             modalDetachGroup(group)
           },
@@ -651,7 +659,7 @@ const GroupList = () => {
     }
 
     return (
-      <Table locale={customLocale} pagination={false} showHeader={false} columns={columns} dataSource={listMember} />
+      <Table locale={customLocale} pagination={false} showHeader={true} columns={columns} dataSource={listMember} />
     )
   }
 
@@ -678,18 +686,7 @@ const GroupList = () => {
       dataIndex: 'status',
       key: 'status',
       width: '13%',
-      render: (_, { status }) => {
-        return {
-          props: {
-            style: { padding: 0, margin: 0 },
-          },
-          children: status && (
-            <Tag color={status === 'Active' ? 'blue' : 'grey'} key={status}>
-              {status}
-            </Tag>
-          ),
-        }
-      },
+      render: (_, { status }) => {},
     },
     {
       title: 'Actions',
@@ -744,6 +741,7 @@ const GroupList = () => {
                     <CDropdown className="mr-4">
                       <CDropdownToggle color="secondary">{filter.milstone.title}</CDropdownToggle>
                       <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
+                        {listFilter.milstoneFilter.length === 0 && <CDropdownItem>No Milestone here</CDropdownItem>}
                         {listFilter.milstoneFilter.map((milestone) => (
                           <CDropdownItem onClick={() => handleFilterMilestone(milestone)}>
                             {milestone.title}
@@ -761,11 +759,6 @@ const GroupList = () => {
                         ))}
                       </CDropdownMenu>
                     </CDropdown>
-                    <Tooltip title="Sync" placement="top">
-                      <CButton color="success" type="submit" className="text-light ml-4" onClick={handleSync}>
-                        <CIcon icon={cilSync} />
-                      </CButton>
-                    </Tooltip>
                   </div>
                 </div>
               </div>

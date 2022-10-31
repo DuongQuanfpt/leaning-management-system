@@ -17,5 +17,8 @@ public interface MilestoneRepository extends JpaRepository<Milestone, Long> {
     @Query(value = "SELECT DISTINCT m FROM Milestone m JOIN m.submits as ms WHERE ms.group.groupId = :groupId")
     List<Milestone> milestoneOfGroup(Long groupId);
 
+    @Query(value = "SELECT m FROM Milestone m WHERE m.classes.code = :classCode ")
+    List<Milestone> getByClassCode(String classCode);
+
     Milestone findByTitle(String title);
 }

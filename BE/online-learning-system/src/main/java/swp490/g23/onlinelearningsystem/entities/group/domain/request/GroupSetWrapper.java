@@ -11,6 +11,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GroupRequestWrapper {
+public class GroupSetWrapper {
     List<GroupRequestDTO> listGroup;
 }

@@ -28,13 +28,13 @@ import swp490.g23.onlinelearningsystem.entities.milestone.domain.filter.Mileston
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.request.MilestoneRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestoneGroupDTO;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestoneMemberDTO;
+import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestoneNoGroupDTO;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestonePaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestoneResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.milestone.repositories.MilestoneRepository;
 import swp490.g23.onlinelearningsystem.entities.milestone.repositories.criteria.MilestoneCriteria;
 import swp490.g23.onlinelearningsystem.entities.milestone.repositories.criteria_entity.MilestoneQuery;
 import swp490.g23.onlinelearningsystem.entities.milestone.service.IMilestoneService;
-import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.SubmitRepository;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
@@ -237,10 +237,10 @@ public class MilestoneService implements IMilestoneService {
 
         List<Submit> submits = new ArrayList<>();
         for (ClassUser user : classes.getClassUsers()) {
-            Submit submit = new Submit();
-            submit.setClassUser(user);
-            submit.setMilestone(milestone);
-            submits.add(submit);
+                Submit submit = new Submit();
+                submit.setClassUser(user);
+                submit.setMilestone(milestone);
+                submits.add(submit);
         }
         submitRepository.saveAll(submits);
         return ResponseEntity.ok("Milestone added");
@@ -274,11 +274,11 @@ public class MilestoneService implements IMilestoneService {
     public ResponseEntity<String> milestoneInProgess(Long id) {
         Milestone milestone = milestoneRepository.findById(id)
                 .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
-        if (milestone.getStatus() == MilestoneStatusEnum.In_Progress) {
-            milestone.setStatus(MilestoneStatusEnum.Open);
+        if (milestone.getStatus() == MilestoneStatusEnum.Open) {
+            milestone.setStatus(MilestoneStatusEnum.In_Progress);
 
         } else {
-            milestone.setStatus(MilestoneStatusEnum.In_Progress);
+           throw new CustomException("Milestone is alredy in progress , or have been close");
         }
 
         milestoneRepository.save(milestone);
@@ -290,11 +290,11 @@ public class MilestoneService implements IMilestoneService {
         Milestone milestone = milestoneRepository.findById(id)
                 .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
 
-        if (milestone.getStatus() == MilestoneStatusEnum.Closed) {
-            milestone.setStatus(MilestoneStatusEnum.Open);
+        if (milestone.getStatus() == MilestoneStatusEnum.In_Progress) {
+            milestone.setStatus(MilestoneStatusEnum.Closed);
 
         } else {
-            milestone.setStatus(MilestoneStatusEnum.Closed);
+           throw new CustomException("Milestone is not in progress , cant close");
         }
 
         milestoneRepository.save(milestone);
@@ -331,14 +331,14 @@ public class MilestoneService implements IMilestoneService {
         }
 
         List<MilestoneGroupDTO> groupResponseDTOs = new ArrayList<>();
-        List<MilestoneMemberDTO> noGroupDTOs = new ArrayList<>();
+        List<MilestoneNoGroupDTO> noGroupDTOs = new ArrayList<>();
         List<Group> groupOfMilestone = new ArrayList<>();
         List<Submit> submits = entity.getSubmits();
 
         if (!submits.isEmpty()) {
             for (Submit submit : submits) {
                 if (submit.getGroup() == null) {
-                    MilestoneMemberDTO noGroupDto = toMilestoneMemberDTO(submit.getClassUser().getUser());
+                    MilestoneNoGroupDTO noGroupDto = toNoGroupDTO(submit.getClassUser().getUser());
                     noGroupDTOs.add(noGroupDto);
                 }
 
@@ -358,6 +358,29 @@ public class MilestoneService implements IMilestoneService {
         responseDTO.setNoGroup(noGroupDTOs);
         responseDTO.setGroups(groupResponseDTOs);
         return responseDTO;
+    }
+
+    public MilestoneNoGroupDTO toNoGroupDTO(User user){
+        MilestoneNoGroupDTO dto = new MilestoneNoGroupDTO();
+
+        if (user.getAccountName() != null) {
+            dto.setUserName(user.getAccountName());
+        }
+
+        if (user.getAvatar_url() != null) {
+            dto.setAvatarUrl(user.getAvatar_url());
+        }
+
+        if (user.getAccountName() != null) {
+            dto.setUserName(user.getAccountName());
+        }
+
+        if (user.getFullName() != null) {
+            dto.setFullName(user.getFullName());
+        }
+
+        dto.setEmail(user.getEmail());
+        return dto;
     }
 
     public MilestoneGroupDTO toMilestoneGroupDTO(Group group) {

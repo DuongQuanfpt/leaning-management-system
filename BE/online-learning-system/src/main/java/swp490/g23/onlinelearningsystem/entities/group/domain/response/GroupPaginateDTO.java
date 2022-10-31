@@ -21,6 +21,5 @@ public class GroupPaginateDTO {
     private List<TraineeResponseDTO> noGroup;
     // private List<MilestoneResponseDTO> milstoneFilter;
     private List<StatusEntity> statusFilter;
-    private List<GroupMilestoneDTO> linkedMilestone;
-    
+  
 }

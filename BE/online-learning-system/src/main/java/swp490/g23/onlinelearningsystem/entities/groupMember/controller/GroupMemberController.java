@@ -21,6 +21,8 @@ public class GroupMemberController {
     @Autowired
     private GroupMemberService groupMemberService;
 
+    
+
     @DeleteMapping(value = "/group-member-remove/{userName}/{groupId}/{milestoneId}")
     public ResponseEntity<String> removeMember(@PathVariable("userName") String userName,
             @PathVariable("groupId") Long groupId,
