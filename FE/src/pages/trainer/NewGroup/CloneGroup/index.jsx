@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { Space, Divider, Radio } from 'antd'
 import groupApi from '~/api/groupApi'
 
-const ReuseGroup = () => {
+const CloneGroup = () => {
   const [listReuse, setListReuse] = useState([])
   const { id } = useParams()
 
@@ -59,16 +59,6 @@ const ReuseGroup = () => {
               field and Description field to change them.ame field, Eval Criteria Weight field, Expected Work field and
               Description field to change them.
             </Radio>
-            <Radio className="ant-radio-custom" value={5}>
-              The actor enter text to Eval Criteriaval Criteria Name field, Eval Criteria Weight field, Expected Work
-              field and Description field to change them. Name field, Eval Criteria Weight field, Expected Work field
-              and Description field to change them.
-            </Radio>
-            <Radio className="ant-radio-custom" value={6}>
-              The actor enter text to Eval Criterival Criteria Name field, Eval Criteria Weight field, Expected Work
-              field and Description field to change them.a Name field, Eval Criteria Weight field, Expected Work field
-              and Description field to change them.
-            </Radio>
           </Radio.Group>
         </Space>
         <Divider />
@@ -77,4 +67,4 @@ const ReuseGroup = () => {
   )
 }
 
-export default ReuseGroup
+export default CloneGroup

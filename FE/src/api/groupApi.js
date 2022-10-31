@@ -12,8 +12,8 @@ const groupApi = {
     return axiosClient.get(url, { ...header, params })
   },
 
-  getFilter: () => {
-    const url = `/api/group-filter`
+  getFilter: (classCode) => {
+    const url = `/api/group-filter/${classCode}`
     return axiosClient.get(url, header)
   },
 
@@ -75,6 +75,21 @@ const groupApi = {
   removeAllGroups: (id) => {
     const url = `/api/group-removes/${id}`
     return axiosClient.delete(url, header)
+  },
+
+  getReuseGroup: (id) => {
+    const url = `/api/group-set-filter/${id}`
+    return axiosClient.get(url, header)
+  },
+
+  overrideGroup: (id, params) => {
+    const url = `/api/group-set/${id}`
+    return axiosClient.put(url, params, header)
+  },
+
+  overrideReuse: (milsId, newMilsId) => {
+    const url = `/api/group-reuse/${milsId}/${newMilsId}`
+    return axiosClient.put(url, {}, header)
   },
 }
 

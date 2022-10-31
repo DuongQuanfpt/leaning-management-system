@@ -24,6 +24,7 @@ const AdminHeader = () => {
     '/class-setting-list',
     '/class-criteria-list',
     '/milestone-list',
+    '/group-list',
   ]
 
   const dispatch = useDispatch()

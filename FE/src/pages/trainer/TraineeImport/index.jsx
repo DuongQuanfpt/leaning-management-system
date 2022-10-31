@@ -41,7 +41,7 @@ const TraineeImport = () => {
     const extensionsValid = ['xlsx', 'xls', 'csv']
 
     if (!extensionsValid.includes(extensionFile)) {
-      modalError('File type is invalid (.xlsx, .xls and .csv is valid)')
+      modalError('File type is invalid (support .xlsx, .xls and .csv only)')
       return
     }
 

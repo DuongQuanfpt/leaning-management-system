@@ -7,6 +7,7 @@ import {} from '@ant-design/icons'
 import UploadFile from './UploadFile'
 import Random from './Random'
 import ReuseGroup from './ReuseGroup'
+import CloneGroup from './CloneGroup'
 
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
@@ -54,6 +55,10 @@ const NewGroup = () => {
                         label: 'Reuse Group',
                         value: 'Reuse Group',
                       },
+                      {
+                        label: 'Clone Group',
+                        value: 'Clone Group',
+                      },
                     ]}
                     value={mode}
                     onChange={setMode}
@@ -62,6 +67,7 @@ const NewGroup = () => {
                     {mode === 'Upload file' && <UploadFile />}
                     {mode === 'Random' && <Random />}
                     {mode === 'Reuse Group' && <ReuseGroup />}
+                    {mode === 'Clone Group' && <CloneGroup />}
                   </div>
                 </div>
               </div>

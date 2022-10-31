@@ -76,7 +76,7 @@ const NewMilestone = () => {
       return
     }
     if (detail.fromDate > detail.toDate) {
-      setError('From Date can not bigger than To Date')
+      setError('FromDate can not after than ToDate')
       return
     }
     if (detail.description === '') {
