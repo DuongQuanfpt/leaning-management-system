@@ -41,7 +41,7 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(CustomException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public ErrorMessage noUserException(Exception ex,  WebRequest request) {
+    public ErrorMessage customExceptionHandler(Exception ex,  WebRequest request) {
         return new ErrorMessage(10104, ex.getMessage());
     }
 }

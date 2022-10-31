@@ -1,5 +1,7 @@
 package swp490.g23.onlinelearningsystem.entities.group.service;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 
 import swp490.g23.onlinelearningsystem.entities.group.domain.filter.GroupFilter;
@@ -8,6 +10,7 @@ import swp490.g23.onlinelearningsystem.entities.group.domain.request.GroupSetWra
 import swp490.g23.onlinelearningsystem.entities.group.domain.response.GroupClassDTO;
 import swp490.g23.onlinelearningsystem.entities.group.domain.response.GroupPaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.group.domain.response.GroupResponseDTO;
+import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestoneResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 
 public interface IGroupService {
@@ -23,5 +26,8 @@ public interface IGroupService {
     ResponseEntity<String> groupRemoveAll(Long milestoneId);
     ResponseEntity<String> groupStatus(Long groupId);
     ResponseEntity<String> groupSet(Long milestoneId , GroupSetWrapper requestDto);
+    ResponseEntity<String> reuseGroupSet(Long milestoneId , Long forMilestoneId);
+    ResponseEntity<String> cloneGroupSet(Long milestoneId , Long forMilestoneId);
+    ResponseEntity<List<MilestoneResponseDTO>> reuseGroupSetFilter(Long milestoneId);
     
 }

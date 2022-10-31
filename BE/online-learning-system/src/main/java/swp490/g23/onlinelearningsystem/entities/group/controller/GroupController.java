@@ -1,5 +1,7 @@
 package swp490.g23.onlinelearningsystem.entities.group.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,6 +23,7 @@ import swp490.g23.onlinelearningsystem.entities.group.domain.response.GroupClass
 import swp490.g23.onlinelearningsystem.entities.group.domain.response.GroupPaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.group.domain.response.GroupResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.group.service.impl.GroupService;
+import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestoneResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 
@@ -107,4 +110,25 @@ public class GroupController {
 		return groupService.groupSet(milestoneId, groupDtos);
 	}
 
+	@PutMapping(value = "/group-reuse/{milestoneId}/{reuseMilestoneId}")
+	public ResponseEntity<String> reuseGroupSet(@PathVariable("milestoneId") Long milestoneId,
+		@PathVariable("reuseMilestoneId") Long reuseMilestoneId) {
+
+		return groupService.reuseGroupSet(milestoneId, reuseMilestoneId);
+	}
+
+	@PostMapping(value = "/group-clone/{milestoneId}/{cloneMilestoneId}")
+	public ResponseEntity<String> cloneGroupSet(@PathVariable("milestoneId") Long milestoneId,
+		@PathVariable("cloneMilestoneId") Long cloneMilestoneId) {
+
+		return groupService.cloneGroupSet(milestoneId, cloneMilestoneId);
+	}
+
+	@GetMapping(value = "/group-reuse-filter/{milestoneId}")
+	public ResponseEntity<List<MilestoneResponseDTO>> getGroupReuseFilter(@PathVariable("milestoneId") Long milestoneId) {
+
+		return groupService.reuseGroupSetFilter(milestoneId);
+	}
+
+	
 }

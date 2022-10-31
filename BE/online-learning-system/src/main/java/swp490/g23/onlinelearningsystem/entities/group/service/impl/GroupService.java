@@ -34,6 +34,7 @@ import swp490.g23.onlinelearningsystem.entities.groupMember.domain.response.Grou
 import swp490.g23.onlinelearningsystem.entities.groupMember.repositories.GroupMemberRepositories;
 import swp490.g23.onlinelearningsystem.entities.groupMember.service.impl.GroupMemberService;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
+import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestoneResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.milestone.repositories.MilestoneRepository;
 import swp490.g23.onlinelearningsystem.entities.milestone.service.impl.MilestoneService;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
@@ -142,19 +143,26 @@ public class GroupService implements IGroupService {
     public ResponseEntity<String> groupRemoveAll(Long milestoneId) {
         Milestone milestone = milestoneRepository.findById(milestoneId)
                 .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
-
         if (!milestoneService.isMilestoneOpen(milestone)) {
             throw new CustomException(
                     "Milestone of this group is in progress or have been closed , edit is not possible");
         }
 
-        List<Group> groups = groupRepository.findGroupByMilestone(milestoneId);
+        List<Group> groupOfMilestone = groupRepository.findGroupByMilestone(milestone.getMilestoneId());
+        if (groupOfMilestone.isEmpty()) {
+            throw new CustomException("There are no group in milestone " + milestone.getTitle());
+        }
 
+        removeGroupConfigInMilestone(milestone, groupOfMilestone);
+        return ResponseEntity.ok("Group configuration of milestone " + milestone.getTitle() + " have been reset");
+    }
+
+    public void removeGroupConfigInMilestone(Milestone milestone, List<Group> groups) {
         for (Group group : groups) {
             List<Submit> submits = group.getSubmits();
             List<Submit> submitNew = new ArrayList<>();
             for (Submit submit : submits) {
-                if (submit.getMilestone().getMilestoneId() == milestoneId) {
+                if (submit.getMilestone().getMilestoneId() == milestone.getMilestoneId()) {
                     if (submit.getClassUser() == null) {
                         submitRepository.delete(submit);
                     } else {
@@ -175,7 +183,6 @@ public class GroupService implements IGroupService {
 
         }
         groupRepository.deleteAll(deleteGroups);
-        return ResponseEntity.ok("Group configuration of milestone " + milestone.getTitle() + " have been reset");
     }
 
     @Override
@@ -254,6 +261,7 @@ public class GroupService implements IGroupService {
 
     @Override
     public ResponseEntity<String> groupCreate(Long milestoneId, GroupRequestDTO dto, String memberName) {
+        // check condition
         Milestone milestone = milestoneRepository.findById(milestoneId)
                 .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
 
@@ -271,11 +279,12 @@ public class GroupService implements IGroupService {
                     "Milestone of this group is in progress or have been closed , edit is not possible");
         }
 
+        // check if trainee have group
         Group oldGroup = groupRepository.findGroupByMilestoneAndUser(milestone, user);
         List<Milestone> affectedMilestones = new ArrayList<>();
 
         if (oldGroup != null) {
-
+            // check if old group allow edit
             for (Submit submit : oldGroup.getSubmits()) {
                 if (submit.getMilestone().getStatus() != MilestoneStatusEnum.Open) {
                     throw new CustomException(
@@ -283,22 +292,28 @@ public class GroupService implements IGroupService {
                 }
             }
 
+            // remove trainee from old group
             GroupMember oldMember = new GroupMember();
             for (GroupMember member : oldGroup.getGroupMembers()) {
                 if (member.getMember().getAccountName().equals(memberName)) {
                     oldMember = member;
                     memberRepositories.removeMemberByGroup(user, oldGroup);
+                    break;
                 }
             }
 
+            // set new leader for old group if trainee was a leader
             if (oldMember.getIsLeader() && oldGroup.getGroupMembers().size() >= 1) {
                 GroupMember newLeader = oldGroup.getGroupMembers().get(0);
                 newLeader.setIsLeader(true);
                 memberRepositories.save(newLeader);
             }
+
+            // milestones to apply changess
             affectedMilestones = milestoneRepository.milestoneOfGroup(oldGroup.getGroupId());
         }
 
+        // Create a new group
         Group group = new Group();
         if (dto.getGroupCode() != null) {
             group.setGroupCode(dto.getGroupCode());
@@ -317,25 +332,27 @@ public class GroupService implements IGroupService {
 
         groupRepository.save(group);
 
+        // Create group member detail
+        GroupMember newMember = new GroupMember();
+        newMember.setGroup(group);
+        newMember.setMember(user);
+        newMember.setIsActive(setMemberStatus(classUser.getStatus()));
+        newMember.setIsLeader(true);
+        memberRepositories.save(newMember);
+
+        List<Submit> submits = new ArrayList<>();
         if (affectedMilestones.isEmpty()) {
             Submit submit = new Submit();
             submit.setGroup(group);
             submit.setMilestone(milestone);
 
-            submitRepository.save(submit);
-
-            GroupMember newMember = new GroupMember();
-            newMember.setGroup(group);
-            newMember.setMember(user);
-            newMember.setIsActive(setMemberStatus(classUser.getStatus()));
-            newMember.setIsLeader(true);
-            memberRepositories.save(newMember);
+            submits.add(submit);
 
             for (Submit memberSubmit : milestone.getSubmits()) {
                 if (memberSubmit.getClassUser() != null
                         && memberSubmit.getClassUser().getUser().getAccountName().equals(memberName)) {
                     memberSubmit.setGroup(group);
-                    submitRepository.save(memberSubmit);
+                    submits.add(memberSubmit);
                 }
             }
         } else {
@@ -344,26 +361,18 @@ public class GroupService implements IGroupService {
                 Submit submit = new Submit();
                 submit.setGroup(group);
                 submit.setMilestone(tempM);
+                submits.add(submit);
 
-                submitRepository.save(submit);
-
-                GroupMember newMember = new GroupMember();
-                newMember.setGroup(group);
-                newMember.setMember(user);
-                newMember.setIsActive(setMemberStatus(classUser.getStatus()));
-                newMember.setIsLeader(true);
-                memberRepositories.save(newMember);
-
-                for (Submit memberSubmit : milestone.getSubmits()) {
+                for (Submit memberSubmit : tempM.getSubmits()) {
                     if (memberSubmit.getClassUser() != null
                             && memberSubmit.getClassUser().getUser().getAccountName().equals(memberName)) {
                         memberSubmit.setGroup(group);
-                        submitRepository.save(memberSubmit);
+                        submits.add(memberSubmit);
                     }
                 }
             }
         }
-
+        submitRepository.saveAll(submits);// save changes to db
         return ResponseEntity.ok("Group created");
     }
 
@@ -418,15 +427,28 @@ public class GroupService implements IGroupService {
 
     @Override
     public ResponseEntity<String> groupSet(Long milestoneId, GroupSetWrapper groupSetWrapper) {
-        groupRemoveAll(milestoneId);
+        // check condition
+        Milestone milestone = milestoneRepository.findById(milestoneId)
+                .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
+        if (!milestoneService.isMilestoneOpen(milestone)) {
+            throw new CustomException(
+                    "Milestone of this group is in progress or have been closed , edit is not possible");
+        }
 
-        Milestone milestone = milestoneRepository.findById(milestoneId).get();
+        // remove group if exist
+        List<Group> groupOfMilestone = groupRepository.findGroupByMilestone(milestone.getMilestoneId());
+        if (!groupOfMilestone.isEmpty()) {
+            removeGroupConfigInMilestone(milestone, groupOfMilestone);
+        }
+
+        // handling request
         List<GroupRequestDTO> groupRequestDTOs = groupSetWrapper.getListGroup();
         List<Group> groups = new ArrayList<>();
         List<Submit> submits = new ArrayList<>();
         List<GroupMember> groupMembers = new ArrayList<>();
 
         for (GroupRequestDTO requestDTO : groupRequestDTOs) {
+            // create a new group
             Group newGroup = new Group();
 
             newGroup.setGroupCode(requestDTO.getGroupCode());
@@ -437,6 +459,7 @@ public class GroupService implements IGroupService {
             newGroup.setClasses(milestone.getClasses());
             groups.add(newGroup);
 
+            // asign newGroup to milestone
             Submit groupSubmit = new Submit();
             groupSubmit.setGroup(newGroup);
             groupSubmit.setMilestone(milestone);
@@ -448,6 +471,7 @@ public class GroupService implements IGroupService {
                     for (Submit milestoneSubmit : milestone.getSubmits()) {
                         ClassUser classUser = milestoneSubmit.getClassUser();
                         if (classUser.getUser().getAccountName().equals(memberRequestDTO.getMemberName())) {
+                            // create group member detail
                             GroupMember groupMember = new GroupMember();
 
                             groupMember.setMember(classUser.getUser());
@@ -456,11 +480,11 @@ public class GroupService implements IGroupService {
 
                             if (memberRequestDTO.getIsLeader().equals("true")) {
                                 groupMember.setIsLeader(true);
-                            } else{
+                            } else {
                                 groupMember.setIsLeader(false);
                             }
                             groupMembers.add(groupMember);
-
+                            // asign trainee to newGroup
                             milestoneSubmit.setGroup(newGroup);
                             submits.add(milestoneSubmit);
                         }
@@ -469,11 +493,141 @@ public class GroupService implements IGroupService {
             }
         }
 
-        groupRepository.saveAll(groups);
-        memberRepositories.saveAll(groupMembers);
-        submitRepository.saveAll(submits);
+        groupRepository.saveAll(groups); // save groups to db
+        memberRepositories.saveAll(groupMembers); // save group member detail to db
+        submitRepository.saveAll(submits); // save group config to db
 
         return ResponseEntity.ok("Milestone group configuration overridden");
+    }
+
+    @Override
+    public ResponseEntity<String> reuseGroupSet(Long milestoneId, Long reuseMilestoneId) {
+        // check condition of milestone
+        Milestone milestone = milestoneRepository.findById(milestoneId)
+                .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
+        if (!milestoneService.isMilestoneOpen(milestone)) {
+            throw new CustomException(
+                    "Milestone of this group is in progress or have been closed , edit is not possible");
+        }
+
+        Milestone reuseMilestone = milestoneRepository.findById(reuseMilestoneId)
+                .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
+        if (reuseMilestone.getStatus() == MilestoneStatusEnum.Open) {
+            throw new CustomException(
+                    "Cant apply group config of milestone " + reuseMilestone.getTitle()
+                            + " because it is open for editting");
+        }
+
+        if (!milestone.getClasses().equals(reuseMilestone.getClasses())) {
+            throw new CustomException("cant reuse group config of milestone in different class");
+        }
+
+        // remove group config of milestone if exist
+        List<Group> groupOfMilestone = groupRepository.findGroupByMilestone(milestone.getMilestoneId());
+        if (!groupOfMilestone.isEmpty()) {
+            removeGroupConfigInMilestone(milestone, groupOfMilestone);
+        }
+
+        // assign milestone to group of reuseMilestone
+        List<Submit> submits = new ArrayList<>();
+        List<Group> groupOfReuseMilestone = groupRepository.findGroupByMilestone(reuseMilestone.getMilestoneId());
+        for (Group group : groupOfReuseMilestone) {
+            Submit submitGroup = new Submit();
+            submitGroup.setGroup(group);
+            submitGroup.setMilestone(milestone);
+
+            submits.add(submitGroup);
+
+            // assign group to trainee in milestone
+            for (GroupMember member : group.getGroupMembers()) {
+                for (Submit submitMilestone : milestone.getSubmits()) {
+                    if (submitMilestone.getClassUser().getUser().equals(member.getMember())) {
+                        submitMilestone.setGroup(group);
+                        submits.add(submitMilestone);
+                    }
+                }
+            }
+        }
+
+        submitRepository.saveAll(submits);
+        return ResponseEntity.ok("group configuration of milestone " + reuseMilestone.getTitle()
+                + " applied to milestone " + milestone.getTitle());
+    }
+
+    @Override
+    public ResponseEntity<String> cloneGroupSet(Long milestoneId, Long cloneMilestoneId) {
+        // check condition of milestone
+        Milestone milestone = milestoneRepository.findById(milestoneId)
+                .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
+        if (!milestoneService.isMilestoneOpen(milestone)) {
+            throw new CustomException(
+                    "Milestone of this group is in progress or have been closed , edit is not possible");
+        }
+
+        Milestone milestoneToClone = milestoneRepository.findById(cloneMilestoneId)
+                .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
+        if (milestoneToClone.getStatus() == MilestoneStatusEnum.Open) {
+            throw new CustomException(
+                    "Cant apply group config of milestone " + milestoneToClone.getTitle()
+                            + " because it is open for editting");
+        }
+
+        if (!milestone.getClasses().equals(milestoneToClone.getClasses())) {
+            throw new CustomException("cant reuse group config of milestone in different class");
+        }
+
+        // remove group config of milestone if exist
+        List<Group> groupOfMilestone = groupRepository.findGroupByMilestone(milestone.getMilestoneId());
+        if (!groupOfMilestone.isEmpty()) {
+            removeGroupConfigInMilestone(milestone, groupOfMilestone);
+        }
+
+        List<Group> groups = new ArrayList<>();
+        List<GroupMember> members = new ArrayList<>();
+        List<Submit> submits = new ArrayList<>();
+        List<Group> groupOfCloneMilestone = groupRepository.findGroupByMilestone(milestoneToClone.getMilestoneId());
+
+        for (Group group : groupOfCloneMilestone) {
+            // create group
+            Group newGroup = new Group();
+            newGroup.setGroupCode(group.getGroupCode());
+            newGroup.setTopicName(group.getTopicName());
+            newGroup.setDescription(group.getDescription());
+            newGroup.setStatus(group.getStatus());
+            newGroup.setClasses(milestone.getClasses());
+
+            groups.add(newGroup);
+
+            // asign newGroup to milestone
+            Submit groupSubmit = new Submit();
+            groupSubmit.setGroup(newGroup);
+            groupSubmit.setMilestone(milestone);
+            submits.add(groupSubmit);
+
+            for (GroupMember member : group.getGroupMembers()) {
+                GroupMember newMember = new GroupMember();
+                newMember.setMember(member.getMember());
+                newMember.setGroup(newGroup);
+                newMember.setIsActive(member.getIsActive());
+                newMember.setIsLeader(member.getIsLeader());
+                members.add(newMember);
+                for (Submit milestoneSubmit : milestone.getSubmits()) {
+                    if (milestoneSubmit.getClassUser().getUser().equals(member.getMember())) {
+                        milestoneSubmit.setGroup(newGroup);
+                        submits.add(milestoneSubmit);
+                    }
+                }
+
+            }
+
+        }
+
+        groupRepository.saveAll(groups); // save groups to db
+        memberRepositories.saveAll(members); // save group member detail to db
+        submitRepository.saveAll(submits); // save group config to db
+
+        return ResponseEntity.ok("group configuration of milestone " + milestoneToClone.getTitle()
+                + " clone to milestone " + milestone.getTitle());
     }
 
     @Override
@@ -498,6 +652,28 @@ public class GroupService implements IGroupService {
         classDTO.setClassSize(classMemberDTOs.size());
         classDTO.setTraineeList(classMemberDTOs);
         return ResponseEntity.ok(classDTO);
+    }
+
+    @Override
+    public ResponseEntity<List<MilestoneResponseDTO>> reuseGroupSetFilter(Long milestoneId) {
+        Milestone milestone = milestoneRepository.findById(milestoneId)
+                .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
+
+        if (!milestoneService.isMilestoneOpen(milestone)) {
+            throw new CustomException(
+                    "Milestone of this group is in progress or have been closed , edit is not possible");
+        }
+
+        List<Milestone> milestoneCanReuses = milestoneRepository.getByClassCode(milestone.getClasses().getCode());
+        List<MilestoneResponseDTO> dtos = new ArrayList<>();
+
+        for (Milestone m : milestoneCanReuses) {
+            if(m.getStatus() != MilestoneStatusEnum.Open){
+                dtos.add(milestoneService.toDTO(m));
+            }
+        }
+
+        return ResponseEntity.ok(dtos);
     }
 
     public GroupClassMemberDTO toClassMemberDTO(ClassUser classUser) {
@@ -568,9 +744,7 @@ public class GroupService implements IGroupService {
             }
 
             if (isAdd == true) {
-                if (submit.getMilestone().getStatus() == MilestoneStatusEnum.Open) {
-                    editTable = true;
-                } else {
+                if (submit.getMilestone().getStatus() != MilestoneStatusEnum.Open) {
                     editTable = false;
                 }
                 groupMilestoneDTOs.add(toMilestoneDTO(submit.getMilestone()));
