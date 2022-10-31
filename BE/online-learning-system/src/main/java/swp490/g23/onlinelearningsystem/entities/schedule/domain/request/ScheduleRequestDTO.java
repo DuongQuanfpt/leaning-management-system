@@ -26,4 +26,6 @@ public class ScheduleRequestDTO {
     private String status;
 
     private String room;
+
+    private String clazz;
 }

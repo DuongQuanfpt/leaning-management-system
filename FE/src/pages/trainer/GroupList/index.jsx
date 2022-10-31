@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 import {
   Breadcrumb,
@@ -15,20 +16,23 @@ import {
   Modal,
   Select,
   Input,
+  Tooltip,
 } from 'antd'
 import { CrownTwoTone, ExclamationCircleOutlined, MoreOutlined } from '@ant-design/icons'
 
-import { CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
+import { CButton, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
+import CIcon from '@coreui/icons-react'
+import { cilSync } from '@coreui/icons'
 
 import groupApi from '~/api/groupApi'
 
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
-import { useRef } from 'react'
 
 const GroupList = () => {
   const navigateTo = useNavigate()
+  const roles = useSelector((state) => state.profile.roles)
 
   const [listFilter, setListFilter] = useState({
     milstoneFilter: [],
@@ -39,11 +43,11 @@ const GroupList = () => {
       },
       {
         name: 'Active',
-        value: true,
+        value: 1,
       },
       {
         name: 'Inactive',
-        value: false,
+        value: 0,
       },
     ],
   })
@@ -61,23 +65,16 @@ const GroupList = () => {
   const [group, setGroup] = useState([])
   const [waitingList, setWaitingList] = useState([])
   const [isHaveGroup, setIsHaveGroup] = useState(false)
+  const [isTrainer, setIsTrainer] = useState(false)
 
   const groupNameRef = useRef(null)
   const topicNameRef = useRef(null)
 
   useEffect(() => {
     loadMilestone()
+    setIsTrainer(roles.includes('trainer'))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  useEffect(() => {
-    const params = {
-      filterMilestone: filter.milstone.milestoneId,
-    }
-    if (filter.status.value !== null) {
-      params.filterStatus = filter.status.value
-    }
-    loadGroup(params)
-  }, [filter])
 
   const loadMilestone = async () => {
     groupApi
@@ -124,6 +121,14 @@ const GroupList = () => {
       ...prev,
       milstone: milestone,
     }))
+    const params = {
+      filterMilestone: milestone.milestoneId,
+    }
+    if (filter.status.value !== null) {
+      params.filterStatus = milestone.status.value === 1 ? true : false
+    }
+
+    loadGroup(params)
   }
 
   const handleFilterStatus = (status) => {
@@ -133,18 +138,25 @@ const GroupList = () => {
     }))
   }
 
+  useEffect(() => {
+    const params = {
+      filterMilestone: filter.milstone.milestoneId,
+    }
+    if (filter.status.value !== null) {
+      params.filterStatus = filter.status.value === 1 ? true : false
+    }
+    if (filter.milstone.title !== 'Select Milestone') {
+      loadGroup(params)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter.status.value])
+
   const handleRemoveGroups = () => {
     const removeGroup = async () => {
       await groupApi
         .removeAllGroups(filter.milstone.milestoneId)
-        .then(() => {
-          const params = {
-            filterMilestone: filter.milstone.milestoneId,
-          }
-          if (filter.status.value !== null) {
-            params.filterStatus = filter.status.value
-          }
-          loadGroup(params)
+        .then((response) => {
+          loadGroup({ filterMilestone: filter.milstone.milestoneId })
           toastMessage('success', 'Remove Groups Successfully!')
         })
         .catch((error) => {
@@ -157,6 +169,8 @@ const GroupList = () => {
       `All student from all groups will be moved to Waiting list. Are you sure want to remove all groups?`,
     )
   }
+
+  const handleSync = () => {}
 
   const toastMessage = (type, mes) => {
     message[type]({
@@ -196,13 +210,7 @@ const GroupList = () => {
             .moveFromGroupToExistGroup(trainee.memberInfo.username, trainee.groupId, targetGroupId)
             .then(() => {
               toastMessage('success', 'Add Student Successfully!')
-              const params = {
-                filterMilestone: filter.milstone.milestoneId,
-              }
-              if (filter.status.value !== null) {
-                params.filterStatus = filter.status.value
-              }
-              loadGroup(params)
+              loadGroup({ filterMilestone: filter.milstone.milestoneId })
             })
             .catch((error) => {
               console.log(error)
@@ -215,13 +223,7 @@ const GroupList = () => {
             .moveFromWaitingListToExistGroup(trainee.memberInfo.username, targetGroupId)
             .then(() => {
               toastMessage('success', 'Add Student Successfully!')
-              const params = {
-                filterMilestone: filter.milstone.milestoneId,
-              }
-              if (filter.status.value !== null) {
-                params.filterStatus = filter.status.value
-              }
-              loadGroup(params)
+              loadGroup({ filterMilestone: filter.milstone.milestoneId })
             })
             .catch((error) => {
               console.log(error)
@@ -252,10 +254,7 @@ const GroupList = () => {
             onChange={(e) => (targetGroupId = e)}
           >
             {listGroup.map((item, index) => (
-              <Select.Option
-                key={index}
-                value={item.groupId}
-              >{`<${item.groupCode}> (${item.topicName})`}</Select.Option>
+              <Select.Option key={index} value={item.groupId}>{`<${item.groupId}> (${item.groupCode})`}</Select.Option>
             ))}
           </Select>
         </>
@@ -270,9 +269,6 @@ const GroupList = () => {
       cancelText: 'Cancel',
       okType: 'danger',
       async onOk() {
-        console.log(groupNameRef.current.input.value.trim())
-        console.log(topicNameRef.current.input.value.trim())
-
         const params = {
           groupCode: groupNameRef.current.input.value.trim(),
           topicName: topicNameRef.current.input.value.trim(),
@@ -281,30 +277,15 @@ const GroupList = () => {
 
         const handleCreateAndMove = async () => {
           await groupApi
-            .createGroup(filter.milstone.milestoneId, params)
+            .createGroup(trainee.memberInfo.username, filter.milstone.milestoneId, params)
             .then((response) => {
               console.log(response)
-              // Đã create group nhưng chưa move sang
-              // groupApi
-              //   .moveFromGroupToExistGroup(trainee.memberInfo.username, trainee.groupId, targetGroupId)
-              //   .then(() => {
-              //     toastMessage('success', 'Add Student Successfully!')
-              //     loadGroup(filter)
-              //   })
-              //   .catch((error) => {
-              //     console.log(error)
-              //     toastMessage('error', 'Something went wrong, please try again')
-              //   })
-              const params = {
-                filterMilestone: filter.milstone.milestoneId,
-              }
-              if (filter.status.value !== null) {
-                params.filterStatus = filter.status.value
-              }
-              loadGroup(params)
+              loadGroup({ filterMilestone: filter.milstone.milestoneId })
+              toastMessage('success', 'Add Student Successfully!')
             })
             .catch((error) => {
               console.log(error)
+              toastMessage('danger', 'Something went wrong, please try again')
             })
         }
         modalConfirm(
@@ -340,13 +321,7 @@ const GroupList = () => {
             .addFromWaitingList(userName, group.groupId)
             .then(() => {
               toastMessage('success', 'Add Student Successfully!')
-              const params = {
-                filterMilestone: filter.milstone.milestoneId,
-              }
-              if (filter.status.value !== null) {
-                params.filterStatus = filter.status.value
-              }
-              loadGroup(params)
+              loadGroup({ filterMilestone: filter.milstone.milestoneId })
             })
             .catch((error) => {
               console.log(error)
@@ -391,15 +366,9 @@ const GroupList = () => {
       async onOk() {
         await groupApi
           .changeActiveStudent(trainee.memberInfo.username, trainee.groupId)
-          .then(() => {
+          .then((response) => {
             toastMessage('success', 'Change Status Student Successfully!')
-            const params = {
-              filterMilestone: filter.milstone.milestoneId,
-            }
-            if (filter.status.value !== null) {
-              params.filterStatus = filter.status.value
-            }
-            loadGroup(params)
+            loadGroup({ filterMilestone: filter.milstone.milestoneId })
           })
           .catch((error) => {
             console.log(error)
@@ -423,13 +392,7 @@ const GroupList = () => {
           .changeActiveGroup(group.groupId)
           .then(() => {
             toastMessage('success', 'Change Status Group Successfully!')
-            const params = {
-              filterMilestone: filter.milstone.milestoneId,
-            }
-            if (filter.status.value !== null) {
-              params.filterStatus = filter.status.value
-            }
-            loadGroup(params)
+            loadGroup({ filterMilestone: filter.milstone.milestoneId })
           })
           .catch((error) => {
             console.log(error)
@@ -451,13 +414,7 @@ const GroupList = () => {
           .detachGroup(group.groupId, filter.milstone.milestoneId)
           .then(() => {
             toastMessage('success', 'Detach Group Successfully!')
-            const params = {
-              filterMilestone: filter.milstone.milestoneId,
-            }
-            if (filter.status.value !== null) {
-              params.filterStatus = filter.status.value
-            }
-            loadGroup(params)
+            loadGroup({ filterMilestone: filter.milstone.milestoneId })
           })
           .catch((error) => {
             console.log(error)
@@ -484,13 +441,7 @@ const GroupList = () => {
                 .setLeader(trainee.memberInfo.username, trainee.groupId)
                 .then(() => {
                   toastMessage('success', 'Change Leader Successfully!')
-                  const params = {
-                    filterMilestone: filter.milstone.milestoneId,
-                  }
-                  if (filter.status.value !== null) {
-                    params.filterStatus = filter.status.value
-                  }
-                  loadGroup(params)
+                  loadGroup({ filterMilestone: filter.milstone.milestoneId })
                 })
                 .catch((error) => {
                   console.log(error)
@@ -538,13 +489,7 @@ const GroupList = () => {
                 .remove(trainee.memberInfo.username, trainee.groupId, filter.milstone.milestoneId)
                 .then(() => {
                   toastMessage('success', 'Remove Student Successfully!')
-                  const params = {
-                    filterMilestone: filter.milstone.milestoneId,
-                  }
-                  if (filter.status.value !== null) {
-                    params.filterStatus = filter.status.value
-                  }
-                  loadGroup(params)
+                  loadGroup({ filterMilestone: filter.milstone.milestoneId })
                 })
                 .catch((error) => {
                   console.log(error)
@@ -565,7 +510,7 @@ const GroupList = () => {
   const menuGroup = (group) => (
     <Menu
       items={[
-        {
+        isTrainer && {
           key: Math.random(),
           label: 'Add New Student',
           disabled: waitingList.length === 0,
@@ -580,15 +525,15 @@ const GroupList = () => {
             navigateTo(`/group-detail/${group.groupId}`)
           },
         },
-        { type: 'divider' },
-        {
+        isTrainer && { type: 'divider' },
+        isTrainer && {
           key: Math.random(),
           label: group.status === 'Active' ? 'Deactivate' : 'Reactivate',
           onClick: () => {
             modalChangeActiveGroup(group)
           },
         },
-        {
+        isTrainer && {
           key: Math.random(),
           label: 'Detach',
           onClick: () => {
@@ -683,7 +628,8 @@ const GroupList = () => {
         width: '7%',
 
         render: (_, trainee) =>
-          !trainee.empty && (
+          !trainee.empty &&
+          isTrainer && (
             <Space>
               <Dropdown overlay={menuStudent(trainee, listMember)} placement="left" trigger={['click']}>
                 <Button
@@ -784,9 +730,9 @@ const GroupList = () => {
         <div className="body flex-grow-1 px-3">
           <div className="col-lg-12 m-b30">
             <div className="row">
-              <div className="col-lg-12 m-b30">
+              <div className="col-lg-12 m-b15">
                 <div className="row">
-                  <div className="col-12 d-flex align-items-center">
+                  <div className="col-6 d-flex align-items-center">
                     <Breadcrumb>
                       <Breadcrumb.Item>
                         <Link to="/dashboard">Dashboard</Link>
@@ -794,25 +740,34 @@ const GroupList = () => {
                       <Breadcrumb.Item>Group List</Breadcrumb.Item>
                     </Breadcrumb>
                   </div>
+                  <div className="col-6 d-flex justify-content-end">
+                    <CDropdown className="mr-4">
+                      <CDropdownToggle color="secondary">{filter.milstone.title}</CDropdownToggle>
+                      <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
+                        {listFilter.milstoneFilter.map((milestone) => (
+                          <CDropdownItem onClick={() => handleFilterMilestone(milestone)}>
+                            {milestone.title}
+                          </CDropdownItem>
+                        ))}
+                      </CDropdownMenu>
+                    </CDropdown>
+                    <CDropdown className="">
+                      <CDropdownToggle disabled={filter.milstone.title === 'Select Milestone'} color="secondary">
+                        {filter.status.name}
+                      </CDropdownToggle>
+                      <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
+                        {listFilter.statusFilter.map((status) => (
+                          <CDropdownItem onClick={() => handleFilterStatus(status)}>{status.name}</CDropdownItem>
+                        ))}
+                      </CDropdownMenu>
+                    </CDropdown>
+                    <Tooltip title="Sync" placement="top">
+                      <CButton color="success" type="submit" className="text-light ml-4" onClick={handleSync}>
+                        <CIcon icon={cilSync} />
+                      </CButton>
+                    </Tooltip>
+                  </div>
                 </div>
-              </div>
-              <div className="col-lg-12 m-b30">
-                <CDropdown className=" mr-4">
-                  <CDropdownToggle color="secondary">{filter.milstone.title}</CDropdownToggle>
-                  <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
-                    {listFilter.milstoneFilter.map((milestone) => (
-                      <CDropdownItem onClick={() => handleFilterMilestone(milestone)}>{milestone.title}</CDropdownItem>
-                    ))}
-                  </CDropdownMenu>
-                </CDropdown>
-                <CDropdown className=" mr-4">
-                  <CDropdownToggle color="secondary">{filter.status.name}</CDropdownToggle>
-                  <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
-                    {listFilter.statusFilter.map((status) => (
-                      <CDropdownItem onClick={() => handleFilterStatus(status)}>{status.name}</CDropdownItem>
-                    ))}
-                  </CDropdownMenu>
-                </CDropdown>
               </div>
               {filter.milstone.title !== 'Select Milestone' &&
                 (!isHaveGroup ? (
@@ -820,27 +775,33 @@ const GroupList = () => {
                     <Typography.Text className="mr-4" type="warning" strong>
                       Trainee have not been grouped
                     </Typography.Text>
-                    <Button type="link " onClick={() => navigateTo(`/new-group/${filter.milstone.milestoneId}`)}>
-                      <Typography.Link strong underline>
-                        Create Groups
-                      </Typography.Link>
-                    </Button>
+                    {isTrainer && (
+                      <Button type="link " onClick={() => navigateTo(`/new-group/${filter.milstone.milestoneId}`)}>
+                        <Typography.Link strong underline>
+                          Create Groups
+                        </Typography.Link>
+                      </Button>
+                    )}
                   </div>
                 ) : (
                   <div className="col-lg-12">
                     <Typography.Text className="mr-4" type="warning" strong>
                       This milestone has groups already
                     </Typography.Text>
-                    <Button type="link " onClick={() => navigateTo(`/new-group/${filter.milstone.milestoneId}`)}>
-                      <Typography.Link strong underline>
-                        Reset Groups
-                      </Typography.Link>
-                    </Button>
-                    <Button type="link " onClick={handleRemoveGroups}>
-                      <Typography.Link strong underline>
-                        Remove Groups
-                      </Typography.Link>
-                    </Button>
+                    {isTrainer && (
+                      <>
+                        <Button type="link " onClick={() => navigateTo(`/new-group/${filter.milstone.milestoneId}`)}>
+                          <Typography.Link strong underline>
+                            Reset Groups
+                          </Typography.Link>
+                        </Button>
+                        <Button type="link " onClick={handleRemoveGroups}>
+                          <Typography.Link strong underline>
+                            Remove Groups
+                          </Typography.Link>
+                        </Button>
+                      </>
+                    )}
                   </div>
                 ))}
               {filter.milstone.title !== 'Select Milestone' && (

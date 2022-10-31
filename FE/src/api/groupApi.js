@@ -22,6 +22,11 @@ const groupApi = {
     return axiosClient.get(url, header)
   },
 
+  changeDetail: (id, params) => {
+    const url = `/api/group-detail/${id}`
+    return axiosClient.put(url, params, header)
+  },
+
   setLeader: (username, groupId) => {
     const url = `/api/group-set-leader/${username}/${groupId}`
     return axiosClient.put(url, {}, header)
@@ -62,8 +67,8 @@ const groupApi = {
     return axiosClient.put(url, {}, header)
   },
 
-  createGroup: (milestoneId, params) => {
-    const url = `/api/group-add/${milestoneId}`
+  createGroup: (username, milestoneId, params) => {
+    const url = `/api/group-add/${username}/${milestoneId}`
     return axiosClient.post(url, params, header)
   },
 

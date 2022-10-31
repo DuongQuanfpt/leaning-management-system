@@ -1,7 +1,34 @@
+import React, { useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 import { Button, Input, Space, Typography } from 'antd'
-import React from 'react'
+import groupApi from '~/api/groupApi'
 
-const index = () => {
+const Random = () => {
+  const { id } = useParams()
+
+  const [groupDetail, setGroupDetail] = useState({})
+
+  useEffect(() => {
+    loadData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const loadData = async () => {
+    await groupApi
+      .getGroup({ filterMilestone: id })
+      .then((response) => {
+        console.log(response)
+        const listStudent = []
+        response.listResult.groupMembers.forEach((item) => listStudent.push(item))
+        console.log(listStudent)
+        console.log(response)
+        setGroupDetail(response)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+
   return (
     <div className="widget-inner">
       <div className="row">
@@ -87,4 +114,4 @@ const index = () => {
   )
 }
 
-export default index
+export default Random
