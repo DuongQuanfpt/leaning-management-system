@@ -306,6 +306,7 @@ public class MilestoneService implements IMilestoneService {
 
         responseDTO.setMilestoneId(entity.getMilestoneId());
         Assignment assignment = entity.getAssignment();
+        responseDTO.setTeamWork(assignment.isTeamWork());
         responseDTO.setAssignment(assignmentService.toDTO(assignment));
         // Group groups = groupRepository.findGroupByMilestone(entity.getMilestoneId());
 
