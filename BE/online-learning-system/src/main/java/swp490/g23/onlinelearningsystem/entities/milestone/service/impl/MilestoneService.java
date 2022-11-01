@@ -184,18 +184,6 @@ public class MilestoneService implements IMilestoneService {
     @Override
     public ResponseEntity<String> milestonAdd(MilestoneRequestDTO dto) {
         Milestone milestone = new Milestone();
-        if (dto.getAssignmentId() != null) {
-            milestone.setAssignment(assignmentRepository.findById(dto.getAssignmentId())
-                    .orElseThrow(() -> new CustomException("Assignment doesnt exist")));
-            List<EvalCriteria> evalCriterias = milestone.getAssignment().getEvalCriteriaList();
-
-            for (EvalCriteria evalCriteria : evalCriterias) {
-                evalCriteria.setMilestone(milestone);
-                evalCriteriaRepositories.save(evalCriteria);
-            }
-        } else {
-            throw new CustomException("Must assign a assignment to milestone");
-        }
 
         Classes classes = new Classes();
         if (dto.getClassesCode() != null) {
@@ -227,13 +215,22 @@ public class MilestoneService implements IMilestoneService {
             milestone.setToDate(LocalDate.parse(dto.getToDate()));
         }
 
-        if (dto.getStatus() != null) {
-            milestone.setStatus(MilestoneStatusEnum.fromInt(Integer.parseInt(dto.getStatus())));
-        } else {
-            throw new CustomException("Must asign a status");
-        }
+        milestone.setStatus(MilestoneStatusEnum.Open);
 
         milestoneRepository.save(milestone);
+        if (dto.getAssignmentId() != null) {
+            milestone.setAssignment(assignmentRepository.findById(dto.getAssignmentId())
+                    .orElseThrow(() -> new CustomException("Assignment doesnt exist")));
+            List<EvalCriteria> evalCriterias = milestone.getAssignment().getEvalCriteriaList();
+            List<EvalCriteria> sCriterias = new ArrayList<>();
+            for (EvalCriteria evalCriteria : evalCriterias) {
+                evalCriteria.setMilestone(milestone);
+                sCriterias.add(evalCriteria);
+            }
+            evalCriteriaRepositories.saveAll(sCriterias);
+        } else {
+            throw new CustomException("Must assign a assignment to milestone");
+        }
 
         List<Submit> submits = new ArrayList<>();
         for (ClassUser user : classes.getClassUsers()) {
@@ -276,6 +273,9 @@ public class MilestoneService implements IMilestoneService {
                 .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
         if (milestone.getStatus() == MilestoneStatusEnum.Open) {
             milestone.setStatus(MilestoneStatusEnum.In_Progress);
+            Assignment assignmentOfMilestone = milestone.getAssignment();
+            assignmentOfMilestone.setOnGoing(true);
+            assignmentRepository.save(assignmentOfMilestone);
 
         } else {
            throw new CustomException("Milestone is alredy in progress , or have been close");
