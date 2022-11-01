@@ -39,6 +39,7 @@ const AssignmentDetail = () => {
     await assignmentApi
       .getDetail(id)
       .then((response) => {
+        console.log(response)
         setDefaulDetail(response)
         setDetail((prev) => ({
           ...prev,
@@ -196,11 +197,7 @@ const AssignmentDetail = () => {
                     <div className="form-group col-4">
                       <label className="col-form-label">Is Ongoing</label>
                       <div>
-                        <Radio.Group
-                          value={detail.isOnGoing}
-                          disabled={!isEditMode}
-                          onChange={(e) => setDetail((prev) => ({ ...prev, isOnGoing: e.target.value }))}
-                        >
+                        <Radio.Group value={detail.isOnGoing} disabled>
                           <Radio value={1}>Yes</Radio>
                           <Radio value={0}>No</Radio>
                         </Radio.Group>
@@ -238,20 +235,21 @@ const AssignmentDetail = () => {
                       isError={error === 'You have successfully change your assignment detail' ? false : true}
                     />
                     <div className="d-flex">
-                      {isEditMode ? (
-                        <>
-                          <CButton size="md" className="mr-3" color="warning" onClick={modalConfirm}>
-                            Save
+                      {defaultDetail.isOnGoing !== 1 &&
+                        (isEditMode ? (
+                          <>
+                            <CButton size="md" className="mr-3" color="warning" onClick={modalConfirm}>
+                              Save
+                            </CButton>
+                            <CButton size="md" className="mr-3" color="warning" onClick={handleCancel}>
+                              Cancel
+                            </CButton>
+                          </>
+                        ) : (
+                          <CButton size="md" className="mr-3" color="warning" onClick={handleEdit}>
+                            Edit
                           </CButton>
-                          <CButton size="md" className="mr-3" color="warning" onClick={handleCancel}>
-                            Cancel
-                          </CButton>
-                        </>
-                      ) : (
-                        <CButton size="md" className="mr-3" color="warning" onClick={handleEdit}>
-                          Edit
-                        </CButton>
-                      )}
+                        ))}
                     </div>
                   </div>
                 </div>

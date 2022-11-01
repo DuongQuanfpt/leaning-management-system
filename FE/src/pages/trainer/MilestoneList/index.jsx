@@ -337,7 +337,7 @@ const MilestoneList = () => {
       render: (_, subject) => (
         <Space size="middle" align="baseline">
           {subject.status === 'Open' ? (
-            <Tooltip title={'Open Milestone'} placement="top">
+            <Tooltip title={'Progress Milestone'} placement="top">
               <Button
                 type={'primary'}
                 shape="circle"

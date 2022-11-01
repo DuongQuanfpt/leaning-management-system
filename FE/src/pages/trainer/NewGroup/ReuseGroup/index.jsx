@@ -21,6 +21,7 @@ const ReuseGroup = () => {
     await groupApi
       .getReuseFilter(id)
       .then((response) => {
+        console.log(response)
         setListReuse(response)
         setIsReusable(true)
       })
@@ -40,7 +41,7 @@ const ReuseGroup = () => {
 
   const modalConfirm = () => {
     Modal.confirm({
-      title: 'Are you sure to confirm this configure group this milestone?',
+      title: 'Are you sure to confirm reuse this configure group for this milestone?',
       icon: <ExclamationCircleOutlined />,
       okText: 'Confirm',
       cancelText: 'Cancel',
@@ -78,7 +79,8 @@ const ReuseGroup = () => {
 
   return (
     <div className="widget-inner">
-      <div className="row">
+      <div className="row mb-3">
+        <Typography.Text className="ml-3 mt-2 mb-2">Select Milestone want to reuse:</Typography.Text>
         <Divider />
         <Space
           align="center"
