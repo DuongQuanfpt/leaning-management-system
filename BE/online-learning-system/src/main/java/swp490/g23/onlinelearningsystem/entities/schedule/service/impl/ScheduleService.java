@@ -143,9 +143,10 @@ public class ScheduleService implements IScheduleService {
         }
 
         for (Classes clazz : classList) {
-            for (ClassSetting classSetting : clazz.getTypes()) {
+            for (ClassSetting classSetting : classSettingRepository.findByClassAndSlot(clazz.getCode())) {
                 slotFilter
-                        .add(new ModuleTypeResponseDTO(classSetting.getSettingValue(), classSetting.getSettingTitle()));
+                        .add(new ModuleTypeResponseDTO(classSetting.getSettingValue(), classSetting.getSettingTitle(),
+                                classSetting.getClasses().getCode()));
             }
         }
 
@@ -170,10 +171,8 @@ public class ScheduleService implements IScheduleService {
     @Override
     public ResponseEntity<String> addSchedule(ScheduleRequestDTO dto, Long id) {
         Schedule schedule = new Schedule();
-        // ClassSetting settingClass = new ClassSetting();
-        // User user = userRepository.findById(id).get();
-        // List<Classes> classList =
-        // classRepositories.findClassSupporterAssigned(user.getAccountName());
+        ClassSetting settingClass = new ClassSetting();
+        Classes clazz = classRepositories.findClassByCode(dto.getClazz());
         Setting setting = settingRepositories.findBySettingValue(dto.getRoom());
         LocalDate dateNow = LocalDate.now();
         LocalTime timeNow = LocalTime.now();
@@ -181,21 +180,32 @@ public class ScheduleService implements IScheduleService {
         LocalTime requestFromTime = LocalTime.parse(dto.getFromTime());
         LocalTime requestToTime = LocalTime.parse(dto.getToTime());
 
-        // for (Classes clazz : classList) {
-        // for (ClassSetting classSetting : clazz.getTypes()) {
-        // if (dto.getSlot().equals(classSetting.getSettingValue())) {
-        // throw new CustomException("Class had this slot already! Try again!");
-        // } else {
-        // settingClass.setSettingValue(dto.getSlot());
-        // settingClass.setSettingTitle(dto.getTopic());
-        // settingClass.setClasses(clazz);
-        // settingClass.setStatus(Status.Active);
-        // classSettingRepository.save(settingClass);
-        // schedule.setClassSetting(settingClass);
-        // schedule.setClasses(clazz);
-        // }
-        // }
-        // }
+        List<ClassSetting> listClassSetting = classSettingRepository.findByClassAndSlot(clazz.getCode());
+        List<String> listSlot = new ArrayList<>();
+        List<Schedule> scheduleList = new ArrayList<>();
+        for (ClassSetting clazzSetting : listClassSetting) {
+            listSlot.add(clazzSetting.getSettingValue());
+            scheduleList.addAll(clazzSetting.getSchedules());
+        }
+        if (listSlot.contains(dto.getSlot())) {
+            throw new CustomException("Class had this slot already! Try again!");
+        } else {
+            for (Schedule schedu : scheduleList) {
+                if (requestDate.equals(schedu.getTrainingDate())
+                        && requestFromTime.equals(schedu.getFromTime())
+                        && requestToTime.equals(schedu.getToTime())) {
+                    throw new CustomException("This time had already asigned by one slot! Try again!");
+                }
+            }
+            settingClass.setSettingValue(dto.getSlot());
+            settingClass.setSettingTitle(dto.getTopic());
+            settingClass.setClasses(clazz);
+            settingClass.setStatus(Status.Active);
+            settingClass.setType(settingRepositories.findBySettingValue("TYPE_CLASS_MODULE"));
+            classSettingRepository.save(settingClass);
+            schedule.setClassSetting(settingClass);
+            schedule.setClasses(clazz);
+        }
 
         if (dto.getRoom() != null && setting != null) {
             if (setting.getSchedules() != null) {
@@ -243,7 +253,7 @@ public class ScheduleService implements IScheduleService {
         if (schedule == null) {
             throw new CustomException("schedule doesn't exist!");
         }
-        if (schedule.getStatus().equals(null)) {
+        if (schedule.getStatus().equals(null) || schedule.getStatus().equals(ScheduleStatus.Active)) {
             throw new CustomException("schedule had taken attendence, can't change information!");
         }
 
@@ -306,7 +316,7 @@ public class ScheduleService implements IScheduleService {
         }
         if (entity.getClassSetting() != null) {
             responseDTO.setModules(new ModuleTypeResponseDTO(entity.getClassSetting().getSettingValue(),
-                    entity.getClassSetting().getSettingTitle()));
+                    entity.getClassSetting().getSettingTitle(), entity.getClasses().getCode()));
         }
         if (entity.getSetting() != null) {
             responseDTO.setRoom(new SettingTypeResponseDTO(entity.getSetting().getSettingTitle(),
