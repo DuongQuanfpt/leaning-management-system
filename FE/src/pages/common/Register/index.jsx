@@ -73,26 +73,25 @@ const Register = () => {
       clientId: clientId,
     }
 
-    try {
-      //Get google account token
-      await authApi
-        .getLoginGoogle(data)
-        .then((response) => {
-          const token = response.accessToken
-          dispatch(setToken(token))
-          return token
-        })
-        .then((token) => {
-          //Get profile data
-          userApi.getProfile(token).then((response) => {
-            dispatch(setProfile(response))
+    //Get google account token
+    await authApi
+      .getLoginGoogle(data)
+      .then((response) => {
+        const token = response.accessToken
+        dispatch(setToken(token))
+        return token
+      })
+      .then((token) => {
+        //Get profile data
+        userApi.getProfile(token).then((response) => {
+          dispatch(setProfile(response))
 
-            navigateTo('/')
-          })
+          navigateTo('/')
         })
-    } catch (error) {
-      setError('Something went wrong, please try again later!')
-    }
+      })
+      .catch(() => {
+        setError('Something went wrong, please try again later!')
+      })
   }
 
   const onFailure = (res) => {

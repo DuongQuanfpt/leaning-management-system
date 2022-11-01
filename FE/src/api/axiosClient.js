@@ -1,8 +1,10 @@
 import axios from 'axios'
 import queryString from 'query-string'
 
+const url = process.env.REACT_APP_LMS_API_URL
+
 const axiosClient = axios.create({
-  baseURL: 'https://lms-app-1.herokuapp.com',
+  baseURL: url,
   withCredentials: false,
   'Access-Control-Allow-Origin': '*',
   'Content-type': 'application/json; charset=utf-8',

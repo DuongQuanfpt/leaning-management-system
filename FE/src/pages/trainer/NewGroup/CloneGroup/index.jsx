@@ -164,6 +164,33 @@ const CloneGroup = () => {
               </Col>
             ))}
           </Row>
+          <Space className="mt-4">
+            <Typography.Title level={5} strong>
+              Create group configuration base on selected milestone
+            </Typography.Title>
+          </Space>
+          <Space className="mt-1">
+            <Typography.Text>
+              <Typography.Text strong>Step 1: </Typography.Text>
+              <Typography.Text>
+                The system will display the list of milestone that is "In_Progress" or "Close" status.
+              </Typography.Text>
+            </Typography.Text>
+          </Space>
+          <Space className="mt-3">
+            <Typography.Text>
+              <Typography.Text strong>Step 2: </Typography.Text>
+              <Typography.Text>Select milestone to preview group configuration.</Typography.Text>
+            </Typography.Text>
+          </Space>
+          <Space className="mt-3">
+            <Typography.Text>
+              <Typography.Text strong>Step 3: </Typography.Text>
+              <Typography.Text>
+                Click "Clone" to create new group configuration base on selected milestone.
+              </Typography.Text>
+            </Typography.Text>
+          </Space>
         </>
       )}
       <div className="d-flex justify-content-end ">

@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
-import { Breadcrumb, Pagination, Space, Table, Tag } from 'antd'
-import {} from '@ant-design/icons'
+import { Breadcrumb, Button, DatePicker, Pagination, Space, Table, Tag, Tooltip } from 'antd'
+import { EyeOutlined } from '@ant-design/icons'
 
 import scheduleApi from '~/api/scheduleApi'
 
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
+import { CButton, CDropdown, CDropdownMenu, CDropdownToggle } from '@coreui/react'
+import CIcon from '@coreui/icons-react'
+import { cilPlus, cilReload, cilSearch } from '@coreui/icons'
+import moment from 'moment'
 
 const ScheduleList = () => {
   const ITEM_PER_PAGE = 10
@@ -18,6 +22,26 @@ const ScheduleList = () => {
 
   const [totalItem, setTotalItem] = useState(1)
   const [currentPage, setCurrentPage] = useState(1)
+
+  const [search, setSearch] = useState('')
+  const [listFilter, setListFilter] = useState([])
+  const [filter, setFilter] = useState({
+    date: [moment(new Date(), 'YYYY-MM-DD').subtract(3, 'd'), moment(new Date(), 'YYYY-MM-DD').add(3, 'd')],
+    status: 'Select Attendance Status',
+  })
+
+  useEffect(() => {
+    //Load filter
+    scheduleApi
+      .getFilter()
+      .then((response) => {
+        console.log(response)
+        setListFilter((prev) => ({}))
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }, [])
 
   useEffect(() => {
     loadData()
@@ -30,6 +54,7 @@ const ScheduleList = () => {
       .then((response) => {
         console.log(response)
         setSchedule(response.listResult)
+        setListFilter((prev) => ({}))
       })
       .catch((error) => {
         console.log(error)
@@ -37,6 +62,12 @@ const ScheduleList = () => {
   }
 
   const handleChangePage = (pageNumber) => {}
+
+  const handleSearch = () => {}
+
+  const handleAdd = () => {}
+
+  const handleReload = () => {}
 
   const columns = [
     {
@@ -85,7 +116,19 @@ const ScheduleList = () => {
       title: 'Actions',
       dataIndex: 'actions',
       width: '5%',
-      render: (_, subject) => <Space size="middle" align="baseline"></Space>,
+      render: (_, subject) => (
+        <Space size="middle" align="baseline">
+          <Tooltip title="View" placement="top">
+            <Button
+              shape="circle"
+              icon={<EyeOutlined />}
+              onClick={() => {
+                navigateTo(`/schedule-detail/${subject?.id}`)
+              }}
+            ></Button>
+          </Tooltip>
+        </Space>
+      ),
     },
   ]
 
@@ -99,13 +142,54 @@ const ScheduleList = () => {
             <div className="row">
               <div className="col-lg-12 m-b30">
                 <div className="row">
-                  <div className="col-4 d-flex align-items-center">
+                  <div className="col-2 d-flex align-items-center">
                     <Breadcrumb>
                       <Breadcrumb.Item>
                         <Link to="/dashboard">Dashboard</Link>
                       </Breadcrumb.Item>
                       <Breadcrumb.Item>Schedule List</Breadcrumb.Item>
                     </Breadcrumb>
+                  </div>
+                  <div className="col-3 d-flex w-80">
+                    <input
+                      type="search"
+                      id="form1"
+                      className="form-control"
+                      placeholder="Searching by name, email, message and response...."
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                    />
+                    <CButton color="primary" type="submit" className="text-light ml-10" onClick={handleSearch}>
+                      <CIcon icon={cilSearch} />
+                    </CButton>
+                  </div>
+                  <div className="col-7 d-flex justify-content-end">
+                    <CDropdown className="ml-3 mr-3 ">
+                      <CDropdownToggle color="secondary">{filter.status}</CDropdownToggle>
+                      <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}></CDropdownMenu>
+                    </CDropdown>
+
+                    <DatePicker.RangePicker
+                      className="w-50"
+                      size={'large'}
+                      format={'YYYY-MM-DD'}
+                      defaultValue={filter.date}
+                      onChange={(dateString) => {
+                        setFilter((prev) => ({ ...prev, date: dateString }))
+                      }}
+                      allowClear={false}
+                    />
+
+                    <Tooltip title="Add New Class Eval Criteria" placement="right">
+                      <CButton color="danger" type="submit" className="text-light ml-4" onClick={handleAdd}>
+                        <CIcon icon={cilPlus} />
+                      </CButton>
+                    </Tooltip>
+                    <Tooltip title="Reload" placement="right">
+                      <CButton color="success" type="submit" className="text-light ml-4" onClick={handleReload}>
+                        <CIcon icon={cilReload} />
+                      </CButton>
+                    </Tooltip>
                   </div>
                 </div>
               </div>
