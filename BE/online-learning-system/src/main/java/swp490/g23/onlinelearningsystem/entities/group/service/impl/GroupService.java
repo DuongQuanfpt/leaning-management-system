@@ -694,6 +694,8 @@ public class GroupService implements IGroupService {
         if (milestone.getTitle() != null) {
             dto.setTitle(milestone.getTitle());
         }
+
+        dto.setTeamWork(milestone.getAssignment().isTeamWork());
         dto.setMilestoneId(milestone.getMilestoneId());
         dto.setStatus(milestone.getStatus().toString());
         dto.setClassesCode(milestone.getClasses().getCode());

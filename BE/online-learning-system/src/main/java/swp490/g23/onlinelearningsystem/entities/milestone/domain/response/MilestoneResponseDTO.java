@@ -16,6 +16,8 @@ public class MilestoneResponseDTO {
 
     private AssignmentResponseDTO assignment;
 
+    private boolean isTeamWork;
+
     private String classesCode;
 
     private int classesSize;

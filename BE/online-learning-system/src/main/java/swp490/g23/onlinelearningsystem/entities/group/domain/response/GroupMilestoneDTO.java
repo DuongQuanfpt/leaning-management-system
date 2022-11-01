@@ -17,5 +17,7 @@ public class GroupMilestoneDTO {
     private String classesCode;
 
     private String status;
+
+    private boolean isTeamWork;
     
 }
