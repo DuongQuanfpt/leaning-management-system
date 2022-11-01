@@ -19,8 +19,8 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 public class ScheduleCriteria {
     private final EntityManager em;
 
-    public ScheduleQuery searchFilterSchedule(String keyword, String filterStatus, String filterDate,
-            String filterYear, User user) {
+    public ScheduleQuery searchFilterSchedule(String keyword, String filterStatus, String filterDateFrom,
+            String filterDateTo, User user) {
 
         List<Setting> settings = user.getSettings();
         List<String> roles = new ArrayList<>();
@@ -50,13 +50,10 @@ public class ScheduleCriteria {
             query.append(" AND s.status = '" + filterStatus + "'");
         }
 
-        if (filterDate != null) {
-            query.append(" AND s.trainingDate = '" + filterDate + "'");
+        if (filterDateFrom != null && filterDateTo != null) {
+            query.append(" AND s.trainingDate BETWEEN '" + filterDateFrom + "' AND '" + filterDateTo + "'");
         }
 
-        if (filterYear != null) {
-            query.append(" AND s.trainingDate LIKE '%" + filterYear + "%'");
-        }
         StringBuilder queryCount = new StringBuilder(query.toString().replaceAll("SELECT s", "SELECT COUNT(*)"));
         TypedQuery<Long> countQuery = em.createQuery(queryCount.toString(), Long.class);
         TypedQuery<Schedule> typedQuery = em.createQuery(query.toString(), Schedule.class);

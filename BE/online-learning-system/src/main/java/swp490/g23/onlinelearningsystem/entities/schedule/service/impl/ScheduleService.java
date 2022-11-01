@@ -59,11 +59,11 @@ public class ScheduleService implements IScheduleService {
 
     @Override
     public ResponseEntity<SchedulePaginateDTO> displaySchedule(String keyword, int limit, int page,
-            String filterStatus, String filterDate, String filterYear, Long userId) {
+            String filterStatus, String filterDateFrom, String filterDateTo, Long userId) {
 
         User user = userRepository.findById(userId).get();
-        ScheduleQuery result = scheduleCriteria.searchFilterSchedule(keyword, filterStatus, filterDate, filterYear,
-                user);
+        ScheduleQuery result = scheduleCriteria.searchFilterSchedule(keyword, filterStatus,
+                filterDateFrom, filterDateTo, user);
 
         TypedQuery<Schedule> queryResult = result.getResultQuery();
         TypedQuery<Long> countQuery = result.getCountQuery();
@@ -72,6 +72,7 @@ public class ScheduleService implements IScheduleService {
         List<ScheduleStatusEntity> statusfilter = new ArrayList<>();
         List<String> dateFilter = new ArrayList<>();
         List<String> yearFilter = new ArrayList<>();
+        List<String> classList = new ArrayList<>();
         List<Schedule> scheduleList = queryResult.getResultList();
 
         for (ScheduleStatus status : new ArrayList<ScheduleStatus>(EnumSet.allOf(ScheduleStatus.class))) {
@@ -85,7 +86,9 @@ public class ScheduleService implements IScheduleService {
             if (!yearFilter.contains(Integer.toString(schedule.getTrainingDate().getYear()))) {
                 yearFilter.add(Integer.toString(schedule.getTrainingDate().getYear()));
             }
-
+            if (!classList.contains(schedule.getClasses().getCode())) {
+                classList.add(schedule.getClasses().getCode());
+            }
         }
 
         Long totalItem = countQuery.getSingleResult();
@@ -110,6 +113,7 @@ public class ScheduleService implements IScheduleService {
         dto.setStatusFilter(statusfilter);
         dto.setDateFilter(dateFilter);
         dto.setYearFilter(yearFilter);
+        dto.setClassList(classList);
 
         return ResponseEntity.ok(dto);
     }
