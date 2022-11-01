@@ -15,6 +15,7 @@ import {
   milestoneListRoutes,
   classEvalCriteriaListRoutes,
   groupListRoutes,
+  scheduleListRoutes,
 } from '~/routes'
 import RequireAuth from '~/utils/RequireAuth'
 
@@ -101,6 +102,10 @@ const User = () => {
               return <Route key={index} path={route.path} element={<Page />} />
             })}
             {classEvalCriteriaListRoutes.map((route, index) => {
+              const Page = route.component
+              return <Route key={index} path={route.path} element={<Page />} />
+            })}
+            {scheduleListRoutes.map((route, index) => {
               const Page = route.component
               return <Route key={index} path={route.path} element={<Page />} />
             })}

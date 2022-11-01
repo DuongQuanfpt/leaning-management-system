@@ -107,28 +107,27 @@ const Login = () => {
       idToken: res.tokenId,
       clientId: clientId,
     }
-    try {
-      //Get google account token
-      await authApi
-        .getLoginGoogle(data)
-        .then((response) => {
-          const token = response.accessToken
-          dispatch(setToken(token))
-          return token
+
+    //Get google account token
+    await authApi
+      .getLoginGoogle(data)
+      .then((response) => {
+        const token = response.accessToken
+        dispatch(setToken(token))
+        return token
+      })
+      .then((token) => {
+        //Get profile data
+        userApi.getProfile(token).then((response) => {
+          dispatch(setProfile(response))
+          dispatch(setCurrentClass(response.classCodes[0]))
+          setLogged(true)
+          navigateTo('/')
         })
-        .then((token) => {
-          //Get profile data
-          userApi.getProfile(token).then((response) => {
-            dispatch(setProfile(response))
-            dispatch(setCurrentClass(response.classCodes[0]))
-            setLogged(true)
-            navigateTo('/')
-          })
-        })
-    } catch (error) {
-      console.log(error)
-      setError('Something went wrong, please try again later!')
-    }
+      })
+      .catch(() => {
+        setError('Something went wrong, please try again later!')
+      })
   }
 
   const onFailure = (res) => {

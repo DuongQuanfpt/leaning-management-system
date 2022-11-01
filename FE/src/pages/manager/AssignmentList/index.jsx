@@ -78,6 +78,7 @@ const AssignmentList = () => {
     await assignmentApi
       .getPage(params)
       .then((response) => {
+        console.log(response)
         setListAssignment(response.listResult)
         setCurrentPage(page)
         setTotalItem(response.totalItem)

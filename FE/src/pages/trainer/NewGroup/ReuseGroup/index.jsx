@@ -21,6 +21,7 @@ const ReuseGroup = () => {
     await groupApi
       .getReuseFilter(id)
       .then((response) => {
+        console.log(response)
         setListReuse(response)
         setIsReusable(true)
       })
@@ -40,7 +41,7 @@ const ReuseGroup = () => {
 
   const modalConfirm = () => {
     Modal.confirm({
-      title: 'Are you sure to confirm this configure group this milestone?',
+      title: 'Are you sure to confirm reuse this configure group for this milestone?',
       icon: <ExclamationCircleOutlined />,
       okText: 'Confirm',
       cancelText: 'Cancel',
@@ -78,7 +79,8 @@ const ReuseGroup = () => {
 
   return (
     <div className="widget-inner">
-      <div className="row">
+      <div className="row mb-3">
+        <Typography.Text className="ml-3 mt-2 mb-2">Select Milestone want to reuse:</Typography.Text>
         <Divider />
         <Space
           align="center"
@@ -162,6 +164,35 @@ const ReuseGroup = () => {
               </Col>
             ))}
           </Row>
+          <div className="row">
+            <Space className="mt-4">
+              <Typography.Title level={5} strong>
+                Apply old milestone group configuration
+              </Typography.Title>
+            </Space>
+            <Space className="mt-1">
+              <Typography.Text>
+                <Typography.Text strong>Step 1: </Typography.Text>
+                <Typography.Text>
+                  The system will display the list of milestone that is "In_Progress" or "Close" status.
+                </Typography.Text>
+              </Typography.Text>
+            </Space>
+            <Space className="mt-3">
+              <Typography.Text>
+                <Typography.Text strong>Step 2: </Typography.Text>
+                <Typography.Text>Select milestone to preview group configuration.</Typography.Text>
+              </Typography.Text>
+            </Space>
+            <Space className="mt-3">
+              <Typography.Text>
+                <Typography.Text strong>Step 3: </Typography.Text>
+                <Typography.Text>
+                  Click "Reuse" to apply configuration of this milestone to current milestone.
+                </Typography.Text>
+              </Typography.Text>
+            </Space>
+          </div>
         </>
       )}
       <div className="d-flex justify-content-end ">

@@ -43,6 +43,9 @@ const SubjectSettingAdd = lazy(() => import('~/pages/manager/SubjectSettingAdd')
 const ContactList = lazy(() => import('~/pages/supporter/ContactList'))
 const ContactDetail = lazy(() => import('~/pages/supporter/ContactDetail'))
 
+const ScheduleList = lazy(() => import('~/pages/supporter/ScheduleList'))
+const ScheduleDetail = lazy(() => import('~/pages/supporter/ScheduleDetail'))
+
 //Trainer
 const TraineeList = lazy(() => import('~/pages/trainer/TraineeList'))
 const TraineeDetail = lazy(() => import('~/pages/trainer/TraineeDetail'))
@@ -168,6 +171,11 @@ const groupListRoutes = [
   { path: '/group-detail/:id', component: GroupDetail },
 ]
 
+const scheduleListRoutes = [
+  { path: '/schedule-list', component: ScheduleList },
+  { path: '/schedule-detail/:id', component: ScheduleDetail },
+]
+
 export {
   commonRoutes,
   userRoutes,
@@ -183,4 +191,5 @@ export {
   milestoneListRoutes,
   classEvalCriteriaListRoutes,
   groupListRoutes,
+  scheduleListRoutes,
 }
