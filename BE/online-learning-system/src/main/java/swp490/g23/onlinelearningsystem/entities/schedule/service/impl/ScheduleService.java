@@ -294,7 +294,7 @@ public class ScheduleService implements IScheduleService {
     public ResponseEntity<String> updateScheduleStatus(Long id) {
         Schedule schedule = scheduleRepositories.findById(id).get();
         if (schedule == null) {
-            throw new CustomException("Trainee doesn't exist!");
+            throw new CustomException("Schedule doesn't exist!");
         }
         if (schedule.getStatus() == ScheduleStatus.Active) {
             schedule.setStatus(ScheduleStatus.Inactive);
