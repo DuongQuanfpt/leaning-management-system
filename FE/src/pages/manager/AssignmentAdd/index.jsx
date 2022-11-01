@@ -188,6 +188,7 @@ const AssignmentAdd = () => {
                       <label className="col-form-label">Is Ongoing</label>
                       <div>
                         <Radio.Group
+                          disabled
                           value={detail.isOnGoing}
                           onChange={(e) => setDetail((prev) => ({ ...prev, isOnGoing: e.target.value }))}
                         >

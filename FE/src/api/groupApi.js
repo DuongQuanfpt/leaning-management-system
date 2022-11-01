@@ -96,6 +96,11 @@ const groupApi = {
     const url = `/api/group-reuse/${milsId}/${newMilsId}`
     return axiosClient.put(url, {}, header)
   },
+
+  overrideClone: (milsId, cloneId) => {
+    const url = `/api/group-clone/${milsId}/${cloneId}`
+    return axiosClient.post(url, {}, header)
+  },
 }
 
 export default groupApi
