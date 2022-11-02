@@ -10,7 +10,7 @@ import swp490.g23.onlinelearningsystem.entities.schedule.domain.response.Schedul
 public interface IScheduleService {
 
     ResponseEntity<SchedulePaginateDTO> displaySchedule(String keyword, int limit, int page, String filterStatus,
-            String filterDate, String filterYear, Long userId);
+            String filterDate, String filterYear, String filterClass, Long userId);
 
     ResponseEntity<ScheduleResponseDTO> scheduleDetail(Long id);
 

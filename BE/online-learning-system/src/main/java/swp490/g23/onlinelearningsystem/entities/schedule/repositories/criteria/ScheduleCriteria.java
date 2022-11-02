@@ -20,7 +20,7 @@ public class ScheduleCriteria {
     private final EntityManager em;
 
     public ScheduleQuery searchFilterSchedule(String keyword, String filterStatus, String filterDateFrom,
-            String filterDateTo, User user) {
+            String filterDateTo, String filterClass, User user) {
 
         List<Setting> settings = user.getSettings();
         List<String> roles = new ArrayList<>();
@@ -52,6 +52,10 @@ public class ScheduleCriteria {
 
         if (filterDateFrom != null && filterDateTo != null) {
             query.append(" AND s.trainingDate BETWEEN '" + filterDateFrom + "' AND '" + filterDateTo + "'");
+        }
+
+        if (filterClass != null) {
+            query.append(" AND s.classes.code = '" + filterClass + "'");
         }
 
         StringBuilder queryCount = new StringBuilder(query.toString().replaceAll("SELECT s", "SELECT COUNT(*)"));
