@@ -266,42 +266,45 @@ public class ScheduleService implements IScheduleService {
         if (dto.getRoom() != null && setting != null) {
             if (setting.getSchedules() != null) {
                 for (Schedule sche : setting.getSchedules()) {
-                    if (dto.getTopic().equals(sche.getClassSetting().getSettingTitle())
-                            && dto.getRoom().equals(sche.getSetting().getSettingValue())
-                            && requestDate.equals(sche.getTrainingDate()) && requestFromTime.equals(sche.getFromTime())
-                            && requestToTime.equals(sche.getToTime())) {
-                        continue;
-                    }
-                    if (requestDate.equals(sche.getTrainingDate())
-                            && requestFromTime.equals(sche.getFromTime())
-                            && requestToTime.equals(sche.getToTime())) {
-                        throw new CustomException("Room already have slots, cannot assign!");
+                    if (slot.equalsIgnoreCase(sche.getClassSetting().getSettingValue())) {
+                        if (dto.getTopic() != null) {
+                            classSetting.setSettingTitle(dto.getTopic());
+                            classSettingRepository.save(classSetting);
+                            if (dto.getDate() != null) {
+                                if (requestDate.equals(sche.getTrainingDate())
+                                        && requestFromTime.equals(sche.getFromTime())
+                                        && requestToTime.equals(sche.getToTime())) {
+                                    if (dto.getRoom().equals(sche.getSetting().getSettingValue())) {
+                                        continue;
+                                    } else {
+                                        throw new CustomException("Room already have slots, cannot assign!");
+                                    }
+                                }
+                                if (!requestDate.equals(sche.getTrainingDate())
+                                        || !requestFromTime.equals(sche.getFromTime())
+                                        || !requestToTime.equals(sche.getToTime())) {
+                                    if (requestDate.isBefore(dateNow)) {
+                                        throw new CustomException("Date is before now, ilegal to udpate!");
+                                    } else if (requestDate.equals(dateNow)
+                                            && (requestFromTime.isBefore(timeNow)
+                                                    || requestToTime.isBefore(timeNow))) {
+                                        throw new CustomException("Time is before now, ilegal to udpate!");
+                                    } else {
+                                        if (requestFromTime.isAfter(requestToTime)) {
+                                            throw new CustomException("From Time must before To Time");
+                                        } else {
+                                            schedule.setTrainingDate(LocalDate.parse(dto.getDate()));
+                                            schedule.setFromTime(LocalTime.parse(dto.getFromTime()));
+                                            schedule.setToTime(LocalTime.parse(dto.getToTime()));
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
             schedule.setSetting(setting);
-        }
-
-        if (dto.getDate() != null) {
-            if (requestDate.isBefore(dateNow)) {
-                throw new CustomException("Date is before now, ilegal to udpate!");
-            } else if (requestDate.equals(dateNow)
-                    && (requestFromTime.isBefore(timeNow) || requestToTime.isBefore(timeNow))) {
-                throw new CustomException("Time is before now, ilegal to udpate!");
-            } else {
-                if (requestFromTime.isAfter(requestToTime)) {
-                    throw new CustomException("From Time must before To Time");
-                } else {
-                    schedule.setTrainingDate(LocalDate.parse(dto.getDate()));
-                    schedule.setFromTime(LocalTime.parse(dto.getFromTime()));
-                    schedule.setToTime(LocalTime.parse(dto.getToTime()));
-                }
-            }
-
-        }
-        if (dto.getTopic() != null) {
-            classSetting.setSettingTitle(dto.getTopic());
-            classSettingRepository.save(classSetting);
         }
         scheduleRepositories.save(schedule);
         return ResponseEntity.ok("Update Schedule successfully");
