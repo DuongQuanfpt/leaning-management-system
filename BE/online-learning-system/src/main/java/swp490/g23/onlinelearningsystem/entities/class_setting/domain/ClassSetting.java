@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.BaseEntity;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
+import swp490.g23.onlinelearningsystem.entities.issue.domain.Issue;
 import swp490.g23.onlinelearningsystem.entities.schedule.domain.Schedule;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.util.enumutil.Status;
@@ -58,4 +59,10 @@ public class ClassSetting extends BaseEntity {
 
     @OneToMany(mappedBy = "classSetting")
     private List<Schedule> schedules;
+
+    @OneToMany(mappedBy = "type")
+    private List<Issue> issuesOfType;
+
+    @OneToMany(mappedBy = "status")
+    private List<Issue> issuesOfStatus;
 }
