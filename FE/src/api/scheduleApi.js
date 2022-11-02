@@ -16,6 +16,16 @@ const webContactApi = {
     const url = `/api/schedule-filter`
     return axiosClient.get(url, header)
   },
+
+  getDetail: (id) => {
+    const url = `/api/schedule-detail/${id}`
+    return axiosClient.get(url, header)
+  },
+
+  changeDetail: (id, params) => {
+    const url = `/api/schedule-filter/${id}`
+    return axiosClient.put(url, params, header)
+  },
 }
 
 export default webContactApi

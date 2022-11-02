@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
-import { Breadcrumb, Button, DatePicker, Pagination, Space, Table, Tag, Tooltip } from 'antd'
+import { Breadcrumb, Button, DatePicker, Pagination, Space, Table, Tooltip } from 'antd'
 import { EyeOutlined } from '@ant-design/icons'
 
 import scheduleApi from '~/api/scheduleApi'
@@ -9,14 +9,16 @@ import scheduleApi from '~/api/scheduleApi'
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
-import { CButton, CDropdown, CDropdownMenu, CDropdownToggle } from '@coreui/react'
+import { CButton, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilPlus, cilReload, cilSearch } from '@coreui/icons'
 import moment from 'moment'
+import { useSelector } from 'react-redux'
 
 const ScheduleList = () => {
   const ITEM_PER_PAGE = 10
   const navigateTo = useNavigate()
+  const currentClass = useSelector((state) => state.profile.currentClass)
 
   const [schedule, setSchedule] = useState([])
 
@@ -24,10 +26,13 @@ const ScheduleList = () => {
   const [currentPage, setCurrentPage] = useState(1)
 
   const [search, setSearch] = useState('')
-  const [listFilter, setListFilter] = useState([])
+  const [listFilter, setListFilter] = useState({
+    statusFilter: [],
+  })
   const [filter, setFilter] = useState({
     date: [moment(new Date(), 'YYYY-MM-DD').subtract(3, 'd'), moment(new Date(), 'YYYY-MM-DD').add(3, 'd')],
-    status: 'Select Attendance Status',
+    status: { name: 'Select Attendance Status', value: null },
+    class: currentClass,
   })
 
   useEffect(() => {
@@ -35,8 +40,10 @@ const ScheduleList = () => {
     scheduleApi
       .getFilter()
       .then((response) => {
-        console.log(response)
-        setListFilter((prev) => ({}))
+        setListFilter((prev) => ({
+          ...prev,
+          ...response,
+        }))
       })
       .catch((error) => {
         console.log(error)
@@ -44,30 +51,64 @@ const ScheduleList = () => {
   }, [])
 
   useEffect(() => {
-    loadData()
-  }, [])
+    loadData(1, filter)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter, currentClass])
 
-  const loadData = async () => {
-    const params = {}
+  const loadData = async (page, filter, q = '') => {
+    const [filterDateFrom, filterDateTo] = filter.date
+
+    const params = {
+      limit: ITEM_PER_PAGE,
+      page: page,
+      filterClass: currentClass,
+      filterDateFrom: filterDateFrom.format('YYYY-MM-DD'),
+      filterDateTo: filterDateTo.format('YYYY-MM-DD'),
+    }
+    if (q !== '') {
+      params.q = q.trim()
+    }
+    if (filter.status.name !== 'Select Attendance Status') {
+      params.filterStatus = filter.status.value
+    }
+
     await scheduleApi
       .getSchedule(params)
       .then((response) => {
-        console.log(response)
+        setCurrentPage(page)
+        setTotalItem(response.totalItem)
         setSchedule(response.listResult)
-        setListFilter((prev) => ({}))
       })
       .catch((error) => {
         console.log(error)
       })
   }
 
-  const handleChangePage = (pageNumber) => {}
+  const handleChangePage = (pageNumber) => {
+    loadData(pageNumber, filter)
+  }
 
-  const handleSearch = () => {}
+  const handleSearch = () => {
+    loadData(1, filter, search)
+  }
 
-  const handleAdd = () => {}
+  const handleFilterStatus = (status) => {
+    setFilter((prev) => ({ ...prev, status: status }))
+  }
 
-  const handleReload = () => {}
+  const handleAdd = () => {
+    navigateTo('/schedule-list')
+  }
+
+  const handleReload = () => {
+    setFilter((prev) => ({
+      ...prev,
+      date: [moment(new Date(), 'YYYY-MM-DD').subtract(3, 'd'), moment(new Date(), 'YYYY-MM-DD').add(3, 'd')],
+      status: { name: 'Select Attendance Status', value: null },
+      class: currentClass,
+    }))
+    setSearch('')
+  }
 
   const columns = [
     {
@@ -150,12 +191,12 @@ const ScheduleList = () => {
                       <Breadcrumb.Item>Schedule List</Breadcrumb.Item>
                     </Breadcrumb>
                   </div>
-                  <div className="col-3 d-flex w-80">
+                  <div className="col-4 d-flex">
                     <input
                       type="search"
                       id="form1"
                       className="form-control"
-                      placeholder="Searching by name, email, message and response...."
+                      placeholder="Searching by something..."
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
                     />
@@ -163,31 +204,36 @@ const ScheduleList = () => {
                       <CIcon icon={cilSearch} />
                     </CButton>
                   </div>
-                  <div className="col-7 d-flex justify-content-end">
+                  <div className="col-6 d-flex justify-content-end">
                     <CDropdown className="ml-3 mr-3 ">
-                      <CDropdownToggle color="secondary">{filter.status}</CDropdownToggle>
-                      <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}></CDropdownMenu>
+                      <CDropdownToggle color="secondary">{filter.status.name}</CDropdownToggle>
+                      <CDropdownMenu style={{ width: '100%', maxHeight: '300px', overflow: 'auto' }}>
+                        {listFilter?.statusFilter?.map((status) => (
+                          <CDropdownItem value={status.value} onClick={() => handleFilterStatus(status)}>
+                            {status.name}
+                          </CDropdownItem>
+                        ))}
+                      </CDropdownMenu>
                     </CDropdown>
 
                     <DatePicker.RangePicker
-                      className="w-50"
+                      className="w-30"
                       size={'large'}
                       format={'YYYY-MM-DD'}
-                      defaultValue={filter.date}
+                      value={filter.date}
                       onChange={(dateString) => {
                         setFilter((prev) => ({ ...prev, date: dateString }))
                       }}
                       allowClear={false}
                     />
-
-                    <Tooltip title="Add New Class Eval Criteria" placement="right">
-                      <CButton color="danger" type="submit" className="text-light ml-4" onClick={handleAdd}>
-                        <CIcon icon={cilPlus} />
+                    <Tooltip title="Reload" placement="right">
+                      <CButton color="success" type="submit" className="text-light ml-3" onClick={handleReload}>
+                        <CIcon icon={cilReload} />
                       </CButton>
                     </Tooltip>
-                    <Tooltip title="Reload" placement="right">
-                      <CButton color="success" type="submit" className="text-light ml-4" onClick={handleReload}>
-                        <CIcon icon={cilReload} />
+                    <Tooltip title="Add New Class Eval Criteria" placement="right">
+                      <CButton color="danger" type="submit" className="text-light ml-3" onClick={handleAdd}>
+                        <CIcon icon={cilPlus} />
                       </CButton>
                     </Tooltip>
                   </div>
