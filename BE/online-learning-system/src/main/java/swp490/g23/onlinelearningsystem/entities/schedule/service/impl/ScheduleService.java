@@ -247,23 +247,31 @@ public class ScheduleService implements IScheduleService {
     @Override
     public ResponseEntity<String> updateSchedule(ScheduleRequestDTO dto, Long id) {
         Schedule schedule = scheduleRepositories.findById(id).get();
+        if (schedule == null) {
+            throw new CustomException("schedule doesn't exist!");
+        }
         Setting setting = settingRepositories.findBySettingValue(dto.getRoom());
+        String clazz = schedule.getClasses().getCode();
+        String slot = dto.getSlot();
+        ClassSetting classSetting = classSettingRepository.findByValueAndClass(slot, clazz);
         LocalDate dateNow = LocalDate.now();
         LocalTime timeNow = LocalTime.now();
         LocalDate requestDate = LocalDate.parse(dto.getDate());
         LocalTime requestFromTime = LocalTime.parse(dto.getFromTime());
         LocalTime requestToTime = LocalTime.parse(dto.getToTime());
 
-        if (schedule == null) {
-            throw new CustomException("schedule doesn't exist!");
-        }
         if (schedule.getStatus().equals(null) || schedule.getStatus().equals(ScheduleStatus.Active)) {
             throw new CustomException("schedule had taken attendence, can't change information!");
         }
-
         if (dto.getRoom() != null && setting != null) {
             if (setting.getSchedules() != null) {
                 for (Schedule sche : setting.getSchedules()) {
+                    if (dto.getTopic().equals(sche.getClassSetting().getSettingTitle())
+                            && dto.getRoom().equals(sche.getSetting().getSettingValue())
+                            && requestDate.equals(sche.getTrainingDate()) && requestFromTime.equals(sche.getFromTime())
+                            && requestToTime.equals(sche.getToTime())) {
+                        continue;
+                    }
                     if (requestDate.equals(sche.getTrainingDate())
                             && requestFromTime.equals(sche.getFromTime())
                             && requestToTime.equals(sche.getToTime())) {
@@ -273,6 +281,7 @@ public class ScheduleService implements IScheduleService {
             }
             schedule.setSetting(setting);
         }
+
         if (dto.getDate() != null) {
             if (requestDate.isBefore(dateNow)) {
                 throw new CustomException("Date is before now, ilegal to udpate!");
@@ -289,6 +298,10 @@ public class ScheduleService implements IScheduleService {
                 }
             }
 
+        }
+        if (dto.getTopic() != null) {
+            classSetting.setSettingTitle(dto.getTopic());
+            classSettingRepository.save(classSetting);
         }
         scheduleRepositories.save(schedule);
         return ResponseEntity.ok("Update Schedule successfully");
