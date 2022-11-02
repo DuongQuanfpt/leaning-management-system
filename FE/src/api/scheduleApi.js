@@ -23,7 +23,7 @@ const webContactApi = {
   },
 
   changeDetail: (id, params) => {
-    const url = `/api/schedule-filter/${id}`
+    const url = `/api/schedule-detail/${id}`
     return axiosClient.put(url, params, header)
   },
 }

@@ -75,6 +75,7 @@ const ScheduleList = () => {
     await scheduleApi
       .getSchedule(params)
       .then((response) => {
+        console.log(response)
         setCurrentPage(page)
         setTotalItem(response.totalItem)
         setSchedule(response.listResult)
@@ -97,7 +98,7 @@ const ScheduleList = () => {
   }
 
   const handleAdd = () => {
-    navigateTo('/schedule-list')
+    navigateTo('/schedule-add')
   }
 
   const handleReload = () => {
@@ -148,9 +149,11 @@ const ScheduleList = () => {
       title: 'Take Attendance',
       dataIndex: 'status',
       width: '15%',
-      // Active : Đã điểm danh hôm đó, click vào thì cho sửa
-      // Inactive: Chưa điểm danh hôm đó
-      // Attendance taken: ?
+      // Active : Đã điểm danh hôm đó, click vào thì cho sửa -> không đc sửa
+      // Inactive: Trong tương lai, Chưa điểm danh -> đc sửa
+      // Sửa date chỉ đc chọn date hôm nay và những hôm sau
+      // Sửa from to chỉ đc chọn tương lai
+      // Attendance taken: điểm danh rồi, không đc điểm danh nữa -> không đc sửa
       render: (_, { status }) => (status === 'Active' ? 'Edit Attendance' : status === 'Inactive' ? 'Take' : ''),
     },
     {
@@ -196,7 +199,7 @@ const ScheduleList = () => {
                       type="search"
                       id="form1"
                       className="form-control"
-                      placeholder="Searching by something..."
+                      placeholder="Searching by Topic..."
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
                     />
@@ -226,12 +229,12 @@ const ScheduleList = () => {
                       }}
                       allowClear={false}
                     />
-                    <Tooltip title="Reload" placement="right">
+                    <Tooltip title="Reload" placement="top">
                       <CButton color="success" type="submit" className="text-light ml-3" onClick={handleReload}>
                         <CIcon icon={cilReload} />
                       </CButton>
                     </Tooltip>
-                    <Tooltip title="Add New Class Eval Criteria" placement="right">
+                    <Tooltip title="Add New Schedule" placement="top">
                       <CButton color="danger" type="submit" className="text-light ml-3" onClick={handleAdd}>
                         <CIcon icon={cilPlus} />
                       </CButton>

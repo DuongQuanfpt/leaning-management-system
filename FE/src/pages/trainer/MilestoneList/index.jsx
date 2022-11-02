@@ -64,6 +64,7 @@ const MilestoneList = () => {
 
   useEffect(() => {
     milestoneApi.getPage().then((response) => {
+      console.log(response)
       setListFilter((prev) => ({
         ...prev,
         statusFilter: response.statusFilter,
