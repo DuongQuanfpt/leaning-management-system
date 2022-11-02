@@ -45,6 +45,7 @@ const ContactDetail = lazy(() => import('~/pages/supporter/ContactDetail'))
 
 const ScheduleList = lazy(() => import('~/pages/supporter/ScheduleList'))
 const ScheduleDetail = lazy(() => import('~/pages/supporter/ScheduleDetail'))
+const ScheduleAdd = lazy(() => import('~/pages/supporter/ScheduleAdd'))
 
 //Trainer
 const TraineeList = lazy(() => import('~/pages/trainer/TraineeList'))
@@ -174,6 +175,7 @@ const groupListRoutes = [
 const scheduleListRoutes = [
   { path: '/schedule-list', component: ScheduleList },
   { path: '/schedule-detail/:id', component: ScheduleDetail },
+  { path: '/schedule-add', component: ScheduleAdd },
 ]
 
 export {

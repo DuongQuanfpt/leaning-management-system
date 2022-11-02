@@ -65,6 +65,7 @@ const GroupList = () => {
   const [isHaveGroup, setIsHaveGroup] = useState(false)
   const [isTrainer, setIsTrainer] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
+  const [isTeamwork, setIsTeamwork] = useState(true)
 
   const groupNameRef = useRef(null)
   const topicNameRef = useRef(null)
@@ -107,7 +108,6 @@ const GroupList = () => {
     await groupApi
       .getFilter(currentClass)
       .then((response) => {
-        console.log(response)
         setMilestoneDetail(response)
         setListFilter((prev) => ({
           ...prev,
@@ -125,9 +125,16 @@ const GroupList = () => {
       setIsOpen(true)
     }
 
+    if (!isOpen[0].teamWork) {
+      setIsTeamwork(false)
+    }
+
+    console.log(isOpen[0])
+
     await groupApi
       .getGroup(params)
       .then((response) => {
+        console.log(response)
         setIsHaveGroup(response.listResult.length === 0 ? false : true)
         setWaitingList(response.noGroup)
         const waitingGroup = {
@@ -789,22 +796,31 @@ const GroupList = () => {
                   </div>
                 </div>
               </div>
+
               {filter.milstone.title !== 'Select Milestone' &&
                 isTrainer &&
                 (isOpen ? (
                   !isHaveGroup ? (
-                    <div className="col-lg-12">
-                      <Typography.Text className="mr-4" type="warning" strong>
-                        Trainee have not been grouped
-                      </Typography.Text>
-                      {isTrainer && (
-                        <Button type="link " onClick={() => navigateTo(`/new-group/${filter.milstone.milestoneId}`)}>
-                          <Typography.Link strong underline>
-                            Create Groups
-                          </Typography.Link>
-                        </Button>
-                      )}
-                    </div>
+                    isTeamwork ? (
+                      <div className="col-lg-12">
+                        <Typography.Text className="mr-4" type="warning" strong>
+                          Trainee have not been grouped
+                        </Typography.Text>
+                        {isTrainer && (
+                          <Button type="link " onClick={() => navigateTo(`/new-group/${filter.milstone.milestoneId}`)}>
+                            <Typography.Link strong underline>
+                              Create Groups
+                            </Typography.Link>
+                          </Button>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="col-lg-12">
+                        <Typography.Text className="mr-4" type="warning" strong>
+                          This milestone is working individually, you can't create group for this milestone
+                        </Typography.Text>
+                      </div>
+                    )
                   ) : (
                     <div className="col-lg-12">
                       <Typography.Text className="mr-4" type="warning" strong>
@@ -829,11 +845,11 @@ const GroupList = () => {
                 ) : (
                   <div className="col-lg-12 mt-1 mb-1">
                     <Typography.Text className="mr-4" type="warning" strong>
-                      This milestone already In_Progress or Close, you can not reconfigurate group this milestone
-                      anymore
+                      This milestone already In_Progress or Close, you can't reconfigurate group this milestone
                     </Typography.Text>
                   </div>
                 ))}
+
               {filter.milstone.title !== 'Select Milestone' && (
                 <div className="col-lg-12 m-b30">
                   <Table
