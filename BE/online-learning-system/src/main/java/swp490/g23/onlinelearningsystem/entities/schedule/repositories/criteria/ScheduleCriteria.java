@@ -43,7 +43,7 @@ public class ScheduleCriteria {
         }
         if (keyword != null) {
             query.append(
-                    " AND (a.title LIKE '%" + keyword + "%' OR a.forSubject.subjectCode LIKE '%" + keyword + "%')");
+                    " AND (s.classSetting.settingTitle LIKE '%" + keyword + "%')");
         }
 
         if (filterStatus != null) {
