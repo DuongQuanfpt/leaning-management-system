@@ -63,6 +63,8 @@ const UploadFile = () => {
         'Is Leader': '',
       })),
     ]
+
+    console.log(listExport)
     const ws = utils.json_to_sheet(listExport)
     const wb = utils.book_new()
     utils.sheet_add_aoa(ws, [['Group Name', 'Email', 'Fullname', 'Username', 'Is Leader']], { origin: 'A1' })
@@ -117,27 +119,34 @@ const UploadFile = () => {
   }
 
   const handleNextStep = () => {
-    console.log(groupDetail.traineeList)
-    console.log(fileList)
+    for (let i = 0; i < fileList.length; i++) {
+      fileList[i]['Group Name'] = fileList[i]['Group Name']?.trim()
+    }
+
     if (groupDetail.traineeList.length !== fileList.length) {
       toastMessage('error', 'Data is invalid, follow the File of Student List please')
+      console.log(1)
       return
     }
     for (let i = 0; i < fileList.length; i++) {
-      if (Object.keys(fileList[i]).length !== 5) {
+      if (Object.keys(fileList[i]).length !== 4) {
         toastMessage('error', 'Data is invalid, follow the File of Student List please')
+        console.log(2)
         return
       }
-      if (groupDetail.traineeList[i].username.trim() !== fileList[i].Username.trim()) {
+      if (groupDetail.traineeList[i].username?.trim() !== fileList[i].Username?.trim()) {
         toastMessage('error', 'Data is invalid, follow the File of Student List please')
+        console.log(3)
         return
       }
-      if (groupDetail.traineeList[i].fullName.trim() !== fileList[i].Fullname.trim()) {
+      if (groupDetail.traineeList[i].fullName?.trim() !== fileList[i].Fullname?.trim()) {
         toastMessage('error', 'Data is invalid, follow the File of Student List please')
+        console.log(4)
         return
       }
-      if (groupDetail.traineeList[i].email.trim() !== fileList[i].Email.trim()) {
+      if (groupDetail.traineeList[i].email?.trim() !== fileList[i].Email?.trim()) {
         toastMessage('error', 'Data is invalid, follow the File of Student List please')
+        console.log(5)
         return
       }
     }
@@ -146,20 +155,37 @@ const UploadFile = () => {
     const result = []
 
     for (const [key, value] of Object.entries(grouped)) {
-      result.push({
-        groupCode: key,
-        topicName: `Topic ${key}`,
-        description: `Description ${key}`,
-        fullData: value,
-        members: value.map((item) => ({
-          memberName: item.Username,
-          isLeader: item['Is Leader'] === 'TRUE' ? true : false,
-        })),
-      })
+      if (key === '') {
+        result.unshift({
+          groupCode: key,
+          topicName: `Topic Waiting List`,
+          description: `Description Waiting List`,
+          fullData: value,
+          members: value.map((item) => ({
+            memberName: item.Username,
+            isLeader: false,
+          })),
+        })
+      } else {
+        result.push({
+          groupCode: key,
+          topicName: `Topic ${key}`,
+          description: `Description ${key}`,
+          fullData: value,
+          members: value.map((item) => ({
+            memberName: item.Username,
+            isLeader: item['Is Leader'] === 'TRUE' ? true : false,
+          })),
+        })
+      }
     }
+
+    result[0].fullData = result[0].fullData.map((item) => ({ ...item, 'Is Leader': false }))
+
     setDisplay(result)
     setResult(result)
     setIsClickedNextStep(true)
+    console.log(result)
   }
 
   const handleFinish = async () => {
@@ -325,7 +351,6 @@ const UploadFile = () => {
           </Space>
           <Row gutter={24} className="mt-3">
             {display.map((group) => {
-              console.log(group)
               return (
                 <Col span={8} className="pb-3">
                   <Card
