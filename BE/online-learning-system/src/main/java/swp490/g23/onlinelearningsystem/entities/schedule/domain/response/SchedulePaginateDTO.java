@@ -20,4 +20,5 @@ public class SchedulePaginateDTO {
     private List<ScheduleStatusEntity> statusFilter;
     private List<String> dateFilter;
     private List<String> yearFilter;
+    private List<String> classList;
 }
