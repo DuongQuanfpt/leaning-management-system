@@ -38,7 +38,7 @@ public class AssignmentController {
 		int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
 		int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
 
-		return assignmentService.getAssignment(limit, page, keyword, subjectFilter, statusFilter);
+		return assignmentService.getAssignment(limit, page, keyword, subjectFilter, statusFilter );
 	}
 
 	@GetMapping(value = "/assignment-detail/{id}")

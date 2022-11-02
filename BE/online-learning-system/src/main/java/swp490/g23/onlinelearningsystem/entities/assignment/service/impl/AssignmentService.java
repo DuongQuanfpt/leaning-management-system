@@ -19,8 +19,15 @@ import swp490.g23.onlinelearningsystem.entities.assignment.repositories.Assignme
 import swp490.g23.onlinelearningsystem.entities.assignment.repositories.criteria.AssignmentCriteria;
 import swp490.g23.onlinelearningsystem.entities.assignment.repositories.criteriaEntity.AssignmenQuery;
 import swp490.g23.onlinelearningsystem.entities.assignment.service.IAssignmentService;
+import swp490.g23.onlinelearningsystem.entities.group.domain.Group;
+import swp490.g23.onlinelearningsystem.entities.group.repositories.GroupRepository;
+import swp490.g23.onlinelearningsystem.entities.groupMember.domain.GroupMember;
+import swp490.g23.onlinelearningsystem.entities.groupMember.repositories.GroupMemberRepositories;
+import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
 import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
 import swp490.g23.onlinelearningsystem.entities.subject.repositories.SubjecRepository;
+import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
+import swp490.g23.onlinelearningsystem.entities.submit.repositories.SubmitRepository;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
@@ -35,12 +42,21 @@ public class AssignmentService implements IAssignmentService {
     private AssignmentRepository assignmentRepository;
 
     @Autowired
+    private GroupRepository groupRepository;
+
+    @Autowired
+    private GroupMemberRepositories memberRepositories;
+
+    @Autowired
+    private SubmitRepository submitRepository;
+
+    @Autowired
     private SubjecRepository subjecRepository;
 
     @Override
     public ResponseEntity<AssignmentPaginate> getAssignment(int limit, int page, String keyword, String subjectFilter,
             String statusFilter) {
-        AssignmenQuery result = assignmentCriteria.searchFilterAssignment(keyword, statusFilter, subjectFilter);
+        AssignmenQuery result = assignmentCriteria.searchFilterAssignment(keyword, statusFilter, subjectFilter );
 
         TypedQuery<Assignment> queryResult = result.getResultQuery();
         TypedQuery<Long> countQuery = result.getCountQuery();
@@ -115,19 +131,52 @@ public class AssignmentService implements IAssignmentService {
         if (dto.getStatus() != null) {
             assignment.setStatus(Status.getFromValue(Integer.parseInt(dto.getStatus())).get());
         }
-        if (dto.getIsOnGoing() == 1) {
-            assignment.setOnGoing(true);
-        } else {
-            assignment.setOnGoing(false);
-        }
+      
         if (dto.getIsTeamWork() == 1) {
             assignment.setTeamWork(true);
         } else {
             assignment.setTeamWork(false);
+            List<Milestone> milestoneOfAssignment = assignment.getMilestones();
+            if (!milestoneOfAssignment.isEmpty()) {
+                for (Milestone milestone : milestoneOfAssignment) {
+                    List<Group> groups = groupRepository.findGroupByMilestone(milestone.getMilestoneId());
+                    if (!groups.isEmpty()) {
+                        removeGroupConfigInMilestone(milestone, groups);
+                    }
+                }
+            }
         }
 
         assignmentRepository.save(assignment);
         return ResponseEntity.ok("Assignment update successfully!");
+    }
+
+    private void removeGroupConfigInMilestone(Milestone milestone, List<Group> groups) {
+        for (Group group : groups) {
+            List<Submit> submits = group.getSubmits();
+            List<Submit> submitNew = new ArrayList<>();
+            for (Submit submit : submits) {
+                if (submit.getMilestone().getMilestoneId() == milestone.getMilestoneId()) {
+                    if (submit.getClassUser() == null) {
+                        submitRepository.delete(submit);
+                    } else {
+                        submit.setGroup(null);
+                        submitNew.add(submit);
+                    }
+                }
+
+            }
+            submitRepository.saveAll(submitNew);
+        }
+
+        List<Group> deleteGroups = groupRepository.findBySubmitsIsNull();
+        for (Group group : deleteGroups) {
+
+            List<GroupMember> groupMembers = group.getGroupMembers();
+            memberRepositories.deleteAll(groupMembers);
+
+        }
+        groupRepository.deleteAll(deleteGroups);
     }
 
     @Override
@@ -165,11 +214,9 @@ public class AssignmentService implements IAssignmentService {
         } else {
             throw new CustomException("You haven't assigned subject yet!");
         }
-        if (dto.getIsOnGoing() == 1) {
-            assignment.setOnGoing(true);
-        } else {
-            assignment.setOnGoing(false);
-        }
+
+        assignment.setOnGoing(false);
+
         if (dto.getIsTeamWork() == 1) {
             assignment.setTeamWork(true);
         } else {

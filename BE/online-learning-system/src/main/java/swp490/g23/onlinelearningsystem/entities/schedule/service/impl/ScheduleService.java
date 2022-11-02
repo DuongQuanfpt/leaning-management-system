@@ -59,11 +59,11 @@ public class ScheduleService implements IScheduleService {
 
     @Override
     public ResponseEntity<SchedulePaginateDTO> displaySchedule(String keyword, int limit, int page,
-            String filterStatus, String filterDate, String filterYear, Long userId) {
+            String filterStatus, String filterDateFrom, String filterDateTo, String filterClass, Long userId) {
 
         User user = userRepository.findById(userId).get();
-        ScheduleQuery result = scheduleCriteria.searchFilterSchedule(keyword, filterStatus, filterDate, filterYear,
-                user);
+        ScheduleQuery result = scheduleCriteria.searchFilterSchedule(keyword, filterStatus,
+                filterDateFrom, filterDateTo, filterClass, user);
 
         TypedQuery<Schedule> queryResult = result.getResultQuery();
         TypedQuery<Long> countQuery = result.getCountQuery();
@@ -72,6 +72,7 @@ public class ScheduleService implements IScheduleService {
         List<ScheduleStatusEntity> statusfilter = new ArrayList<>();
         List<String> dateFilter = new ArrayList<>();
         List<String> yearFilter = new ArrayList<>();
+        List<String> classList = new ArrayList<>();
         List<Schedule> scheduleList = queryResult.getResultList();
 
         for (ScheduleStatus status : new ArrayList<ScheduleStatus>(EnumSet.allOf(ScheduleStatus.class))) {
@@ -85,7 +86,9 @@ public class ScheduleService implements IScheduleService {
             if (!yearFilter.contains(Integer.toString(schedule.getTrainingDate().getYear()))) {
                 yearFilter.add(Integer.toString(schedule.getTrainingDate().getYear()));
             }
-
+            if (!classList.contains(schedule.getClasses().getCode())) {
+                classList.add(schedule.getClasses().getCode());
+            }
         }
 
         Long totalItem = countQuery.getSingleResult();
@@ -110,6 +113,7 @@ public class ScheduleService implements IScheduleService {
         dto.setStatusFilter(statusfilter);
         dto.setDateFilter(dateFilter);
         dto.setYearFilter(yearFilter);
+        dto.setClassList(classList);
 
         return ResponseEntity.ok(dto);
     }
@@ -243,23 +247,31 @@ public class ScheduleService implements IScheduleService {
     @Override
     public ResponseEntity<String> updateSchedule(ScheduleRequestDTO dto, Long id) {
         Schedule schedule = scheduleRepositories.findById(id).get();
+        if (schedule == null) {
+            throw new CustomException("schedule doesn't exist!");
+        }
         Setting setting = settingRepositories.findBySettingValue(dto.getRoom());
+        String clazz = schedule.getClasses().getCode();
+        String slot = dto.getSlot();
+        ClassSetting classSetting = classSettingRepository.findByValueAndClass(slot, clazz);
         LocalDate dateNow = LocalDate.now();
         LocalTime timeNow = LocalTime.now();
         LocalDate requestDate = LocalDate.parse(dto.getDate());
         LocalTime requestFromTime = LocalTime.parse(dto.getFromTime());
         LocalTime requestToTime = LocalTime.parse(dto.getToTime());
 
-        if (schedule == null) {
-            throw new CustomException("schedule doesn't exist!");
-        }
         if (schedule.getStatus().equals(null) || schedule.getStatus().equals(ScheduleStatus.Active)) {
             throw new CustomException("schedule had taken attendence, can't change information!");
         }
-
         if (dto.getRoom() != null && setting != null) {
             if (setting.getSchedules() != null) {
                 for (Schedule sche : setting.getSchedules()) {
+                    if (dto.getTopic().equals(sche.getClassSetting().getSettingTitle())
+                            && dto.getRoom().equals(sche.getSetting().getSettingValue())
+                            && requestDate.equals(sche.getTrainingDate()) && requestFromTime.equals(sche.getFromTime())
+                            && requestToTime.equals(sche.getToTime())) {
+                        continue;
+                    }
                     if (requestDate.equals(sche.getTrainingDate())
                             && requestFromTime.equals(sche.getFromTime())
                             && requestToTime.equals(sche.getToTime())) {
@@ -269,6 +281,7 @@ public class ScheduleService implements IScheduleService {
             }
             schedule.setSetting(setting);
         }
+
         if (dto.getDate() != null) {
             if (requestDate.isBefore(dateNow)) {
                 throw new CustomException("Date is before now, ilegal to udpate!");
@@ -286,6 +299,10 @@ public class ScheduleService implements IScheduleService {
             }
 
         }
+        if (dto.getTopic() != null) {
+            classSetting.setSettingTitle(dto.getTopic());
+            classSettingRepository.save(classSetting);
+        }
         scheduleRepositories.save(schedule);
         return ResponseEntity.ok("Update Schedule successfully");
     }
@@ -294,7 +311,7 @@ public class ScheduleService implements IScheduleService {
     public ResponseEntity<String> updateScheduleStatus(Long id) {
         Schedule schedule = scheduleRepositories.findById(id).get();
         if (schedule == null) {
-            throw new CustomException("Trainee doesn't exist!");
+            throw new CustomException("Schedule doesn't exist!");
         }
         if (schedule.getStatus() == ScheduleStatus.Active) {
             schedule.setStatus(ScheduleStatus.Inactive);

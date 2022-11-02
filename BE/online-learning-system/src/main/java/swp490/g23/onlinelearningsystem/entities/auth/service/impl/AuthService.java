@@ -3,6 +3,8 @@ package swp490.g23.onlinelearningsystem.entities.auth.service.impl;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.mail.MessagingException;
 
@@ -37,6 +39,7 @@ import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomExcep
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.UnverifiedUserException;
 import swp490.g23.onlinelearningsystem.util.GoogleHelper;
 import swp490.g23.onlinelearningsystem.util.JwtTokenUtil;
+import swp490.g23.onlinelearningsystem.util.StringUltility;
 import swp490.g23.onlinelearningsystem.util.enumutil.EnumEntity.RoleEnum;
 import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
 
@@ -92,6 +95,10 @@ public class AuthService implements IAuthService {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         User user = new User();
         user.setFullName(request.getFullName());
+        
+        String accountName = user.getFullName().replaceAll("\\s+","").toLowerCase();
+        user.setAccountName(accountNameGenerate(accountName));
+
         user.setEmail(request.getEmail());
         user.setPassword(encoder.encode(password));
         user.addRole(settingRepositories.findBySettingValue("ROLE_TRAINEE"));
@@ -109,6 +116,15 @@ public class AuthService implements IAuthService {
         }
 
         return ResponseEntity.ok("Successfull register , password has been to your email");
+    }
+
+    public String accountNameGenerate(String accountName){
+        accountName = StringUltility.removeAccent(accountName);
+        List<User> userWithSameName = userRepository.getUserWithAccNameStartWith(accountName);
+        if(!userWithSameName.isEmpty()){
+            accountName += userWithSameName.size();  
+        } 
+        return accountName;
     }
 
     @Override
@@ -149,6 +165,10 @@ public class AuthService implements IAuthService {
 
             user.setEmail(email);
             user.setFullName(name);
+
+            String accountName = user.getFullName().replaceAll("\\s+","").toLowerCase();
+            user.setAccountName(accountNameGenerate(accountName));
+
             user.setPassword(encoder.encode(pass));
             user.setAvatar_url(pictureUrl);
             user.setStatus(UserStatus.Active);
@@ -163,6 +183,15 @@ public class AuthService implements IAuthService {
 
         } else {
             user = userRepository.findByEmail(email).get();
+            if(user.getAvatar_url()== null) {
+                user.setAvatar_url(pictureUrl);
+            }
+
+            if(user.getAccountName() == null) {
+                String accountName = user.getFullName().replaceAll("\\s+","").toLowerCase();
+                user.setAccountName(accountNameGenerate(accountName));
+            }
+
             if (user.getStatus() == UserStatus.Unverified) {
                 user.setStatus(UserStatus.Active);
                 user.setMailToken(null);
