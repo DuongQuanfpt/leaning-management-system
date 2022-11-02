@@ -37,12 +37,13 @@ public class ScheduleController {
             @RequestParam(name = "filterStatus", required = false) String statusFilter,
             @RequestParam(name = "filterDateFrom", required = false) String dateFromFilter,
             @RequestParam(name = "filterDateTo", required = false) String dateToFilter,
+            @RequestParam(name = "filterClass", required = false) String classFilter,
             @AuthenticationPrincipal User user) {
 
         int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
         int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
         return scheduleService.displaySchedule(keyword, limit, page, statusFilter,
-                dateFromFilter, dateToFilter, user.getUserId());
+                dateFromFilter, dateToFilter, classFilter, user.getUserId());
     }
 
     @GetMapping(value = "/schedule-detail/{id}")
