@@ -760,7 +760,7 @@ public class GroupService implements IGroupService {
             if (!entity.getSubmits().isEmpty()) {
 
                 for (Submit submit : entity.getSubmits()) {
-
+                 
                     if (submit.getClassUser() != null && submit.getMilestone().getMilestoneId() == milestoneId) {
 
                         GroupMemberResponseDTO groupResponseDTO = new GroupMemberResponseDTO();
@@ -783,7 +783,6 @@ public class GroupService implements IGroupService {
                         }
 
                     }
-
                 }
 
                 dto.setGroupMembers(memberResponseDTOs);
