@@ -29,11 +29,10 @@ const ForgetPasswordProcessed = () => {
 
     const data = {
       newPassword: password,
-      token: token,
     }
 
     await forgetPasswordApi
-      .forgetPassword(data)
+      .forgetPassword(data, token)
       .then(() => {
         setIsResetSuccess(true)
       })

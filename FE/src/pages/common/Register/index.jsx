@@ -51,11 +51,13 @@ const Register = () => {
       setError('Your password and confirm password is not matched')
       return
     }
+    const urlFE = process.env.REACT_APP_LMS_FE_URL
+
     data = {
       fullName: data.name,
       email: data.email,
       password: data.password,
-      link: 'http://localhost:3000/verify?token=',
+      link: `${urlFE}/verify?token=`,
     }
 
     await registerApi

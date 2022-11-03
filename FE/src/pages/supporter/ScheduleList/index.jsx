@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
-import { Breadcrumb, Button, DatePicker, Pagination, Space, Table, Tooltip } from 'antd'
+import { Breadcrumb, Button, DatePicker, Pagination, Space, Table, Tooltip, Typography } from 'antd'
 import { EyeOutlined } from '@ant-design/icons'
 
 import scheduleApi from '~/api/scheduleApi'
@@ -154,7 +154,18 @@ const ScheduleList = () => {
       // Sửa date chỉ đc chọn date hôm nay và những hôm sau
       // Sửa from to chỉ đc chọn tương lai
       // Attendance taken: điểm danh rồi, không đc điểm danh nữa -> không đc sửa
-      render: (_, { status }) => (status === 'Active' ? 'Edit Attendance' : status === 'Inactive' ? 'Take' : ''),
+      render: (_, { status, id }) =>
+        status === 'Active' ? (
+          <Button type="link" className="p-0 m-0" onClick={() => navigateTo(`/attendance-detail/${id}`)}>
+            <Typography.Link underline>Edit Attendance</Typography.Link>
+          </Button>
+        ) : status === 'Inactive' ? (
+          <Button type="link" className="p-0 m-0" onClick={() => navigateTo(`/attendance-detail/${id}`)}>
+            <Typography.Link underline>Take Attendance</Typography.Link>
+          </Button>
+        ) : (
+          'Attendance Taken'
+        ),
     },
     {
       title: 'Actions',
