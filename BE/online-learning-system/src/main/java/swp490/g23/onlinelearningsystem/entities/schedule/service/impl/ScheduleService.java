@@ -188,10 +188,10 @@ public class ScheduleService implements IScheduleService {
         List<String> listSlot = new ArrayList<>();
         List<Schedule> scheduleList = new ArrayList<>();
         for (ClassSetting clazzSetting : listClassSetting) {
-            listSlot.add(clazzSetting.getSettingValue());
+            listSlot.add(clazzSetting.getSettingValue().toLowerCase());
             scheduleList.addAll(clazzSetting.getSchedules());
         }
-        if (listSlot.contains(dto.getSlot())) {
+        if (listSlot.contains(dto.getSlot().toLowerCase())) {
             throw new CustomException("Class had this slot already! Try again!");
         } else {
             for (Schedule schedu : scheduleList) {
