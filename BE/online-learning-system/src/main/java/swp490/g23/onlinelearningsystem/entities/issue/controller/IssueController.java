@@ -1,5 +1,7 @@
 package swp490.g23.onlinelearningsystem.entities.issue.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueListDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueMilestoneDTO;
+import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.service.impl.IssueService;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 
@@ -32,7 +35,7 @@ public class IssueController {
             @RequestParam(name = "milestone", required = false) Long milestoneId,
             @RequestParam(name = "asignee", required = false) String filterAssigneeName,
             @RequestParam(name = "type", required = false) String filterTypeValue,
-		    @PathVariable String classCode) {
+		    @PathVariable("classCode") String classCode) {
 
 		int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
 		int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
@@ -40,8 +43,14 @@ public class IssueController {
 	}
 
 	@GetMapping(value = "/issue-list-filter/{classCode}")
-	public ResponseEntity<IssueMilestoneDTO> getGroupFilter(@PathVariable("classCode") String classCode) {
+	public ResponseEntity<List<IssueMilestoneDTO>> getIssueFilter(@PathVariable("classCode") String classCode) {
 
-		return null;
+		return issueService.issueListFilter(classCode);
+	}
+
+	@GetMapping(value = "/issue-detail/{issueId}")
+	public ResponseEntity<IssueResponseDTO> getIssueDetail(@PathVariable("issueId") Long issueId) {
+
+		return issueService.issueDetail(issueId);
 	}
 }

@@ -23,5 +23,9 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
     @Query(value = "SELECT g FROM Group g JOIN g.submits as s WHERE s.milestone = :milestone AND s.classUser.user = :user")
     Group findGroupByMilestoneAndUser(Milestone milestone, User user);
 
+    @Query(value = "SELECT DISTINCT g FROM Group g JOIN g.issues as i WHERE i.milestone.milestoneId = :milestoneId")
+    List<Group> getGroupOfIssueByMilestone(Long milestoneId);
 
+    @Query(value = "SELECT DISTINCT g FROM Group g JOIN g.issues as i WHERE i.classes.code = :classCode AND i.milestone IS NULL")
+    List<Group> getGroupOfGeneralIssue(String classCode);
 }

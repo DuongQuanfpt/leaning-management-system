@@ -14,7 +14,7 @@ public class IssueResponseDTO {
 
     String title;
 
-    String classCode;
+ 
     
     String milestoneTitle;
 
@@ -25,4 +25,8 @@ public class IssueResponseDTO {
     String deadline;
 
     String status;
+
+    String classCode;
+
+    String description;
 }
