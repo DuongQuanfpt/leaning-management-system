@@ -14,9 +14,11 @@ const ForgetPassword = () => {
   const [error, setError] = useState('')
 
   const handleSubmit = async () => {
+    setError('')
+    const urlFE = process.env.REACT_APP_LMS_FE_URL
     const data = {
       email,
-      link: 'http://localhost:3000/forget-password-processed?token=',
+      link: `${urlFE}/forget-password-processed?token=`,
     }
 
     await forgetPasswordApi
@@ -44,7 +46,10 @@ const ForgetPassword = () => {
                 Forgot <span>Password</span>
               </h2>
               <p>
-                Login Your Account <Link to="/login">Click here</Link>
+                Login Your Account{' '}
+                <Link to="/login" className="link-decoration">
+                  Click here
+                </Link>
               </p>
             </div>
             <div className="row placeani">
@@ -72,7 +77,7 @@ const ForgetPassword = () => {
                   color="warning"
                   onClick={handleSubmit}
                 >
-                  Submit
+                  Reset
                 </CButton>
               </div>
               <ErrorMsg

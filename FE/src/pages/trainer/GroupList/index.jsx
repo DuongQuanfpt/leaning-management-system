@@ -129,12 +129,9 @@ const GroupList = () => {
       setIsTeamwork(false)
     }
 
-    console.log(isOpen[0])
-
     await groupApi
       .getGroup(params)
       .then((response) => {
-        console.log(response)
         setIsHaveGroup(response.listResult.length === 0 ? false : true)
         setWaitingList(response.noGroup)
         const waitingGroup = {
@@ -671,7 +668,8 @@ const GroupList = () => {
 
         render: (_, trainee) =>
           isTrainer &&
-          isOpen && (
+          isOpen &&
+          isTeamwork && (
             <Space>
               <Dropdown overlay={menuStudent(trainee, listMember)} placement="left" trigger={['hover']}>
                 <Button

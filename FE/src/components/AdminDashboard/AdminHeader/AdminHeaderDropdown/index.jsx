@@ -23,19 +23,19 @@ const AdminHeaderDropdown = () => {
         <CAvatar src={!!profileData.avatar_url === true ? profileData.avatar_url : avatar} size="md" />
       </CDropdownToggle>
       <CDropdownMenu className="pt-0" placement="bottom-end">
-        <CDropdownItem href="/">
+        <CDropdownItem>
           <CIcon icon={cilUser} className="me-2" />
           <Link to="/" className="color-black">
             Homepage
           </Link>
         </CDropdownItem>
-        <CDropdownItem href="/profile">
+        <CDropdownItem>
           <CIcon icon={cilSettings} className="me-2" />
           <Link to="/profile" className="color-black">
             User Profile
           </Link>
         </CDropdownItem>
-        <CDropdownItem href="/change-password">
+        <CDropdownItem>
           <CIcon icon={cilSettings} className="me-2" />
           <Link to="/change-password" className="color-black">
             Change Password

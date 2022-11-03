@@ -26,6 +26,7 @@ const AdminHeader = () => {
     '/milestone-list',
     '/group-list',
     '/schedule-list',
+    '/schedule-add',
   ]
 
   const dispatch = useDispatch()

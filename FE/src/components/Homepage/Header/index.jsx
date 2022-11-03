@@ -186,15 +186,15 @@ const Header = () => {
                           />
                         </CDropdownToggle>
                         <CDropdownMenu className="pt-0" placement="bottom-end">
-                          <CDropdownItem href="/dashboard">
+                          <CDropdownItem>
                             <CIcon icon={cilUser} className="me-2" />
                             <Link to="/dashboard">Dashboard</Link>
                           </CDropdownItem>
-                          <CDropdownItem href="/profile">
+                          <CDropdownItem>
                             <CIcon icon={cilSettings} className="me-2" />
                             <Link to="/profile">Profile</Link>
                           </CDropdownItem>
-                          <CDropdownItem href="/change-password">
+                          <CDropdownItem>
                             <CIcon icon={cilCreditCard} className="me-2" />
                             <Link to="/change-password">Change Password</Link>
                           </CDropdownItem>
