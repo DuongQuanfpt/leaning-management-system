@@ -9,20 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class IssueResponseDTO {
-    Long issueId;
-
-    String title;
-
-    String classCode;
-    
-    String milestoneTitle;
-
-    String type;
-
-    String asigneeName;
-
-    String deadline;
-
-    String status;
+public class IssueGroupDTO {
+    Long groupId;
+    String groupName;
+    String groupTopic;
 }

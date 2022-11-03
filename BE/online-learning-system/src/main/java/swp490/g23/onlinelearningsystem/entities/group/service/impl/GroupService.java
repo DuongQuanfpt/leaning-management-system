@@ -644,9 +644,7 @@ public class GroupService implements IGroupService {
 
         List<GroupClassMemberDTO> classMemberDTOs = new ArrayList<>();
         for (ClassUser classUser : classes.getClassUsers()) {
-            if (classUser.getStatus() == TraineeStatus.Active) {
                 classMemberDTOs.add(toClassMemberDTO(classUser));
-            }
         }
 
         classDTO.setClassSize(classMemberDTOs.size());

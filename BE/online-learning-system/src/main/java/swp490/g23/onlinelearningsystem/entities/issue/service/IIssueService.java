@@ -6,5 +6,5 @@ import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueListD
 
 public interface IIssueService {
     ResponseEntity<IssueListDTO> getIssueList(int page, int limit, String keyword, String filterStatus,
-            Long filterMilestoneId, Long filterGroupId ,String filterAsigneeName, String filterTypeValue);
+            Long filterMilestoneId, Long filterGroupId ,String filterAsigneeName, String filterTypeValue ,String classCode);
 }

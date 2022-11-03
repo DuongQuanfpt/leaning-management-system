@@ -4,6 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import swp490.g23.onlinelearningsystem.entities.issue.domain.Issue;
 
-public interface IssueRepository extends JpaRepository<Issue,Long> {
-    
+public interface IssueRepository extends JpaRepository<Issue, Long> {
+  
 }

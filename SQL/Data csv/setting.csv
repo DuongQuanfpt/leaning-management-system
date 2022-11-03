@@ -1,72 +1,80 @@
-"setting_id";"created_by";"created_date";"modified_by";"modified_date";"description";"display_order";"setting_title";"setting_value";"status";"screen_id";"type_id"
-1;"";"2022-10-07 23:15:03.000000";"";"2022-10-07 23:15:03.000000";"contain setting for each screen in system";"";"System Screen";"TYPE_SCREEN";"";0;0
-2;"";"2022-10-07 23:15:03.000000";"";"2022-10-07 23:15:03.000000";"contain api link";"";"API";"TYPE_API";"";0;0
-3;"";"2022-10-07 23:15:03.000000";"";"2022-10-07 23:15:03.000000";"contain settings relate to user role";"";"User Role";"TYPE_ROLE";"";0;0
-4;"";"2022-10-07 23:15:03.000000";"";"2022-10-09 05:25:19.000000";"admin12";"2";"admin";"ROLE_ADMIN";"1";0;3
-5;"";"2022-10-07 23:15:03.000000";"";"2022-10-09 05:52:04.000000";"trainee";"1000000000000000000000000000000000000000000000000";"trainee";"ROLE_TRAINEE";"1";0;3
-6;"";"2022-10-07 23:15:03.000000";"";"2022-10-07 23:15:03.000000";"description for manager";"1";"manager";"ROLE_MANAGER";"1";0;3
-7;"";"2022-10-07 23:15:03.000000";"";"2022-10-08 14:29:14.000000";"description for supporter";"1";"supporter";"ROLE_SUPPORTER";"1";0;3
-8;"";"2022-10-07 23:15:03.000000";"";"2022-10-07 23:15:03.000000";"description for trainer";"1";"trainer";"ROLE_TRAINER";"1";0;3
-9;"";"2022-10-07 23:15:03.000000";"";"2022-10-07 23:15:03.000000";"description for expert";"1";"expert";"ROLE_EXPERT";"1";0;3
-10;"";"2022-10-07 23:15:03.000000";"";"2022-10-07 23:15:03.000000";"type for test";"";"Test";"TYPE_TEST";"";0;0
-11;"";"2022-10-07 23:15:03.000000";"";"2022-10-07 23:15:03.000000";"description";"1";"Setting List ";"/api/setting";"1";24;2
-12;"";"2022-10-07 23:15:03.000000";"";"2022-10-07 23:15:03.000000";"description ";"1";"Setting Filter";"/api/setting-filter";"1";24;2
-13;"";"2022-10-07 23:15:03.000000";"";"2022-10-07 23:15:03.000000";"description ";"1";"Setting Status";"/api/setting-status";"1";24;2
-14;"";"2022-10-07 23:15:03.000000";"";"2022-10-07 23:15:03.000000";"description ";"1";"Subject List";"/api/subjects";"1";28;2
-15;"";"2022-10-07 23:15:03.000000";"";"2022-10-07 23:15:03.000000";"description ";"1";"Subject Status";"/api/subjects-status";"1";28;2
-16;"";"2022-10-07 23:15:03.000000";"";"2022-10-07 23:15:03.000000";"description ";"1";"User List";"/api/user";"1";27;2
-17;"";"2022-10-07 23:15:03.000000";"";"2022-10-07 23:15:03.000000";"description ";"1";"User Filter";"/api/user-filter";"1";27;2
-18;"";"2022-10-07 23:15:03.000000";"";"2022-10-07 23:15:03.000000";"description ";"1";"User Status";"/api/user-status";"1";27;2
-19;"";"2022-10-07 23:15:03.000000";"hoangnhhe141380@fpt.edu.vn";"2022-10-12 18:39:59.166000";"description for test";"2";"test3";"TEST3";"0";0;10
-20;"";"2022-10-07 23:15:03.000000";"xucxichbo@doivl.com";"2022-10-12 15:45:25.514000";"dfsfdfsfs";"2";"GRRRR 3";"TEEST";"0";0;10
-21;"";"2022-10-07 23:15:03.000000";"";"2022-10-07 23:15:03.000000";"description";"1";"Dashboard ";"/dashboard";"1";0;1
-22;"";"2022-10-07 23:15:03.000000";"";"2022-10-07 23:15:03.000000";"description";"1";"Profile  ";"/profile";"1";0;1
-23;"";"2022-10-07 23:15:03.000000";"";"2022-10-07 23:15:03.000000";"description";"1";"ChangePassword   ";"/change-password";"1";0;1
-24;"";"2022-10-07 23:15:03.000000";"";"2022-10-07 23:15:03.000000";"description";"1";"SettingList ";"/setting-list";"1";0;1
-25;"";"2022-10-07 23:15:03.000000";"";"2022-10-07 23:15:03.000000";"description";"1";"SettingDetail";"/setting-detail/:id";"1";0;1
-26;"";"2022-10-07 23:15:03.000000";"";"2022-10-07 23:15:03.000000";"description";"1";"UserDetail ";"/user-detail/:id";"1";0;1
-27;"";"2022-10-07 23:15:03.000000";"";"2022-10-08 14:45:23.000000";"description";"1";"UserList";"/user-list";"1";0;1
-28;"";"2022-10-07 23:15:03.000000";"";"2022-10-07 23:15:03.000000";"description";"1";"SubjectList";"/subject-list";"1";0;1
-29;"";"2022-10-07 23:15:03.000000";"";"2022-10-07 23:15:03.000000";"description";"1";"SubjectDetail";"/subject-detail/:id";"1";0;1
-30;"";"2022-10-07 23:15:03.000000";"";"2022-10-07 23:15:03.000000";"description";"1";"ClassList";"/class-list";"1";0;1
-31;"";"2022-10-07 23:15:03.000000";"";"2022-10-07 23:15:03.000000";"description";"1";"ClassDetail";"/class-detail/:id";"1";0;1
-32;"";"";"";"";"API setting details";"1";"ApiSettingDetails";"/api/setting-detail";"1";25;2
-33;"";"";"";"";"API subject details";"1";"ApiSubjectDetail";"/api/subjects-detail";"1";29;2
-34;"";"";"";"";"API for user detail";"1";"ApiUserDetail";"/api/user-detail";"1";26;2
-35;"";"";"";"";"API for class";"1";"APIClasslist";"/api/class";"1";30;2
-36;"";"";"";"";"API for class detail";"1";"APIClassDetail";"/api/class-detail";"1";31;2
-37;"";"";"";"";"API for class-status";"1";"API class status";"/api/class-status";"1";30;2
-38;"";"";"";"";"term for classes";"1";"Term";"TYPE_TERM";"1";0;0
-39;"";"";"";"";"branch of classes";"1";"Branch";"TYPE_BRANCH";"1";0;0
-40;"";"";"";"";"contain different type of web contact";"1";"Contact Category";"TYPE_CONTACT";"1";0;0
-44;"";"";"";"";"term spring";"3";"Spring";"TERM_SPRING";"1";0;38
-54;"";"";"";"";"term summer";"3";"Summer";"TERM_SUMMER";"1";0;38
-64;"";"";"";"";"term fall";"3";"Fall";"TERM_FALL";"1";0;38
-74;"";"";"";"";"branch Ho Chi Minh";"4";"HCM";"BRANCH_HCM";"1";0;39
-84;"";"";"";"";"branch Ha Noi";"4";"Ha Noi";"BRANCH_HN";"1";0;39
-94;"";"";"";"2022-10-09 07:25:00.000000";"";"1";"Da Nang";"BRANCH_DN";"1";0;39
-104;"";"";"";"";"question about account";"1";"Account and billing";"CONTACT_ACCOUNT";"1";0;40
-114;"";"";"";"";"general question";"1";"General";"CONTACT_GENERAL";"1";0;40
-124;"";"";"";"";"report a bug , problem";"1";"Report a problem, bugs";"CONTACT_PROBLEM";"1";0;40
-164;"xucxichbo@doivl.com";"2022-10-11 10:24:21.456000";"xucxichbo@doivl.com";"2022-10-11 10:42:49.006000";"asdfasdfasdf";"2";"aabc";"a";"0";0;10
-174;"xucxichbo@doivl.com";"2022-10-11 10:25:00.389000";"xucxichbo@doivl.com";"2022-10-11 10:25:00.389000";"vailonluondesciption";"2";"vailonluon";"vailonluonvalue";"0";0;10
-184;"xucxichbo@doivl.com";"2022-10-11 14:16:11.437000";"xucxichbo@doivl.com";"2022-10-11 16:47:02.565000";"termtest12";"1";"termtest12";"123123";"1";0;38
-194;"xucxichbo@doivl.com";"2022-10-11 16:13:35.047000";"hoangnhhe141380@fpt.edu.vn";"2022-10-12 18:39:28.578000";"termtest";"1";"termtest";"123";"1";0;38
-204;"";"";"";"";"API for webcontact list";"1";"Web Contact List";"/api/contact";"1";244;2
-214;"";"";"";"";"API for webcontact detail";"1";"Web Contact Detail";"/api/contact-detail";"1";254;2
-224;"";"";"";"";"API for webcontact add";"1";"Web Contact add";"/api/contact-add";"1";0;2
-234;"";"";"";"";"API for webcontact subject";"1";"Web Contact subject";"/api/contact-subjects";"1";0;2
-244;"";"";"";"";"Screen for contact list";"1";"ContactList ";"/contact-list";"1";0;1
-254;"";"";"";"";"Screen for contact detail";"1";"ContactDetail ";"/contact-detail/:id";"1";0;1
-264;"xucxichbo@doivl.com";"2022-10-13 01:30:22.335000";"xucxichbo@doivl.com";"2022-10-13 01:30:22.335000";"GRRRR 3";"2";"GRRRR 3";"TEST444";"1";0;10
-275;"";"";"";"";"Setting for subject complexity";"1";"Subject complexity";"TYPE_COMPLEXITY";"1";0;278
-276;"";"";"";"";"Setting for subject quality";"1";"Subject quality";"TYPE_QUALITY";"1";0;278
-277;"";"";"";"";"Setting for subject slots";"1";"Subject slots";"TYPE_SLOT";"1";0;278
-278;"";"";"";"";"contain subject setting";"1";"Subject setting";"TYPE_SUBJECT_SETTING";"1";0;0
-279;"";"";"";"";"contain class setting";"1";"Class setting";"TYPE_CLASS_SETTING";"1";0;0
-280;"";"";"";"";"Setting for Class slots";"1";"Class slot";"TYPE_CLASS_SLOT";"1";0;279
-281;"";"";"";"";"Setting for issue type";"1";"Issue type";"TYPE_ISSUE_TYPE";"1";0;279
-282;"";"";"";"";"Setting for issue status";"1";"Issue status";"TYPE_ISSUE_STATUS";"1";0;279
-283;"";"";"";"";"Setting for subject modules";"1";"Subject modules";"TYPE_SUBJECT_MODULES";"1";0;278
-284;"";"";"";"";"Setting for keyword category";"1";"Keyword Category";"TYPE_KEYWORD_CATEGORY";"1";0;278
-285;"";"";"";"";"Setting forcontent group type";"1";"Subject Content group type";"TYPE_CONTENT_GROUP";"1";0;278
+"setting_id;""created_by"";""created_date"";""modified_by"";""modified_date"";""description"";""display_order"";""setting_title"";""setting_value"";""status"";""screen_id"";""type_id""",,
+"1;"""";""2022-10-07 23:15:03.000000"";"""";""2022-10-07 23:15:03.000000"";""contain setting for each screen in system"";"""";""System Screen"";""TYPE_SCREEN"";"""";0;0",,
+"2;"""";""2022-10-07 23:15:03.000000"";"""";""2022-10-07 23:15:03.000000"";""contain api link"";"""";""API"";""TYPE_API"";"""";0;0",,
+"3;"""";""2022-10-07 23:15:03.000000"";"""";""2022-10-07 23:15:03.000000"";""contain settings relate to user role"";"""";""User Role"";""TYPE_ROLE"";"""";0;0",,
+"4;"""";""2022-10-07 23:15:03.000000"";"""";""2022-10-09 05:25:19.000000"";""admin12"";""2"";""admin"";""ROLE_ADMIN"";""1"";0;3",,
+"5;"""";""2022-10-07 23:15:03.000000"";"""";""2022-10-09 05:52:04.000000"";""trainee"";""1000000000000000000000000000000000000000000000000"";""trainee"";""ROLE_TRAINEE"";""1"";0;3",,
+"6;"""";""2022-10-07 23:15:03.000000"";"""";""2022-10-07 23:15:03.000000"";""description for manager"";""1"";""manager"";""ROLE_MANAGER"";""1"";0;3",,
+"7;"""";""2022-10-07 23:15:03.000000"";"""";""2022-10-08 14:29:14.000000"";""description for supporter"";""1"";""supporter"";""ROLE_SUPPORTER"";""1"";0;3",,
+"8;"""";""2022-10-07 23:15:03.000000"";"""";""2022-10-07 23:15:03.000000"";""description for trainer"";""1"";""trainer"";""ROLE_TRAINER"";""1"";0;3",,
+"9;"""";""2022-10-07 23:15:03.000000"";"""";""2022-10-07 23:15:03.000000"";""description for expert"";""1"";""expert"";""ROLE_EXPERT"";""1"";0;3",,
+"10;"""";""2022-10-07 23:15:03.000000"";"""";""2022-10-07 23:15:03.000000"";""type for test"";"""";""Test"";""TYPE_TEST"";"""";0;0",,
+"11;"""";""2022-10-07 23:15:03.000000"";"""";""2022-10-07 23:15:03.000000"";""description"";""1"";""Setting List "";""/api/setting"";""1"";24;2",,
+"12;"""";""2022-10-07 23:15:03.000000"";"""";""2022-10-07 23:15:03.000000"";""description "";""1"";""Setting Filter"";""/api/setting-filter"";""1"";24;2",,
+"13;"""";""2022-10-07 23:15:03.000000"";"""";""2022-10-07 23:15:03.000000"";""description "";""1"";""Setting Status"";""/api/setting-status"";""1"";24;2",,
+"14;"""";""2022-10-07 23:15:03.000000"";"""";""2022-10-07 23:15:03.000000"";""description "";""1"";""Subject List"";""/api/subjects"";""1"";28;2",,
+"15;"""";""2022-10-07 23:15:03.000000"";"""";""2022-10-07 23:15:03.000000"";""description "";""1"";""Subject Status"";""/api/subjects-status"";""1"";28;2",,
+"16;"""";""2022-10-07 23:15:03.000000"";"""";""2022-10-07 23:15:03.000000"";""description "";""1"";""User List"";""/api/user"";""1"";27;2",,
+"17;"""";""2022-10-07 23:15:03.000000"";"""";""2022-10-07 23:15:03.000000"";""description "";""1"";""User Filter"";""/api/user-filter"";""1"";27;2",,
+"18;"""";""2022-10-07 23:15:03.000000"";"""";""2022-10-07 23:15:03.000000"";""description "";""1"";""User Status"";""/api/user-status"";""1"";27;2",,
+"19;"""";""2022-10-07 23:15:03.000000"";""hoangnhhe141380@fpt.edu.vn"";""2022-10-12 18:39:59.166000"";""description for test"";""2"";""test3"";""TEST3"";""0"";0;10",,
+"20;"""";""2022-10-07 23:15:03.000000"";""hoangnhhe141380@fpt.edu.vn"";""2022-10-18 14:00:31.241000"";""dfsfdfsfs"";""2"";""GRRRR 3"";""TEEST"";""0"";0;10",,
+"21;"""";""2022-10-07 23:15:03.000000"";"""";""2022-10-07 23:15:03.000000"";""description"";""1"";""Dashboard "";""/dashboard"";""1"";0;1",,
+"22;"""";""2022-10-07 23:15:03.000000"";"""";""2022-10-07 23:15:03.000000"";""description"";""1"";""Profile  "";""/profile"";""1"";0;1",,
+"23;"""";""2022-10-07 23:15:03.000000"";"""";""2022-10-07 23:15:03.000000"";""description"";""1"";""ChangePassword   "";""/change-password"";""1"";0;1",,
+"24;"""";""2022-10-07 23:15:03.000000"";"""";""2022-10-07 23:15:03.000000"";""description"";""1"";""SettingList "";""/setting-list"";""1"";0;1",,
+"25;"""";""2022-10-07 23:15:03.000000"";"""";""2022-10-07 23:15:03.000000"";""description"";""1"";""SettingDetail"";""/setting-detail/:id"";""1"";0;1",,
+"26;"""";""2022-10-07 23:15:03.000000"";"""";""2022-10-07 23:15:03.000000"";""description"";""1"";""UserDetail "";""/user-detail/:id"";""1"";0;1",,
+"27;"""";""2022-10-07 23:15:03.000000"";"""";""2022-10-08 14:45:23.000000"";""description"";""1"";""UserList"";""/user-list"";""1"";0;1",,
+"28;"""";""2022-10-07 23:15:03.000000"";"""";""2022-10-07 23:15:03.000000"";""description"";""1"";""SubjectList"";""/subject-list"";""1"";0;1",,
+"29;"""";""2022-10-07 23:15:03.000000"";"""";""2022-10-07 23:15:03.000000"";""description"";""1"";""SubjectDetail"";""/subject-detail/:id"";""1"";0;1",,
+"30;"""";""2022-10-07 23:15:03.000000"";"""";""2022-10-07 23:15:03.000000"";""description"";""1"";""ClassList"";""/class-list"";""1"";0;1",,
+"31;"""";""2022-10-07 23:15:03.000000"";"""";""2022-10-07 23:15:03.000000"";""description"";""1"";""ClassDetail"";""/class-detail/:id"";""1"";0;1",,
+"32;"""";"""";"""";"""";""API setting details"";""1"";""ApiSettingDetails"";""/api/setting-detail"";""1"";25;2",,
+"33;"""";"""";"""";"""";""API subject details"";""1"";""ApiSubjectDetail"";""/api/subjects-detail"";""1"";29;2",,
+"34;"""";"""";"""";"""";""API for user detail"";""1"";""ApiUserDetail"";""/api/user-detail"";""1"";26;2",,
+"35;"""";"""";"""";"""";""API for class"";""1"";""APIClasslist"";""/api/class"";""1"";30;2",,
+"36;"""";"""";"""";"""";""API for class detail"";""1"";""APIClassDetail"";""/api/class-detail"";""1"";31;2",,
+"37;"""";"""";"""";"""";""API for class-status"";""1"";""API class status"";""/api/class-status"";""1"";30;2",,
+"38;"""";"""";"""";"""";""term for classes"";""1"";""Term"";""TYPE_TERM"";""1"";0;0",,
+"39;"""";"""";"""";"""";""branch of classes"";""1"";""Branch"";""TYPE_BRANCH"";""1"";0;0",,
+"40;"""";"""";"""";"""";""contain different type of web contact"";""1"";""Contact Category"";""TYPE_CONTACT"";""1"";0;0",,
+"44;"""";"""";"""";"""";""term spring"";""3"";""Spring"";""TERM_SPRING"";""1"";0;38",,
+"54;"""";"""";"""";"""";""term summer"";""3"";""Summer"";""TERM_SUMMER"";""1"";0;38",,
+"64;"""";"""";"""";"""";""term fall"";""3"";""Fall"";""TERM_FALL"";""1"";0;38",,
+"74;"""";"""";"""";"""";""branch Ho Chi Minh"";""4"";""HCM"";""BRANCH_HCM"";""1"";0;39",,
+"84;"""";"""";"""";"""";""branch Ha Noi"";""4"";""Ha Noi"";""BRANCH_HN"";""1"";0;39",,
+"94;"""";"""";"""";""2022-10-09 07:25:00.000000"";"""";""1"";""Da Nang"";""BRANCH_DN"";""1"";0;39",,
+"104;"""";"""";"""";"""";""question about account"";""1"";""Account and billing"";""CONTACT_ACCOUNT"";""1"";0;40",,
+"114;"""";"""";"""";"""";""general question"";""1"";""General"";""CONTACT_GENERAL"";""1"";0;40",,
+"124;"""";"""";"""";"""";""report a bug "," problem"";""1"";""Report a problem"," bugs"";""CONTACT_PROBLEM"";""1"";0;40"
+"164;""xucxichbo@doivl.com"";""2022-10-11 10:24:21.456000"";""hoangnhhe141380@fpt.edu.vn"";""2022-10-18 06:42:06.967000"";""asdfasdfasdf"";""2"";""aabc"";""a"";""1"";0;10",,
+"174;""xucxichbo@doivl.com"";""2022-10-11 10:25:00.389000"";""hoangnhhe141380@fpt.edu.vn"";""2022-10-18 06:41:13.640000"";""vailonluondesciption"";""2"";""vailonluon"";""vailonluonvalue"";""1"";0;10",,
+"184;""xucxichbo@doivl.com"";""2022-10-11 14:16:11.437000"";""xucxichbo@doivl.com"";""2022-10-11 16:47:02.565000"";""termtest12"";""1"";""termtest12"";""123123"";""1"";0;38",,
+"194;""xucxichbo@doivl.com"";""2022-10-11 16:13:35.047000"";""hoangnhhe141380@fpt.edu.vn"";""2022-10-12 18:39:28.578000"";""termtest"";""1"";""termtest"";""123"";""1"";0;38",,
+"204;"""";"""";"""";"""";""API for webcontact list"";""1"";""Web Contact List"";""/api/contact"";""1"";244;2",,
+"214;"""";"""";"""";"""";""API for webcontact detail"";""1"";""Web Contact Detail"";""/api/contact-detail"";""1"";254;2",,
+"224;"""";"""";"""";"""";""API for webcontact add"";""1"";""Web Contact add"";""/api/contact-add"";""1"";0;2",,
+"234;"""";"""";"""";"""";""API for webcontact subject"";""1"";""Web Contact subject"";""/api/contact-subjects"";""1"";0;2",,
+"244;"""";"""";"""";"""";""Screen for contact list"";""1"";""ContactList "";""/contact-list"";""1"";0;1",,
+"254;"""";"""";"""";"""";""Screen for contact detail"";""1"";""ContactDetail "";""/contact-detail/:id"";""1"";0;1",,
+"264;""xucxichbo@doivl.com"";""2022-10-13 01:30:22.335000"";""xucxichbo@doivl.com"";""2022-10-13 01:30:22.335000"";""GRRRR 3"";""2"";""GRRRR 3"";""TEST444"";""1"";0;10",,
+"275;"""";"""";"""";"""";""Setting for subject complexity"";""1"";""Subject complexity"";""TYPE_COMPLEXITY"";""1"";0;284",,
+"276;"""";"""";"""";"""";""Setting for subject quality"";""1"";""Subject quality"";""TYPE_QUALITY"";""1"";0;284",,
+"277;"""";"""";"""";"""";""Setting for subject slots"";""1"";""Subject slots"";""TYPE_SLOT"";""1"";0;284",,
+"280;"""";"""";"""";"""";""Setting for Class slots"";""1"";""Class slot"";""TYPE_CLASS_MODULE"";""1"";0;364",,
+"284;"""";"""";"""";"""";""contain subject setting"";""1"";""Subject setting"";""TYPE_SUBJECT_SETTING"";""1"";0;0",,
+"364;"""";"""";"""";"""";""contain class setting"";""1"";""Class setting"";""TYPE_CLASS_SETTING"";""1"";0;0",,
+"534;"""";"""";"""";"""";""Setting for issue type"";""1"";""Issue type"";""TYPE_ISSUE_TYPE"";""1"";0;364",,
+"544;"""";"""";"""";"""";""Setting for issue status"";""1"";""Issue status"";""TYPE_ISSUE_STATUS"";""1"";0;364",,
+"554;"""";"""";"""";"""";""Setting for subject modules"";""1"";""Subject modules"";""TYPE_SUBJECT_MODULES"";""1"";0;284",,
+"564;"""";"""";"""";"""";""Setting for keyword category"";""1"";""Keyword Category"";""TYPE_KEYWORD_CATEGORY"";""1"";0;284",,
+"574;"""";"""";"""";"""";""Setting forcontent group type"";""1"";""Subject Content group type"";""TYPE_CONTENT_GROUP"";""1"";0;284",,
+"634;"""";"""";"""";"""";""Setting for room"";""1"";""Room"";""TYPE_ROOM"";""1"";0;0",,
+"644;"""";"""";"""";"""";""Setting for room Delta 303"";""2"";""Room D303"";""ROOM_D303"";""1"";0;634",,
+"654;"""";"""";"""";"""";""Setting for room Alpha 202"";""2"";""Room A202"";""ROOM_A202"";""1"";0;634",,
+"664;"""";"""";"""";"""";""Setting for room Alpha 306"";""2"";""Room A306"";""ROOM_A306"";""1"";0;634",,
+"674;"""";"""";"""";"""";""Setting for room Alpha 301"";""2"";""Room A301"";""ROOM_A301"";""1"";0;634",,
+"684;"""";"""";"""";"""";""Setting for room Alpha 302"";""2"";""Room A302"";""ROOM_A302"";""1"";0;634",,
+"694;"""";"""";"""";"""";""Setting for room Alpha 303"";""2"";""Room A303"";""ROOM_A303"";""1"";0;634",,
+"704;"""";"""";"""";"""";""Setting for room Alpha 304"";""2"";""Room A304"";""ROOM_A304"";""1"";0;634",,

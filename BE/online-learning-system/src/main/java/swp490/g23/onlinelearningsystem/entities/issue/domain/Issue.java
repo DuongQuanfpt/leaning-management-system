@@ -1,5 +1,7 @@
 package swp490.g23.onlinelearningsystem.entities.issue.domain;
 
+import java.time.LocalDate;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -69,5 +71,5 @@ public class Issue extends BaseEntity{
     private boolean isClosed;
 
     @Column
-    private String deadline;
+    private LocalDate deadline;
 }

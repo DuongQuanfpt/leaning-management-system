@@ -12,4 +12,5 @@ import lombok.Setter;
 public class IssueMilestoneDTO {
     Long milestoneId;
     String milestoneTitle;
+    String assignmentTitle;
 }

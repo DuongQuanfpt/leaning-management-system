@@ -1,7 +1,33 @@
 "class_setting_id";"created_by";"created_date";"modified_by";"modified_date";"description";"display_order";"setting_title";"setting_value";"status";"class_id";"type_id"
-1;"";"";"xucxichbo@doivl.com";"2022-10-20 08:20:42.839000";"description for task 1";"2";"SE1320 Task";"task value";"0";1;281
-2;"";"";"";"";"description for defect 1";"1";"SE1320 Defect";"defect 1";"1";9;281
-3;"";"";"";"";"Q&a description 1";"1";"SE1320 Q&A";"Q&a 1";"1";1;281
-4;"";"";"";"";"idk";"";"SE1320 To do";"todo 1";"1";1;282
-5;"";"";"";"";"idk";"";"SE1320 Doing";"doing 1";"1";1;282
-7;"xucxichbo@doivl.com";"2022-10-20 08:33:05.185000";"xucxichbo@doivl.com";"2022-10-20 08:33:05.185000";"Description for slot 01";"2";"SE1501 slot";"Slot 01";"0";9;280
+14;"";"";"vietnqhe140773@gmail.com";"2022-10-24 14:43:31";"Complete homework and assignment at home";"2";"a";"Task";"0";1;534
+24;"";"";"";"";"description for defect 1";"1";"SE1320 Defect";"defect 1";"1";1;534
+34;"";"";"";"";"Q&A with student about Java basic";"1";"SE1320 Q&A";"Q&a 1";"1";1;534
+44;"";"";"";"";"Complete assignment 2";"1";"SE1320 To do";"todo 1";"1";1;544
+54;"";"";"";"";"Doing progress test 1";"1";"SE1320 Doing";"doing 1";"1";1;544
+64;"";"";"";"";"Introduction";"2";"SE1501 slot";"Slot 01";"1";9;280
+74;"";"";"";"";"Basic Java";"2";"SE1501 slot";"Slot 02";"1";9;280
+84;"";"";"";"";"Exercises";"2";"SE1501 slot";"Slot 03";"1";9;280
+94;"";"";"";"";"If else statement";"2";"SE1501 slot";"Slot 04";"1";9;280
+104;"";"";"";"";"Complete homewỏk";"2";"SE1501 Task";"task value";"1";9;534
+114;"";"";"hoangnhhe141380@fpt.edu.vn";"2022-10-22 12:31:09";"Doing excercises at class";"2";"IA1502 Task";"Task";"0";5;534
+124;"";"";"";"";"Introduction";"2";"IA1502 Slot";"Slot 1";"1";5;280
+134;"";"";"hoangnhhe141380@fpt.edu.vn";"2022-10-22 12:30:44";"Matrix introduction2";"2";"IA1502 Slot";"Slot 2";"1";5;280
+144;"";"";"hoangnhhe141380@fpt.edu.vn";"2022-10-22 08:52:07";"Matrix Exercise";"2";"IA1502 Slot";"Slot 3";"0";5;280
+154;"";"";"";"";"Algorithm introduction";"2";"IA1502 Slot";"Slot 4";"0";5;280
+164;"";"";"";"";"Q&A with student about matrix";"1";"IA1502 Q&A";"Q&A";"1";5;534
+174;"";"";"hoangnhhe141380@fpt.edu.vn";"2022-10-22 12:32:57";"Doing progress test 1";"1";"IA1502 To do";"Todo";"1";5;544
+184;"";"";"";"";"Complete exercise at home";"1";"IA1502 Doing";"doing";"1";5;544
+194;"quan1@doivl.com";"2022-10-22 15:25:34";"quan1@doivl.com";"2022-10-22 15:25:34";"Description for slot 01";"2";"SE1501 slot";"Slot 01";"0";9;280
+204;"hoangnhhe141380@fpt.edu.vn";"2022-10-22 15:35:55";"hoangnhhe141380@fpt.edu.vn";"2022-10-22 15:35:55";"";"1";"Cobug";"Select Value";"0";4;534
+214;"vietnqhe140773@gmail.com";"2022-10-24 04:56:46";"vietnqhe140773@gmail.com";"2022-10-24 04:56:46";"";"1";"a";"b";"0";1;280
+224;"vietnqhe140773@gmail.com";"2022-10-24 04:58:44";"vietnqhe140773@gmail.com";"2022-10-24 04:58:44";"";"1";"a";"b";"0";1;280
+234;"";"";"";"";"";"2";"SE1501 slot";"Slot 05";"0";9;280
+244;"";"";"";"";"";"2";"SE1501 slot";"Slot 06";"0";9;280
+254;"";"";"";"";"";"2";"SE1501 slot";"Slot 07";"0";9;280
+264;"";"";"";"";"";"2";"SE1501 slot";"Slot 08";"0";9;280
+274;"";"";"";"";"";"2";"SE1501 slot";"Slot 09";"0";9;280
+284;"";"";"";"";"";"2";"SE1501 slot";"Slot 10";"0";9;280
+294;"";"";"";"";"";"2";"SE1501 slot";"Slot 11";"0";9;280
+304;"";"";"";"";"";"2";"SE1501 slot";"Slot 12";"0";9;280
+314;"";"";"";"";"";"2";"SE1501 slot";"Slot 13";"0";9;280
+324;"";"";"";"";"";"2";"SE1501 slot";"Slot 14";"0";9;280

@@ -15,10 +15,10 @@ public class IssueCriteria {
     private final EntityManager em;
 
     public IssueQuery searchFilterQuery(String keyword, String filterStatus,
-            Long filterMilestoneId, Long filterGroupId , String filterAsigneeName,
-            String filterTypeValue) {
+            Long filterMilestoneId, Long filterGroupId, String filterAsigneeName,
+            String filterTypeValue, String classCode) {
 
-        StringBuilder query = new StringBuilder("SELECT i FROM Issue i WHERE 1=1 ");
+        StringBuilder query = new StringBuilder("SELECT i FROM Issue i WHERE i.classes.code = '" + classCode + "'");
 
         // if (roles.contains("ROLE_TRAINER")) {
 
@@ -27,25 +27,40 @@ public class IssueCriteria {
         // user.getAccountName() + "' ");
         // }
 
-        // if (keyword != null) {
-        // query.append(" AND (cs.settingTitle LIKE '%" + keyword + "%' OR
-        // cs.settingValue LIKE '%" + keyword + "%')");
-        // }
+        if (keyword != null) {
+            query.append(" AND i.title LIKE '%" + keyword + "%'");
+        }
 
-        // if (filterStatus != null) {
-        // query.append(" AND cs.status = '" + filterStatus + "'");
-        // }
+        if (filterMilestoneId != null) {
+            query.append(" AND i.milestone.milestoneId = '" + filterMilestoneId + "'");
+        } else {
+            query.append(" AND i.milestone IS NULL");
+        }
 
-        // if (filterMilestone != null) {
-        //     query.append(" AND s.milestone.milestoneId = '" + filterMilestone + "'");
-        // }
+        if (filterGroupId != null) {
+            query.append(" AND i.group.groupId = '" + filterGroupId + "'");
+        }
 
-        // if (filterActive != null) {
-        // query.append(" AND g.status = '" + filterActive + "'");
-        // }
+        if (filterAsigneeName != null) {
+            query.append(" AND i.asignee.accountName = '" + filterAsigneeName + "'");
+        }
+
+        if (filterTypeValue != null) {
+            query.append(" AND i.type.settingValue = '" + filterTypeValue + "'");
+        }
+
+        if (filterStatus != null) {
+            if (filterStatus.equals("Open")) {
+                query.append(" AND i.isClosed = 0");
+            } else if (filterStatus.equals("Closed")) {
+                query.append(" AND i.isClosed = 1");
+            } else {
+                query.append(" AND i.status.settingValue = '" + filterStatus + "'");
+            }
+        }
 
         StringBuilder queryCount = new StringBuilder(
-                query.toString().replaceAll("SELECT i", "SELECT COUNT(DISTINCT g)"));
+                query.toString().replaceAll("SELECT i", "SELECT COUNT(*)"));
         TypedQuery<Long> countQuery = em.createQuery(queryCount.toString(), Long.class);
         TypedQuery<Issue> typedQuery = em.createQuery(query.toString(), Issue.class);
         System.out.println(query.toString());
