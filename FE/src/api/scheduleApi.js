@@ -26,6 +26,11 @@ const webContactApi = {
     const url = `/api/schedule-detail/${id}`
     return axiosClient.put(url, params, header)
   },
+
+  addSchedule: (params) => {
+    const url = `/api/schedule-add`
+    return axiosClient.post(url, params, header)
+  },
 }
 
 export default webContactApi

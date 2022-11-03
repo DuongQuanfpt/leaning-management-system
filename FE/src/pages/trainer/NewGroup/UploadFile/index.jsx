@@ -129,7 +129,7 @@ const UploadFile = () => {
       return
     }
     for (let i = 0; i < fileList.length; i++) {
-      if (Object.keys(fileList[i]).length !== 4) {
+      if (Object.keys(fileList[i]).length !== 5) {
         toastMessage('error', 'Data is invalid, follow the File of Student List please')
         console.log(2)
         return

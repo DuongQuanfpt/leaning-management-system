@@ -1,0 +1,7 @@
+"issue_id";"created_by";"created_date";"modified_by";"modified_date";"deadline";"description";"is_closed";"title";"asignee_id";"author_id";"class_id";"group_id";"milestone_id";"status_id";"type_id"
+1;"";"";"";"";"2022-11-04";"Description";"1";"Code BE : ko xong thi chet";254;254;12;194;44;331;325
+2;"";"";"";"";"2022-11-05";"Description";"0";"Code FE : ";264;244;12;174;44;330;325
+3;"";"";"";"";"2022-11-05";"Description";"0";"Bug BE : request return 500";254;244;12;194;44;330;326
+4;"";"";"";"";"2022-11-05";"Description";"0";"Doc Review";254;264;12;194;54;329;327
+6;"";"";"";"";"";"";"0";"General issue 1";254;264;12;244;0;330;326
+7;"";"";"";"";"";"Description";"1";"General issue 2";14;14;1;0;0;44;14

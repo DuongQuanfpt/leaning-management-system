@@ -1,13 +1,13 @@
--- MySQL dump 10.13  Distrib 8.0.13, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 5.6.50, for Linux (x86_64)
 --
--- Host: localhost    Database: learning-management-system
+-- Host: localhost    Database: heroku_740a305870b5dd6
 -- ------------------------------------------------------
--- Server version	8.0.13
+-- Server version	5.6.50-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
- SET NAMES utf8 ;
+/*!40101 SET NAMES utf8 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -21,7 +21,7 @@
 
 DROP TABLE IF EXISTS `assignment`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `assignment` (
   `ass_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `ass_body` varchar(255) DEFAULT NULL,
@@ -47,7 +47,7 @@ CREATE TABLE `assignment` (
 
 LOCK TABLES `assignment` WRITE;
 /*!40000 ALTER TABLE `assignment` DISABLE KEYS */;
-INSERT INTO `assignment` VALUES (1,'Students can do assignment about matrix at home','15%',_binary '',_binary '\0','1','matrix assignment',1,NULL,NULL,'quan1@doivl.com','2022-11-01 17:00:52.031000'),(2,'Students must complete 700 LOC','15%',_binary '',_binary '\0','1','Reach 700 LOC',1,NULL,NULL,NULL,NULL),(3,'Students can do assignment about matrix at home','10%',_binary '',_binary '\0','1','matrix assignment',2,NULL,NULL,NULL,NULL),(4,'Students can do assignment about matrix at home','15%',_binary '',_binary '\0','1','matrix assignment',1,NULL,NULL,'quan1@doivl.com','2022-11-01 17:02:32.897000'),(5,'Students can do assignment about matrix at home','15%',_binary '',_binary '\0','1','matrix assignment',2,'quan1@doivl.com','2022-11-01 17:04:15.192000','quan1@doivl.com','2022-11-01 17:11:08.988000'),(14,'Matrix 2 des','15%',_binary '\0',_binary '\0','1','Matrix 2',2,'hoangnhhe141380@fpt.edu.vn','2022-11-02 18:07:09.135000','hoangnhhe141380@fpt.edu.vn','2022-11-02 18:07:09.135000'),(24,'Matrix 3 des','20%',_binary '\0',_binary '','1','Matrix 3',2,'hoangnhhe141380@fpt.edu.vn','2022-11-02 18:07:16.575000','hoangnhhe141380@fpt.edu.vn','2022-11-02 19:07:45.192000');
+INSERT INTO `assignment` VALUES (1,'Students can do assignment about matrix at home','15%','','\0','1','matrix assignment',1,NULL,NULL,'quan1@doivl.com','2022-11-01 17:00:52.031000'),(2,'Students must complete 700 LOC','15%','','\0','1','Reach 700 LOC',1,NULL,NULL,NULL,NULL),(3,'Students can do assignment about matrix at home','10%','','\0','1','matrix assignment',2,NULL,NULL,NULL,NULL),(4,'Students can do assignment about matrix at home','15%','','\0','1','matrix assignment',1,NULL,NULL,'quan1@doivl.com','2022-11-01 17:02:32.897000'),(5,'Students can do assignment about matrix at home','15%','','\0','1','matrix assignment',2,'quan1@doivl.com','2022-11-01 17:04:15.192000','quan1@doivl.com','2022-11-01 17:11:08.988000'),(14,'Matrix 2 des','15%','\0','\0','1','Matrix 2',2,'hoangnhhe141380@fpt.edu.vn','2022-11-02 18:07:09.135000','hoangnhhe141380@fpt.edu.vn','2022-11-02 18:07:09.135000'),(24,'Matrix 3 des','20%','\0','','1','Matrix 3',2,'hoangnhhe141380@fpt.edu.vn','2022-11-02 18:07:16.575000','hoangnhhe141380@fpt.edu.vn','2022-11-02 19:07:45.192000');
 /*!40000 ALTER TABLE `assignment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -57,7 +57,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `assignment_eval_criteria_list`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `assignment_eval_criteria_list` (
   `assignment_ass_id` bigint(20) NOT NULL,
   `eval_criteria_list_criteria_id` bigint(20) NOT NULL,
@@ -83,7 +83,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `class`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `class` (
   `class_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `created_by` varchar(255) DEFAULT NULL,
@@ -129,7 +129,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `class_setting`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `class_setting` (
   `class_setting_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `created_by` varchar(255) DEFAULT NULL,
@@ -148,7 +148,7 @@ CREATE TABLE `class_setting` (
   KEY `FKdpj05ced45tidkwjs1v1a5s3x` (`type_id`),
   CONSTRAINT `FKdpj05ced45tidkwjs1v1a5s3x` FOREIGN KEY (`type_id`) REFERENCES `setting` (`setting_id`),
   CONSTRAINT `FKfp1ke91vftddcvny9f1uyfnmy` FOREIGN KEY (`class_id`) REFERENCES `class` (`class_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=332 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=325 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -157,7 +157,7 @@ CREATE TABLE `class_setting` (
 
 LOCK TABLES `class_setting` WRITE;
 /*!40000 ALTER TABLE `class_setting` DISABLE KEYS */;
-INSERT INTO `class_setting` VALUES (14,NULL,NULL,NULL,NULL,'description for task 1','2','Evaluate','Evaluate','0',1,534),(24,NULL,NULL,NULL,NULL,'description for defect 1','1','Live meeting','Meeting','1',1,534),(34,NULL,NULL,NULL,NULL,'Q&a description 1','1','SE1320 Q&A','Q&a 1','1',5,534),(44,NULL,NULL,NULL,NULL,'idk','','Cancelled','Cancelled','1',1,544),(54,NULL,NULL,NULL,NULL,'idk','','Delayed','Delayed','1',1,544),(64,NULL,NULL,NULL,NULL,'Description for slot 01','2','SE1501 slot','Slot 01','0',5,280),(74,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','Basic Java','2','SE1501 slot','Slot 02','1',9,280),(84,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','Exercises','2','SE1501 slot','Slot 03','1',9,280),(94,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','If else statement','2','SE1501 slot','Slot 04','1',9,280),(104,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','Complete homewỏk','2','SE1501 Task','task value','1',9,534),(114,'','0000-00-00 00:00:00','hoangnhhe141380@fpt.edu.vn','2022-10-22 12:31:09','Doing excercises at class','2','IA1502 Task','Task','0',5,534),(124,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','Introduction','2','IA1502 Slot','Slot 1','1',5,280),(134,'','0000-00-00 00:00:00','hoangnhhe141380@fpt.edu.vn','2022-10-22 12:30:44','Matrix introduction2','2','IA1502 Slot','Slot 2','1',5,280),(144,'','0000-00-00 00:00:00','hoangnhhe141380@fpt.edu.vn','2022-10-22 08:52:07','Matrix Exercise','2','IA1502 Slot','Slot 3','0',5,280),(154,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','Algorithm introduction','2','IA1502 Slot','Slot 4','0',5,280),(164,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','Q&A with student about matrix','1','IA1502 Q&A','Q&A','1',5,534),(174,'','0000-00-00 00:00:00','hoangnhhe141380@fpt.edu.vn','2022-10-22 12:32:57','Doing progress test 1','1','IA1502 To do','Todo','1',5,544),(184,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','Complete exercise at home','1','IA1502 Doing','doing','1',5,544),(194,'quan1@doivl.com','2022-10-22 15:25:34','quan1@doivl.com','2022-10-22 15:25:34','Description for slot 01','2','SE1501 slot','Slot 01','0',9,280),(204,'hoangnhhe141380@fpt.edu.vn','2022-10-22 15:35:55','hoangnhhe141380@fpt.edu.vn','2022-10-22 15:35:55','','1','Cobug','Select Value','0',4,534),(214,'vietnqhe140773@gmail.com','2022-10-24 04:56:46','vietnqhe140773@gmail.com','2022-10-24 04:56:46','','1','a','b','0',1,280),(224,'vietnqhe140773@gmail.com','2022-10-24 04:58:44','vietnqhe140773@gmail.com','2022-10-24 04:58:44','','1','a','b','0',1,280),(234,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','','2','SE1501 slot','Slot 05','0',9,280),(244,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','','2','SE1501 slot','Slot 06','0',9,280),(254,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','','2','SE1501 slot','Slot 07','0',9,280),(264,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','','2','SE1501 slot','Slot 08','0',9,280),(274,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','','2','SE1501 slot','Slot 09','0',9,280),(284,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','','2','SE1501 slot','Slot 10','0',9,280),(294,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','','2','SE1501 slot','Slot 11','0',9,280),(304,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','','2','SE1501 slot','Slot 12','0',9,280),(314,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','','2','SE1501 slot','Slot 13','0',9,280),(324,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','','2','SE1501 slot','Slot 14','0',9,280),(325,NULL,NULL,NULL,NULL,'Task of SE1501','3','Task','Task','1',12,534),(326,NULL,NULL,NULL,NULL,'Defect of SE1501','4','Defect','Defect','1',12,534),(327,NULL,NULL,NULL,NULL,'Q&A of SE1501','5','Q&A','Q&A','1',12,534),(328,NULL,NULL,NULL,NULL,'Work in progress','6','WIP','WIP','1',12,534),(329,NULL,NULL,NULL,NULL,'Done status','7','Done','Done','1',12,544),(330,NULL,NULL,NULL,NULL,'Waiting for review status','8','Review Pending','Review Pending','1',12,544),(331,NULL,NULL,NULL,NULL,'Doing status','9','Doing','Doing','1',12,544);
+INSERT INTO `class_setting` VALUES (14,NULL,NULL,NULL,NULL,'description for task 1','2','SE1320 Task','task value','0',1,534),(24,NULL,NULL,NULL,NULL,'description for defect 1','1','SE1320 Defect','defect 1','1',1,534),(34,NULL,NULL,NULL,NULL,'Q&a description 1','1','SE1320 Q&A','Q&a 1','1',5,534),(44,NULL,NULL,NULL,NULL,'idk','','SE1320 To do','todo 1','1',1,544),(54,NULL,NULL,NULL,NULL,'idk','','SE1320 Doing','doing 1','1',1,544),(64,NULL,NULL,NULL,NULL,'Description for slot 01','2','SE1501 slot','Slot 01','0',5,280),(74,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','Basic Java','2','SE1501 slot','Slot 02','1',9,280),(84,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','Exercises','2','SE1501 slot','Slot 03','1',9,280),(94,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','If else statement','2','SE1501 slot','Slot 04','1',9,280),(104,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','Complete homewỏk','2','SE1501 Task','task value','1',9,534),(114,'','0000-00-00 00:00:00','hoangnhhe141380@fpt.edu.vn','2022-10-22 12:31:09','Doing excercises at class','2','IA1502 Task','Task','0',5,534),(124,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','Introduction','2','IA1502 Slot','Slot 1','1',5,280),(134,'','0000-00-00 00:00:00','hoangnhhe141380@fpt.edu.vn','2022-10-22 12:30:44','Matrix introduction2','2','IA1502 Slot','Slot 2','1',5,280),(144,'','0000-00-00 00:00:00','hoangnhhe141380@fpt.edu.vn','2022-10-22 08:52:07','Matrix Exercise','2','IA1502 Slot','Slot 3','0',5,280),(154,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','Algorithm introduction','2','IA1502 Slot','Slot 4','0',5,280),(164,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','Q&A with student about matrix','1','IA1502 Q&A','Q&A','1',5,534),(174,'','0000-00-00 00:00:00','hoangnhhe141380@fpt.edu.vn','2022-10-22 12:32:57','Doing progress test 1','1','IA1502 To do','Todo','1',5,544),(184,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','Complete exercise at home','1','IA1502 Doing','doing','1',5,544),(194,'quan1@doivl.com','2022-10-22 15:25:34','quan1@doivl.com','2022-10-22 15:25:34','Description for slot 01','2','SE1501 slot','Slot 01','0',9,280),(204,'hoangnhhe141380@fpt.edu.vn','2022-10-22 15:35:55','hoangnhhe141380@fpt.edu.vn','2022-10-22 15:35:55','','1','Cobug','Select Value','0',4,534),(214,'vietnqhe140773@gmail.com','2022-10-24 04:56:46','vietnqhe140773@gmail.com','2022-10-24 04:56:46','','1','a','b','0',1,280),(224,'vietnqhe140773@gmail.com','2022-10-24 04:58:44','vietnqhe140773@gmail.com','2022-10-24 04:58:44','','1','a','b','0',1,280),(234,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','','2','SE1501 slot','Slot 05','0',9,280),(244,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','','2','SE1501 slot','Slot 06','0',9,280),(254,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','','2','SE1501 slot','Slot 07','0',9,280),(264,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','','2','SE1501 slot','Slot 08','0',9,280),(274,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','','2','SE1501 slot','Slot 09','0',9,280),(284,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','','2','SE1501 slot','Slot 10','0',9,280),(294,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','','2','SE1501 slot','Slot 11','0',9,280),(304,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','','2','SE1501 slot','Slot 12','0',9,280),(314,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','','2','SE1501 slot','Slot 13','0',9,280),(324,'','0000-00-00 00:00:00','','0000-00-00 00:00:00','','2','SE1501 slot','Slot 14','0',9,280);
 /*!40000 ALTER TABLE `class_setting` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -167,7 +167,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `class_user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `class_user` (
   `class_id` bigint(20) NOT NULL,
   `user_id` bigint(20) NOT NULL,
@@ -200,7 +200,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `eval_criteria`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `eval_criteria` (
   `criteria_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `criteria_name` varchar(255) DEFAULT NULL,
@@ -229,7 +229,7 @@ CREATE TABLE `eval_criteria` (
 
 LOCK TABLES `eval_criteria` WRITE;
 /*!40000 ALTER TABLE `eval_criteria` DISABLE KEYS */;
-INSERT INTO `eval_criteria` VALUES (1,'Students code 2','Students code programs like requirements1','99%','Students must completed programs exactly like requirements1',_binary '','1',1,NULL,NULL,NULL,NULL,NULL),(2,'Teacher review code1','Teacher check code with requirements123','25%','Teacher must check programs are passed all case123',_binary '','1',1,NULL,NULL,NULL,NULL,NULL),(3,'Students submit','Students submit code to system','5%','Students must submit successfully ',_binary '','0',1,NULL,NULL,NULL,NULL,NULL),(4,'Students code','Students code programs like requirements','5%','Students must completed programs exactly like requirements',_binary '','0',2,NULL,NULL,NULL,NULL,NULL),(5,'Teacher review code','Teacher check code with requirements','5%','Teacher must check programs are passed all case',_binary '','1',2,NULL,NULL,NULL,NULL,NULL),(6,'Students submit','Students submit code to system','5%','Students must submit successfully ',_binary '','0',2,NULL,NULL,NULL,NULL,NULL),(14,'Students code','Students code programs like requirements','5%','Students must completed programs exactly like requirements',_binary '','1',1,NULL,NULL,NULL,NULL,NULL),(24,'Teacher review code','Teacher check code with requirementsOK','10%','Teacher must check programs are passed all caseOK',_binary '','1',2,NULL,NULL,NULL,NULL,NULL),(34,'Test1','must attendance full','5%','must attendance full',_binary '','1',3,NULL,NULL,NULL,NULL,NULL),(44,'Test1','must attendance full','5%','must attendance full',_binary '','1',3,NULL,NULL,NULL,NULL,NULL),(54,'Students code','Students code programs like requirements','5%','Students must completed programs exactly like requirements',_binary '','0',2,NULL,NULL,NULL,NULL,NULL),(64,'Students submit123','Students submit code to system','6%','Students must submit successfully ',_binary '','1',2,NULL,NULL,NULL,NULL,NULL),(84,'FE','FE','40%','FE',_binary '','0',14,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `eval_criteria` VALUES (1,'Students code 2','Students code programs like requirements1','99%','Students must completed programs exactly like requirements1','','1',1,NULL,NULL,NULL,NULL,NULL),(2,'Teacher review code1','Teacher check code with requirements123','25%','Teacher must check programs are passed all case123','','1',1,NULL,NULL,NULL,NULL,NULL),(3,'Students submit','Students submit code to system','5%','Students must submit successfully ','','0',1,NULL,NULL,NULL,NULL,NULL),(4,'Students code','Students code programs like requirements','5%','Students must completed programs exactly like requirements','','0',2,NULL,NULL,NULL,NULL,NULL),(5,'Teacher review code','Teacher check code with requirements','5%','Teacher must check programs are passed all case','','1',2,NULL,NULL,NULL,NULL,NULL),(6,'Students submit','Students submit code to system','5%','Students must submit successfully ','','0',2,NULL,NULL,NULL,NULL,NULL),(14,'Students code','Students code programs like requirements','5%','Students must completed programs exactly like requirements','','1',1,NULL,NULL,NULL,NULL,NULL),(24,'Teacher review code','Teacher check code with requirementsOK','10%','Teacher must check programs are passed all caseOK','','1',2,NULL,NULL,NULL,NULL,NULL),(34,'Test1','must attendance full','5%','must attendance full','','1',3,NULL,NULL,NULL,NULL,NULL),(44,'Test1','must attendance full','5%','must attendance full','','1',3,NULL,NULL,NULL,NULL,NULL),(54,'Students code','Students code programs like requirements','5%','Students must completed programs exactly like requirements','','0',2,NULL,NULL,NULL,NULL,NULL),(64,'Students submit123','Students submit code to system','6%','Students must submit successfully ','','1',2,NULL,NULL,NULL,NULL,NULL),(84,'FE','FE','40%','FE','','0',14,NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `eval_criteria` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -239,7 +239,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `group_member`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `group_member` (
   `created_by` varchar(255) DEFAULT NULL,
   `created_date` datetime(6) DEFAULT NULL,
@@ -262,7 +262,7 @@ CREATE TABLE `group_member` (
 
 LOCK TABLES `group_member` WRITE;
 /*!40000 ALTER TABLE `group_member` DISABLE KEYS */;
-INSERT INTO `group_member` VALUES ('quan1@doivl.com','2022-11-02 23:32:48.620000','quan1@doivl.com','2022-11-02 23:32:48.620000',_binary '',_binary '',114,1),('quan1@doivl.com','2022-11-03 00:37:21.048000','quan1@doivl.com','2022-11-03 00:37:21.048000',_binary '',_binary '',124,4),('vietnqhe140773@gmail.com','2022-11-02 17:47:10.205000','vietnqhe140773@gmail.com','2022-11-02 18:08:20.365000',_binary '',_binary '\0',144,1),('vietnqhe140773@gmail.com','2022-11-02 17:47:45.473000','vietnqhe140773@gmail.com','2022-11-02 18:08:20.364000',_binary '',_binary '',144,14),('quan4@doivl.com','2022-11-02 18:05:17.969000','quan4@doivl.com','2022-11-02 18:05:17.969000',_binary '\0',_binary '\0',174,234),('quan4@doivl.com','2022-11-02 18:05:17.966000','quan4@doivl.com','2022-11-02 18:05:17.966000',_binary '\0',_binary '\0',174,264),('quan4@doivl.com','2022-11-02 18:05:17.958000','quan4@doivl.com','2022-11-02 18:05:17.958000',_binary '\0',_binary '',174,274),('quan4@doivl.com','2022-11-02 18:05:17.963000','quan4@doivl.com','2022-11-02 18:05:17.963000',_binary '\0',_binary '\0',174,314),('quan4@doivl.com','2022-11-02 18:05:17.975000','quan4@doivl.com','2022-11-02 18:05:17.975000',_binary '\0',_binary '\0',184,244),('quan4@doivl.com','2022-11-02 18:05:17.972000','quan4@doivl.com','2022-11-02 18:05:17.972000',_binary '\0',_binary '',184,254),('quan4@doivl.com','2022-11-02 18:05:17.978000','quan4@doivl.com','2022-11-02 18:05:17.978000',_binary '\0',_binary '\0',184,294),('quan4@doivl.com','2022-11-02 18:05:17.986000','quan4@doivl.com','2022-11-02 18:05:17.986000',_binary '\0',_binary '\0',194,224),('quan4@doivl.com','2022-11-02 18:05:17.981000','quan4@doivl.com','2022-11-02 18:05:17.981000',_binary '\0',_binary '',194,284),('quan4@doivl.com','2022-11-02 18:05:17.983000','quan4@doivl.com','2022-11-02 18:05:17.983000',_binary '\0',_binary '\0',194,304),('quan1@doivl.com','2022-11-03 07:27:55.278000','quan1@doivl.com','2022-11-03 07:27:55.278000',_binary '\0',_binary '',244,224);
+INSERT INTO `group_member` VALUES ('quan1@doivl.com','2022-11-02 23:32:48.620000','quan1@doivl.com','2022-11-02 23:32:48.620000','','',114,1),('quan1@doivl.com','2022-11-03 00:37:21.048000','quan1@doivl.com','2022-11-03 00:37:21.048000','','',124,4),('vietnqhe140773@gmail.com','2022-11-02 17:47:10.205000','vietnqhe140773@gmail.com','2022-11-02 18:08:20.365000','','\0',144,1),('vietnqhe140773@gmail.com','2022-11-02 17:47:45.473000','vietnqhe140773@gmail.com','2022-11-02 18:08:20.364000','','',144,14),('quan4@doivl.com','2022-11-02 18:05:17.969000','quan4@doivl.com','2022-11-02 18:05:17.969000','\0','\0',174,234),('quan4@doivl.com','2022-11-02 18:05:17.966000','quan4@doivl.com','2022-11-02 18:05:17.966000','\0','\0',174,264),('quan4@doivl.com','2022-11-02 18:05:17.958000','quan4@doivl.com','2022-11-02 18:05:17.958000','\0','',174,274),('quan4@doivl.com','2022-11-02 18:05:17.963000','quan4@doivl.com','2022-11-02 18:05:17.963000','\0','\0',174,314),('quan4@doivl.com','2022-11-02 18:05:17.975000','quan4@doivl.com','2022-11-02 18:05:17.975000','\0','\0',184,244),('quan4@doivl.com','2022-11-02 18:05:17.972000','quan4@doivl.com','2022-11-02 18:05:17.972000','\0','',184,254),('quan4@doivl.com','2022-11-02 18:05:17.978000','quan4@doivl.com','2022-11-02 18:05:17.978000','\0','\0',184,294),('quan4@doivl.com','2022-11-02 18:05:17.986000','quan4@doivl.com','2022-11-02 18:05:17.986000','\0','\0',194,224),('quan4@doivl.com','2022-11-02 18:05:17.981000','quan4@doivl.com','2022-11-02 18:05:17.981000','\0','',194,284),('quan4@doivl.com','2022-11-02 18:05:17.983000','quan4@doivl.com','2022-11-02 18:05:17.983000','\0','\0',194,304);
 /*!40000 ALTER TABLE `group_member` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -272,7 +272,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `group_tbl`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `group_tbl` (
   `group_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `created_by` varchar(255) DEFAULT NULL,
@@ -287,7 +287,7 @@ CREATE TABLE `group_tbl` (
   PRIMARY KEY (`group_id`),
   KEY `FKjx9ivqp2tjb4x1ctjxokkcfs9` (`class_id`),
   CONSTRAINT `FKjx9ivqp2tjb4x1ctjxokkcfs9` FOREIGN KEY (`class_id`) REFERENCES `class` (`class_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=245 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=244 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -296,7 +296,7 @@ CREATE TABLE `group_tbl` (
 
 LOCK TABLES `group_tbl` WRITE;
 /*!40000 ALTER TABLE `group_tbl` DISABLE KEYS */;
-INSERT INTO `group_tbl` VALUES (114,'quan1@doivl.com','2022-11-02 23:32:48.489000','quan1@doivl.com','2022-11-02 23:32:48.489000','group 6','group 6','1','TEST2',3),(124,'quan1@doivl.com','2022-11-03 00:37:19.750000','quan1@doivl.com','2022-11-03 00:37:19.750000','group 6','group 6','1','TEST2',3),(144,'vietnqhe140773@gmail.com','2022-11-02 17:46:49.007000','vietnqhe140773@gmail.com','2022-11-02 17:46:49.007000','g2','g2','1','t2',1),(174,'quan4@doivl.com','2022-11-02 18:05:17.877000','quan4@doivl.com','2022-11-02 18:05:17.877000','','G1','1','Topic 1',12),(184,'quan4@doivl.com','2022-11-02 18:05:17.888000','quan4@doivl.com','2022-11-02 18:05:17.888000','','G2','1','Topic 2',12),(194,'quan4@doivl.com','2022-11-02 18:05:17.892000','quan4@doivl.com','2022-11-02 18:05:17.892000','','G3','1','Topic 3',12),(244,'quan1@doivl.com','2022-11-03 07:27:55.150000','quan1@doivl.com','2022-11-03 07:27:55.150000','group 6','group 6','1','TEST2',12);
+INSERT INTO `group_tbl` VALUES (114,'quan1@doivl.com','2022-11-02 23:32:48.489000','quan1@doivl.com','2022-11-02 23:32:48.489000','group 6','group 6','1','TEST2',3),(124,'quan1@doivl.com','2022-11-03 00:37:19.750000','quan1@doivl.com','2022-11-03 00:37:19.750000','group 6','group 6','1','TEST2',3),(144,'vietnqhe140773@gmail.com','2022-11-02 17:46:49.007000','vietnqhe140773@gmail.com','2022-11-02 17:46:49.007000','g2','g2','1','t2',1),(174,'quan4@doivl.com','2022-11-02 18:05:17.877000','quan4@doivl.com','2022-11-02 18:05:17.877000','','G1','1','Topic 1',12),(184,'quan4@doivl.com','2022-11-02 18:05:17.888000','quan4@doivl.com','2022-11-02 18:05:17.888000','','G2','1','Topic 2',12),(194,'quan4@doivl.com','2022-11-02 18:05:17.892000','quan4@doivl.com','2022-11-02 18:05:17.892000','','G3','1','Topic 3',12);
 /*!40000 ALTER TABLE `group_tbl` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -306,32 +306,32 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `issue_tbl`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `issue_tbl` (
   `issue_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) DEFAULT NULL,
+  `deadline` varchar(255) DEFAULT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `is_closed` bit(1) DEFAULT NULL,
+  `class_id` bigint(20) DEFAULT NULL,
+  `group_id` bigint(20) DEFAULT NULL,
+  `milestone_id` bigint(20) DEFAULT NULL,
+  `type_id` bigint(20) DEFAULT NULL,
   `created_by` varchar(255) DEFAULT NULL,
   `created_date` datetime(6) DEFAULT NULL,
   `modified_by` varchar(255) DEFAULT NULL,
   `modified_date` datetime(6) DEFAULT NULL,
-  `deadline` date DEFAULT NULL,
-  `description` varchar(255) DEFAULT NULL,
-  `is_closed` bit(1) DEFAULT NULL,
-  `title` varchar(255) DEFAULT NULL,
   `asignee_id` bigint(20) DEFAULT NULL,
   `author_id` bigint(20) DEFAULT NULL,
-  `class_id` bigint(20) DEFAULT NULL,
-  `group_id` bigint(20) DEFAULT NULL,
-  `milestone_id` bigint(20) DEFAULT NULL,
   `status_id` bigint(20) DEFAULT NULL,
-  `type_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`issue_id`),
-  KEY `FKdocj47ssqy0lyq594vqn7t5y4` (`asignee_id`),
-  KEY `FK48winckjudv0nkwkenq4dq8l` (`author_id`),
   KEY `FKk0b9qk0cfnbfo693qu5aarpl4` (`class_id`),
   KEY `FKdcmkgwap4n2h4tdm6f3ov0odx` (`group_id`),
   KEY `FKgg0gdjddp1847wscsxb8jvvrd` (`milestone_id`),
-  KEY `FKk5cvieekhq7dskoxo79l5112h` (`status_id`),
   KEY `FK27s4gopce6pqysl1v76kehypc` (`type_id`),
+  KEY `FKdocj47ssqy0lyq594vqn7t5y4` (`asignee_id`),
+  KEY `FK48winckjudv0nkwkenq4dq8l` (`author_id`),
+  KEY `FKk5cvieekhq7dskoxo79l5112h` (`status_id`),
   CONSTRAINT `FK27s4gopce6pqysl1v76kehypc` FOREIGN KEY (`type_id`) REFERENCES `class_setting` (`class_setting_id`),
   CONSTRAINT `FK48winckjudv0nkwkenq4dq8l` FOREIGN KEY (`author_id`) REFERENCES `user` (`user_id`),
   CONSTRAINT `FKdcmkgwap4n2h4tdm6f3ov0odx` FOREIGN KEY (`group_id`) REFERENCES `group_tbl` (`group_id`),
@@ -339,7 +339,7 @@ CREATE TABLE `issue_tbl` (
   CONSTRAINT `FKgg0gdjddp1847wscsxb8jvvrd` FOREIGN KEY (`milestone_id`) REFERENCES `milestone` (`milestone_id`),
   CONSTRAINT `FKk0b9qk0cfnbfo693qu5aarpl4` FOREIGN KEY (`class_id`) REFERENCES `class` (`class_id`),
   CONSTRAINT `FKk5cvieekhq7dskoxo79l5112h` FOREIGN KEY (`status_id`) REFERENCES `class_setting` (`class_setting_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -348,7 +348,6 @@ CREATE TABLE `issue_tbl` (
 
 LOCK TABLES `issue_tbl` WRITE;
 /*!40000 ALTER TABLE `issue_tbl` DISABLE KEYS */;
-INSERT INTO `issue_tbl` VALUES (1,NULL,NULL,NULL,NULL,'2022-11-04','Description',_binary '','Code BE : ko xong thi chet',254,254,12,194,44,331,325),(2,NULL,NULL,NULL,NULL,'2022-11-05','Description',_binary '\0','Code FE : ',264,244,12,174,44,330,325),(3,NULL,NULL,NULL,NULL,'2022-11-05','Description',_binary '\0','Bug BE : request return 500',254,244,12,194,44,330,326),(4,NULL,NULL,NULL,NULL,'2022-11-05','Description',_binary '\0','Doc Review',254,264,12,194,54,329,327),(6,NULL,NULL,NULL,NULL,NULL,NULL,_binary '\0','General issue 1',254,264,12,244,NULL,330,326),(7,NULL,NULL,NULL,NULL,NULL,'Description',_binary '','General issue 2',14,14,1,NULL,NULL,44,14);
 /*!40000 ALTER TABLE `issue_tbl` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -358,7 +357,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `milestone`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `milestone` (
   `milestone_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `created_by` varchar(255) DEFAULT NULL,
@@ -386,7 +385,7 @@ CREATE TABLE `milestone` (
 
 LOCK TABLES `milestone` WRITE;
 /*!40000 ALTER TABLE `milestone` DISABLE KEYS */;
-INSERT INTO `milestone` VALUES (39,'quan1@doivl.com','2022-10-30 17:09:54.014000','quan1@doivl.com','2022-10-31 11:21:33.920000','CCCCCCCCCC','2000-12-29',_binary '\0','Test Milestone B','2020-12-29',4,1),(41,'quan1@doivl.com','2022-10-31 10:35:53.787000','quan1@doivl.com','2022-10-31 22:16:15.229000','CCCCCCCCCC','2000-12-29',_binary '\0','Test Milestone B','2020-12-29',1,1),(42,'quan1@doivl.com','2022-11-01 17:10:43.916000','quan1@doivl.com','2022-11-01 17:11:08.988000','Indi des','2022-11-01',_binary '\0','Indi','2022-11-01',5,3),(44,'quan4@doivl.com','2022-11-02 17:53:48.520000','quan4@doivl.com','2022-11-02 18:06:03.494000','Matrix 1 des','2022-11-03',_binary '','Matrix 1','2022-11-03',3,12),(54,'quan4@doivl.com','2022-11-02 18:08:37.207000','quan4@doivl.com','2022-11-02 18:08:37.233000','Matrix 2 mil des','2022-11-03',_binary '\0','Matrix 2 mil title','2022-11-03',14,12),(64,'quan4@doivl.com','2022-11-02 18:08:45.007000','quan4@doivl.com','2022-11-02 18:51:29.820000','Matrix 3 mil des','2022-11-03',_binary '\0','Matrix 3 mil title','2022-11-03',24,12);
+INSERT INTO `milestone` VALUES (39,'quan1@doivl.com','2022-10-30 17:09:54.014000','quan1@doivl.com','2022-10-31 11:21:33.920000','CCCCCCCCCC','2000-12-29','\0','Test Milestone B','2020-12-29',4,1),(41,'quan1@doivl.com','2022-10-31 10:35:53.787000','quan1@doivl.com','2022-10-31 22:16:15.229000','CCCCCCCCCC','2000-12-29','\0','Test Milestone B','2020-12-29',1,1),(42,'quan1@doivl.com','2022-11-01 17:10:43.916000','quan1@doivl.com','2022-11-01 17:11:08.988000','Indi des','2022-11-01','\0','Indi','2022-11-01',5,3),(44,'quan4@doivl.com','2022-11-02 17:53:48.520000','quan4@doivl.com','2022-11-02 18:06:03.494000','Matrix 1 des','2022-11-03','','Matrix 1','2022-11-03',3,12),(54,'quan4@doivl.com','2022-11-02 18:08:37.207000','quan4@doivl.com','2022-11-02 18:08:37.233000','Matrix 2 mil des','2022-11-03','\0','Matrix 2 mil title','2022-11-03',14,12),(64,'quan4@doivl.com','2022-11-02 18:08:45.007000','quan4@doivl.com','2022-11-02 18:51:29.820000','Matrix 3 mil des','2022-11-03','\0','Matrix 3 mil title','2022-11-03',24,12);
 /*!40000 ALTER TABLE `milestone` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -396,7 +395,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `permission`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `permission` (
   `role_id` bigint(20) NOT NULL,
   `screen_id` bigint(20) NOT NULL,
@@ -417,7 +416,7 @@ CREATE TABLE `permission` (
 
 LOCK TABLES `permission` WRITE;
 /*!40000 ALTER TABLE `permission` DISABLE KEYS */;
-INSERT INTO `permission` VALUES (4,24,_binary '\0',_binary '\0',_binary '',_binary ''),(4,25,_binary '\0',_binary '\0',_binary '',_binary ''),(4,26,_binary '\0',_binary '\0',_binary '',_binary ''),(4,27,_binary '\0',_binary '\0',_binary '',_binary ''),(4,28,_binary '\0',_binary '\0',_binary '',_binary ''),(4,29,_binary '\0',_binary '\0',_binary '',_binary ''),(5,24,_binary '\0',_binary '\0',_binary '\0',_binary '\0'),(5,25,_binary '\0',_binary '\0',_binary '\0',_binary '\0'),(5,26,_binary '\0',_binary '\0',_binary '\0',_binary '\0'),(5,27,_binary '\0',_binary '\0',_binary '\0',_binary '\0'),(5,28,_binary '\0',_binary '\0',_binary '\0',_binary '\0'),(6,24,_binary '\0',_binary '\0',_binary '\0',_binary '\0'),(6,25,_binary '\0',_binary '\0',_binary '\0',_binary '\0'),(6,26,_binary '\0',_binary '\0',_binary '\0',_binary '\0'),(6,27,_binary '\0',_binary '\0',_binary '\0',_binary '\0'),(6,28,_binary '\0',_binary '\0',_binary '',_binary ''),(6,29,_binary '\0',_binary '\0',_binary '',_binary ''),(6,30,_binary '\0',_binary '\0',_binary '',_binary ''),(6,31,_binary '\0',_binary '\0',_binary '',_binary ''),(7,24,_binary '\0',_binary '\0',_binary '\0',_binary '\0'),(7,25,_binary '\0',_binary '\0',_binary '\0',_binary '\0'),(7,26,_binary '\0',_binary '\0',_binary '\0',_binary '\0'),(7,27,_binary '\0',_binary '\0',_binary '\0',_binary '\0'),(7,28,_binary '\0',_binary '\0',_binary '\0',_binary '\0'),(7,30,_binary '\0',_binary '\0',_binary '',_binary ''),(7,31,_binary '\0',_binary '\0',_binary '',_binary ''),(7,244,_binary '\0',_binary '\0',_binary '',_binary ''),(7,254,_binary '\0',_binary '\0',_binary '',_binary ''),(8,24,_binary '\0',_binary '\0',_binary '\0',_binary '\0'),(8,25,_binary '\0',_binary '\0',_binary '\0',_binary '\0'),(8,26,_binary '\0',_binary '\0',_binary '\0',_binary '\0'),(8,27,_binary '\0',_binary '\0',_binary '\0',_binary '\0'),(8,28,_binary '\0',_binary '\0',_binary '\0',_binary '\0'),(8,30,_binary '\0',_binary '\0',_binary '\0',_binary ''),(8,31,_binary '\0',_binary '\0',_binary '\0',_binary '');
+INSERT INTO `permission` VALUES (4,24,'\0','\0','',''),(4,25,'\0','\0','',''),(4,26,'\0','\0','',''),(4,27,'\0','\0','',''),(4,28,'\0','\0','',''),(4,29,'\0','\0','',''),(5,24,'\0','\0','\0','\0'),(5,25,'\0','\0','\0','\0'),(5,26,'\0','\0','\0','\0'),(5,27,'\0','\0','\0','\0'),(5,28,'\0','\0','\0','\0'),(6,24,'\0','\0','\0','\0'),(6,25,'\0','\0','\0','\0'),(6,26,'\0','\0','\0','\0'),(6,27,'\0','\0','\0','\0'),(6,28,'\0','\0','',''),(6,29,'\0','\0','',''),(6,30,'\0','\0','',''),(6,31,'\0','\0','',''),(7,24,'\0','\0','\0','\0'),(7,25,'\0','\0','\0','\0'),(7,26,'\0','\0','\0','\0'),(7,27,'\0','\0','\0','\0'),(7,28,'\0','\0','\0','\0'),(7,30,'\0','\0','',''),(7,31,'\0','\0','',''),(7,244,'\0','\0','',''),(7,254,'\0','\0','',''),(8,24,'\0','\0','\0','\0'),(8,25,'\0','\0','\0','\0'),(8,26,'\0','\0','\0','\0'),(8,27,'\0','\0','\0','\0'),(8,28,'\0','\0','\0','\0'),(8,30,'\0','\0','\0',''),(8,31,'\0','\0','\0','');
 /*!40000 ALTER TABLE `permission` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -427,28 +426,24 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `schedule`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `schedule` (
   `schedule_id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `created_by` varchar(255) DEFAULT NULL,
-  `created_date` datetime(6) DEFAULT NULL,
-  `modified_by` varchar(255) DEFAULT NULL,
-  `modified_date` datetime(6) DEFAULT NULL,
   `from_time` time DEFAULT NULL,
   `status` bit(1) DEFAULT NULL,
   `to_time` time DEFAULT NULL,
   `training_date` date DEFAULT NULL,
-  `module_id` bigint(20) DEFAULT NULL,
   `class_id` bigint(20) DEFAULT NULL,
+  `module_id` bigint(20) DEFAULT NULL,
   `room_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`schedule_id`),
-  KEY `FK60xg4jvuwici9qugyyr45ktgf` (`module_id`),
   KEY `FKqqv2rqy5xxw2oyhie35seyclw` (`class_id`),
+  KEY `FK60xg4jvuwici9qugyyr45ktgf` (`module_id`),
   KEY `FKbe4um70jjtrh25fo6kmxscl18` (`room_id`),
   CONSTRAINT `FK60xg4jvuwici9qugyyr45ktgf` FOREIGN KEY (`module_id`) REFERENCES `class_setting` (`class_setting_id`),
   CONSTRAINT `FKbe4um70jjtrh25fo6kmxscl18` FOREIGN KEY (`room_id`) REFERENCES `setting` (`setting_id`),
   CONSTRAINT `FKqqv2rqy5xxw2oyhie35seyclw` FOREIGN KEY (`class_id`) REFERENCES `class` (`class_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -457,7 +452,7 @@ CREATE TABLE `schedule` (
 
 LOCK TABLES `schedule` WRITE;
 /*!40000 ALTER TABLE `schedule` DISABLE KEYS */;
-INSERT INTO `schedule` VALUES (1,NULL,NULL,NULL,NULL,'09:00:00',_binary '','10:40:00','2022-10-27',214,1,644),(2,NULL,NULL,NULL,NULL,'12:50:00',_binary '','14:20:00','2022-10-24',64,9,654),(3,NULL,NULL,NULL,NULL,'14:30:00',_binary '','16:10:00','2022-10-28',74,9,654),(4,NULL,NULL,NULL,NULL,'14:30:00',_binary '\0','16:00:00','2022-10-29',224,1,644);
+INSERT INTO `schedule` VALUES (1,'09:00:00','','10:40:00','2022-10-27',1,214,644),(2,'12:50:00','','14:20:00','2022-10-24',9,64,654),(3,'14:30:00','','16:10:00','2022-10-26',9,74,654),(4,'14:30:00','\0','16:00:00','2022-10-24',1,224,644),(5,'16:10:00','','17:40:00','2022-10-24',9,84,654),(6,'12:50:00','','14:20:00','2022-10-26',9,94,654),(7,'14:30:00','','16:10:00','2022-10-26',9,234,654),(8,'16:10:00','','17:40:00','2022-10-26',9,244,654),(9,'12:50:00','','14:20:00','2022-10-28',9,254,654),(10,'14:30:00','','16:10:00','2022-10-28',9,264,654),(11,'16:10:00','','17:40:00','2022-10-28',9,274,654),(12,'12:50:00','','14:20:00','2022-10-31',9,284,654),(13,'14:30:00','','16:10:00','2022-10-31',9,294,654),(14,'16:10:00','','17:40:00','2022-10-31',9,304,654),(15,'12:50:00','','14:20:00','2022-11-02',9,314,654),(16,'14:30:00','','16:10:00','2022-11-02',9,324,654);
 /*!40000 ALTER TABLE `schedule` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -467,7 +462,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `setting`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `setting` (
   `setting_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `created_by` varchar(255) DEFAULT NULL,
@@ -506,7 +501,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `subject`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `subject` (
   `subject_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `created_by` varchar(255) DEFAULT NULL,
@@ -544,7 +539,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `subject_setting`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `subject_setting` (
   `subject_setting_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `created_by` varchar(255) DEFAULT NULL,
@@ -582,7 +577,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `submit_tbl`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `submit_tbl` (
   `submit_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `created_by` varchar(255) DEFAULT NULL,
@@ -604,7 +599,7 @@ CREATE TABLE `submit_tbl` (
   CONSTRAINT `FKinvtjwii9msmjtru01t1mw0xa` FOREIGN KEY (`group_id`) REFERENCES `group_tbl` (`group_id`),
   CONSTRAINT `FKiwjdbqc50w5kg38iylwatmhlx` FOREIGN KEY (`class_id`, `user_id`) REFERENCES `class_user` (`class_id`, `user_id`),
   CONSTRAINT `FKp1agsivyliuq4l9x89r8rklwh` FOREIGN KEY (`milestone_id`) REFERENCES `milestone` (`milestone_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=875 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=874 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -613,7 +608,7 @@ CREATE TABLE `submit_tbl` (
 
 LOCK TABLES `submit_tbl` WRITE;
 /*!40000 ALTER TABLE `submit_tbl` DISABLE KEYS */;
-INSERT INTO `submit_tbl` VALUES (224,'quan1@doivl.com','2022-10-30 17:09:54.118000','quan1@doivl.com','2022-11-01 17:02:33.071000',NULL,NULL,NULL,NULL,1,24,NULL,39),(225,'quan1@doivl.com','2022-10-30 17:09:54.121000','quan1@doivl.com','2022-11-01 17:02:33.040000',NULL,NULL,NULL,NULL,1,34,NULL,39),(226,'quan1@doivl.com','2022-10-30 17:09:54.123000','quan1@doivl.com','2022-10-30 17:09:54.123000',NULL,NULL,NULL,NULL,1,44,NULL,39),(227,'quan1@doivl.com','2022-10-30 17:09:54.124000','vietnqhe140773@gmail.com','2022-11-02 17:58:13.015000',NULL,NULL,NULL,NULL,1,194,NULL,39),(235,'quan1@doivl.com','2022-10-30 18:51:43.192000','vietnqhe140773@gmail.com','2022-11-02 17:47:45.451000',NULL,NULL,NULL,NULL,1,14,144,39),(251,'quan1@doivl.com','2022-10-31 10:35:53.818000','quan1@doivl.com','2022-11-01 17:00:52.044000',NULL,NULL,NULL,NULL,1,14,NULL,41),(252,'quan1@doivl.com','2022-10-31 10:35:53.820000','quan1@doivl.com','2022-10-31 10:35:53.820000',NULL,NULL,NULL,NULL,1,24,NULL,41),(253,'quan1@doivl.com','2022-10-31 10:35:53.823000','quan1@doivl.com','2022-11-01 17:00:52.265000',NULL,NULL,NULL,NULL,1,34,NULL,41),(254,'quan1@doivl.com','2022-10-31 10:35:53.823000','quan1@doivl.com','2022-10-31 10:35:53.823000',NULL,NULL,NULL,NULL,1,44,NULL,41),(255,'quan1@doivl.com','2022-10-31 10:35:53.825000','quan1@doivl.com','2022-10-31 10:35:53.825000',NULL,NULL,NULL,NULL,1,194,NULL,41),(256,'quan1@doivl.com','2022-10-31 10:35:53.826000','quan1@doivl.com','2022-10-31 10:35:53.826000',NULL,NULL,NULL,NULL,1,204,NULL,41),(282,'quan1@doivl.com','2022-10-31 14:31:21.024000','quan1@doivl.com','2022-11-01 17:00:52.215000',NULL,NULL,NULL,NULL,1,1,NULL,41),(290,'quan1@doivl.com','2022-11-01 17:10:44.071000','quan1@doivl.com','2022-11-02 23:32:48.697000',NULL,NULL,NULL,NULL,3,1,114,42),(291,'quan1@doivl.com','2022-11-01 17:10:44.073000','quan1@doivl.com','2022-11-03 00:37:23.533000',NULL,NULL,NULL,NULL,3,4,124,42),(292,'quan1@doivl.com','2022-11-01 17:10:44.074000','quan1@doivl.com','2022-11-01 17:10:44.074000',NULL,NULL,NULL,NULL,3,6,NULL,42),(293,'quan1@doivl.com','2022-11-01 17:10:44.076000','quan1@doivl.com','2022-11-01 17:10:44.076000',NULL,NULL,NULL,NULL,3,14,NULL,42),(294,'quan1@doivl.com','2022-11-01 17:10:44.078000','quan1@doivl.com','2022-11-01 17:10:44.078000',NULL,NULL,NULL,NULL,3,34,NULL,42),(295,'quan1@doivl.com','2022-11-02 23:32:48.688000','quan1@doivl.com','2022-11-02 23:32:48.688000',NULL,NULL,NULL,NULL,NULL,NULL,114,42),(304,'quan1@doivl.com','2022-11-03 00:37:23.287000','quan1@doivl.com','2022-11-03 00:37:23.287000',NULL,NULL,NULL,NULL,NULL,NULL,124,42),(324,'vietnqhe140773@gmail.com','2022-11-02 17:46:49.048000','vietnqhe140773@gmail.com','2022-11-02 17:46:49.048000',NULL,NULL,NULL,NULL,NULL,NULL,144,39),(334,'vietnqhe140773@gmail.com','2022-11-02 17:47:10.236000','vietnqhe140773@gmail.com','2022-11-02 17:47:10.236000',NULL,NULL,NULL,NULL,1,1,144,39),(344,'vietnqhe140773@gmail.com','2022-11-02 17:47:29.813000','vietnqhe140773@gmail.com','2022-11-02 18:10:04.238000',NULL,NULL,NULL,NULL,1,204,NULL,39),(354,'quan4@doivl.com','2022-11-02 17:55:14.906000','quan4@doivl.com','2022-11-02 18:05:17.906000',NULL,NULL,NULL,NULL,12,224,194,44),(364,'quan4@doivl.com','2022-11-02 17:55:15.131000','quan4@doivl.com','2022-11-02 18:05:17.906000',NULL,NULL,NULL,NULL,12,234,174,44),(374,'quan4@doivl.com','2022-11-02 17:56:54.073000','quan4@doivl.com','2022-11-02 18:05:17.906000',NULL,NULL,NULL,NULL,12,244,184,44),(384,'quan4@doivl.com','2022-11-02 17:56:54.243000','quan4@doivl.com','2022-11-02 18:05:17.906000',NULL,NULL,NULL,NULL,12,254,184,44),(394,'quan4@doivl.com','2022-11-02 17:56:54.380000','quan4@doivl.com','2022-11-02 18:05:17.906000',NULL,NULL,NULL,NULL,12,264,174,44),(404,'quan4@doivl.com','2022-11-02 17:56:54.531000','quan4@doivl.com','2022-11-02 18:05:17.907000',NULL,NULL,NULL,NULL,12,274,174,44),(414,'quan4@doivl.com','2022-11-02 17:56:54.673000','quan4@doivl.com','2022-11-02 18:05:17.907000',NULL,NULL,NULL,NULL,12,284,194,44),(424,'quan4@doivl.com','2022-11-02 17:57:40.412000','quan4@doivl.com','2022-11-02 18:05:17.905000',NULL,NULL,NULL,NULL,12,294,184,44),(434,'quan4@doivl.com','2022-11-02 17:57:40.565000','quan4@doivl.com','2022-11-02 18:05:17.908000',NULL,NULL,NULL,NULL,12,304,194,44),(474,'quan4@doivl.com','2022-11-02 18:00:08.102000','quan4@doivl.com','2022-11-02 18:05:17.908000',NULL,NULL,NULL,NULL,12,314,174,44),(484,'quan4@doivl.com','2022-11-02 18:05:18.032000','quan4@doivl.com','2022-11-02 18:05:18.032000',NULL,NULL,NULL,NULL,NULL,NULL,174,44),(494,'quan4@doivl.com','2022-11-02 18:05:18.036000','quan4@doivl.com','2022-11-02 18:05:18.036000',NULL,NULL,NULL,NULL,NULL,NULL,184,44),(504,'quan4@doivl.com','2022-11-02 18:05:18.040000','quan4@doivl.com','2022-11-02 18:05:18.040000',NULL,NULL,NULL,NULL,NULL,NULL,194,44),(514,'quan4@doivl.com','2022-11-02 18:08:37.245000','quan1@doivl.com','2022-11-03 07:27:55.330000',NULL,NULL,NULL,NULL,12,224,244,54),(524,'quan4@doivl.com','2022-11-02 18:08:37.248000','quan4@doivl.com','2022-11-02 18:08:37.248000',NULL,NULL,NULL,NULL,12,234,NULL,54),(534,'quan4@doivl.com','2022-11-02 18:08:37.262000','quan4@doivl.com','2022-11-02 18:08:37.262000',NULL,NULL,NULL,NULL,12,244,NULL,54),(544,'quan4@doivl.com','2022-11-02 18:08:37.264000','quan4@doivl.com','2022-11-02 18:08:37.264000',NULL,NULL,NULL,NULL,12,254,NULL,54),(554,'quan4@doivl.com','2022-11-02 18:08:37.267000','quan4@doivl.com','2022-11-02 18:08:37.267000',NULL,NULL,NULL,NULL,12,264,NULL,54),(564,'quan4@doivl.com','2022-11-02 18:08:37.271000','quan4@doivl.com','2022-11-02 18:08:37.271000',NULL,NULL,NULL,NULL,12,274,NULL,54),(574,'quan4@doivl.com','2022-11-02 18:08:37.273000','quan4@doivl.com','2022-11-02 18:08:37.273000',NULL,NULL,NULL,NULL,12,284,NULL,54),(584,'quan4@doivl.com','2022-11-02 18:08:37.276000','quan4@doivl.com','2022-11-02 18:08:37.276000',NULL,NULL,NULL,NULL,12,294,NULL,54),(594,'quan4@doivl.com','2022-11-02 18:08:37.278000','quan4@doivl.com','2022-11-02 18:08:37.278000',NULL,NULL,NULL,NULL,12,304,NULL,54),(604,'quan4@doivl.com','2022-11-02 18:08:37.280000','quan4@doivl.com','2022-11-02 18:08:37.280000',NULL,NULL,NULL,NULL,12,314,NULL,54),(614,'quan4@doivl.com','2022-11-02 18:08:45.038000','hoangnhhe141380@fpt.edu.vn','2022-11-02 18:55:20.954000',NULL,NULL,NULL,NULL,12,224,NULL,64),(624,'quan4@doivl.com','2022-11-02 18:08:45.041000','hoangnhhe141380@fpt.edu.vn','2022-11-02 18:55:20.892000',NULL,NULL,NULL,NULL,12,234,NULL,64),(634,'quan4@doivl.com','2022-11-02 18:08:45.043000','hoangnhhe141380@fpt.edu.vn','2022-11-02 18:55:20.926000',NULL,NULL,NULL,NULL,12,244,NULL,64),(644,'quan4@doivl.com','2022-11-02 18:08:45.045000','hoangnhhe141380@fpt.edu.vn','2022-11-02 18:55:20.926000',NULL,NULL,NULL,NULL,12,254,NULL,64),(654,'quan4@doivl.com','2022-11-02 18:08:45.047000','hoangnhhe141380@fpt.edu.vn','2022-11-02 18:55:20.892000',NULL,NULL,NULL,NULL,12,264,NULL,64),(664,'quan4@doivl.com','2022-11-02 18:08:45.050000','hoangnhhe141380@fpt.edu.vn','2022-11-02 18:55:20.892000',NULL,NULL,NULL,NULL,12,274,NULL,64),(674,'quan4@doivl.com','2022-11-02 18:08:45.052000','hoangnhhe141380@fpt.edu.vn','2022-11-02 18:55:20.954000',NULL,NULL,NULL,NULL,12,284,NULL,64),(684,'quan4@doivl.com','2022-11-02 18:08:45.054000','hoangnhhe141380@fpt.edu.vn','2022-11-02 18:55:20.926000',NULL,NULL,NULL,NULL,12,294,NULL,64),(694,'quan4@doivl.com','2022-11-02 18:08:45.056000','hoangnhhe141380@fpt.edu.vn','2022-11-02 18:55:20.954000',NULL,NULL,NULL,NULL,12,304,NULL,64),(704,'quan4@doivl.com','2022-11-02 18:08:45.058000','hoangnhhe141380@fpt.edu.vn','2022-11-02 18:55:20.892000',NULL,NULL,NULL,NULL,12,314,NULL,64),(744,'quan4@doivl.com','2022-11-02 18:12:29.528000','quan4@doivl.com','2022-11-02 18:12:29.528000',NULL,NULL,NULL,NULL,12,324,NULL,44),(754,'quan4@doivl.com','2022-11-02 18:12:29.533000','quan4@doivl.com','2022-11-02 18:12:29.533000',NULL,NULL,NULL,NULL,12,324,NULL,54),(764,'quan4@doivl.com','2022-11-02 18:12:29.536000','quan4@doivl.com','2022-11-02 18:12:29.536000',NULL,NULL,NULL,NULL,12,324,NULL,64),(774,'quan4@doivl.com','2022-11-02 18:12:29.665000','quan4@doivl.com','2022-11-02 18:12:29.665000',NULL,NULL,NULL,NULL,12,334,NULL,44),(784,'quan4@doivl.com','2022-11-02 18:12:29.669000','quan4@doivl.com','2022-11-02 18:12:29.669000',NULL,NULL,NULL,NULL,12,334,NULL,54),(794,'quan4@doivl.com','2022-11-02 18:12:29.671000','quan4@doivl.com','2022-11-02 18:16:51.868000',NULL,NULL,NULL,NULL,12,334,NULL,64),(804,'quan4@doivl.com','2022-11-02 18:12:29.835000','quan4@doivl.com','2022-11-02 18:12:29.835000',NULL,NULL,NULL,NULL,12,344,NULL,44),(814,'quan4@doivl.com','2022-11-02 18:12:29.840000','quan4@doivl.com','2022-11-02 18:12:29.840000',NULL,NULL,NULL,NULL,12,344,NULL,54),(824,'quan4@doivl.com','2022-11-02 18:12:29.842000','quan4@doivl.com','2022-11-02 18:14:44.750000',NULL,NULL,NULL,NULL,12,344,NULL,64),(874,'quan1@doivl.com','2022-11-03 07:27:55.327000','quan1@doivl.com','2022-11-03 07:27:55.327000',NULL,NULL,NULL,NULL,NULL,NULL,244,54);
+INSERT INTO `submit_tbl` VALUES (224,'quan1@doivl.com','2022-10-30 17:09:54.118000','quan1@doivl.com','2022-11-01 17:02:33.071000',NULL,NULL,NULL,NULL,1,24,NULL,39),(225,'quan1@doivl.com','2022-10-30 17:09:54.121000','quan1@doivl.com','2022-11-01 17:02:33.040000',NULL,NULL,NULL,NULL,1,34,NULL,39),(226,'quan1@doivl.com','2022-10-30 17:09:54.123000','quan1@doivl.com','2022-10-30 17:09:54.123000',NULL,NULL,NULL,NULL,1,44,NULL,39),(227,'quan1@doivl.com','2022-10-30 17:09:54.124000','vietnqhe140773@gmail.com','2022-11-02 17:58:13.015000',NULL,NULL,NULL,NULL,1,194,NULL,39),(235,'quan1@doivl.com','2022-10-30 18:51:43.192000','vietnqhe140773@gmail.com','2022-11-02 17:47:45.451000',NULL,NULL,NULL,NULL,1,14,144,39),(251,'quan1@doivl.com','2022-10-31 10:35:53.818000','quan1@doivl.com','2022-11-01 17:00:52.044000',NULL,NULL,NULL,NULL,1,14,NULL,41),(252,'quan1@doivl.com','2022-10-31 10:35:53.820000','quan1@doivl.com','2022-10-31 10:35:53.820000',NULL,NULL,NULL,NULL,1,24,NULL,41),(253,'quan1@doivl.com','2022-10-31 10:35:53.823000','quan1@doivl.com','2022-11-01 17:00:52.265000',NULL,NULL,NULL,NULL,1,34,NULL,41),(254,'quan1@doivl.com','2022-10-31 10:35:53.823000','quan1@doivl.com','2022-10-31 10:35:53.823000',NULL,NULL,NULL,NULL,1,44,NULL,41),(255,'quan1@doivl.com','2022-10-31 10:35:53.825000','quan1@doivl.com','2022-10-31 10:35:53.825000',NULL,NULL,NULL,NULL,1,194,NULL,41),(256,'quan1@doivl.com','2022-10-31 10:35:53.826000','quan1@doivl.com','2022-10-31 10:35:53.826000',NULL,NULL,NULL,NULL,1,204,NULL,41),(282,'quan1@doivl.com','2022-10-31 14:31:21.024000','quan1@doivl.com','2022-11-01 17:00:52.215000',NULL,NULL,NULL,NULL,1,1,NULL,41),(290,'quan1@doivl.com','2022-11-01 17:10:44.071000','quan1@doivl.com','2022-11-02 23:32:48.697000',NULL,NULL,NULL,NULL,3,1,114,42),(291,'quan1@doivl.com','2022-11-01 17:10:44.073000','quan1@doivl.com','2022-11-03 00:37:23.533000',NULL,NULL,NULL,NULL,3,4,124,42),(292,'quan1@doivl.com','2022-11-01 17:10:44.074000','quan1@doivl.com','2022-11-01 17:10:44.074000',NULL,NULL,NULL,NULL,3,6,NULL,42),(293,'quan1@doivl.com','2022-11-01 17:10:44.076000','quan1@doivl.com','2022-11-01 17:10:44.076000',NULL,NULL,NULL,NULL,3,14,NULL,42),(294,'quan1@doivl.com','2022-11-01 17:10:44.078000','quan1@doivl.com','2022-11-01 17:10:44.078000',NULL,NULL,NULL,NULL,3,34,NULL,42),(295,'quan1@doivl.com','2022-11-02 23:32:48.688000','quan1@doivl.com','2022-11-02 23:32:48.688000',NULL,NULL,NULL,NULL,NULL,NULL,114,42),(304,'quan1@doivl.com','2022-11-03 00:37:23.287000','quan1@doivl.com','2022-11-03 00:37:23.287000',NULL,NULL,NULL,NULL,NULL,NULL,124,42),(324,'vietnqhe140773@gmail.com','2022-11-02 17:46:49.048000','vietnqhe140773@gmail.com','2022-11-02 17:46:49.048000',NULL,NULL,NULL,NULL,NULL,NULL,144,39),(334,'vietnqhe140773@gmail.com','2022-11-02 17:47:10.236000','vietnqhe140773@gmail.com','2022-11-02 17:47:10.236000',NULL,NULL,NULL,NULL,1,1,144,39),(344,'vietnqhe140773@gmail.com','2022-11-02 17:47:29.813000','vietnqhe140773@gmail.com','2022-11-02 18:10:04.238000',NULL,NULL,NULL,NULL,1,204,NULL,39),(354,'quan4@doivl.com','2022-11-02 17:55:14.906000','quan4@doivl.com','2022-11-02 18:05:17.906000',NULL,NULL,NULL,NULL,12,224,194,44),(364,'quan4@doivl.com','2022-11-02 17:55:15.131000','quan4@doivl.com','2022-11-02 18:05:17.906000',NULL,NULL,NULL,NULL,12,234,174,44),(374,'quan4@doivl.com','2022-11-02 17:56:54.073000','quan4@doivl.com','2022-11-02 18:05:17.906000',NULL,NULL,NULL,NULL,12,244,184,44),(384,'quan4@doivl.com','2022-11-02 17:56:54.243000','quan4@doivl.com','2022-11-02 18:05:17.906000',NULL,NULL,NULL,NULL,12,254,184,44),(394,'quan4@doivl.com','2022-11-02 17:56:54.380000','quan4@doivl.com','2022-11-02 18:05:17.906000',NULL,NULL,NULL,NULL,12,264,174,44),(404,'quan4@doivl.com','2022-11-02 17:56:54.531000','quan4@doivl.com','2022-11-02 18:05:17.907000',NULL,NULL,NULL,NULL,12,274,174,44),(414,'quan4@doivl.com','2022-11-02 17:56:54.673000','quan4@doivl.com','2022-11-02 18:05:17.907000',NULL,NULL,NULL,NULL,12,284,194,44),(424,'quan4@doivl.com','2022-11-02 17:57:40.412000','quan4@doivl.com','2022-11-02 18:05:17.905000',NULL,NULL,NULL,NULL,12,294,184,44),(434,'quan4@doivl.com','2022-11-02 17:57:40.565000','quan4@doivl.com','2022-11-02 18:05:17.908000',NULL,NULL,NULL,NULL,12,304,194,44),(474,'quan4@doivl.com','2022-11-02 18:00:08.102000','quan4@doivl.com','2022-11-02 18:05:17.908000',NULL,NULL,NULL,NULL,12,314,174,44),(484,'quan4@doivl.com','2022-11-02 18:05:18.032000','quan4@doivl.com','2022-11-02 18:05:18.032000',NULL,NULL,NULL,NULL,NULL,NULL,174,44),(494,'quan4@doivl.com','2022-11-02 18:05:18.036000','quan4@doivl.com','2022-11-02 18:05:18.036000',NULL,NULL,NULL,NULL,NULL,NULL,184,44),(504,'quan4@doivl.com','2022-11-02 18:05:18.040000','quan4@doivl.com','2022-11-02 18:05:18.040000',NULL,NULL,NULL,NULL,NULL,NULL,194,44),(514,'quan4@doivl.com','2022-11-02 18:08:37.245000','quan4@doivl.com','2022-11-02 18:08:37.245000',NULL,NULL,NULL,NULL,12,224,NULL,54),(524,'quan4@doivl.com','2022-11-02 18:08:37.248000','quan4@doivl.com','2022-11-02 18:08:37.248000',NULL,NULL,NULL,NULL,12,234,NULL,54),(534,'quan4@doivl.com','2022-11-02 18:08:37.262000','quan4@doivl.com','2022-11-02 18:08:37.262000',NULL,NULL,NULL,NULL,12,244,NULL,54),(544,'quan4@doivl.com','2022-11-02 18:08:37.264000','quan4@doivl.com','2022-11-02 18:08:37.264000',NULL,NULL,NULL,NULL,12,254,NULL,54),(554,'quan4@doivl.com','2022-11-02 18:08:37.267000','quan4@doivl.com','2022-11-02 18:08:37.267000',NULL,NULL,NULL,NULL,12,264,NULL,54),(564,'quan4@doivl.com','2022-11-02 18:08:37.271000','quan4@doivl.com','2022-11-02 18:08:37.271000',NULL,NULL,NULL,NULL,12,274,NULL,54),(574,'quan4@doivl.com','2022-11-02 18:08:37.273000','quan4@doivl.com','2022-11-02 18:08:37.273000',NULL,NULL,NULL,NULL,12,284,NULL,54),(584,'quan4@doivl.com','2022-11-02 18:08:37.276000','quan4@doivl.com','2022-11-02 18:08:37.276000',NULL,NULL,NULL,NULL,12,294,NULL,54),(594,'quan4@doivl.com','2022-11-02 18:08:37.278000','quan4@doivl.com','2022-11-02 18:08:37.278000',NULL,NULL,NULL,NULL,12,304,NULL,54),(604,'quan4@doivl.com','2022-11-02 18:08:37.280000','quan4@doivl.com','2022-11-02 18:08:37.280000',NULL,NULL,NULL,NULL,12,314,NULL,54),(614,'quan4@doivl.com','2022-11-02 18:08:45.038000','hoangnhhe141380@fpt.edu.vn','2022-11-02 18:55:20.954000',NULL,NULL,NULL,NULL,12,224,NULL,64),(624,'quan4@doivl.com','2022-11-02 18:08:45.041000','hoangnhhe141380@fpt.edu.vn','2022-11-02 18:55:20.892000',NULL,NULL,NULL,NULL,12,234,NULL,64),(634,'quan4@doivl.com','2022-11-02 18:08:45.043000','hoangnhhe141380@fpt.edu.vn','2022-11-02 18:55:20.926000',NULL,NULL,NULL,NULL,12,244,NULL,64),(644,'quan4@doivl.com','2022-11-02 18:08:45.045000','hoangnhhe141380@fpt.edu.vn','2022-11-02 18:55:20.926000',NULL,NULL,NULL,NULL,12,254,NULL,64),(654,'quan4@doivl.com','2022-11-02 18:08:45.047000','hoangnhhe141380@fpt.edu.vn','2022-11-02 18:55:20.892000',NULL,NULL,NULL,NULL,12,264,NULL,64),(664,'quan4@doivl.com','2022-11-02 18:08:45.050000','hoangnhhe141380@fpt.edu.vn','2022-11-02 18:55:20.892000',NULL,NULL,NULL,NULL,12,274,NULL,64),(674,'quan4@doivl.com','2022-11-02 18:08:45.052000','hoangnhhe141380@fpt.edu.vn','2022-11-02 18:55:20.954000',NULL,NULL,NULL,NULL,12,284,NULL,64),(684,'quan4@doivl.com','2022-11-02 18:08:45.054000','hoangnhhe141380@fpt.edu.vn','2022-11-02 18:55:20.926000',NULL,NULL,NULL,NULL,12,294,NULL,64),(694,'quan4@doivl.com','2022-11-02 18:08:45.056000','hoangnhhe141380@fpt.edu.vn','2022-11-02 18:55:20.954000',NULL,NULL,NULL,NULL,12,304,NULL,64),(704,'quan4@doivl.com','2022-11-02 18:08:45.058000','hoangnhhe141380@fpt.edu.vn','2022-11-02 18:55:20.892000',NULL,NULL,NULL,NULL,12,314,NULL,64),(744,'quan4@doivl.com','2022-11-02 18:12:29.528000','quan4@doivl.com','2022-11-02 18:12:29.528000',NULL,NULL,NULL,NULL,12,324,NULL,44),(754,'quan4@doivl.com','2022-11-02 18:12:29.533000','quan4@doivl.com','2022-11-02 18:12:29.533000',NULL,NULL,NULL,NULL,12,324,NULL,54),(764,'quan4@doivl.com','2022-11-02 18:12:29.536000','quan4@doivl.com','2022-11-02 18:12:29.536000',NULL,NULL,NULL,NULL,12,324,NULL,64),(774,'quan4@doivl.com','2022-11-02 18:12:29.665000','quan4@doivl.com','2022-11-02 18:12:29.665000',NULL,NULL,NULL,NULL,12,334,NULL,44),(784,'quan4@doivl.com','2022-11-02 18:12:29.669000','quan4@doivl.com','2022-11-02 18:12:29.669000',NULL,NULL,NULL,NULL,12,334,NULL,54),(794,'quan4@doivl.com','2022-11-02 18:12:29.671000','quan4@doivl.com','2022-11-02 18:16:51.868000',NULL,NULL,NULL,NULL,12,334,NULL,64),(804,'quan4@doivl.com','2022-11-02 18:12:29.835000','quan4@doivl.com','2022-11-02 18:12:29.835000',NULL,NULL,NULL,NULL,12,344,NULL,44),(814,'quan4@doivl.com','2022-11-02 18:12:29.840000','quan4@doivl.com','2022-11-02 18:12:29.840000',NULL,NULL,NULL,NULL,12,344,NULL,54),(824,'quan4@doivl.com','2022-11-02 18:12:29.842000','quan4@doivl.com','2022-11-02 18:14:44.750000',NULL,NULL,NULL,NULL,12,344,NULL,64);
 /*!40000 ALTER TABLE `submit_tbl` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -623,7 +618,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user` (
   `user_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `created_by` varchar(255) DEFAULT NULL,
@@ -661,7 +656,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `user_role`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user_role` (
   `role_id` bigint(20) NOT NULL,
   `user_id` bigint(20) NOT NULL,
@@ -683,7 +678,7 @@ CREATE TABLE `user_role` (
 
 LOCK TABLES `user_role` WRITE;
 /*!40000 ALTER TABLE `user_role` DISABLE KEYS */;
-INSERT INTO `user_role` VALUES (4,1,NULL,NULL,NULL,NULL,NULL),(4,2,NULL,NULL,NULL,NULL,NULL),(4,6,NULL,NULL,NULL,NULL,NULL),(4,24,NULL,NULL,NULL,NULL,NULL),(5,1,NULL,NULL,NULL,NULL,NULL),(5,4,NULL,NULL,NULL,NULL,NULL),(5,6,NULL,NULL,NULL,NULL,NULL),(5,14,NULL,NULL,NULL,NULL,NULL),(5,24,NULL,NULL,NULL,NULL,NULL),(5,34,NULL,NULL,NULL,NULL,NULL),(5,44,NULL,NULL,NULL,NULL,NULL),(6,1,NULL,NULL,NULL,NULL,NULL),(6,2,NULL,NULL,NULL,NULL,NULL),(6,4,NULL,NULL,NULL,NULL,NULL),(6,6,NULL,NULL,NULL,NULL,NULL),(6,24,NULL,NULL,NULL,NULL,NULL),(7,1,NULL,NULL,NULL,NULL,NULL),(7,2,NULL,NULL,NULL,NULL,NULL),(7,3,NULL,NULL,NULL,NULL,_binary '\0'),(7,6,NULL,NULL,NULL,NULL,_binary '\0'),(7,24,NULL,NULL,NULL,NULL,_binary '\0'),(8,1,NULL,NULL,NULL,NULL,_binary '\0'),(8,5,NULL,NULL,NULL,NULL,_binary '\0'),(8,6,NULL,NULL,NULL,NULL,_binary '\0'),(8,24,NULL,NULL,NULL,NULL,_binary '\0'),(9,1,NULL,NULL,NULL,NULL,_binary '\0'),(9,6,NULL,NULL,NULL,NULL,_binary '\0'),(9,7,NULL,NULL,NULL,NULL,_binary '\0'),(9,24,NULL,NULL,NULL,NULL,_binary '\0');
+INSERT INTO `user_role` VALUES (4,1,NULL,NULL,NULL,NULL,NULL),(4,2,NULL,NULL,NULL,NULL,NULL),(4,6,NULL,NULL,NULL,NULL,NULL),(4,24,NULL,NULL,NULL,NULL,NULL),(5,1,NULL,NULL,NULL,NULL,NULL),(5,4,NULL,NULL,NULL,NULL,NULL),(5,6,NULL,NULL,NULL,NULL,NULL),(5,14,NULL,NULL,NULL,NULL,NULL),(5,24,NULL,NULL,NULL,NULL,NULL),(5,34,NULL,NULL,NULL,NULL,NULL),(5,44,NULL,NULL,NULL,NULL,NULL),(6,1,NULL,NULL,NULL,NULL,NULL),(6,2,NULL,NULL,NULL,NULL,NULL),(6,4,NULL,NULL,NULL,NULL,NULL),(6,6,NULL,NULL,NULL,NULL,NULL),(6,24,NULL,NULL,NULL,NULL,NULL),(7,1,NULL,NULL,NULL,NULL,NULL),(7,2,NULL,NULL,NULL,NULL,NULL),(7,3,NULL,NULL,NULL,NULL,'\0'),(7,6,NULL,NULL,NULL,NULL,'\0'),(7,24,NULL,NULL,NULL,NULL,'\0'),(8,1,NULL,NULL,NULL,NULL,'\0'),(8,5,NULL,NULL,NULL,NULL,'\0'),(8,6,NULL,NULL,NULL,NULL,'\0'),(8,24,NULL,NULL,NULL,NULL,'\0'),(9,1,NULL,NULL,NULL,NULL,'\0'),(9,6,NULL,NULL,NULL,NULL,'\0'),(9,7,NULL,NULL,NULL,NULL,'\0'),(9,24,NULL,NULL,NULL,NULL,'\0');
 /*!40000 ALTER TABLE `user_role` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -693,7 +688,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `user_roles`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user_roles` (
   `user_id` bigint(20) NOT NULL,
   `role_id` bigint(20) NOT NULL,
@@ -720,7 +715,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `web_contact`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `web_contact` (
   `contact_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `created_by` varchar(255) DEFAULT NULL,
@@ -752,6 +747,10 @@ LOCK TABLES `web_contact` WRITE;
 INSERT INTO `web_contact` VALUES (4,'xucxichbo@doivl.com','2022-10-12 10:13:10','hoangnhhe141380@fpt.edu.vn','2022-10-14 14:06:01','random123@gmail.com',NULL,'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nec nisl in libero posuere dapibus eget nec neque. Maecenas venenatis elit sed nunc volutpat efficitur. Donec at iaculis sapien. Nam eget turpis pulvinar','0123456789','ok nhe','0',104,6),(14,'anonymousUser','2022-10-12 14:34:29','hoangnhhe141380@fpt.edu.vn','2022-10-14 01:24:00','hoangnguyen@gmail.com',NULL,'asdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdf','0123123123','ádasdasd','1',104,6),(24,'anonymousUser','2022-10-12 14:34:48','hoangnhhe141380@fpt.edu.vn','2022-10-14 01:27:32','hoang3232nguyen@gmail.com',NULL,'rtwetertwetertwetertwetertwetertwetertwetertwetertwetertwetertwetertwetertwetertwetertwetertwetertwetertwetertwetertwetertwetertwetertwete','0123123323','ok ban nhe','0',104,6),(34,'xucxichbo@doivl.com','2022-10-12 15:14:46','hoangnhhe141380@fpt.edu.vn','2022-10-14 02:54:43','random123@gmail.com',NULL,'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nec nisl in libero posuere dapibus eget nec neque. Maecenas venenatis elit sed nunc volutpat efficitur. Donec at iaculis sapien. Nam eget turpis pulvinar','0123456789','oke anh nhe','0',104,6),(44,'xucxichbo@doivl.com','2022-10-12 15:15:06','quan22@doivl.com','2022-10-17 14:54:56','random123@gmail.com',NULL,'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nec nisl in libero posuere dapibus eget nec neque. Maecenas venenatis elit sed nunc volutpat efficitur. Donec at iaculis sapien. Nam eget turpis pulvinar','0123456789','a','1',104,3),(74,'quan22@doivl.com','2022-10-13 01:27:03','quan22@doivl.com','2022-10-17 14:46:16','hehe@gmail.com','CuMeo2000xx','something something something','0123456789','uk thi sao2a','0',114,3),(84,'anonymousUser','2022-10-13 16:29:32','quan22@doivl.com','2022-10-17 14:46:47','hoansgasdf@xyz.com','hoang','bug ne','054583213','dadad','0',124,3),(94,'anonymousUser','2022-10-14 02:56:41','hoangnhhe141380@fpt.edu.vn','2022-10-14 02:57:37','asdfawer@vzcv.xzx','asdfasdfas dpfasdf','dm web nhu cl','0124234434','deo tra loi','0',124,6),(104,'anonymousUser','2022-10-17 13:32:45','anonymousUser','2022-10-17 13:32:45','soaicaviet2000@gmail.com','Viet ','a','0968549998',NULL,'1',104,NULL),(114,'anonymousUser','2022-10-17 13:36:20','anonymousUser','2022-10-17 13:36:20','soaicaviet2000@gmail.com','Viet Nguyen','a','0968549998',NULL,'1',104,NULL);
 /*!40000 ALTER TABLE `web_contact` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Dumping routines for database 'heroku_740a305870b5dd6'
+--
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -762,4 +761,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-11-03 12:04:28
+-- Dump completed on 2022-11-02 20:00:19

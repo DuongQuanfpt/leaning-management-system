@@ -20,6 +20,7 @@ import swp490.g23.onlinelearningsystem.entities.BaseEntity;
 import swp490.g23.onlinelearningsystem.entities.class_setting.domain.ClassSetting;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.ClassUser;
 import swp490.g23.onlinelearningsystem.entities.group.domain.Group;
+import swp490.g23.onlinelearningsystem.entities.issue.domain.Issue;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
 import swp490.g23.onlinelearningsystem.entities.schedule.domain.Schedule;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
@@ -78,5 +79,8 @@ public class Classes extends BaseEntity {
 
     @OneToMany(mappedBy = "classes")
     private List<Schedule> schedules;
+
+    @OneToMany(mappedBy = "classes")
+    private List<Issue> issues;
 
 }

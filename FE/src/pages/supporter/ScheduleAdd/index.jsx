@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 import { Breadcrumb, DatePicker, Modal, TimePicker } from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
@@ -11,13 +11,14 @@ import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 import { CButton, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
 import ErrorMsg from '~/components/Common/ErrorMsg'
 import moment from 'moment/moment'
+import { useSelector } from 'react-redux'
 
 const ScheduleAdd = () => {
   const round = (date, duration, method) => {
     return moment(Math[method](+date / +duration) * +duration)
   }
 
-  const { id } = useParams()
+  const currentClass = useSelector((state) => state.profile.currentClass)
 
   const [listFilter, setListFilter] = useState([])
   const [detail, setDetail] = useState({
@@ -51,7 +52,25 @@ const ScheduleAdd = () => {
   }, [])
 
   const handleAdd = async () => {
+    if (detail.modules.slot.trim() === '') {
+      setError('Slot name must not empty')
+      return
+    }
+
+    if (detail.modules.topic.trim() === '') {
+      setError('Topic name must not empty')
+      return
+    }
+
+    if (detail.room.title === 'Select Room') {
+      setError('You must select room')
+      return
+    }
+
     const params = {
+      clazz: currentClass,
+      slot: detail.modules.slot.trim(),
+      topic: detail.modules.topic.trim(),
       date: moment(detail.date).format('YYYY-MM-DD'),
       fromTime: moment(detail.fromTime).format('HH:mm:ss'),
       toTime: moment(detail.toTime).format('HH:mm:ss'),
@@ -59,11 +78,20 @@ const ScheduleAdd = () => {
     }
 
     await scheduleApi
-      .changeDetail(id, params)
+      .addSchedule(params)
       .then(() => {
-        setError('You have successfully changed your schedule detail')
+        setError('You have successfully add new schedule detail')
       })
       .catch((error) => {
+        console.log(error)
+        if (error.response.data.message === 'Room already have slots, cannot assign!') {
+          setError("You can't assign this Room at this time because already have slots assigned")
+          return
+        }
+        if (error.response.data.message === 'From Time must before To Time') {
+          setError('Time From must before Time To')
+          return
+        }
         setError('Something went wrong, please try again')
       })
   }
@@ -186,7 +214,6 @@ const ScheduleAdd = () => {
                             minuteStep={10}
                             secondStep={60}
                             disabledHours={() => range(0, Number(moment(new Date()).format('HH')))}
-                            disabledMinutes={() => range(0, Number(moment(new Date()).format('mm')))}
                             allowClear={false}
                             value={detail.fromTime}
                             onChange={(time) => setDetail((prev) => ({ ...prev, fromTime: time }))}
@@ -203,7 +230,6 @@ const ScheduleAdd = () => {
                             minuteStep={10}
                             secondStep={60}
                             disabledHours={() => range(0, Number(moment(detail.fromTime).format('HH')))}
-                            disabledMinutes={() => range(0, Number(moment(detail.fromTime).format('mm')))}
                             allowClear={false}
                             value={detail.toTime}
                             onChange={(time) => setDetail((prev) => ({ ...prev, toTime: time }))}
@@ -213,11 +239,11 @@ const ScheduleAdd = () => {
 
                       <ErrorMsg
                         errorMsg={error}
-                        isError={error === 'You have successfully changed your contact detail' ? false : true}
+                        isError={error === 'You have successfully add new schedule detail' ? false : true}
                       />
                       <div className="d-flex">
                         <CButton size="md" className="mr-5" color="warning" onClick={modalConfirm}>
-                          Save
+                          Add
                         </CButton>
                       </div>
                     </div>

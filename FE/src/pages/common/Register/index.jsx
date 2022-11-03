@@ -23,7 +23,7 @@ import logoWhite2 from '~/assets/images/logo-white-2.png'
 import bannerImg from '~/assets/images/background/bg2.jpg'
 
 const Register = () => {
-  const clientId = '75646251109-9glq1hvj26fb2l15867ipc9cqqs3koeo.apps.googleusercontent.com'
+  const clientId = process.env.clientId
 
   const navigateTo = useNavigate()
 
@@ -51,11 +51,13 @@ const Register = () => {
       setError('Your password and confirm password is not matched')
       return
     }
+    const urlFE = process.env.REACT_APP_LMS_FE_URL
+
     data = {
       fullName: data.name,
       email: data.email,
       password: data.password,
-      link: 'http://localhost:3000/verify?token=',
+      link: `${urlFE}/verify?token=`,
     }
 
     await registerApi

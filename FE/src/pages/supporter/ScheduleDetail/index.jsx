@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import moment from 'moment/moment'
 
-import { Breadcrumb, DatePicker, Modal, Radio, TimePicker } from 'antd'
+import { Breadcrumb, DatePicker, Modal, TimePicker } from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
+import { CButton, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
 
 import scheduleApi from '~/api/scheduleApi'
+
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
-import { CButton, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
 import ErrorMsg from '~/components/Common/ErrorMsg'
-import moment from 'moment/moment'
 
 const ScheduleDetail = () => {
   const { id } = useParams()
@@ -95,6 +96,14 @@ const ScheduleDetail = () => {
       })
       .catch((error) => {
         console.log(error)
+        if (error.response.data.message === 'Room already have slots, cannot assign!') {
+          setError("You can't assign this Room at this time because already have slots assigned")
+          return
+        }
+        if (error.response.data.message === 'From Time must before To Time') {
+          setError('Time From must before Time To')
+          return
+        }
         setError('Something went wrong, please try again')
       })
   }
@@ -245,16 +254,6 @@ const ScheduleDetail = () => {
                         </div>
                       </div>
 
-                      <div className="form-group col-6">
-                        <label className="col-form-label">Take Attendance</label>
-                        <div>
-                          <Radio.Group value={detail.status} disabled={true}>
-                            <Radio value={1}>Active</Radio>
-                            <Radio value={0}>Inactive</Radio>
-                            <Radio value={-1}>Attendance Taken</Radio>
-                          </Radio.Group>
-                        </div>
-                      </div>
                       <ErrorMsg
                         errorMsg={error}
                         isError={error === 'You have successfully changed your schedule detail' ? false : true}
