@@ -47,6 +47,7 @@ const Random = () => {
     await groupApi
       .getReuseGroup(id)
       .then((response) => {
+        console.log(response)
         setGroupDetail(response)
       })
       .catch((error) => {

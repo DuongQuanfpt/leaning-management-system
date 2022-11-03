@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
-import { Breadcrumb, DatePicker, Modal, Radio, TimePicker } from 'antd'
+import { Breadcrumb, DatePicker, Modal, TimePicker } from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 
 import scheduleApi from '~/api/scheduleApi'
@@ -12,11 +12,14 @@ import { CButton, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } fro
 import ErrorMsg from '~/components/Common/ErrorMsg'
 import moment from 'moment/moment'
 
-const ScheduleDetail = () => {
+const ScheduleAdd = () => {
+  const round = (date, duration, method) => {
+    return moment(Math[method](+date / +duration) * +duration)
+  }
+
   const { id } = useParams()
 
   const [listFilter, setListFilter] = useState([])
-  const [defaultDetail, setDefaultDetail] = useState({})
   const [detail, setDetail] = useState({
     modules: {
       classCode: '',
@@ -24,17 +27,16 @@ const ScheduleDetail = () => {
       topic: '',
     },
     date: moment(new Date(), 'YYYY-MM-DD'),
-    fromTime: moment(new Date(), 'HH:mm:ss'),
-    toTime: moment(new Date(), 'HH:mm:ss'),
+    fromTime: round(new Date(), moment.duration(10, 'minutes'), 'floor'),
+    toTime: round(new Date(), moment.duration(10, 'minutes'), 'ceil'),
     status: null,
     room: {
-      title: '',
+      title: 'Select Room',
       value: null,
     },
   })
 
   const [error, setError] = useState('')
-  const [isEditMode, setIsEditMode] = useState(false)
 
   useEffect(() => {
     scheduleApi
@@ -45,43 +47,11 @@ const ScheduleDetail = () => {
       .catch((error) => {
         console.log(error)
       })
-    loadData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const loadData = async () => {
-    await scheduleApi
-      .getDetail(id)
-      .then((response) => {
-        setDefaultDetail({
-          ...response,
-          status: response.status === 'Active' ? 1 : response.status === 'Inactive' ? 0 : null,
-          date: moment(response.date, 'YYYY-MM-DD'),
-          fromTime: moment(response.fromTime, 'HH:mm:ss'),
-          toTime: moment(response.toTime, 'HH:mm:ss'),
-        })
-        setDetail({
-          ...response,
-          status: response.status === 'Active' ? 1 : response.status === 'Inactive' ? 0 : null,
-          date: moment(response.date, 'YYYY-MM-DD'),
-          fromTime: moment(response.fromTime, 'HH:mm:ss'),
-          toTime: moment(response.toTime, 'HH:mm:ss'),
-        })
-      })
-      .catch((error) => {
-        console.log(error)
-      })
-  }
-
-  const handleEdit = () => {
-    setIsEditMode(true)
-    setError('')
-  }
-
-  const handleSave = async () => {
+  const handleAdd = async () => {
     const params = {
-      slot: detail.modules.slot,
-      topic: detail.modules.topic.trim(),
       date: moment(detail.date).format('YYYY-MM-DD'),
       fromTime: moment(detail.fromTime).format('HH:mm:ss'),
       toTime: moment(detail.toTime).format('HH:mm:ss'),
@@ -94,15 +64,8 @@ const ScheduleDetail = () => {
         setError('You have successfully changed your schedule detail')
       })
       .catch((error) => {
-        console.log(error)
         setError('Something went wrong, please try again')
       })
-  }
-
-  const handleCancel = () => {
-    setDetail((prev) => ({ ...prev, ...defaultDetail }))
-    setError('')
-    setIsEditMode(false)
   }
 
   const range = (start, end) => {
@@ -124,7 +87,7 @@ const ScheduleDetail = () => {
       cancelText: 'Cancel',
       okType: 'danger',
       onOk() {
-        handleSave()
+        handleAdd()
       },
       onCancel() {},
     })
@@ -140,7 +103,7 @@ const ScheduleDetail = () => {
             <div className="row">
               <div className="col-lg-12 m-b30">
                 <div className="row">
-                  <div className="col-12 d-flex align-items-center">
+                  <div className="col-4 d-flex align-items-center">
                     <Breadcrumb>
                       <Breadcrumb.Item>
                         <Link to="/dashboard">Dashboard</Link>
@@ -148,7 +111,7 @@ const ScheduleDetail = () => {
                       <Breadcrumb.Item>
                         <Link to="/schedule-list">Schedule List</Link>
                       </Breadcrumb.Item>
-                      <Breadcrumb.Item>Schedule Detail</Breadcrumb.Item>
+                      <Breadcrumb.Item>Schedule Add</Breadcrumb.Item>
                     </Breadcrumb>
                   </div>
                 </div>
@@ -159,7 +122,14 @@ const ScheduleDetail = () => {
                     <div className="row">
                       <div className="form-group col-6">
                         <label className="col-form-label">Slot</label>
-                        <input className="form-control" type="text" value={detail.modules.slot} disabled={true} />
+                        <input
+                          className="form-control"
+                          type="text"
+                          value={detail.modules.slot}
+                          onChange={(e) =>
+                            setDetail((prev) => ({ ...prev, modules: { ...prev.modules, slot: e.target.value } }))
+                          }
+                        />
                       </div>
                       <div className="form-group col-6">
                         <label className="col-form-label">Topic</label>
@@ -171,7 +141,6 @@ const ScheduleDetail = () => {
                             onChange={(e) =>
                               setDetail((prev) => ({ ...prev, modules: { ...prev.modules, topic: e.target.value } }))
                             }
-                            disabled={!isEditMode}
                           />
                         </div>
                       </div>
@@ -179,9 +148,7 @@ const ScheduleDetail = () => {
                         <label className="col-form-label">Room</label>
                         <div>
                           <CDropdown className="w-100">
-                            <CDropdownToggle disabled={!isEditMode} color="warning">
-                              {detail.room.title}
-                            </CDropdownToggle>
+                            <CDropdownToggle color="warning">{detail.room.title}</CDropdownToggle>
                             <CDropdownMenu style={{ width: '100%', maxHeight: '300px', overflow: 'auto' }}>
                               {listFilter?.roomFilter?.map((room) => (
                                 <CDropdownItem
@@ -201,7 +168,6 @@ const ScheduleDetail = () => {
                           <DatePicker
                             className="w-100"
                             size={'large'}
-                            disabled={!isEditMode}
                             format={'YYYY-MM-DD'}
                             allowClear={false}
                             disabledDate={(current) => current && current < moment().startOf('day')}
@@ -216,10 +182,11 @@ const ScheduleDetail = () => {
                           <TimePicker
                             className="w-100"
                             size={'large'}
-                            disabled={!isEditMode}
                             showNow={false}
                             minuteStep={10}
                             secondStep={60}
+                            disabledHours={() => range(0, Number(moment(new Date()).format('HH')))}
+                            disabledMinutes={() => range(0, Number(moment(new Date()).format('mm')))}
                             allowClear={false}
                             value={detail.fromTime}
                             onChange={(time) => setDetail((prev) => ({ ...prev, fromTime: time }))}
@@ -232,12 +199,11 @@ const ScheduleDetail = () => {
                           <TimePicker
                             className="w-100"
                             size={'large'}
-                            disabled={!isEditMode}
                             showNow={false}
                             minuteStep={10}
                             secondStep={60}
                             disabledHours={() => range(0, Number(moment(detail.fromTime).format('HH')))}
-                            disabledMinutes={() => {}}
+                            disabledMinutes={() => range(0, Number(moment(detail.fromTime).format('mm')))}
                             allowClear={false}
                             value={detail.toTime}
                             onChange={(time) => setDetail((prev) => ({ ...prev, toTime: time }))}
@@ -245,37 +211,14 @@ const ScheduleDetail = () => {
                         </div>
                       </div>
 
-                      <div className="form-group col-6">
-                        <label className="col-form-label">Take Attendance</label>
-                        <div>
-                          <Radio.Group value={detail.status} disabled={true}>
-                            <Radio value={1}>Active</Radio>
-                            <Radio value={0}>Inactive</Radio>
-                            <Radio value={-1}>Attendance Taken</Radio>
-                          </Radio.Group>
-                        </div>
-                      </div>
                       <ErrorMsg
                         errorMsg={error}
-                        isError={error === 'You have successfully changed your schedule detail' ? false : true}
+                        isError={error === 'You have successfully changed your contact detail' ? false : true}
                       />
                       <div className="d-flex">
-                        {isEditMode ? (
-                          <>
-                            <CButton size="md" className="mr-5" color="warning" onClick={modalConfirm}>
-                              Save
-                            </CButton>
-                            <CButton size="md" color="warning" onClick={handleCancel}>
-                              Cancel
-                            </CButton>
-                          </>
-                        ) : (
-                          <>
-                            <CButton size="md" color="warning" onClick={handleEdit}>
-                              Edit
-                            </CButton>
-                          </>
-                        )}
+                        <CButton size="md" className="mr-5" color="warning" onClick={modalConfirm}>
+                          Save
+                        </CButton>
                       </div>
                     </div>
                   </div>
@@ -290,4 +233,4 @@ const ScheduleDetail = () => {
   )
 }
 
-export default ScheduleDetail
+export default ScheduleAdd

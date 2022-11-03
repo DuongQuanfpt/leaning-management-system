@@ -64,6 +64,7 @@ const MilestoneList = () => {
 
   useEffect(() => {
     milestoneApi.getPage().then((response) => {
+      console.log(response)
       setListFilter((prev) => ({
         ...prev,
         statusFilter: response.statusFilter,
@@ -135,6 +136,7 @@ const MilestoneList = () => {
   }
 
   const modalOpen = (allGroup) => {
+    console.log(allGroup)
     const listGroup = [
       {
         groupCode: 'Individually',
@@ -199,30 +201,49 @@ const MilestoneList = () => {
               </Col>
             ))}
           </Row>
-          <Space className="pt-3 d-flex flex-row aligns-item-start">
-            <Typography.Title
-              level={5}
-              className="d-flex"
-              style={{
-                fontFamily:
-                  '-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji',
-              }}
-            >
-              Once you have opened it, group configuration of this milestone cannot be changed anymore!
-            </Typography.Title>
-          </Space>
-          <Space>
-            <Button
-              className="p-0 m-0 d-flex flex-row aligns-item-start"
-              type="link"
-              onClick={() => {
-                Modal.destroyAll()
-                navigateTo('/group-list')
-              }}
-            >
-              Click here to configure group
-            </Button>
-          </Space>
+          {allGroup.teamWork ? (
+            <>
+              <Space className="pt-3 d-flex flex-row aligns-item-start">
+                <Typography.Title
+                  level={5}
+                  className="d-flex"
+                  style={{
+                    fontFamily:
+                      '-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji',
+                  }}
+                >
+                  Once you have opened it, group configuration of this milestone cannot be changed anymore!
+                </Typography.Title>
+              </Space>
+              <Space>
+                <Button
+                  className="p-0 m-0 d-flex flex-row aligns-item-start"
+                  type="link"
+                  onClick={() => {
+                    Modal.destroyAll()
+                    navigateTo('/group-list')
+                  }}
+                >
+                  Click here to configure group
+                </Button>
+              </Space>
+            </>
+          ) : (
+            <>
+              <Space className="pt-3 d-flex flex-row aligns-item-start">
+                <Typography.Title
+                  level={5}
+                  className="d-flex"
+                  style={{
+                    fontFamily:
+                      '-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji',
+                  }}
+                >
+                  This milestone is working individually, you can't create group for this milestone
+                </Typography.Title>
+              </Space>
+            </>
+          )}
         </div>
       ),
     })

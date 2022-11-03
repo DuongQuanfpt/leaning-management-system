@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import swp490.g23.onlinelearningsystem.entities.BaseEntity;
 import swp490.g23.onlinelearningsystem.entities.class_setting.domain.ClassSetting;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
@@ -24,7 +25,7 @@ import swp490.g23.onlinelearningsystem.util.enumutil.ScheduleStatus;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Schedule {
+public class Schedule extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
