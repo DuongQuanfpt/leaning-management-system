@@ -1,4 +1,4 @@
-package swp490.g23.onlinelearningsystem.entities.issue.domain.response;
+package swp490.g23.onlinelearningsystem.entities.issue.domain.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,24 +9,19 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class IssueResponseDTO {
-    Long issueId;
-
+public class IssueRequestDTO {
     String title;
     
-    String milestoneTitle;
+    Long milestoneId;
 
-    String type;
+    Long typeId;
 
     String asigneeName;
 
     String deadline;
 
-    String status;
-
-    String classCode;
+    Long statusId;
 
     String description;
 
-    String requirement;
 }

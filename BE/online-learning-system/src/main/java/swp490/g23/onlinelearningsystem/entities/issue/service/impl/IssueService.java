@@ -16,10 +16,13 @@ import swp490.g23.onlinelearningsystem.entities.classes.repositories.ClassReposi
 import swp490.g23.onlinelearningsystem.entities.group.domain.Group;
 import swp490.g23.onlinelearningsystem.entities.group.repositories.GroupRepository;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.Issue;
+import swp490.g23.onlinelearningsystem.entities.issue.domain.filter.IssueFilter;
+import swp490.g23.onlinelearningsystem.entities.issue.domain.filter.IssueFilterValue;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueGroupDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueListDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueMilestoneDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueResponseDTO;
+import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueSettingDto;
 import swp490.g23.onlinelearningsystem.entities.issue.repositories.IssueRepository;
 import swp490.g23.onlinelearningsystem.entities.issue.repositories.Criteria.IssueCriteria;
 import swp490.g23.onlinelearningsystem.entities.issue.repositories.CriteriaEntity.IssueQuery;
@@ -55,53 +58,18 @@ public class IssueService implements IIssueService {
     private ClassRepositories classRepositories;
 
     @Override
-    public ResponseEntity<IssueListDTO> getIssueList(int page, int limit, String keyword, String filterStatus,
+    public ResponseEntity<IssueListDTO> getIssueList(int page, int limit, String keyword, Long filterStatus,
             Long filterMilestoneId, Long filterGroupId, String filterAsigneeName,
-            String filterTypeValue, String classCode) {
+            Long filterTypeValue, String classCode, Long filterRequirementId) {
         Classes classes = classRepositories.findClassByCode(classCode);
         if (classes == null) {
             throw new CustomException("Class doesnt exist");
         }
 
         IssueQuery result = issueCriteria.searchFilterQuery(keyword, filterStatus, filterMilestoneId, filterGroupId,
-                filterAsigneeName, filterTypeValue, classCode);
+                filterAsigneeName, filterTypeValue,filterRequirementId ,classCode);
         TypedQuery<Issue> queryResult = result.getResultQuery();
         TypedQuery<Long> countQuery = result.getCountQuery();
-
-        List<User> asignees = new ArrayList<>();
-        if (filterMilestoneId != null) {
-            asignees = userRepository.getIssueAsigneeOfMilestone(classCode, filterMilestoneId);
-        } else {
-            asignees = userRepository.getIssueAsigneeOfGeneral(classCode);
-        }
-        List<String> asigneeFilter = new ArrayList<>();
-        for (User user : asignees) {
-            asigneeFilter.add(user.getAccountName());
-        }
-
-        List<Group> groups = new ArrayList<>();
-        if (filterMilestoneId != null) {
-            groups = groupRepository.getGroupOfIssueByMilestone(filterMilestoneId);
-        } else {
-            groups = groupRepository.getGroupOfGeneralIssue(classCode);
-        }
-        List<IssueGroupDTO> groupDTOs = new ArrayList<>();
-        for (Group group : groups) {
-            groupDTOs.add(toGroupDto(group));
-        }
-
-        List<ClassSetting> typeAndStatusOfClass = classSettingRepository.getTypeAndStatusOfClass(classCode);
-        List<String> typeFilter = new ArrayList<>();
-        List<String> statusFilter = new ArrayList<>();
-        for (ClassSetting setting : typeAndStatusOfClass) {
-            if (setting.getType().getSettingValue().equals("TYPE_ISSUE_STATUS")) {
-                statusFilter.add(setting.getSettingValue());
-            }
-
-            if (setting.getType().getSettingValue().equals("TYPE_ISSUE_TYPE")) {
-                typeFilter.add(setting.getSettingValue());
-            }
-        }
 
         Long totalItem = countQuery.getSingleResult();
         int totalPage;
@@ -124,10 +92,6 @@ public class IssueService implements IIssueService {
         dto.setTotalItem(totalItem);
         dto.setTotalPage(totalPage);
         dto.setIssueList(issueResponseDTOs);
-        dto.setAsigneeFilter(asigneeFilter);
-        dto.setTypeFilter(typeFilter);
-        dto.setStatusFilter(statusFilter);
-        dto.setGroupFilter(groupDTOs);
         return ResponseEntity.ok(dto);
     }
 
@@ -139,17 +103,31 @@ public class IssueService implements IIssueService {
         return groupDTO;
     }
 
+    public IssueSettingDto toSettingDTO(ClassSetting setting) {
+        IssueSettingDto dto = new IssueSettingDto();
+        dto.setId(setting.getClassSettingId());
+        dto.setTitle(setting.getSettingValue());
+        return dto;
+    }
+
     public IssueResponseDTO toDto(Issue issue) {
         IssueResponseDTO dto = new IssueResponseDTO();
         dto.setIssueId(issue.getIssueId());
         dto.setTitle(issue.getTitle());
-        dto.setType(issue.getType().getSettingTitle());
         dto.setClassCode(issue.getClasses().getCode());
 
-        if(issue.getDescription()!=null) {
-            dto.setDescription(issue.getDescription());
+        if(issue.getType()!=null){
+            dto.setType(issue.getType().getSettingTitle());
         }
       
+        if(issue.getRequirement()!=null){
+            dto.setRequirement(issue.getRequirement().getTitle());
+        }
+
+        if (issue.getDescription() != null) {
+            dto.setDescription(issue.getDescription());
+        }
+
         if (issue.getAsignee() != null) {
             dto.setAsigneeName(issue.getAsignee().getAccountName());
         }
@@ -183,14 +161,54 @@ public class IssueService implements IIssueService {
     }
 
     @Override
-    public ResponseEntity<List<IssueMilestoneDTO>> issueListFilter(String classCode) {
+    public ResponseEntity<IssueFilter> issueListFilter(String classCode) {
+        IssueFilter filter = new IssueFilter();
+
+        List<User> asignees = userRepository.getIssueAsigneeOfClass(classCode);
+        ;
+        List<String> asigneeFilter = new ArrayList<>();
+        for (User user : asignees) {
+            asigneeFilter.add(user.getAccountName());
+        }
+
+        List<Group> groups = groupRepository.getGroupOfIssueByClass(classCode);
+        List<IssueGroupDTO> groupDTOs = new ArrayList<>();
+        for (Group group : groups) {
+            groupDTOs.add(toGroupDto(group));
+        }
+
         List<Milestone> milestoneOfClass = milestoneRepository.getByClassCode(classCode);
         List<IssueMilestoneDTO> dtos = new ArrayList<>();
-
         for (Milestone milestone : milestoneOfClass) {
             dtos.add(toMilestoneDto(milestone));
         }
-        return ResponseEntity.ok(dtos);
+
+        List<ClassSetting> typeAndStatusOfClass = classSettingRepository.getTypeAndStatusOfClass(classCode);
+        List<IssueSettingDto> typeFilter = new ArrayList<>();
+        List<IssueSettingDto> statusFilter = new ArrayList<>();
+        for (ClassSetting setting : typeAndStatusOfClass) {
+            if (setting.getType().getSettingValue().equals("TYPE_ISSUE_STATUS")) {
+                statusFilter.add(toSettingDTO(setting));
+            }
+
+            if (setting.getType().getSettingValue().equals("TYPE_ISSUE_TYPE")) {
+                typeFilter.add(toSettingDTO(setting));
+            }
+        }
+
+        List<IssueFilterValue> requirementFilter = new ArrayList<>();
+        List<Issue> requirementOfClass = issueRepository.getRequirementOfClass(classCode);
+        for (Issue issue : requirementOfClass) {
+            requirementFilter.add(new IssueFilterValue(issue.getTitle(), issue.getIssueId()));
+        }
+
+        filter.setAsigneeFilter(asigneeFilter);
+        filter.setGroupFilter(groupDTOs);
+        filter.setMilestoneFilter(dtos);
+        filter.setStatusFilter(statusFilter);
+        filter.setTypeFilter(typeFilter);
+        filter.setRequirement(requirementFilter);
+        return ResponseEntity.ok(filter);
     }
 
     @Override

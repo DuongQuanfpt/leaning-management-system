@@ -7,10 +7,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import swp490.g23.onlinelearningsystem.entities.issue.domain.filter.IssueFilter;
+import swp490.g23.onlinelearningsystem.entities.issue.domain.request.IssueRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueListDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueMilestoneDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueResponseDTO;
@@ -30,22 +34,30 @@ public class IssueController {
 			@RequestParam(name = "page", required = false) String currentPage,
 			@RequestParam(name = "limit", required = false) String requestLimit,
 			@RequestParam(name = "q", required = false) String keyword,
-			@RequestParam(name = "status", required = false) String filterStatus,
-            @RequestParam(name = "group", required = false) Long filterGroupId,
-            @RequestParam(name = "milestone", required = false) Long milestoneId,
+			@RequestParam(name = "statusId", required = false) Long filterStatus,
+            @RequestParam(name = "groupId", required = false) Long filterGroupId,
+			@RequestParam(name = "requirementId", required = false) Long filterRequirementId,
+            @RequestParam(name = "milestoneId", required = false) Long milestoneId,
             @RequestParam(name = "asignee", required = false) String filterAssigneeName,
-            @RequestParam(name = "type", required = false) String filterTypeValue,
+            @RequestParam(name = "type", required = false) Long filterTypeValue,
 		    @PathVariable("classCode") String classCode) {
 
 		int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
 		int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
-		return issueService.getIssueList(page, limit, keyword, filterStatus, milestoneId, filterGroupId , filterAssigneeName, filterTypeValue ,classCode);
+		return issueService.getIssueList(page, limit, keyword, filterStatus, milestoneId, filterGroupId , filterAssigneeName, filterTypeValue ,classCode ,filterRequirementId);
 	}
 
 	@GetMapping(value = "/issue-list-filter/{classCode}")
-	public ResponseEntity<List<IssueMilestoneDTO>> getIssueFilter(@PathVariable("classCode") String classCode) {
+	public ResponseEntity<IssueFilter> getIssueFilter(@PathVariable("classCode") String classCode) {
 
 		return issueService.issueListFilter(classCode);
+	}
+
+	@PostMapping(value = "/issue-add-filter/{classCode}")
+	public ResponseEntity<List<IssueMilestoneDTO>> addIssueFilter(@PathVariable("classCode") String classCode,
+		@RequestBody IssueRequestDTO dto ) {
+
+		return null;
 	}
 
 	@GetMapping(value = "/issue-detail/{issueId}")

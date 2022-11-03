@@ -8,10 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-public class IssueMilestoneDTO {
-    Long milestoneId;
-    String milestoneTitle;
-    String assignmentTitle;
-    boolean isTeamwork;
+public class IssueSettingDto {
+    String title;
+    Long id;
 }

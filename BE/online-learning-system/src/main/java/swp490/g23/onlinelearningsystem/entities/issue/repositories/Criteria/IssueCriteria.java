@@ -14,9 +14,9 @@ import swp490.g23.onlinelearningsystem.entities.issue.repositories.CriteriaEntit
 public class IssueCriteria {
     private final EntityManager em;
 
-    public IssueQuery searchFilterQuery(String keyword, String filterStatus,
+    public IssueQuery searchFilterQuery(String keyword, Long filterStatusId,
             Long filterMilestoneId, Long filterGroupId, String filterAsigneeName,
-            String filterTypeValue, String classCode) {
+            Long filterTypeId,Long filterRequirementId , String classCode) {
 
         StringBuilder query = new StringBuilder("SELECT i FROM Issue i WHERE i.classes.code = '" + classCode + "'");
 
@@ -33,9 +33,7 @@ public class IssueCriteria {
 
         if (filterMilestoneId != null) {
             query.append(" AND i.milestone.milestoneId = '" + filterMilestoneId + "'");
-        } else {
-            query.append(" AND i.milestone IS NULL");
-        }
+        } 
 
         if (filterGroupId != null) {
             query.append(" AND i.group.groupId = '" + filterGroupId + "'");
@@ -45,17 +43,21 @@ public class IssueCriteria {
             query.append(" AND i.asignee.accountName = '" + filterAsigneeName + "'");
         }
 
-        if (filterTypeValue != null) {
-            query.append(" AND i.type.settingValue = '" + filterTypeValue + "'");
+        if (filterTypeId != null) {
+            query.append(" AND i.type.classSettingId = '" + filterTypeId + "'");
         }
 
-        if (filterStatus != null) {
-            if (filterStatus.equals("Open")) {
+        if (filterRequirementId != null) {
+            query.append(" AND i.requirement.issueId = '" + filterRequirementId + "'");
+        }
+
+        if (filterStatusId != null) {
+            if (filterStatusId.equals("Open")) {
                 query.append(" AND i.isClosed = 0");
-            } else if (filterStatus.equals("Closed")) {
+            } else if (filterStatusId.equals("Closed")) {
                 query.append(" AND i.isClosed = 1");
             } else {
-                query.append(" AND i.status.settingValue = '" + filterStatus + "'");
+                query.append(" AND i.status.classSettingId = '" + filterStatusId + "'");
             }
         }
 
