@@ -26,6 +26,7 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
     @Query(value = "SELECT DISTINCT g FROM Group g JOIN g.issues as i WHERE  i.classes.code = :classCode")
     List<Group> getGroupOfIssueByClass(String classCode);
 
-    @Query(value = "SELECT DISTINCT g FROM Group g JOIN g.issues as i WHERE i.classes.code = :classCode AND i.milestone IS NULL")
-    List<Group> getGroupOfGeneralIssue(String classCode);
+    @Query(value = "SELECT DISTINCT g FROM Group g WHERE  g.classes.code = :classCode")
+    List<Group> getGroupOfClass(String classCode);
+   
 }

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueAsigneeDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueGroupDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueMilestoneDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueSettingDto;
@@ -21,4 +22,5 @@ public class IssueFilter {
     private List<IssueGroupDTO> groupFilter;
     private List<IssueMilestoneDTO> milestoneFilter;
     private List<IssueFilterValue> requirement;
+    private List<IssueAsigneeDTO> traineesToAsign;
 }

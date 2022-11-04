@@ -1,9 +1,9 @@
 package swp490.g23.onlinelearningsystem.entities.issue.controller;
 
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.filter.IssueFilter;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.request.IssueRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueListDTO;
-import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueMilestoneDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.service.impl.IssueService;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
+import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 
 @RestController
 @RequestMapping(Setting.API_PREFIX)
@@ -39,7 +39,7 @@ public class IssueController {
 			@RequestParam(name = "requirementId", required = false) Long filterRequirementId,
             @RequestParam(name = "milestoneId", required = false) Long milestoneId,
             @RequestParam(name = "asignee", required = false) String filterAssigneeName,
-            @RequestParam(name = "type", required = false) Long filterTypeValue,
+            @RequestParam(name = "typeId", required = false) Long filterTypeValue,
 		    @PathVariable("classCode") String classCode) {
 
 		int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
@@ -53,12 +53,22 @@ public class IssueController {
 		return issueService.issueListFilter(classCode);
 	}
 
-	@PostMapping(value = "/issue-add-filter/{classCode}")
-	public ResponseEntity<List<IssueMilestoneDTO>> addIssueFilter(@PathVariable("classCode") String classCode,
-		@RequestBody IssueRequestDTO dto ) {
+	@GetMapping(value = "/issue-add-filter/{classCode}")
+	public ResponseEntity<IssueFilter> addIssueFilter(@PathVariable("classCode") String classCode,
+		@AuthenticationPrincipal User user) {
 
-		return null;
+		return issueService.issueAddFilter(classCode,user);
 	}
+
+
+	@PostMapping(value = "/issue-add/{classCode}")
+	public ResponseEntity<String> addIssue(@PathVariable("classCode") String classCode,
+		@RequestBody IssueRequestDTO dto,
+		@AuthenticationPrincipal User user ) {
+
+		return issueService.issueAdd(classCode, dto ,user);
+	}
+	
 
 	@GetMapping(value = "/issue-detail/{issueId}")
 	public ResponseEntity<IssueResponseDTO> getIssueDetail(@PathVariable("issueId") Long issueId) {

@@ -16,6 +16,8 @@ public class IssueRequestDTO {
 
     Long typeId;
 
+    Long groupId;
+
     String asigneeName;
 
     String deadline;

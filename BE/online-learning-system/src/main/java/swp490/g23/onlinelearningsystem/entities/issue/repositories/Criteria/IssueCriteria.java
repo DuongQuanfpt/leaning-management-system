@@ -52,9 +52,9 @@ public class IssueCriteria {
         }
 
         if (filterStatusId != null) {
-            if (filterStatusId.equals("Open")) {
+            if (filterStatusId == 1 ) {
                 query.append(" AND i.isClosed = 0");
-            } else if (filterStatusId.equals("Closed")) {
+            } else if (filterStatusId == 0) {
                 query.append(" AND i.isClosed = 1");
             } else {
                 query.append(" AND i.status.classSettingId = '" + filterStatusId + "'");
