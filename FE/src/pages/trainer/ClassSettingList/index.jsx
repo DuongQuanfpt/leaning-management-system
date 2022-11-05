@@ -72,7 +72,7 @@ const ClassSettingList = () => {
   }, [filter, currentClass])
 
   const loadData = async (page, filter, q = '') => {
-    const params = { item: ITEM_PER_PAGE, page: page, filterClass: currentClass }
+    const params = { limit: ITEM_PER_PAGE, page: page, filterClass: currentClass }
     if (q !== '') {
       params.q = q.trim()
     }
