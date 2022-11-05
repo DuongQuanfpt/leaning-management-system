@@ -16,6 +16,7 @@ import {
   classEvalCriteriaListRoutes,
   groupListRoutes,
   scheduleListRoutes,
+  issueRoutes,
 } from '~/routes'
 import RequireAuth from '~/utils/RequireAuth'
 
@@ -113,6 +114,13 @@ const User = () => {
 
           <Route element={<RequireAuth allowedRoles={['supporter', 'trainer', 'trainee']} />}>
             {groupListRoutes.map((route, index) => {
+              const Page = route.component
+              return <Route key={index} path={route.path} element={<Page />} />
+            })}
+          </Route>
+
+          <Route element={<RequireAuth allowedRoles={['trainer', 'trainee']} />}>
+            {issueRoutes.map((route, index) => {
               const Page = route.component
               return <Route key={index} path={route.path} element={<Page />} />
             })}

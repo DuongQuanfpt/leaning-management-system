@@ -54,8 +54,8 @@ const Register = () => {
     const urlFE = process.env.REACT_APP_LMS_FE_URL
 
     data = {
-      fullName: data.name,
-      email: data.email,
+      fullName: data.name.trim(),
+      email: data.email.trim(),
       password: data.password,
       link: `${urlFE}/verify?token=`,
     }

@@ -64,7 +64,6 @@ const MilestoneList = () => {
 
   useEffect(() => {
     milestoneApi.getPage().then((response) => {
-      console.log(response)
       setListFilter((prev) => ({
         ...prev,
         statusFilter: response.statusFilter,
@@ -98,6 +97,7 @@ const MilestoneList = () => {
     await milestoneApi
       .getPage(params)
       .then((response) => {
+        console.log(response)
         setListMilestone(response.listResult)
         setCurrentPage(page)
         setTotalItem(response.totalItem)
@@ -316,13 +316,13 @@ const MilestoneList = () => {
       title: 'Title',
       dataIndex: 'title',
       sorter: (a, b) => a.title.length - b.title.length,
-      width: '15',
+      width: '15%',
     },
     {
       title: 'Assignment',
       dataIndex: 'assignment',
       sorter: (a, b) => a.assignment.title.length - b.assignment.title.length,
-      width: '15',
+      width: '15%',
       render: (_, { assignment }) => assignment.title,
     },
     {
@@ -336,15 +336,20 @@ const MilestoneList = () => {
       width: '12.5%',
     },
     {
+      title: 'Is Teamwork',
+      render: (_, { assignment }) => (assignment.isTeamWork === 1 ? 'Yes' : 'No'),
+      width: '10%',
+    },
+    {
       title: 'Description',
       dataIndex: 'description',
       sorter: (a, b) => a.description.length - b.description.length,
-      width: '35%',
+      width: '25%',
     },
     {
       title: 'Status',
       dataIndex: 'status',
-      width: '10%',
+      width: '5%',
       sorter: (a, b) => a.status?.length - b.status?.length,
       render: (_, { status }) => (
         <Tag color={status === 'Open' ? 'blue' : status === 'In_Progress' ? 'green' : 'grey'} key={status}>
@@ -393,6 +398,7 @@ const MilestoneList = () => {
           </Tooltip>
         </Space>
       ),
+      width: '5%',
     },
   ]
 
@@ -441,7 +447,7 @@ const MilestoneList = () => {
                         <CIcon icon={cilSync} />
                       </CButton>
                     </Tooltip>
-                    <Tooltip title="Add New Eval Criteria" placement="right">
+                    <Tooltip title="Add New Milestones" placement="right">
                       <CButton color="danger" type="submit" className="text-light ml-4" onClick={handleAdd}>
                         <CIcon icon={cilPlus} />
                       </CButton>
