@@ -8,12 +8,14 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import swp490.g23.onlinelearningsystem.entities.issue.domain.filter.IssueFilter;
+import swp490.g23.onlinelearningsystem.entities.issue.domain.request.IssueBatchRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.request.IssueRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueListDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueResponseDTO;
@@ -68,6 +70,31 @@ public class IssueController {
 
 		return issueService.issueAdd(classCode, dto ,user);
 	}
+
+	@PutMapping(value = "/issue-edit/{issueId}")
+	public ResponseEntity<String> editIssue(@PathVariable("issueId") Long issueId,
+		@RequestBody IssueRequestDTO dto,
+		@AuthenticationPrincipal User user ) {
+
+		return issueService.issueEdit(issueId, dto ,user);
+	}
+
+	@PutMapping(value = "/issue-batch-update")
+	public ResponseEntity<String> updateBatchIssue(@RequestBody IssueBatchRequestDTO batchRequestDTO,
+		@AuthenticationPrincipal User user ) {
+
+		return issueService.updateBatchIssue(batchRequestDTO ,user);
+	}
+
+
+
+	// @PostMapping(value = "/issue-add-requirement/{classCode}")
+	// public ResponseEntity<String> addRequirement(@PathVariable("classCode") String classCode,
+	// 	@RequestBody IssueRequestDTO dto,
+	// 	@AuthenticationPrincipal User user ) {
+
+	// 	return issueService.requirementAdd(classCode, dto ,user);
+	// }
 	
 
 	@GetMapping(value = "/issue-detail/{issueId}")

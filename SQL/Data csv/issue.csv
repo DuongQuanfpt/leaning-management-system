@@ -1,7 +1,11 @@
-"issue_id";"created_by";"created_date";"modified_by";"modified_date";"deadline";"description";"is_closed";"title";"asignee_id";"author_id";"class_id";"group_id";"milestone_id";"status_id";"type_id"
-1;"";"";"";"";"2022-11-04";"Description";"1";"Code BE : ko xong thi chet";254;254;12;194;44;331;325
-2;"";"";"";"";"2022-11-05";"Description";"0";"Code FE : ";264;244;12;174;44;330;325
-3;"";"";"";"";"2022-11-05";"Description";"0";"Bug BE : request return 500";254;244;12;194;44;330;326
-4;"";"";"";"";"2022-11-05";"Description";"0";"Doc Review";254;264;12;194;54;329;327
-6;"";"";"";"";"";"";"0";"General issue 1";254;264;12;244;0;330;326
-7;"";"";"";"";"";"Description";"1";"General issue 2";14;14;1;0;0;44;14
+"issue_id";"created_by";"created_date";"modified_by";"modified_date";"deadline";"description";"is_closed";"title";"asignee_id";"author_id";"class_id";"group_id";"milestone_id";"status_id";"type_id";"requirement_id"
+1;"";"";"";"";"2022-11-04";"Description";"1";"Code BE : ko xong thi chet";254;254;12;194;44;331;325;8
+2;"";"";"";"";"2022-11-05";"Description";"0";"Code FE : ";264;244;12;174;44;330;325;8
+3;"";"";"";"";"2022-11-05";"Description";"0";"Bug BE : request return 500";254;244;12;194;44;330;326;8
+4;"";"";"";"";"2022-11-05";"Description";"0";"Doc Review";254;264;12;194;54;329;327;0
+6;"";"";"";"";"";"";"0";"General issue 1";254;264;12;244;54;330;326;0
+7;"";"";"";"";"";"Description";"1";"General issue 2";14;14;1;0;44;44;14;0
+8;"";"";"";"";"";"";"1";"Requirement 1";254;264;12;194;44;0;0;0
+9;"quan1@doivl.com";"2022-11-04 15:42:56.904000";"quan1@doivl.com";"2022-11-04 15:42:56.904000";"2022-11-01";"new description";"0";"New Issue";0;2;12;174;44;329;325;0
+10;"quan1@doivl.com";"2022-11-05 09:40:13.683000";"quan1@doivl.com";"2022-11-05 09:40:13.683000";"2022-11-01";"new description";"0";"New Issue";234;2;12;174;44;329;325;0
+11;"quan1@doivl.com";"2022-11-05 12:43:16.876000";"quan1@doivl.com";"2022-11-05 12:43:16.876000";"2022-11-01";"new description";"0";"New Issue";234;2;12;174;44;329;325;8

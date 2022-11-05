@@ -1,7 +1,5 @@
 package swp490.g23.onlinelearningsystem.entities.issue.domain.response;
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,9 +10,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class IssueMilestoneDTO {
-    Long milestoneId;
-    String milestoneTitle;
-    String assignmentTitle;
-    boolean isTeamwork;
-    List<Long> groupId;
+    String title;
+    String deadline;
+    String status;
+    
 }

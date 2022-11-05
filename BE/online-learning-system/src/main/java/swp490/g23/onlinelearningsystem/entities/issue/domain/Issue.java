@@ -72,7 +72,7 @@ public class Issue extends BaseEntity{
     private List<Issue> issueOfRequirement = new ArrayList<>();
 
 
-    @Column
+    @Column(name = "title", nullable = false)
     private String title;
 
     @Column
