@@ -17,6 +17,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import swp490.g23.onlinelearningsystem.entities.attendance.domain.Attendance;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
@@ -64,4 +65,6 @@ public class ClassUser {
     @OneToMany(mappedBy = "classUser")
     private List<Submit> submits;
 
+    @OneToMany(mappedBy = "classUser")
+    private List<Attendance> attendances;
 }

@@ -6,21 +6,17 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueAsigneeDTO;
-import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueGroupDTO;
-import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueMilestoneDTO;
-import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueSettingDto;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class IssueFilter {
-    private List<IssueSettingDto> typeFilter;
-    private List<IssueSettingDto> statusFilter;
+    private List<IssueSettingFilterDto> typeFilter;
+    private List<IssueSettingFilterDto> statusFilter;
     private List<String> asigneeFilter;
-    private List<IssueGroupDTO> groupFilter;
-    private List<IssueMilestoneDTO> milestoneFilter;
+    private List<IssueGroupFilterDTO> groupFilter;
+    private List<IssueMilestoneFilterDTO> milestoneFilter;
     private List<IssueFilterValue> requirement;
-    private List<IssueAsigneeDTO> traineesToAsign;
+    private List<String> traineesToAsign;
 }

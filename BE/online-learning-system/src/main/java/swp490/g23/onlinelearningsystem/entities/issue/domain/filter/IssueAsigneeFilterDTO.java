@@ -1,4 +1,4 @@
-package swp490.g23.onlinelearningsystem.entities.issue.domain.response;
+package swp490.g23.onlinelearningsystem.entities.issue.domain.filter;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class IssueAsigneeDTO {
+public class IssueAsigneeFilterDTO {
     Long traineeId;
     String username;   
 }
