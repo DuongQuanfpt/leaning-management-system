@@ -12,6 +12,11 @@ const contactUsApi = {
     return axiosClient.get(url, { ...header, params })
   },
 
+  getIssueDetail: (id) => {
+    const url = `/api/issue-detail/${id}`
+    return axiosClient.get(url, header)
+  },
+
   getListFilter: (classCode) => {
     const url = `/api/issue-list-filter/${classCode}`
     return axiosClient.get(url, header)
