@@ -57,7 +57,7 @@ public class ScheduleCriteria {
         if (filterClass != null) {
             query.append(" AND s.classes.code = '" + filterClass + "'");
         }
-
+        query.append(" ORDER BY s.trainingDate ASC, s.fromTime ASC, s.toTime ASC");
         StringBuilder queryCount = new StringBuilder(query.toString().replaceAll("SELECT s", "SELECT COUNT(*)"));
         TypedQuery<Long> countQuery = em.createQuery(queryCount.toString(), Long.class);
         TypedQuery<Schedule> typedQuery = em.createQuery(query.toString(), Schedule.class);
