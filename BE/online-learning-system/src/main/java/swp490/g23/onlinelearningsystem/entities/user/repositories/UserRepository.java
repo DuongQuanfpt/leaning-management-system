@@ -43,8 +43,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = "SELECT u FROM User u WHERE u.accountName LIKE %:accountName% ")
     List<User> getUserWithAccNameStartWith(String accountName);
 
-    @Query(value = "SELECT DISTINCT u FROM User u JOIN u.issueOfAsignee as i WHERE i.classes.code = :classCode AND i.milestone.milestoneId = :milestoneId ")
-    List<User> getIssueAsigneeOfMilestone(String classCode , Long milestoneId);
+    @Query(value = "SELECT DISTINCT u FROM User u JOIN u.issueOfAsignee as i WHERE i.classes.code = :classCode ")
+    List<User> getIssueAsigneeOfClass(String classCode);
 
     @Query(value = "SELECT DISTINCT u FROM User u JOIN u.issueOfAsignee as i WHERE i.classes.code = :classCode AND i.milestone IS NULL ")
     List<User> getIssueAsigneeOfGeneral(String classCode);

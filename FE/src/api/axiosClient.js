@@ -1,5 +1,6 @@
 import axios from 'axios'
 import queryString from 'query-string'
+import { message } from 'antd'
 
 const url = process.env.REACT_APP_LMS_API_URL
 
@@ -36,6 +37,10 @@ axiosClient.interceptors.response.use(
   },
   async (error) => {
     // Handle exceptions/invalid logs here
+    if (error.code === 'ERR_NETWORK') {
+      message.error('You are offline. Check your internet connection again')
+      return
+    }
 
     if (error?.response?.data?.message === 'Missing auth token') {
       //Response return fail by not loggin yet

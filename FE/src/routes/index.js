@@ -68,6 +68,11 @@ const GroupList = lazy(() => import('~/pages/trainer/GroupList'))
 const NewGroup = lazy(() => import('~/pages/trainer/NewGroup'))
 const GroupDetail = lazy(() => import('~/pages/trainer/GroupDetail'))
 
+const IssueList = lazy(() => import('~/pages/trainer/IssueList'))
+const IssueDetail = lazy(() => import('~/pages/trainer/IssueDetail'))
+const IssueAdd = lazy(() => import('~/pages/trainer/IssueAdd'))
+const RequirementAdd = lazy(() => import('~/pages/trainer/RequirementAdd'))
+
 //404 pages
 const PageNotFound = lazy(() => import('~/pages/common/PageNotFound'))
 
@@ -178,6 +183,13 @@ const scheduleListRoutes = [
   { path: '/schedule-add', component: ScheduleAdd },
 ]
 
+const issueRoutes = [
+  { path: '/issue-list', component: IssueList },
+  { path: '/issue-detail/:id', component: IssueDetail },
+  { path: '/issue-add', component: IssueAdd },
+  { path: '/requirement-add', component: RequirementAdd },
+]
+
 export {
   commonRoutes,
   userRoutes,
@@ -194,4 +206,5 @@ export {
   classEvalCriteriaListRoutes,
   groupListRoutes,
   scheduleListRoutes,
+  issueRoutes,
 }

@@ -16,8 +16,5 @@ public class IssueListDTO {
 	private int totalPage;
 	private long totalItem;
     private List<IssueResponseDTO> issueList;
-    private List<String> typeFilter;
-    private List<String> statusFilter;
-    private List<String> asigneeFilter;
-    private List<IssueGroupDTO> groupFilter;
+
 }

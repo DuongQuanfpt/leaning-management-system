@@ -1,4 +1,6 @@
-package swp490.g23.onlinelearningsystem.entities.issue.domain.response;
+package swp490.g23.onlinelearningsystem.entities.issue.domain.filter;
+
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,8 +11,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class IssueGroupDTO {
+public class IssueGroupFilterDTO {
     Long groupId;
-    String groupCode;
+    String groupName;
     String groupTopic;
+    List<String> memberId;
 }

@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -13,14 +12,18 @@ public class IssueResponseDTO {
     Long issueId;
 
     String title;
-
- 
     
-    String milestoneTitle;
+    IssueMilestoneDTO milestone;
+    
+    IssueGroupDTO group;
 
     String type;
 
-    String asigneeName;
+    IssueUserDTO asignee;
+
+    IssueUserDTO author;
+
+    IssueUserDTO modifiedBy;
 
     String deadline;
 
@@ -29,4 +32,10 @@ public class IssueResponseDTO {
     String classCode;
 
     String description;
+
+    String requirement;
+
+    String createdDate;
+
+    String modifiedDate;
 }

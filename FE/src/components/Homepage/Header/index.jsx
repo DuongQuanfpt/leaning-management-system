@@ -15,9 +15,9 @@ import logoWhite from '~/assets/images/logo-white.png'
 import avatar from '~/assets/images/profile/pic1.jpg'
 
 const Header = () => {
+  const [logged, setLogged] = useState(false)
   const navigateTo = useNavigate()
 
-  const [logged, setLogged] = useState(false)
   useEffect(() => {
     // Search Form Popup
     var searchForm = document.querySelector('.nav-search-bar')
@@ -142,9 +142,7 @@ const Header = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('persist:LMS')
-    //Reload page
-    navigateTo('/login')
-    navigateTo(0)
+    window.location.replace('/')
   }
 
   return (
@@ -186,19 +184,19 @@ const Header = () => {
                           />
                         </CDropdownToggle>
                         <CDropdownMenu className="pt-0" placement="bottom-end">
-                          <CDropdownItem href="/dashboard">
+                          <CDropdownItem onClick={() => navigateTo('/dashboard')}>
                             <CIcon icon={cilUser} className="me-2" />
                             <Link to="/dashboard">Dashboard</Link>
                           </CDropdownItem>
-                          <CDropdownItem href="/profile">
+                          <CDropdownItem onClick={() => navigateTo('/profile')}>
                             <CIcon icon={cilSettings} className="me-2" />
                             <Link to="/profile">Profile</Link>
                           </CDropdownItem>
-                          <CDropdownItem href="/change-password">
+                          <CDropdownItem onClick={() => navigateTo('/change-password')}>
                             <CIcon icon={cilCreditCard} className="me-2" />
                             <Link to="/change-password">Change Password</Link>
                           </CDropdownItem>
-                          <CDropdownItem onClick={handleLogout}>
+                          <CDropdownItem onClick={() => handleLogout()}>
                             <CIcon icon={cilAccountLogout} className="me-2" />
                             Logout
                           </CDropdownItem>
