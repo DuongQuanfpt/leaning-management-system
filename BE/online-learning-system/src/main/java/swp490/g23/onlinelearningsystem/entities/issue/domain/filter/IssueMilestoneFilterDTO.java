@@ -17,4 +17,5 @@ public class IssueMilestoneFilterDTO {
     String assignmentTitle;
     boolean isTeamwork;
     List<IssueGroupFilterDTO> groups;
+    List<IssueFilterValue> requirements;
 }
