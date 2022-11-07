@@ -204,3 +204,15 @@
 .hover-text-decoration:hover {
   text-decoration: underline;
 }
+
+.custom-sticky{
+  position: sticky;
+}
+.body-sider{
+  background-color: #f0f2f5 !important;
+  border-left: 1px solid #D3D3D3  !important;
+  padding: 10px !important;
+  position: -webkit-sticky !important;
+  position: sticky !important;
+  top: 0 !important;
+}
