@@ -29,7 +29,9 @@ const AdminHeader = () => {
     '/schedule-add',
     '/issue-list',
     '/issue-add',
-    'requirement-add',
+    '/requirement-list',
+    '/requirement-add',
+    '/attendance-tracking',
   ]
 
   const dispatch = useDispatch()

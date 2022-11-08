@@ -38,7 +38,7 @@ axiosClient.interceptors.response.use(
   async (error) => {
     // Handle exceptions/invalid logs here
     if (error.code === 'ERR_NETWORK') {
-      message.error('You are offline. Check your internet connection again')
+      message.error('You are offline. Check your internet connection again', 10)
       return
     }
 
