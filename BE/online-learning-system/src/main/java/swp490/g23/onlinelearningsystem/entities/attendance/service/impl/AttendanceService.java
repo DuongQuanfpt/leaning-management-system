@@ -12,6 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import swp490.g23.onlinelearningsystem.entities.attendance.domain.Attendance;
+import swp490.g23.onlinelearningsystem.entities.attendance.domain.AttendanceKey;
+import swp490.g23.onlinelearningsystem.entities.attendance.domain.request.AttendanceDetailRequestDTO;
+import swp490.g23.onlinelearningsystem.entities.attendance.domain.response.AttendanceDetailResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.attendance.domain.response.AttendanceResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.attendance.domain.response.UserAttendanceResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.attendance.repositories.AttendanceRepositories;
@@ -25,6 +28,7 @@ import swp490.g23.onlinelearningsystem.entities.schedule.domain.Schedule;
 import swp490.g23.onlinelearningsystem.entities.schedule.repositories.ScheduleRepositories;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.util.enumutil.AttendanceStatus;
 import swp490.g23.onlinelearningsystem.util.enumutil.ScheduleStatus;
 
@@ -85,29 +89,124 @@ public class AttendanceService implements IAttendanceService {
             }
             attendanceResponseDTO.setUserAttendance(userAttendances);
             attendanceResponseDTO.setAbsentPercent(new DecimalFormat("##.##").format((countAbsent / size) * 100));
+            attendanceResponseDTO.setClassCode(clazz.getCode());
             attendanceResponseDTOs.add(attendanceResponseDTO);
         }
         return ResponseEntity.ok(attendanceResponseDTOs);
     }
 
-    public AttendanceResponseDTO toDTO(Attendance entity) {
-        AttendanceResponseDTO responseDTO = new AttendanceResponseDTO();
-
-        // if (entity.getComment() != null) {
-        // responseDTO.setComment(entity.getComment());
-        // }
-        if (entity.getClassUser().getUser() != null) {
-            responseDTO.setAccountName(entity.getClassUser().getUser().getAccountName());
-            responseDTO.setFullName(entity.getClassUser().getUser().getFullName());
+    @Override
+    public ResponseEntity<List<AttendanceDetailResponseDTO>> viewAttendance(Long id) {
+        Schedule schedule = scheduleRepositories.findById(id).get();
+        Classes clazz = schedule.getClasses();
+        List<AttendanceDetailResponseDTO> dtos = new ArrayList<>();
+        if (schedule.equals(null)) {
+            throw new CustomException("Attendance doesn't exist!");
         }
-        // if (entity.getClassUser() != null && entity.getSchedule() != null) {
-        // responseDTO.setUserAttendance(new UserAttendanceResponseDTO(
-        // entity.getSchedule().getClassSetting().getSettingValue(),
-        // entity.getSchedule().getTrainingDate().toString(),
-        // entity.getStatus()));
-        // responseDTO.setClassCode(entity.getClassUser().getClasses().getCode());
-        // }
-        responseDTO.setClassCode(entity.getClassUser().getClasses().getCode());
-        return responseDTO;
+        if (schedule.getStatus().equals(ScheduleStatus.Attendance_taken)) {
+            throw new CustomException("This schedule had already taken attendance!");
+        } else if (schedule.getStatus().equals(ScheduleStatus.Active)) {
+            List<Attendance> attendances = schedule.getAttendances();
+            for (Attendance attendance : attendances) {
+                AttendanceDetailResponseDTO dto = new AttendanceDetailResponseDTO();
+                dto.setAccountName(attendance.getClassUser().getUser().getAccountName());
+                dto.setFullName(attendance.getClassUser().getUser().getFullName());
+                dto.setClassCode(attendance.getClassUser().getClasses().getCode());
+                dto.setStatus(attendance.getStatus());
+                dto.setComment(attendance.getComment());
+                dto.setImage(attendance.getClassUser().getUser().getAvatar_url());
+                dtos.add(dto);
+            }
+        } else {
+            List<ClassUser> classUsers = clazz.getClassUsers();
+            for (ClassUser classUser : classUsers) {
+                AttendanceDetailResponseDTO dto = new AttendanceDetailResponseDTO();
+                dto.setAccountName(classUser.getUser().getAccountName());
+                dto.setFullName(classUser.getUser().getFullName());
+                dto.setClassCode(classUser.getClasses().getCode());
+                dto.setImage(classUser.getUser().getAvatar_url());
+                dtos.add(dto);
+            }
+        }
+        return ResponseEntity.ok(dtos);
     }
+
+    @Override
+    public ResponseEntity<String> updateAttendance(List<AttendanceDetailRequestDTO> dtos, Long id) {
+        Schedule schedule = scheduleRepositories.findById(id).get();
+        Classes clazz = schedule.getClasses();
+        if (schedule.equals(null)) {
+            throw new CustomException("Attendance doesn't exist!");
+        }
+        if (schedule.getStatus().equals(ScheduleStatus.Attendance_taken)) {
+            throw new CustomException("This schedule had already taken attendance! Can not edit");
+        } else if (schedule.getStatus().equals(ScheduleStatus.Active)) {
+            List<Attendance> attendances = schedule.getAttendances();
+            List<Attendance> requestList = new ArrayList<>();
+            for (Attendance attendance : attendances) {
+                for (AttendanceDetailRequestDTO dto : dtos) {
+                    if (dto.getAccountName().equals(attendance.getClassUser().getUser().getAccountName())) {
+                        if (dto.getComment() != null) {
+                            attendance.setComment(dto.getComment());
+                        }
+                        if (dto.getStatus() != null) {
+                            attendance.setStatus(AttendanceStatus.fromInt(Integer.parseInt(dto.getStatus())));
+                        }
+                        requestList.add(attendance);
+                    }
+                }
+            }
+            attendanceRepositories.saveAll(requestList);
+        } else {
+            List<Attendance> attendances = new ArrayList<>();
+            List<ClassUser> classUsers = clazz.getClassUsers();
+            for (ClassUser classUser : classUsers) {
+                Attendance attendance = new Attendance();
+                for (AttendanceDetailRequestDTO dto : dtos) {
+                    if (dto.getAccountName().equals(classUser.getUser().getAccountName())) {
+                        attendance.setClassUser(classUser);
+                        attendance.setSchedule(schedule);
+                        AttendanceKey key = new AttendanceKey();
+                        key.setClassId(clazz.getClassId());
+                        key.setUserId(classUser.getUser().getUserId());
+                        key.setScheduleId(schedule.getScheduleId());
+                        attendance.setId(key);
+                        if (dto.getStatus() != null) {
+                            attendance.setStatus(AttendanceStatus.fromInt(Integer.parseInt(dto.getStatus())));
+                        } else {
+                            throw new CustomException("Must add status!");
+                        }
+                        if (dto.getComment() != null) {
+                            attendance.setComment(dto.getComment());
+                        }
+                        schedule.setStatus(ScheduleStatus.Active);
+                        attendances.add(attendance);
+                    }
+                }
+            }
+            attendanceRepositories.saveAll(attendances);
+        }
+        return ResponseEntity.ok("update successfully!");
+    }
+
+    // public AttendanceResponseDTO toDTO(Attendance entity) {
+    // AttendanceResponseDTO responseDTO = new AttendanceResponseDTO();
+
+    // // if (entity.getComment() != null) {
+    // // responseDTO.setComment(entity.getComment());
+    // // }
+    // if (entity.getClassUser().getUser() != null) {
+    // responseDTO.setAccountName(entity.getClassUser().getUser().getAccountName());
+    // responseDTO.setFullName(entity.getClassUser().getUser().getFullName());
+    // }
+    // // if (entity.getClassUser() != null && entity.getSchedule() != null) {
+    // // responseDTO.setUserAttendance(new UserAttendanceResponseDTO(
+    // // entity.getSchedule().getClassSetting().getSettingValue(),
+    // // entity.getSchedule().getTrainingDate().toString(),
+    // // entity.getStatus()));
+    // // responseDTO.setClassCode(entity.getClassUser().getClasses().getCode());
+    // // }
+    // responseDTO.setClassCode(entity.getClassUser().getClasses().getCode());
+    // return responseDTO;
+    // }
 }
