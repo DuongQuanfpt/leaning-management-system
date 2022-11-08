@@ -16,6 +16,7 @@ import swp490.g23.onlinelearningsystem.entities.attendance.domain.AttendanceKey;
 import swp490.g23.onlinelearningsystem.entities.attendance.domain.request.AttendanceDetailRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.attendance.domain.response.AttendanceDetailResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.attendance.domain.response.AttendanceResponseDTO;
+import swp490.g23.onlinelearningsystem.entities.attendance.domain.response.ScheduleAttendanceDTO;
 import swp490.g23.onlinelearningsystem.entities.attendance.domain.response.UserAttendanceResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.attendance.repositories.AttendanceRepositories;
 import swp490.g23.onlinelearningsystem.entities.attendance.repositories.criteria.AttendanceCriteria;
@@ -189,24 +190,25 @@ public class AttendanceService implements IAttendanceService {
         return ResponseEntity.ok("update successfully!");
     }
 
-    // public AttendanceResponseDTO toDTO(Attendance entity) {
-    // AttendanceResponseDTO responseDTO = new AttendanceResponseDTO();
+    @Override
+    public ResponseEntity<List<ScheduleAttendanceDTO>> scheduleAttendance(Long id, String clasCode) {
+        // User user = userRepository.findById(id).get();
+        // Classes clazz = classRepositories.findClassByCode(clasCode);
+        List<ScheduleAttendanceDTO> list = new ArrayList<>();
+        ClassUser classUser = classUserRepositories.findByClassesAndUser(id, clasCode);
+        List<Attendance> attendances = classUser.getAttendances();
+        for (Attendance attendance : attendances) {
+            ScheduleAttendanceDTO dto = new ScheduleAttendanceDTO();
+            dto.setSlot(attendance.getSchedule().getClassSetting().getSettingValue());
+            dto.setDate(attendance.getSchedule().getTrainingDate());
+            dto.setFromTime(attendance.getSchedule().getFromTime());
+            dto.setToTime(attendance.getSchedule().getToTime());
+            dto.setRoom(attendance.getSchedule().getSetting().getSettingTitle());
+            dto.setScheduleStatus(attendance.getSchedule().getStatus());
+            dto.setAttendanceStatus(attendance.getStatus());
+            list.add(dto);
+        }
+        return ResponseEntity.ok(list);
+    }
 
-    // // if (entity.getComment() != null) {
-    // // responseDTO.setComment(entity.getComment());
-    // // }
-    // if (entity.getClassUser().getUser() != null) {
-    // responseDTO.setAccountName(entity.getClassUser().getUser().getAccountName());
-    // responseDTO.setFullName(entity.getClassUser().getUser().getFullName());
-    // }
-    // // if (entity.getClassUser() != null && entity.getSchedule() != null) {
-    // // responseDTO.setUserAttendance(new UserAttendanceResponseDTO(
-    // // entity.getSchedule().getClassSetting().getSettingValue(),
-    // // entity.getSchedule().getTrainingDate().toString(),
-    // // entity.getStatus()));
-    // // responseDTO.setClassCode(entity.getClassUser().getClasses().getCode());
-    // // }
-    // responseDTO.setClassCode(entity.getClassUser().getClasses().getCode());
-    // return responseDTO;
-    // }
 }

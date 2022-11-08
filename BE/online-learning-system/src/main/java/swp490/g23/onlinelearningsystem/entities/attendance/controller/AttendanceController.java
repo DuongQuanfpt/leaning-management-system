@@ -19,6 +19,7 @@ import swp490.g23.onlinelearningsystem.entities.attendance.domain.request.Attend
 import swp490.g23.onlinelearningsystem.entities.attendance.domain.request.AttendanceRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.attendance.domain.response.AttendanceDetailResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.attendance.domain.response.AttendanceResponseDTO;
+import swp490.g23.onlinelearningsystem.entities.attendance.domain.response.ScheduleAttendanceDTO;
 import swp490.g23.onlinelearningsystem.entities.attendance.service.impl.AttendanceService;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
@@ -51,5 +52,11 @@ public class AttendanceController {
 
         List<AttendanceDetailRequestDTO> list = wrapper.getDto();
         return attendanceService.updateAttendance(list, id);
+    }
+
+    @GetMapping("/attendance-schedule")
+    public ResponseEntity<List<ScheduleAttendanceDTO>> scheduleAttendance(
+            @RequestParam(name = "filterClass", required = true) String classCode, @AuthenticationPrincipal User user) {
+        return attendanceService.scheduleAttendance(user.getUserId(), classCode);
     }
 }
