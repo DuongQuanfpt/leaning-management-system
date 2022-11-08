@@ -7,9 +7,7 @@ import {
   Breadcrumb,
   Button,
   Cascader,
-  Checkbox,
   Col,
-  DatePicker,
   Divider,
   Input,
   Layout,
@@ -33,7 +31,7 @@ import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 import moment from 'moment'
 
-const IssueList = () => {
+const RequirementList = () => {
   let ITEM_PER_PAGE = 10
   const { roles, currentClass, ofGroup } = useSelector((state) => state.profile)
 
@@ -67,9 +65,20 @@ const IssueList = () => {
   const [selectedRows, setSelectedRow] = useState([])
 
   const [baseEditBatch, setBaseEditBatch] = useState({})
-
-  const listGroupAssigned = ofGroup.map((gr) => gr.groupId)
   const [isTrainer, setIsTrainer] = useState(false)
+
+  const [listGroupLeader, setListGroupLeader] = useState([])
+
+  useEffect(() => {
+    const baseListGroupLeader = []
+    ofGroup.forEach((group) => {
+      if (group.isLeader) {
+        baseListGroupLeader.push(group.groupId)
+      }
+    })
+    setListGroupLeader(baseListGroupLeader)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     setIsEditMode(false)
@@ -90,11 +99,11 @@ const IssueList = () => {
     issueApi
       .getListFilter(currentClass)
       .then((response) => {
-        console.log(response)
         setListFilter({
           ...response,
           asigneeFilter: ['None', ...response.asigneeFilter],
           groupFilter: [{ groupId: 0, groupName: 'None' }, ...response.groupFilter],
+          requirement: [{ id: 0, title: 'General Requirement' }, ...response.requirement],
           statusFilter: [{ title: 'Open', id: 1 }, ...response.statusFilter, { title: 'Close', id: 0 }],
         })
       })
@@ -125,7 +134,7 @@ const IssueList = () => {
     const params = {
       limit: ITEM_PER_PAGE,
       page: page,
-      isIssue: true,
+      isIssue: false,
       milestoneId: filter?.milestoneId,
       filter: btoa(JSON.stringify(globalFilter)),
     }
@@ -249,7 +258,7 @@ const IssueList = () => {
 
   const columns = [
     {
-      width: '70%',
+      width: '75%',
       title: () => (
         <Row gutter={16}>
           <Col className="gutter-row" span={8}>
@@ -299,19 +308,11 @@ const IssueList = () => {
       render: (_, issue) => (
         <Space className="d-flex flex-column">
           <Space className="d-flex flex-row">
-            <Link to={`/issue-detail/${issue.issueId}`}>
+            <Link to={`/requirement-detail/${issue.issueId}`}>
               <Typography.Text className="hover-text-decoration" strong>
                 {issue.title}
               </Typography.Text>
             </Link>
-          </Space>
-          <Space className="d-inline-block">
-            <Typography.Text>
-              <Typography.Text type="secondary">{`Requirement: `}</Typography.Text>
-              <Typography.Text>
-                {issue.requirement === null ? 'General Requirement' : issue.requirement}
-              </Typography.Text>
-            </Typography.Text>
           </Space>
           <Space className="d-inline-block">
             <Typography.Text>
@@ -396,15 +397,7 @@ const IssueList = () => {
                   </Tooltip>
                 </>
               )}
-              {issue.type !== null ? (
-                <Tag className="mr-0 ml-2" color="volcano">
-                  {issue.type}
-                </Tag>
-              ) : (
-                <Tag className="mr-0 ml-2" color="blue">
-                  {`Requirement`}
-                </Tag>
-              )}
+
               <Tag className="ml-2" color="green">
                 {issue.status}
               </Tag>
@@ -414,12 +407,12 @@ const IssueList = () => {
       ),
     },
     {
-      width: '30%',
+      width: '25%',
       align: 'end',
       title: () => (
         <Space>
-          <Button type="secondary" shape="square" onClick={() => navigateTo('/issue-add')} title={'Issue'}>
-            New Issue
+          <Button type="secondary" shape="square" onClick={() => navigateTo('/requirement-add')} title={'Issue'}>
+            New Requirement
           </Button>
 
           <Button
@@ -431,13 +424,13 @@ const IssueList = () => {
               setIsEditMode(true)
             }}
           >
-            Edit Issues
+            Edit Requirements
           </Button>
         </Space>
       ),
       render: (_, issue) => (
         <Space className="d-flex flex-column">
-          <Space className="d-flex flex-row">
+          <Space className="d-flex flex-row ">
             {issue.asignee !== null ? (
               <Tooltip
                 className="flex-column"
@@ -465,6 +458,7 @@ const IssueList = () => {
                   </Space>
                 }
               >
+                <Typography.Text style={{ marginRight: '10px' }}>{issue?.asignee?.fullName}</Typography.Text>
                 <Avatar style={{ width: '20px', height: '20px' }} src={issue?.asignee?.avatar_url} />
               </Tooltip>
             ) : (
@@ -474,13 +468,7 @@ const IssueList = () => {
               />
             )}
           </Space>
-          <Space className="d-flex flex-row">
-            {issue.asignee !== null ? (
-              <Typography.Text>{issue?.asignee?.fullName}</Typography.Text>
-            ) : (
-              <Typography.Text type="secondary">No Assigned</Typography.Text>
-            )}
-          </Space>
+
           <Space className="d-flex flex-row">
             <Typography.Text>
               <Typography.Text type="secondary">{`Updated ${moment(issue.modifiedDate).fromNow()}`}</Typography.Text>
@@ -546,7 +534,7 @@ const IssueList = () => {
                           <Breadcrumb.Item>
                             <Link to="/dashboard">Dashboard</Link>
                           </Breadcrumb.Item>
-                          <Breadcrumb.Item>Issue List</Breadcrumb.Item>
+                          <Breadcrumb.Item>Requirement List</Breadcrumb.Item>
                         </Breadcrumb>
                       </div>
                       <div className="col-4 d-flex w-80"></div>
@@ -576,9 +564,14 @@ const IssueList = () => {
                               const selected = selectedRows.map((row) => row.issueId)
                               setSelectedRow(selected)
                             },
-                            getCheckboxProps: (record) => ({
-                              disabled: isTrainer ? false : !listGroupAssigned.includes(record?.group?.groupId), // Column configuration not to be checked
-                            }),
+                            getCheckboxProps: (record) => {
+                              console.log(record)
+                              console.log(listGroupLeader)
+                              return {
+                                disabled: isTrainer ? false : !listGroupLeader.includes(record?.group?.groupId),
+                                // Column configuration not to be checked
+                              }
+                            },
                           }
                         }
                       />
@@ -670,7 +663,6 @@ const IssueList = () => {
                 </Button>
               </Space>
               <Divider />
-
               <Space className="w-100 d-flex flex-column mt-2">
                 <Typography.Text>Milestone</Typography.Text>
                 <Select
@@ -680,23 +672,11 @@ const IssueList = () => {
                     label: milestone.milestoneTitle,
                   }))}
                   onChange={(value) => {
-                    setListFilter((prev) => ({
-                      ...prev,
-                      requirement: [
-                        { title: 'General Requirement', id: 0 },
-                        ...listFilter?.milestoneFilter?.filter((milestone) => milestone.milestoneId === value)?.shift()
-                          ?.requirements,
-                      ],
-                    }))
                     setBaseEditBatch((prev) => ({
                       milestoneId: value,
                       milestone: listFilter?.milestoneFilter
                         ?.filter((milestone) => milestone.milestoneId === value)
                         ?.shift(),
-                      // requirement: {
-                      //   ...prev.requirement,
-                      //   id: 0,
-                      // },
                     }))
                   }}
                 ></Select>
@@ -744,12 +724,10 @@ const IssueList = () => {
                   ))}
                 </Select>
               </Space>
-              <Space className="w-100 d-flex flex-column mt-2">
+              {/* <Space className="w-100 d-flex flex-column mt-2">
                 <Typography.Text>Requirement</Typography.Text>
                 <Select
                   className="w-100"
-                  disabled={!baseEditBatch.milestoneId}
-                  value={baseEditBatch?.requirement?.id}
                   options={listFilter?.requirement?.map((require) => ({
                     label: require.title,
                     value: require.id,
@@ -758,7 +736,6 @@ const IssueList = () => {
                   allowClear={true}
                 ></Select>
               </Space>
-
               <Space className="w-100 d-flex flex-column mt-2">
                 <Typography.Text>Type</Typography.Text>
                 <Select
@@ -805,7 +782,7 @@ const IssueList = () => {
                   onChange={(value) => setBaseEditBatch((prev) => ({ ...prev, status: value }))}
                   allowClear={true}
                 ></Select>
-              </Space>
+              </Space> */}
             </Layout.Sider>
           )}
         </Layout>
@@ -815,4 +792,4 @@ const IssueList = () => {
   )
 }
 
-export default IssueList
+export default RequirementList

@@ -15,7 +15,7 @@ import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 import { useSelector } from 'react-redux'
 import moment from 'moment'
 
-const IssueDetail = () => {
+const RequirementDetail = () => {
   const { currentClass } = useSelector((state) => state.profile)
   const { id } = useParams()
 
@@ -55,7 +55,6 @@ const IssueDetail = () => {
     await issueApi
       .getAddFilter(currentClass)
       .then((response) => {
-        console.log(response)
         setFilter({
           ...response,
           statusFilter: [{ title: 'Open', value: 1 }, ...response.statusFilter, { title: 'Close', value: 0 }],
@@ -70,11 +69,11 @@ const IssueDetail = () => {
       .then((response) => {
         console.log(response)
 
-        const groupModified = response?.milestone?.groups
-          ?.filter((group) => group?.groupId === response?.group?.groupId)
-          ?.shift()
+        const groupModified = response.milestone.groups
+          .filter((group) => group.groupId === response.group.groupId)
+          .shift()
 
-        groupModified?.memberId?.unshift('Unassigned')
+        groupModified.memberId.unshift('Unassigned')
 
         setDefaultDetail({
           ...response,
@@ -98,19 +97,11 @@ const IssueDetail = () => {
 
     const changedDetail = {
       title: detail.title,
-      deadline: moment(detail.deadline).format('YYYY-MM-DD'),
       statusId: detail.status.id,
       description: detail.description,
       milestoneId: detail.milestone.milestoneId,
-      typeId: detail.type.id,
-      requirementId: detail.requirement.id,
-    }
-    if (detail.group.groupName !== 'Select Group') {
-      changedDetail.groupId = detail.group.groupId
-    }
-
-    if (detail.asignee.username !== 'Select Assignee') {
-      changedDetail.asigneeName = detail.asignee.username
+      groupId: detail.group.groupId,
+      asigneeName: detail.asignee.fullName,
     }
 
     const params = {
@@ -121,7 +112,7 @@ const IssueDetail = () => {
     await issueApi
       .changeBatch(params)
       .then(() => {
-        setError('You have successfully change issue detail')
+        setError('You have successfully change requirement detail')
         setIsEditMode(false)
       })
       .catch((error) => {
@@ -131,20 +122,18 @@ const IssueDetail = () => {
   }
 
   const handleCancel = () => {
-    setError('')
     setDetail(defaultDetail)
     setIsEditMode(false)
   }
 
   const handleEdit = () => {
-    setError('')
     setIsEditMode(true)
   }
 
   const modalConfirm = () => {
     setError('')
     Modal.confirm({
-      title: `Are you want to save new Issue?`,
+      title: `Are you want to save new Requirement?`,
       icon: <ExclamationCircleOutlined />,
       okText: 'OK',
       cancelText: 'Cancel',
@@ -172,9 +161,9 @@ const IssueDetail = () => {
                         <Link to="/dashboard">Dashboard</Link>
                       </Breadcrumb.Item>
                       <Breadcrumb.Item>
-                        <Link to="/issue-list">Issue List</Link>
+                        <Link to="/requirement-list">Requirement List</Link>
                       </Breadcrumb.Item>
-                      <Breadcrumb.Item>Issue Detail</Breadcrumb.Item>
+                      <Breadcrumb.Item>Requirement Detail</Breadcrumb.Item>
                     </Breadcrumb>
                   </div>
                 </div>
@@ -203,7 +192,7 @@ const IssueDetail = () => {
                         />
                       </div>
                     </div>
-                    <div className="form-group col-4">
+                    <div className="form-group col-3">
                       <div>
                         <label className="col-form-label">Milestone</label>
                         <CDropdown className="w-100">
@@ -218,7 +207,7 @@ const IssueDetail = () => {
                                     ...prev,
                                     milestone: milestone,
                                     group: { ...prev.group, groupName: 'Select Group' },
-                                    asignee: { ...prev.asignee, username: 'Select Assignee' },
+                                    asignee: { ...prev.asignee, fullName: 'Select Assignee' },
                                   }))
                                 }
                               >
@@ -229,7 +218,7 @@ const IssueDetail = () => {
                         </CDropdown>
                       </div>
                     </div>
-                    <div className="form-group col-4">
+                    <div className="form-group col-3">
                       <div>
                         <label className="col-form-label">Group</label>
                         <CDropdown className="w-100">
@@ -247,8 +236,7 @@ const IssueDetail = () => {
                                   setDetail((prev) => ({
                                     ...prev,
                                     group: newGroup,
-                                    asignee: { ...prev.asignee, username: 'Select Assignee' },
-                                    // requirement: { title: 'General Requirement', value: null },
+                                    asignee: { ...prev.asignee, fullName: 'Select Assignee' },
                                   }))
                                   console.log(group)
                                 }}
@@ -260,7 +248,7 @@ const IssueDetail = () => {
                         </CDropdown>
                       </div>
                     </div>
-                    <div className="form-group col-4">
+                    <div className="form-group col-3">
                       <div>
                         <label className="col-form-label">Assignee</label>
                         <CDropdown className="w-100">
@@ -268,7 +256,7 @@ const IssueDetail = () => {
                             color="warning"
                             disabled={!isEditMode || detail?.group?.groupName === 'Select Group'}
                           >
-                            {detail?.asignee?.username}
+                            {detail?.asignee?.fullName}
                           </CDropdownToggle>
                           <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                             {detail?.group?.memberId?.map((member) => (
@@ -276,7 +264,7 @@ const IssueDetail = () => {
                                 onClick={() =>
                                   setDetail((prev) => ({
                                     ...prev,
-                                    asignee: { ...prev.asignee, username: member },
+                                    asignee: { ...prev.asignee, fullName: member },
                                   }))
                                 }
                               >
@@ -287,69 +275,7 @@ const IssueDetail = () => {
                         </CDropdown>
                       </div>
                     </div>
-                    <div className="form-group col-4">
-                      <div>
-                        <label className="col-form-label">Type</label>
-                        <CDropdown className="w-100">
-                          <CDropdownToggle color="warning" disabled={!isEditMode}>
-                            {detail?.type?.title}
-                          </CDropdownToggle>
-                          <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
-                            {filter?.typeFilter?.map((type) => (
-                              <CDropdownItem onClick={() => setDetail((prev) => ({ ...prev, type: type }))}>
-                                {type?.title}
-                              </CDropdownItem>
-                            ))}
-                          </CDropdownMenu>
-                        </CDropdown>
-                      </div>
-                    </div>
-                    <div className="form-group col-4">
-                      <div>
-                        <label className="col-form-label">Requirement</label>
-                        <CDropdown className="w-100">
-                          <CDropdownToggle color="warning" disabled={!isEditMode}>
-                            {detail?.requirement?.title}
-                          </CDropdownToggle>
-                          <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
-                            <CDropdownItem
-                              onClick={() =>
-                                setDetail((prev) => ({
-                                  ...prev,
-                                  requirement: { title: 'General Requirement', id: null },
-                                }))
-                              }
-                            >
-                              General Requirement
-                            </CDropdownItem>
-                            {detail?.milestone?.requirements?.map((require) => (
-                              <CDropdownItem onClick={() => setDetail((prev) => ({ ...prev, requirement: require }))}>
-                                {require?.title}
-                              </CDropdownItem>
-                            ))}
-                          </CDropdownMenu>
-                        </CDropdown>
-                      </div>
-                    </div>
-                    <div className="form-group col-4">
-                      <div>
-                        <label className="col-form-label">Deadline</label>
-                        <DatePicker
-                          className="w-100"
-                          size={'large'}
-                          format={'YYYY-MM-DD'}
-                          value={moment(detail.deadline, 'YYYY-MM-DD')}
-                          disabled={!isEditMode}
-                          onChange={(date) => setDetail((prev) => ({ ...prev, deadline: date }))}
-                          allowClear={false}
-                          disabledDate={(current) => {
-                            let customDate = moment().format('YYYY-MM-DD')
-                            return current && current < moment(customDate, 'YYYY-MM-DD')
-                          }}
-                        />
-                      </div>
-                    </div>
-                    <div className="form-group col-4">
+                    <div className="form-group col-3">
                       <div>
                         <label className="col-form-label">Status</label>
                         <CDropdown className="w-100">
@@ -381,7 +307,7 @@ const IssueDetail = () => {
                     </div>
                     <ErrorMsg
                       errorMsg={error}
-                      isError={error === 'You have successfully change issue detail' ? false : true}
+                      isError={error === 'You have successfully change requirement detail' ? false : true}
                     />
                     <div className="d-flex">
                       {isEditMode ? (
@@ -411,4 +337,4 @@ const IssueDetail = () => {
   )
 }
 
-export default IssueDetail
+export default RequirementDetail

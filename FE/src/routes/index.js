@@ -71,7 +71,11 @@ const GroupDetail = lazy(() => import('~/pages/trainer/GroupDetail'))
 const IssueList = lazy(() => import('~/pages/trainer/IssueList'))
 const IssueDetail = lazy(() => import('~/pages/trainer/IssueDetail'))
 const IssueAdd = lazy(() => import('~/pages/trainer/IssueAdd'))
+const RequirementList = lazy(() => import('~/pages/trainer/RequirementList'))
+const RequirementDetail = lazy(() => import('~/pages/trainer/RequirementDetail'))
 const RequirementAdd = lazy(() => import('~/pages/trainer/RequirementAdd'))
+
+const AttendanceTracking = lazy(() => import('~/pages/trainer/AttendanceTracking'))
 
 //404 pages
 const PageNotFound = lazy(() => import('~/pages/common/PageNotFound'))
@@ -187,8 +191,12 @@ const issueRoutes = [
   { path: '/issue-list', component: IssueList },
   { path: '/issue-detail/:id', component: IssueDetail },
   { path: '/issue-add', component: IssueAdd },
+  { path: '/requirement-list', component: RequirementList },
+  { path: '/requirement-detail/:id', component: RequirementDetail },
   { path: '/requirement-add', component: RequirementAdd },
 ]
+
+const attendanceRoutes = [{ path: '/attendance-tracking', component: AttendanceTracking }]
 
 export {
   commonRoutes,
@@ -207,4 +215,5 @@ export {
   groupListRoutes,
   scheduleListRoutes,
   issueRoutes,
+  attendanceRoutes,
 }

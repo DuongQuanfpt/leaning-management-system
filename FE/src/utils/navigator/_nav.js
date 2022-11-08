@@ -106,6 +106,18 @@ const _nav = [
     to: '/issue-list',
     icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
   },
+  {
+    component: CNavItem,
+    name: 'Requirement List',
+    to: '/requirement-list',
+    icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Attendance Tracking',
+    to: '/attendance-tracking',
+    icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+  },
 ]
 
 export default _nav

@@ -7,10 +7,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import swp490.g23.onlinelearningsystem.entities.attendance.domain.request.AttendanceDetailRequestDTO;
+import swp490.g23.onlinelearningsystem.entities.attendance.domain.request.AttendanceDetailWrapper;
+import swp490.g23.onlinelearningsystem.entities.attendance.domain.request.AttendanceRequestDTO;
+import swp490.g23.onlinelearningsystem.entities.attendance.domain.response.AttendanceDetailResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.attendance.domain.response.AttendanceResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.attendance.service.impl.AttendanceService;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
@@ -31,5 +38,18 @@ public class AttendanceController {
             @AuthenticationPrincipal User user) {
 
         return attendanceService.displayAttendanceList(classFilter, user.getUserId());
+    }
+
+    @GetMapping("/attendance-detail/{id}")
+    public ResponseEntity<List<AttendanceDetailResponseDTO>> viewAttendance(@PathVariable("id") Long id) {
+        return attendanceService.viewAttendance(id);
+    }
+
+    @PutMapping("/attendance-detail/{id}")
+    public ResponseEntity<String> updateAttendance(@RequestBody AttendanceDetailWrapper wrapper,
+            @PathVariable("id") Long id) {
+
+        List<AttendanceDetailRequestDTO> list = wrapper.getDto();
+        return attendanceService.updateAttendance(list, id);
     }
 }
