@@ -21,6 +21,7 @@ import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.classes.repositories.ClassRepositories;
 import swp490.g23.onlinelearningsystem.entities.email.EmailDetails;
 import swp490.g23.onlinelearningsystem.entities.email.service.impl.EmailService;
+import swp490.g23.onlinelearningsystem.entities.groupMember.domain.GroupMember;
 import swp490.g23.onlinelearningsystem.entities.permission.domain.SettingPermission;
 import swp490.g23.onlinelearningsystem.entities.permission.domain.response.PermissionResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.permission.repositories.criteria.PermissionCriteria;
@@ -32,6 +33,7 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.filter.UserFilterDTO
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.request.UserUpdatePassRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.AuthenticatedResponseDTO;
+import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserGroupDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserListResponsePaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserTypeResponseDTO;
@@ -427,6 +429,7 @@ public class UserService implements IUserService {
         responseDTO.setRoles(roleNames);
 
         List<String> classCode = new ArrayList<>();
+        List<UserGroupDTO> groupDTOs = new ArrayList<>();
         if(roleNames.contains("manager")){
             List<Classes> classesAll = classRepositories.findAll();
             for (Classes classes : classesAll) {
@@ -438,7 +441,22 @@ public class UserService implements IUserService {
             for (Classes classes : classesAll) {
                 classCode.add(classes.getCode());
             }
+
+            for (GroupMember member :  entity.getGroupMembers()) {
+                groupDTOs.add(toGroupDTO(member));
+            }
+        } else if (roleNames.contains("trainee")){
+            List<Classes> classesAll = classRepositories.getClassOfTrainee(entity.getAccountName());
+            for (Classes classes : classesAll) {
+                classCode.add(classes.getCode());
+            }
+
+            for (GroupMember member :  entity.getGroupMembers()) {
+                groupDTOs.add(toGroupDTO(member));
+            }
+        
         }
+        responseDTO.setOfGroup(groupDTOs);
         responseDTO.setClassCodes(classCode);
 
         List<PermissionResponseDTO> permissionDTO = new ArrayList<>();
@@ -449,6 +467,15 @@ public class UserService implements IUserService {
         }
         responseDTO.setPermissions(permissionDTO);
         return responseDTO;
+    }
+
+    public UserGroupDTO toGroupDTO(GroupMember member){
+        UserGroupDTO groupDTO = new UserGroupDTO();
+        groupDTO.setGroupId(member.getGroup().getGroupId());
+        groupDTO.setGroupCode(member.getGroup().getGroupCode());
+        groupDTO.setIsLeader(member.getIsLeader());
+
+        return groupDTO;
     }
 
 }
