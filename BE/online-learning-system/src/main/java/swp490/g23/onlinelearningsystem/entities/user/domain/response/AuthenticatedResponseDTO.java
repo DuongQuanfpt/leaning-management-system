@@ -35,4 +35,6 @@ public class AuthenticatedResponseDTO {
     private List<String> classCodes;
 
     private List<PermissionResponseDTO> permissions;
+
+    private List<UserGroupDTO> ofGroup;
 }

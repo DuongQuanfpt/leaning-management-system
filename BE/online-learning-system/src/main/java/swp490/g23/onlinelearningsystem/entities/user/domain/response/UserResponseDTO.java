@@ -8,8 +8,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
 
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
-public class UserResponseDTO  {
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class UserResponseDTO {
 
     private Long userId;
 
@@ -28,5 +31,7 @@ public class UserResponseDTO  {
     private String note;
 
     private List<UserTypeResponseDTO> roles;
-    
+
+ 
+
 }

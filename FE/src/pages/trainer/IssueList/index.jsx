@@ -8,8 +8,9 @@ import {
   Button,
   Cascader,
   Col,
-  Form,
-  Input,
+  DatePicker,
+  Divider,
+  Layout,
   Pagination,
   Row,
   Select,
@@ -20,7 +21,17 @@ import {
   Typography,
 } from 'antd'
 
-import { CalendarOutlined, ClockCircleOutlined, ExclamationCircleOutlined, SearchOutlined } from '@ant-design/icons'
+import {
+  CalendarOutlined,
+  ClockCircleOutlined,
+  CloseCircleOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  ExclamationCircleOutlined,
+  PlusOutlined,
+  SaveOutlined,
+  SearchOutlined,
+} from '@ant-design/icons'
 
 import { CButton, CDropdown, CDropdownMenu, CDropdownToggle } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
@@ -34,7 +45,7 @@ import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 import moment from 'moment'
 
 const IssueList = () => {
-  const ITEM_PER_PAGE = 10
+  let ITEM_PER_PAGE = 10
   const { roles, currentClass } = useSelector((state) => state.profile)
 
   const navigateTo = useNavigate()
@@ -46,26 +57,49 @@ const IssueList = () => {
   const [search, setSearch] = useState('')
   const [listFilter, setListFilter] = useState({})
 
-  const [filter, setFilter] = useState({})
+  const [filter, setFilter] = useState(null)
 
   const [isEditMode, setIsEditMode] = useState(false)
 
+  const [selectedRows, setSelectedRow] = useState([])
+
   useEffect(() => {
+    setSelectedRow([])
+    setFilter(null)
     issueApi
       .getListFilter(currentClass)
       .then((response) => {
         console.log(response)
-        setListFilter(response)
+        setListFilter({
+          ...response,
+          asigneeFilter: ['None', ...response.asigneeFilter],
+          groupFilter: [{ groupId: -1, groupName: 'None' }, ...response.groupFilter],
+          requirement: [{ id: null, title: 'General Requirement' }, ...response.requirement],
+          typeFilter: [{ title: 'None', id: -1 }, ...response.typeFilter],
+          statusFilter: [{ title: 'Open', id: 1 }, { title: 'Close', id: 0 }, ...response.statusFilter],
+        })
       })
       .catch((error) => {
         console.log(error)
       })
-    loadData(1, filter)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter, currentClass])
+  }, [currentClass])
+
+  useEffect(() => {
+    if (filter !== null) {
+      loadData(1, filter)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter, ITEM_PER_PAGE])
 
   const loadData = async (page, filter, q = '') => {
-    const params = { limit: ITEM_PER_PAGE, page: page }
+    const params = {
+      limit: ITEM_PER_PAGE,
+      page: page,
+      isIssue: true,
+      milestoneId: filter?.milestoneId,
+      // filter: btoa(JSON.stringify({ filter: {} })),
+    }
     if (q !== '') {
       params.q = q.trim()
     }
@@ -83,18 +117,6 @@ const IssueList = () => {
       })
   }
 
-  const handleSearch = () => {
-    loadData(1, filter, search)
-  }
-
-  // const handleFilterType = (type) => {
-  //   setFilter((prev) => ({ ...prev, type: type }))
-  // }
-
-  // const handleFilterStatus = (status) => {
-  //   setFilter((prev) => ({ ...prev, status: status }))
-  // }
-
   const handleChangePage = (pageNumber) => {
     setCurrentPage(pageNumber)
     loadData(pageNumber, filter)
@@ -104,8 +126,6 @@ const IssueList = () => {
     setSearch('')
     setFilter({})
   }
-
-  console.log(listFilter)
 
   const options = [
     {
@@ -133,14 +153,6 @@ const IssueList = () => {
       })),
     },
     {
-      label: 'Milestone',
-      value: 'milestone',
-      children: listFilter?.milestoneFilter?.map((milestone) => ({
-        label: milestone.milestoneTitle,
-        value: milestone.milestoneId,
-      })),
-    },
-    {
       label: 'Type',
       value: 'type',
       children: listFilter?.typeFilter?.map((type) => ({
@@ -157,8 +169,16 @@ const IssueList = () => {
       })),
     },
   ]
+
   const onChange = (value) => {
     console.log(value)
+  }
+
+  const displayRenderCascader = (labels) => {
+    if (labels[1] === undefined) {
+      labels[1] = 'Any'
+    }
+    return <span key={Math.random()}>{`${labels[0]} : ${labels[1]}`}</span>
   }
 
   const columns = [
@@ -173,6 +193,8 @@ const IssueList = () => {
               onChange={onChange}
               expandTrigger="hover"
               maxTagCount="responsive"
+              multiple
+              displayRender={displayRenderCascader}
             />
           </Col>
           <Col className="gutter-row" span={2}>
@@ -185,8 +207,18 @@ const IssueList = () => {
         <Space className="d-flex flex-column">
           <Space className="d-flex flex-row">
             <Link to={`/issue-detail/${issue.issueId}`}>
-              <Typography.Text className="hover-text-decoration">{issue.title}</Typography.Text>
+              <Typography.Text className="hover-text-decoration" strong>
+                {issue.title}
+              </Typography.Text>
             </Link>
+          </Space>
+          <Space className="d-inline-block">
+            <Typography.Text>
+              <Typography.Text type="secondary">{`Requirement: `}</Typography.Text>
+              <Typography.Text>
+                {issue.requirement === null ? 'General Requirement' : issue.requirement}
+              </Typography.Text>
+            </Typography.Text>
           </Space>
           <Space className="d-inline-block">
             <Typography.Text>
@@ -213,17 +245,6 @@ const IssueList = () => {
               >
                 {issue?.author?.username}
               </Tooltip>
-
-              {issue.type !== null && (
-                <>
-                  <Typography.Text type="secondary" className="ml-2">
-                    {` Requirement: `}
-                  </Typography.Text>
-                  <Typography.Text>
-                    {issue.requirement === null ? 'General Requirement' : issue.requirement}
-                  </Typography.Text>
-                </>
-              )}
 
               {issue?.group && (
                 <>
@@ -304,22 +325,19 @@ const IssueList = () => {
       align: 'end',
       title: () => (
         <Space>
-          <Button type="primary" shape="square" onClick={() => navigateTo('/requirement-add')}>
-            New Requirement
-          </Button>
-          <Button type="primary" shape="square" onClick={() => navigateTo('/issue-add')}>
+          <Button type="secondary" shape="square" onClick={() => navigateTo('/issue-add')} title={'Issue'}>
             New Issue
           </Button>
 
-          <Button type="secondary" shape="square" onClick={() => setIsEditMode(!isEditMode)}>
-            {isEditMode ? 'Cancel' : 'Edit'}
+          <Button type="primary" shape="square" disabled={isEditMode} onClick={() => setIsEditMode(true)}>
+            Edit Issues
           </Button>
         </Space>
       ),
       render: (_, issue) => (
         <Space className="d-flex flex-column">
-          {issue.asignee !== null ? (
-            <Space className="d-flex flex-row">
+          <Space className="d-flex flex-row">
+            {issue.asignee !== null ? (
               <Tooltip
                 className="flex-column"
                 placement="left"
@@ -348,44 +366,51 @@ const IssueList = () => {
               >
                 <Avatar style={{ width: '20px', height: '20px' }} src={issue?.asignee?.avatar_url} />
               </Tooltip>
-            </Space>
-          ) : (
-            <Space className="d-flex flex-row">
+            ) : (
               <Avatar
                 style={{ width: '20px', height: '20px', visibility: 'hidden' }}
                 src={issue?.asignee?.avatar_url}
               />
-            </Space>
-          )}
-          <Typography.Text>
-            <Typography.Text type="secondary">{`Updated ${moment(issue.modifiedDate).fromNow()}`}</Typography.Text>
-            {issue.modifiedBy !== null && (
-              <>
-                <Typography.Text type="secondary"> by</Typography.Text>
-                <Tooltip
-                  placement="left"
-                  title={
-                    <Space>
-                      <Avatar src={issue?.author?.avatar_url} />
-                      <Space className="flex-column pl-2">
-                        <p
-                          className="p-0 m-0 d-flex align-items-center"
-                          style={{ fontSize: '14px', lineHeight: '18px', fontWeight: '500' }}
-                        >
-                          {issue?.author?.fullName}
-                        </p>
-                        <p className="p-0 m-0" style={{ fontSize: '10px', lineHeight: '18px', fontWeight: '500' }}>
-                          {issue?.author?.username}
-                        </p>
-                      </Space>
-                    </Space>
-                  }
-                >
-                  <Typography.Text> {issue?.modifiedBy?.username}</Typography.Text>
-                </Tooltip>
-              </>
             )}
-          </Typography.Text>
+          </Space>
+          <Space className="d-flex flex-row">
+            {issue.asignee !== null ? (
+              <Typography.Text>{issue?.asignee?.fullName}</Typography.Text>
+            ) : (
+              <Typography.Text style={{ visibility: 'hidden' }}>{issue?.asignee?.fullName}</Typography.Text>
+            )}
+          </Space>
+          <Space className="d-flex flex-row">
+            <Typography.Text>
+              <Typography.Text type="secondary">{`Updated ${moment(issue.modifiedDate).fromNow()}`}</Typography.Text>
+              {issue.modifiedBy !== null && (
+                <>
+                  <Typography.Text type="secondary"> by</Typography.Text>
+                  <Tooltip
+                    placement="left"
+                    title={
+                      <Space>
+                        <Avatar src={issue?.author?.avatar_url} />
+                        <Space className="flex-column pl-2">
+                          <p
+                            className="p-0 m-0 d-flex align-items-center"
+                            style={{ fontSize: '14px', lineHeight: '18px', fontWeight: '500' }}
+                          >
+                            {issue?.author?.fullName}
+                          </p>
+                          <p className="p-0 m-0" style={{ fontSize: '10px', lineHeight: '18px', fontWeight: '500' }}>
+                            {issue?.author?.username}
+                          </p>
+                        </Space>
+                      </Space>
+                    }
+                  >
+                    <Typography.Text> {issue?.modifiedBy?.username}</Typography.Text>
+                  </Tooltip>
+                </>
+              )}
+            </Typography.Text>
+          </Space>
         </Space>
       ),
     },
@@ -403,103 +428,234 @@ const IssueList = () => {
   //   })
   // }
 
+  const handleChange = (value) => {
+    console.log(`selected ${value}`)
+  }
+
   return (
     <div>
       <AdminSidebar />
-      <div className="wrapper d-flex flex-column min-vh-100 bg-light">
+      <div className="wrapper d-flex flex-column min-vh-100 bg-light custom-sticky">
         <AdminHeader />
-        <div className="body flex-grow-1 px-3">
-          <div className="col-lg-12 m-b30">
-            <div className="row">
+        <Layout>
+          <Layout.Content>
+            <div className="body flex-grow-1 px-3">
               <div className="col-lg-12 m-b30">
                 <div className="row">
-                  <div className="col-2 d-flex align-items-center">
-                    <Breadcrumb>
-                      <Breadcrumb.Item>
-                        <Link to="/dashboard">Dashboard</Link>
-                      </Breadcrumb.Item>
-                      <Breadcrumb.Item>Issue List</Breadcrumb.Item>
-                    </Breadcrumb>
+                  <div className="col-lg-12 m-b30">
+                    <div className="row">
+                      <div className="col-6 d-flex align-items-center">
+                        <Breadcrumb>
+                          <Breadcrumb.Item>
+                            <Link to="/dashboard">Dashboard</Link>
+                          </Breadcrumb.Item>
+                          <Breadcrumb.Item>Issue List</Breadcrumb.Item>
+                        </Breadcrumb>
+                      </div>
+                      <div className="col-4 d-flex w-80"></div>
+                      <div className="col-2 d-flex justify-content-end">
+                        <Select
+                          className="w-100"
+                          placeholder="Select Milestone"
+                          options={listFilter?.milestoneFilter?.map((milestone) => ({
+                            value: milestone.milestoneId,
+                            label: milestone.milestoneTitle,
+                          }))}
+                          onChange={(value) => setFilter((prev) => ({ ...prev, milestoneId: value }))}
+                        ></Select>
+                      </div>
+                    </div>
                   </div>
-                  <div className="col-4 d-flex w-80">
-                    <input
-                      type="search"
-                      id="form1"
-                      className="form-control"
-                      placeholder="Searching by Class title..."
-                      value={search}
-                      onChange={(e) => setSearch(e.target.value)}
-                    />
-                    <CButton color="primary" type="submit" className="text-light ml-10" onClick={handleSearch}>
-                      <CIcon icon={cilSearch} />
-                    </CButton>
+                  <div className="col-lg-12">
+                    {filter !== null && (
+                      <Table
+                        dataSource={listIssue}
+                        columns={columns}
+                        pagination={false}
+                        rowSelection={
+                          isEditMode && {
+                            type: 'checbox',
+                            onChange: (selectedRowKeys, selectedRows) => {
+                              console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows)
+                              setSelectedRow(selectedRows)
+                            },
+                            getCheckboxProps: (record) => ({
+                              disabled: record.type === null,
+                              name: record.issueId,
+                            }),
+                          }
+                        }
+                      />
+                    )}
                   </div>
-                  <div className="col-6 d-flex justify-content-end">
-                    <CDropdown className="ml-4">
-                      <CDropdownToggle color="secondary">{'filter.type.title'}</CDropdownToggle>
-                      <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}></CDropdownMenu>
-                    </CDropdown>
-                    <CDropdown className="ml-4">
-                      <CDropdownToggle color="secondary">{'filter.status.name'}</CDropdownToggle>
-                      <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}></CDropdownMenu>
-                    </CDropdown>
-                    <Tooltip title="Reload" placement="top">
-                      <CButton color="success" type="submit" className="text-light ml-4" onClick={handleReload}>
-                        <CIcon icon={cilSync} />
-                      </CButton>
-                    </Tooltip>
-                    <Tooltip title="Add New Class Setting" placement="right">
-                      <CButton
-                        color="danger"
-                        type="submit"
-                        className="text-light ml-4"
-                        onClick={() => navigateTo('/issue-add')}
-                      >
-                        <CIcon icon={cilPlus} />
-                      </CButton>
-                    </Tooltip>
-                    <Tooltip title="Edit" placement="right">
-                      <CButton
-                        color="secondary"
-                        type="submit"
-                        className="text-light ml-4"
-                        onClick={() => setIsEditMode(!isEditMode)}
-                      >
-                        <CIcon icon={cilPlus} />
-                      </CButton>
-                    </Tooltip>
+                  <div className="col-lg-12 d-flex justify-content-end">
+                    {filter !== null && (
+                      <Pagination
+                        current={currentPage}
+                        total={totalItem}
+                        onChange={handleChangePage}
+                        showSizeChanger
+                        onShowSizeChange={(current, pageSize) => {
+                          ITEM_PER_PAGE = pageSize
+                        }}
+                      />
+                    )}
                   </div>
                 </div>
               </div>
-              <div className="col-lg-12">
-                <Table
-                  dataSource={listIssue}
-                  columns={columns}
-                  pagination={false}
-                  rowSelection={
-                    isEditMode && {
-                      type: 'checbox',
-                      onChange: (selectedRowKeys, selectedRows) => {
-                        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows)
-                      },
-                      getCheckboxProps: (record) => ({
-                        name: record.issueId,
-                      }),
-                    }
-                  }
-                />
-              </div>
-              <div className="col-lg-12 d-flex justify-content-end">
-                <Pagination
-                  current={currentPage}
-                  total={totalItem}
-                  onChange={handleChangePage}
-                  showSizeChanger={false}
-                />
-              </div>
             </div>
-          </div>
-        </div>
+          </Layout.Content>
+          {isEditMode && (
+            <Layout.Sider className="body-sider" width={250}>
+              <Space className="w-100">
+                <Button
+                  type="primary"
+                  className="float-left"
+                  disabled={selectedRows.length === 0}
+                  onClick={() => console.log('handle edit bath here')}
+                >
+                  Update All
+                </Button>
+                <Button className="float-right" onClick={() => setIsEditMode(false)}>
+                  Cancel
+                </Button>
+              </Space>
+              <Divider />
+              <Space className="w-100 d-flex flex-column mt-2">
+                <Typography.Text>Milestone</Typography.Text>
+                <Select
+                  className="w-100"
+                  options={[
+                    {
+                      value: 'jack',
+                      label: 'Jack',
+                    },
+                    {
+                      value: 'lucy',
+                      label: 'Lucy',
+                    },
+                    {
+                      value: 'Yiminghe',
+                      label: 'yiminghe',
+                    },
+                  ]}
+                ></Select>
+              </Space>
+              <Space className="w-100 d-flex flex-column mt-2">
+                <Typography.Text>Group</Typography.Text>
+                <Select
+                  className="w-100"
+                  options={[
+                    {
+                      value: 'jack',
+                      label: 'Jack',
+                    },
+                    {
+                      value: 'lucy',
+                      label: 'Lucy',
+                    },
+                    {
+                      value: 'Yiminghe',
+                      label: 'yiminghe',
+                    },
+                  ]}
+                ></Select>
+              </Space>
+              <Space className="w-100 d-flex flex-column mt-2">
+                <Typography.Text>Assignee</Typography.Text>
+                <Select
+                  className="w-100"
+                  options={[
+                    {
+                      value: 'jack',
+                      label: 'Jack',
+                    },
+                    {
+                      value: 'lucy',
+                      label: 'Lucy',
+                    },
+                    {
+                      value: 'Yiminghe',
+                      label: 'yiminghe',
+                    },
+                  ]}
+                ></Select>
+              </Space>
+              <Space className="w-100 d-flex flex-column mt-2">
+                <Typography.Text>Requirement</Typography.Text>
+                <Select
+                  className="w-100"
+                  options={[
+                    {
+                      value: 'jack',
+                      label: 'Jack',
+                    },
+                    {
+                      value: 'lucy',
+                      label: 'Lucy',
+                    },
+                    {
+                      value: 'Yiminghe',
+                      label: 'yiminghe',
+                    },
+                  ]}
+                ></Select>
+              </Space>
+              <Space className="w-100 d-flex flex-column mt-2">
+                <Typography.Text>Type</Typography.Text>
+                <Select
+                  className="w-100"
+                  options={[
+                    {
+                      value: 'jack',
+                      label: 'Jack',
+                    },
+                    {
+                      value: 'lucy',
+                      label: 'Lucy',
+                    },
+                    {
+                      value: 'Yiminghe',
+                      label: 'yiminghe',
+                    },
+                  ]}
+                ></Select>
+              </Space>
+              <Space className="w-100 d-flex flex-column mt-2">
+                <Typography.Text>Deadline</Typography.Text>
+                <DatePicker
+                  placement="topRight"
+                  className="w-100"
+                  format={'YYYY-MM-DD'}
+                  disabledDate={(current) => {
+                    let customDate = moment().format('YYYY-MM-DD')
+                    return current && current < moment(customDate, 'YYYY-MM-DD')
+                  }}
+                />
+              </Space>
+              <Space className="w-100 d-flex flex-column mt-2">
+                <Typography.Text>Status</Typography.Text>
+                <Select
+                  className="w-100"
+                  options={[
+                    {
+                      value: 'jack',
+                      label: 'Jack',
+                    },
+                    {
+                      value: 'lucy',
+                      label: 'Lucy',
+                    },
+                    {
+                      value: 'Yiminghe',
+                      label: 'yiminghe',
+                    },
+                  ]}
+                ></Select>
+              </Space>
+            </Layout.Sider>
+          )}
+        </Layout>
         <AdminFooter />
       </div>
     </div>

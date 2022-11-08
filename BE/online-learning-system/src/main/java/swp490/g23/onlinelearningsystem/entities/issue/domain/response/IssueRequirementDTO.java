@@ -9,11 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class IssueMilestoneDTO {
-    Long milestoneId;
+public class IssueRequirementDTO {
+    Long id;
     String title;
-    String deadline;
-    String status;
-    boolean isTeamwork;
-
 }

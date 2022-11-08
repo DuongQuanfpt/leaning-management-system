@@ -1,6 +1,6 @@
 package swp490.g23.onlinelearningsystem.entities.issue.domain.response;
 
-import lombok.AllArgsConstructor;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,12 +8,15 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-public class IssueMilestoneDTO {
-    Long milestoneId;
-    String title;
-    String deadline;
-    String status;
-    boolean isTeamwork;
 
+public class IssueSettingDTO {
+    Long id;
+    String title;
+    
+    public IssueSettingDTO(Long id, String title) {
+        this.id = id;
+        this.title = title;
+    }
+
+    
 }

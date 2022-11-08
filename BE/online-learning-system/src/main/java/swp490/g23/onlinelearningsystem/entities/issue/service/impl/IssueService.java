@@ -27,12 +27,16 @@ import swp490.g23.onlinelearningsystem.entities.issue.domain.filter.IssueGroupFi
 import swp490.g23.onlinelearningsystem.entities.issue.domain.filter.IssueMilestoneFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.filter.IssueSettingFilterDto;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.request.IssueBatchRequestDTO;
+import swp490.g23.onlinelearningsystem.entities.issue.domain.request.IssueFilterRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.request.IssueRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueUserDTO;
+import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueDetailDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueGroupDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueListDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueMilestoneDTO;
+import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueRequirementDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueResponseDTO;
+import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueSettingDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.repositories.IssueRepository;
 import swp490.g23.onlinelearningsystem.entities.issue.repositories.Criteria.IssueCriteria;
 import swp490.g23.onlinelearningsystem.entities.issue.repositories.CriteriaEntity.IssueQuery;
@@ -72,16 +76,15 @@ public class IssueService implements IIssueService {
     private ClassRepositories classRepositories;
 
     @Override
-    public ResponseEntity<IssueListDTO> getIssueList(int page, int limit, String keyword, Long filterStatus,
-            Long filterMilestoneId, Long filterGroupId, String filterAsigneeName,
-            Long filterTypeValue, String classCode, Long filterRequirementId) {
+    public ResponseEntity<IssueListDTO> getIssueList(int page, int limit, String keyword, String classCode,
+            boolean isIssue, Long filterMilestoneId, IssueFilterRequestDTO filterRequestDTO) {
         Classes classes = classRepositories.findClassByCode(classCode);
         if (classes == null) {
             throw new CustomException("Class doesnt exist");
         }
 
-        IssueQuery result = issueCriteria.searchFilterQuery(keyword, filterStatus, filterMilestoneId, filterGroupId,
-                filterAsigneeName, filterTypeValue, filterRequirementId, classCode);
+        IssueQuery result = issueCriteria.searchFilterQuery(keyword, classCode, isIssue, filterMilestoneId,
+                filterRequestDTO);
         TypedQuery<Issue> queryResult = result.getResultQuery();
         TypedQuery<Long> countQuery = result.getCountQuery();
 
@@ -158,6 +161,14 @@ public class IssueService implements IIssueService {
                 noGroupMember.add(submit.getClassUser().getUser().getAccountName());
             }
         }
+
+        List<IssueFilterValue> requirements = new ArrayList<>();
+        for (Issue issue : milestone.getIssues()) {
+            if(issue.getType()== null){
+                requirements.add(new IssueFilterValue(issue.getTitle(), issue.getIssueId()));
+            }
+        }
+        dto.setRequirements(requirements);
 
         noGroup.setMemberId(noGroupMember);
         groups.add(noGroup);
@@ -324,8 +335,8 @@ public class IssueService implements IIssueService {
             throw new CustomException("Class doesnt exist");
         }
 
-        User author = userRepository.findById(user.getUserId())
-                .orElseThrow(() -> new CustomException("author doesnt exist"));
+        // User author = userRepository.findById(user.getUserId())
+        // .orElseThrow(() -> new CustomException("author doesnt exist"));
 
         List<Milestone> milestoneOfClass = milestoneRepository.getByClassCodeInProgress(classCode);
         List<IssueMilestoneFilterDTO> dtos = new ArrayList<>();
@@ -376,10 +387,76 @@ public class IssueService implements IIssueService {
     }
 
     @Override
-    public ResponseEntity<IssueResponseDTO> issueDetail(Long issueId) {
+    public ResponseEntity<IssueDetailDTO> issueDetail(Long issueId) {
         Issue issue = issueRepository.findById(issueId).orElseThrow(() -> new CustomException("Issue doesnt exist"));
 
-        return ResponseEntity.ok(toDto(issue));
+        return ResponseEntity.ok(toIssueDetail(issue));
+    }
+
+    public IssueRequirementDTO toRequirementDTO(Issue requirement) {
+        IssueRequirementDTO requirementDTO = new IssueRequirementDTO();
+        requirementDTO.setId(requirement.getIssueId());
+        requirementDTO.setTitle(requirement.getTitle());
+        return requirementDTO;
+    }
+
+    public IssueDetailDTO toIssueDetail(Issue issue) {
+        IssueDetailDTO detailDTO = new IssueDetailDTO();
+        detailDTO.setIssueId(issue.getIssueId());
+        detailDTO.setTitle(issue.getTitle());
+        detailDTO.setClassCode(issue.getClasses().getCode());
+
+        if (issue.getType() != null) {
+            detailDTO.setType(toSettingDTO(issue.getType()));
+        }
+
+        if (issue.getRequirement() != null) {
+            detailDTO.setRequirement(toRequirementDTO(issue.getRequirement()));
+        }
+
+        if (issue.getDescription() != null) {
+            detailDTO.setDescription(issue.getDescription());
+        }
+
+        if (issue.getAsignee() != null) {
+            detailDTO.setAsignee(toUserDTO(issue.getAsignee()));
+        }
+
+        if (issue.getDeadline() != null) {
+            detailDTO.setDeadline(issue.getDeadline().toString());
+        }
+
+        if (issue.getGroup() != null) {
+            detailDTO.setGroup(toGroupDTO(issue.getGroup()));
+        }
+
+        if (issue.getMilestone() != null) {
+            IssueMilestoneDTO milestoneViewDTO = new IssueMilestoneDTO();
+            milestoneViewDTO.setMilestoneId(issue.getMilestone().getMilestoneId());
+            milestoneViewDTO.setTeamwork(issue.getMilestone().getAssignment().isTeamWork());
+            milestoneViewDTO.setDeadline(issue.getMilestone().getToDate().toString());
+            milestoneViewDTO.setTitle(issue.getMilestone().getTitle());
+            detailDTO.setMilestone(milestoneViewDTO);
+        }
+
+        if (issue.isClosed() != true) {
+            if (issue.getStatus() != null) {
+                detailDTO.setStatus(toSettingDTO(issue.getStatus()));
+            } else {
+                detailDTO.setStatus(new IssueSettingDTO((long) 1, "Open"));
+            }
+
+        } else {
+            detailDTO.setStatus(new IssueSettingDTO((long) 0, "Close"));
+        }
+        return detailDTO;
+    }
+
+    public IssueSettingDTO toSettingDTO(ClassSetting setting) {
+        IssueSettingDTO dto = new IssueSettingDTO();
+        dto.setTitle(setting.getSettingValue());
+        dto.setId(setting.getClassSettingId());
+        return dto;
     }
 
     @Override
@@ -522,8 +599,26 @@ public class IssueService implements IIssueService {
         ClassSetting typeSetting = null;
         ClassSetting statusSetting = null;
         User assignee = null;
+        Milestone milestone = null;
+        Issue requirement = null;
+        Group group = null;
 
-        if (changes.getAsigneeName() != null) {
+        if (changes.getMilestoneId() != null) {
+            milestone = milestoneRepository.findById(changes.getMilestoneId())
+                    .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
+        }
+
+        if (changes.getGroupId() != null && changes.getGroupId() != 0) {
+            group = groupRepository.findById(changes.getGroupId())
+                    .orElseThrow(() -> new CustomException("Group doesnt exist"));
+        }
+
+        if (changes.getRequirementId() != null && changes.getRequirementId() != 0) {
+            milestone = milestoneRepository.findById(changes.getMilestoneId())
+                    .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
+        }
+
+        if (changes.getAsigneeName() != null && !changes.getAsigneeName().equalsIgnoreCase("None")) {
             assignee = userRepository.findByAccountName(changes.getAsigneeName());
             if (assignee == null) {
                 throw new CustomException("assignee doesnt exist");
@@ -543,6 +638,16 @@ public class IssueService implements IIssueService {
         for (Long id : issueIds) {
             Issue issue = issueRepository.findById(id).get();
 
+            if (milestone != null) {
+                issue.setMilestone(milestone);
+            }
+
+            if (changes.getRequirementId() == 0) {
+                issue.setRequirement(null);
+            } else if (requirement != null) {
+                issue.setRequirement(requirement);
+            }
+
             if (typeSetting != null) {
                 issue.setType(typeSetting);
             }
@@ -560,7 +665,15 @@ public class IssueService implements IIssueService {
                 }
             }
 
-            if (assignee != null) {
+            if (changes.getGroupId() == 0) {
+                issue.setGroup(null);
+            } else if (group != null) {
+                issue.setGroup(group);
+            }
+
+            if (changes.getAsigneeName().equalsIgnoreCase("None")) {
+                issue.setAsignee(null);
+            } else if (assignee != null) {
                 issue.setAsignee(assignee);
             }
 
