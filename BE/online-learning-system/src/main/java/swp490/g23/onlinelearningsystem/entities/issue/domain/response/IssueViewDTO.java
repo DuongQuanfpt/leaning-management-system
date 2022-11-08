@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class IssueRequirementDTO {
+public class IssueViewDTO {
     Long id;
     String title;
 }

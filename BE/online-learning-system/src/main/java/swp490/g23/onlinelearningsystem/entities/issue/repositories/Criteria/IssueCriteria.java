@@ -20,7 +20,8 @@ public class IssueCriteria {
     public IssueQuery searchFilterQuery(String keyword, String classCode, boolean isIssue, Long filterMilestoneId,
             IssueFilterRequestDTO filterRequestDTO) {
 
-        StringBuilder query = new StringBuilder("SELECT i FROM Issue i LEFT JOIN i.asignee as a WHERE i.classes.code = '" + classCode + "'");
+        StringBuilder query = new StringBuilder(
+                "SELECT i FROM Issue i LEFT JOIN i.asignee as a WHERE i.classes.code = '" + classCode + "'");
 
         if (isIssue == false) {
             query.append(" AND i.type IS NULL");
@@ -32,13 +33,22 @@ public class IssueCriteria {
             query.append(" AND i.milestone.milestoneId = '" + filterMilestoneId + "'");
         }
 
+        if (keyword != null) {
+            query.append(" AND (i.title LIKE '%" + keyword + "%' OR i.issueId LIKE '%" + keyword + "%')");
+        }
+    
         if (filterRequestDTO != null) {
             List<Long> groupFilter = filterRequestDTO.getGroupIds();
             if (groupFilter != null && !groupFilter.isEmpty()) {
                 query.append(" AND (");
 
                 for (Long groupId : groupFilter) {
-                    query.append(" i.group.groupId = '" + groupId + "'");
+                    if (groupId == 0) {
+                        query.append(" i.group IS NULL");
+                    } else {
+                        query.append(" i.group.groupId = '" + groupId + "'");
+                    }
+
                     if (groupId != groupFilter.get(groupFilter.size() - 1)) {
                         query.append(" OR");
                     }
@@ -89,9 +99,9 @@ public class IssueCriteria {
                 query.append(" AND (");
 
                 for (String username : assigneeFilter) {
-                    if(username.equalsIgnoreCase("none")){
+                    if (username.equalsIgnoreCase("none")) {
                         query.append(" i.asignee IS NULL");
-                    }else {
+                    } else {
                         query.append(" i.asignee.accountName = '" + username + "'");
                     }
 
@@ -108,9 +118,9 @@ public class IssueCriteria {
                 query.append(" AND (");
 
                 for (Long requirementId : requirementIds) {
-                    if(requirementId == 0){
+                    if (requirementId == 0) {
                         query.append(" i.requirement IS NULL");
-                    }else {
+                    } else {
                         query.append(" i.requirement.issueId = '" + requirementId + "'");
                     }
 
@@ -128,10 +138,6 @@ public class IssueCriteria {
         // } else if (roles.contains("ROLE_SUPPORTER")) {
         // query.append(" AND cs.classes.userSupporter.accountName = '" +
         // user.getAccountName() + "' ");
-        // }
-
-        // if (keyword != null) {
-        // query.append(" AND i.title LIKE '%" + keyword + "%'");
         // }
 
         // if (filterGroupId != null) {
