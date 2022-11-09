@@ -462,38 +462,20 @@ public class IssueService implements IIssueService {
                     for (Submit submit : groupMember.getGroup().getSubmits()) {
                         if (!milestoneOfClass.contains(submit.getMilestone())
                                 && submit.getMilestone().getClasses().getCode().equals(classCode)) {
-                                    milestoneOfClass.add(submit.getMilestone());
+                            milestoneOfClass.add(submit.getMilestone());
                         }
                     }
                 }
             }
         }
 
-        // List<Milestone> milestoneOfClass =
-        // milestoneRepository.getByClassCodeInProgress(classCode);
-
         List<IssueMilestoneFilterDTO> dtos = new ArrayList<>();
         for (Milestone milestone : milestoneOfClass) {
             dtos.add(toMilestoneFilterDto(milestone, groupOfAuthor));
         }
 
-        // for (Setting setting : author.getSettings()) {
-        // if (setting.getSettingValue().equals("ROLE_TRAINEE")) {
-        // for (IssueMilestoneFilterDTO milestoneFilterDTO : dtos) {
-        // milestoneFilterDTO.get
-        // }
-        // break;
-        // }
-        // }
-
         IssueFilter filter = new IssueFilter();
         filter.setMilestoneFilter(dtos);
-        // filter.setGroupFilter(groupDTOs);
-
-        // filter.setStatusFilter(statusFilter);
-        // filter.setTypeFilter(typeFilter);
-        // filter.setRequirement(requirementFilter);
-        // filter.setTraineesToAsign(asigneeDTOs);
         return ResponseEntity.ok(filter);
     }
 
@@ -616,9 +598,20 @@ public class IssueService implements IIssueService {
                 .orElseThrow(() -> new CustomException("author doesnt exist"));
         Issue issue = new Issue();
         issue.setClasses(classes);
-        issue.setTitle(requestDTO.getTitle());
         issue.setAuthor(author);
         issue.setClosed(false);
+
+        List<Issue> issues = new ArrayList<>();
+        if (requestDTO.getTypeId() != null) {
+            issues = issueRepository.getIssueByTitleOfClass(classCode, requestDTO.getTitle());
+        } else {
+            issues = issueRepository.getRequirementByTitleOfClass(classCode, requestDTO.getTitle());
+        }
+
+        if (!issues.isEmpty()) {
+            throw new CustomException("Title already exist");
+        }
+        issue.setTitle(requestDTO.getTitle());
 
         if (requestDTO.getMilestoneId() != null) {
             Milestone milestone = milestoneRepository.findById(requestDTO.getMilestoneId())
@@ -626,9 +619,9 @@ public class IssueService implements IIssueService {
             issue.setMilestone(milestone);
         }
 
-        if (requestDTO.getGroupId() != null) {
+        if (requestDTO.getGroupId() != null && requestDTO.getGroupId() != 0) {
             Group group = groupRepository.findById(requestDTO.getGroupId())
-                    .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
+                    .orElseThrow(() -> new CustomException("Group doesnt exist"));
             issue.setGroup(group);
         }
 
@@ -671,6 +664,20 @@ public class IssueService implements IIssueService {
     public ResponseEntity<String> issueEdit(Long issueId, IssueRequestDTO requestDTO, User user) {
         Issue issue = issueRepository.findById(issueId).orElseThrow(() -> new CustomException("Issue doesnt exist"));
 
+        if (!issue.getTitle().equals(requestDTO.getTitle())) {
+            List<Issue> issues = new ArrayList<>();
+            if (requestDTO.getTypeId() != null) {
+                issues = issueRepository.getIssueByTitleOfClass(issue.getClasses().getCode(), requestDTO.getTitle());
+            } else {
+                issues = issueRepository.getRequirementByTitleOfClass(issue.getClasses().getCode(),
+                        requestDTO.getTitle());
+            }
+
+            if (!issues.isEmpty()) {
+                throw new CustomException("Title already exist");
+            }
+        }
+
         issue.setTitle(requestDTO.getTitle());
 
         if (requestDTO.getDeadline() != null && requestDTO.getDeadline() != issue.getDeadline().toString()) {
@@ -691,9 +698,9 @@ public class IssueService implements IIssueService {
             }
         }
 
-        if (requestDTO.getGroupId() != null) {
+        if (requestDTO.getGroupId() != null && requestDTO.getGroupId() != 0 ) {
             Group group = groupRepository.findById(requestDTO.getGroupId())
-                    .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
+                    .orElseThrow(() -> new CustomException("Group doesnt exist"));
             issue.setGroup(group);
         }
 
