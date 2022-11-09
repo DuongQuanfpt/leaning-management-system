@@ -11,7 +11,7 @@ import attendanceApi from '~/api/attendanceApi'
 
 const AttendanceTracking = () => {
   const { currentClass } = useSelector((state) => state.profile)
-
+  const [loading, setLoading] = useState(false)
   const [listAttendanceTracking, setListAttendanceTracking] = useState([])
 
   useEffect(() => {
@@ -20,6 +20,7 @@ const AttendanceTracking = () => {
   }, [currentClass])
 
   const loadData = async () => {
+    setLoading(true)
     const params = {
       filterClass: currentClass,
     }
@@ -39,8 +40,10 @@ const AttendanceTracking = () => {
         })
         // setListAttendanceTracking(result)
       })
+      .then(() => setLoading(false))
       .catch((error) => {
         console.log(error)
+        setLoading(false)
       })
   }
 
@@ -132,6 +135,7 @@ const AttendanceTracking = () => {
                     x: 1500,
                     y: 480,
                   }}
+                  loading={loading}
                 />
               </div>
             </div>

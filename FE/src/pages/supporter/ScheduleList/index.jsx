@@ -35,6 +35,8 @@ const ScheduleList = () => {
     class: currentClass,
   })
 
+  const [loading, setLoading] = useState(false)
+
   useEffect(() => {
     //Load filter
     scheduleApi
@@ -56,6 +58,7 @@ const ScheduleList = () => {
   }, [filter, currentClass])
 
   const loadData = async (page, filter, q = '') => {
+    setLoading(true)
     const [filterDateFrom, filterDateTo] = filter.date
 
     const params = {
@@ -80,8 +83,10 @@ const ScheduleList = () => {
         setTotalItem(response.totalItem)
         setSchedule(response.listResult)
       })
+      .then(() => setLoading(false))
       .catch((error) => {
         console.log(error)
+        setLoading(false)
       })
   }
 
@@ -254,7 +259,7 @@ const ScheduleList = () => {
                 </div>
               </div>
               <div className="col-lg-12">
-                <Table bordered dataSource={schedule} columns={columns} pagination={false} />
+                <Table bordered dataSource={schedule} columns={columns} pagination={false} loading={loading} />
               </div>
               <div className="col-lg-12 d-flex justify-content-end">
                 <Pagination current={currentPage} total={totalItem} onChange={handleChangePage} />;
