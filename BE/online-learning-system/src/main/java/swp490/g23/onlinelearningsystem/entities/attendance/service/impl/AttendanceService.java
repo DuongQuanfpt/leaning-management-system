@@ -3,6 +3,7 @@ package swp490.g23.onlinelearningsystem.entities.attendance.service.impl;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.TypedQuery;
@@ -66,6 +67,7 @@ public class AttendanceService implements IAttendanceService {
         double size = schedules.size();
 
         for (ClassUser classUser : classUsers) {
+            HashMap<String, AttendanceStatus> list = new HashMap<>();
             AttendanceResponseDTO attendanceResponseDTO = new AttendanceResponseDTO();
             double countAbsent = 0;
             attendanceResponseDTO.setAccountName(classUser.getUser().getAccountName());
@@ -77,6 +79,7 @@ public class AttendanceService implements IAttendanceService {
                         attendance.getSchedule().getClassSetting().getSettingValue(),
                         attendance.getSchedule().getTrainingDate().toString(), attendance.getStatus(),
                         attendance.getComment()));
+                list.put(attendance.getSchedule().getClassSetting().getSettingValue(), attendance.getStatus());
                 if (attendance.getStatus().equals(AttendanceStatus.Absent)) {
                     countAbsent++;
                 }
@@ -88,6 +91,7 @@ public class AttendanceService implements IAttendanceService {
                             schedule.getTrainingDate().toString()));
                 }
             }
+            attendanceResponseDTO.setSlotStatus(list);
             attendanceResponseDTO.setUserAttendance(userAttendances);
             attendanceResponseDTO.setAbsentPercent(new DecimalFormat("##.##").format((countAbsent / size) * 100));
             attendanceResponseDTO.setClassCode(clazz.getCode());
