@@ -26,6 +26,8 @@ const AttendanceTracking = () => {
     await attendanceApi
       .getAttendanceDetail(params)
       .then((response) => {
+        console.log(response)
+        setListAttendanceTracking(response)
         const result = response.map((item) => {
           const x = {
             accountName: item.accountName,
@@ -35,7 +37,7 @@ const AttendanceTracking = () => {
           item.userAttendance.forEach((index) => (x[index.slot] = index.status))
           return x
         })
-        setListAttendanceTracking(result)
+        // setListAttendanceTracking(result)
       })
       .catch((error) => {
         console.log(error)
@@ -56,8 +58,12 @@ const AttendanceTracking = () => {
     array.push({
       title: property,
       dataIndex: property,
+      render: () => property,
     })
   }
+  // title: 'slot 1',
+  // dataIndex: 'slot 1'
+  // render (_) =>
   array[0] = {
     ...array[0],
     title: 'Username',
@@ -76,7 +82,25 @@ const AttendanceTracking = () => {
     width: '10%',
     fixed: 'left',
   }
-  console.log(array)
+
+  const column = [
+    {
+      title: 'Username',
+      dataIndex: 'accountName',
+    },
+    {
+      title: 'Fullname',
+      dataIndex: 'fullName',
+    },
+    {
+      title: 'dummy',
+      dataIndex: 'safdf',
+      render: (_, { userAttendance }) => {
+        console.log(userAttendance)
+        return <span> 1</span>
+      },
+    },
+  ]
 
   return (
     <div>
@@ -101,8 +125,8 @@ const AttendanceTracking = () => {
               <div className="col-lg-12">
                 <Table
                   bordered
-                  dataSource={x}
-                  columns={array}
+                  dataSource={listAttendanceTracking}
+                  columns={column}
                   pagination={false}
                   scroll={{
                     x: 1500,

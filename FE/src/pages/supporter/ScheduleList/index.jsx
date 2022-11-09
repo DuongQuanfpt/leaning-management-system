@@ -30,7 +30,7 @@ const ScheduleList = () => {
     statusFilter: [],
   })
   const [filter, setFilter] = useState({
-    date: [moment(new Date(), 'YYYY-MM-DD').subtract(3, 'd'), moment(new Date(), 'YYYY-MM-DD').add(3, 'd')],
+    date: [moment(new Date(), 'YYYY-MM-DD').subtract(7, 'd'), moment(new Date(), 'YYYY-MM-DD').add(7, 'd')],
     status: { name: 'Select Attendance Status', value: null },
     class: currentClass,
   })
@@ -104,7 +104,7 @@ const ScheduleList = () => {
   const handleReload = () => {
     setFilter((prev) => ({
       ...prev,
-      date: [moment(new Date(), 'YYYY-MM-DD').subtract(3, 'd'), moment(new Date(), 'YYYY-MM-DD').add(3, 'd')],
+      date: [moment(new Date(), 'YYYY-MM-DD').subtract(7, 'd'), moment(new Date(), 'YYYY-MM-DD').add(7, 'd')],
       status: { name: 'Select Attendance Status', value: null },
       class: currentClass,
     }))
