@@ -1,9 +1,12 @@
 package swp490.g23.onlinelearningsystem.entities.issue.domain.response;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import swp490.g23.onlinelearningsystem.entities.issue.domain.filter.IssueMilestoneFilterDTO;
 
 @Getter
 @Setter
@@ -14,7 +17,7 @@ public class IssueDetailDTO {
 
     String title;
 
-    IssueMilestoneDTO milestone;
+    IssueMilestoneFilterDTO milestone;
 
     IssueGroupDTO group;
 
@@ -30,6 +33,8 @@ public class IssueDetailDTO {
 
     String description;
 
-    IssueRequirementDTO requirement;
+    IssueViewDTO requirement;
+
+    List<IssueViewDTO> linkedIssues;
 
 }

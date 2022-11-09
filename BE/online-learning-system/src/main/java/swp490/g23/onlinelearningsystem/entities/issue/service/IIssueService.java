@@ -14,9 +14,11 @@ public interface IIssueService {
     ResponseEntity<IssueListDTO> getIssueList(int page, int limit, String keyword, String classCode, boolean isIssue,
             Long filterMilestoneId, IssueFilterRequestDTO filterRequestDTO);
 
-    ResponseEntity<IssueFilter> issueListFilter(String classCode);
+    ResponseEntity<IssueFilter> issueListFilter(String classCode , User user);
 
     ResponseEntity<IssueFilter> issueAddFilter(String classCode, User user);
+
+    ResponseEntity<IssueFilter> requirementAddFilter(String classCode, User user);
 
     ResponseEntity<String> issueAdd(String classCode, IssueRequestDTO requestDTO, User user);
 
@@ -24,5 +26,5 @@ public interface IIssueService {
 
     ResponseEntity<String> updateBatchIssue(IssueBatchRequestDTO requestDTO, User user);
 
-    ResponseEntity<IssueDetailDTO> issueDetail(Long issueId);
+    ResponseEntity<IssueDetailDTO> issueDetail(Long issueId , User user);
 }

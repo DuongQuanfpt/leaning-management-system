@@ -50,18 +50,21 @@ public class IssueController {
 		int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
 		int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
 		
-		byte[] result = Base64.getDecoder().decode(filterJson);
-		String decodedFilter = new String(result);
-		IssueFilterRequestDTO filterRequestDTO = new ObjectMapper().readValue(decodedFilter, IssueFilterRequestDTO.class);
-		System.out.println( "DECODED FILTER : " + filterRequestDTO.getGroupIds().toString());
-
+		IssueFilterRequestDTO filterRequestDTO =  new IssueFilterRequestDTO();
+		if(filterJson != null) {
+			byte[] result = Base64.getDecoder().decode(filterJson);
+			String decodedFilter = new String(result);
+			filterRequestDTO = new ObjectMapper().readValue(decodedFilter, IssueFilterRequestDTO.class);
+			System.out.println( "DECODED FILTER : " + filterRequestDTO.getGroupIds().toString());
+		}
 		return issueService.getIssueList(page, limit, keyword, classCode, isIssue, filterMilestoneId, filterRequestDTO);
 	}
 
 	@GetMapping(value = "/issue-list-filter/{classCode}")
-	public ResponseEntity<IssueFilter> getIssueFilter(@PathVariable("classCode") String classCode) {
+	public ResponseEntity<IssueFilter> getIssueFilter(@PathVariable("classCode") String classCode,
+		@AuthenticationPrincipal User user) {
 
-		return issueService.issueListFilter(classCode);
+		return issueService.issueListFilter(classCode , user);
 	}
 
 	@GetMapping(value = "/issue-add-filter/{classCode}")
@@ -69,6 +72,13 @@ public class IssueController {
 			@AuthenticationPrincipal User user) {
 
 		return issueService.issueAddFilter(classCode, user);
+	}
+
+	@GetMapping(value = "/requirement-add-filter/{classCode}")
+	public ResponseEntity<IssueFilter> addRequirementFilter(@PathVariable("classCode") String classCode,
+			@AuthenticationPrincipal User user) {
+
+		return issueService.requirementAddFilter(classCode, user);
 	}
 
 	@PostMapping(value = "/issue-add/{classCode}")
@@ -95,8 +105,9 @@ public class IssueController {
 	}
 
 	@GetMapping(value = "/issue-detail/{issueId}")
-	public ResponseEntity<IssueDetailDTO> getIssueDetail(@PathVariable("issueId") Long issueId) {
+	public ResponseEntity<IssueDetailDTO> getIssueDetail(@PathVariable("issueId") Long issueId,
+		@AuthenticationPrincipal User user) {
 
-		return issueService.issueDetail(issueId);
+		return issueService.issueDetail(issueId , user);
 	}
 }
