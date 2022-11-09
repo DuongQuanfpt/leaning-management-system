@@ -10,7 +10,6 @@ import avatar from '~/assets/images/profile/pic1.jpg'
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
-import TextArea from 'antd/lib/input/TextArea'
 
 const AttendanceTracking = () => {
   const { id } = useParams()

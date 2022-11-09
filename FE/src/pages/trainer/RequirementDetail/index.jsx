@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 import { Link, useParams } from 'react-router-dom'
-import { Breadcrumb, DatePicker, Modal } from 'antd'
+import { Breadcrumb, Modal } from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 
 import { CButton, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
@@ -13,7 +13,6 @@ import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 import { useSelector } from 'react-redux'
-import moment from 'moment'
 
 const RequirementDetail = () => {
   const { currentClass } = useSelector((state) => state.profile)

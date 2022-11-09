@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
-import { Breadcrumb, Space, Table, Tag, Typography } from 'antd'
+import { Breadcrumb, Space, Table, Typography } from 'antd'
 
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
@@ -13,7 +13,6 @@ const AttendanceTracking = () => {
   const { currentClass } = useSelector((state) => state.profile)
   const [loading, setLoading] = useState(false)
   const [listAttendanceTracking, setListAttendanceTracking] = useState([])
-  const [clone, setClone] = useState([])
 
   useEffect(() => {
     loadData()
@@ -28,19 +27,18 @@ const AttendanceTracking = () => {
     await attendanceApi
       .getAttendanceTracking(params)
       .then((response) => {
-        console.log(response)
         setListAttendanceTracking(response)
-        const result = response.map((item) => {
-          const x = {
-            accountName: item.accountName,
-            fullName: item.fullName,
-            absentPercent: item.absentPercent,
-          }
-          item.userAttendance.forEach((index) => (x[index.slot] = index.status))
-          return x
-        })
-        // setListAttendanceTracking(result)
-        // setClone(result)
+        // const result = response.map((item) => {
+        //   const x = {
+        //     accountName: item.accountName,
+        //     fullName: item.fullName,
+        //     absentPercent: item.absentPercent,
+        //   }
+        //   item.userAttendance.forEach((index) => (x[index.slot] = index.status))
+        //   return x
+        // })
+        // // setListAttendanceTracking(result)
+        // // setClone(result)
       })
       .then(() => setLoading(false))
       .catch((error) => {
