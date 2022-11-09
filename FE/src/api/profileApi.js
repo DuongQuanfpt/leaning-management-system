@@ -15,7 +15,9 @@ const userApi = {
 
     return axiosClient.get(url, header)
   },
+
   updateProfile: (params) => {
+    console.log(currentAccessToken)
     const url = `/user/update-profile`
     return axiosClient.put(url, params, header)
   },
