@@ -11,7 +11,7 @@ import attendanceApi from '~/api/attendanceApi'
 
 const AttendanceTracking = () => {
   const { currentClass } = useSelector((state) => state.profile)
-
+  const [loading, setLoading] = useState(false)
   const [listAttendanceTracking, setListAttendanceTracking] = useState([])
 
   useEffect(() => {
@@ -20,12 +20,15 @@ const AttendanceTracking = () => {
   }, [currentClass])
 
   const loadData = async () => {
+    setLoading(true)
     const params = {
       filterClass: currentClass,
     }
     await attendanceApi
       .getAttendanceDetail(params)
       .then((response) => {
+        console.log(response)
+        setListAttendanceTracking(response)
         const result = response.map((item) => {
           const x = {
             accountName: item.accountName,
@@ -35,10 +38,12 @@ const AttendanceTracking = () => {
           item.userAttendance.forEach((index) => (x[index.slot] = index.status))
           return x
         })
-        setListAttendanceTracking(result)
+        // setListAttendanceTracking(result)
       })
+      .then(() => setLoading(false))
       .catch((error) => {
         console.log(error)
+        setLoading(false)
       })
   }
 
@@ -56,8 +61,12 @@ const AttendanceTracking = () => {
     array.push({
       title: property,
       dataIndex: property,
+      render: () => property,
     })
   }
+  // title: 'slot 1',
+  // dataIndex: 'slot 1'
+  // render (_) =>
   array[0] = {
     ...array[0],
     title: 'Username',
@@ -76,7 +85,25 @@ const AttendanceTracking = () => {
     width: '10%',
     fixed: 'left',
   }
-  console.log(array)
+
+  const column = [
+    {
+      title: 'Username',
+      dataIndex: 'accountName',
+    },
+    {
+      title: 'Fullname',
+      dataIndex: 'fullName',
+    },
+    {
+      title: 'dummy',
+      dataIndex: 'safdf',
+      render: (_, { userAttendance }) => {
+        console.log(userAttendance)
+        return <span> 1</span>
+      },
+    },
+  ]
 
   return (
     <div>
@@ -101,13 +128,14 @@ const AttendanceTracking = () => {
               <div className="col-lg-12">
                 <Table
                   bordered
-                  dataSource={x}
-                  columns={array}
+                  dataSource={listAttendanceTracking}
+                  columns={column}
                   pagination={false}
                   scroll={{
                     x: 1500,
                     y: 480,
                   }}
+                  loading={loading}
                 />
               </div>
             </div>

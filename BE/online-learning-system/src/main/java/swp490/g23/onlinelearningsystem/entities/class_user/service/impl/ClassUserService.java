@@ -194,23 +194,18 @@ public class ClassUserService implements IClassUserService {
             User newTrainee = new User();
             TraineeImportResponse importResponse = new TraineeImportResponse();
             ClassUser classUser = new ClassUser();
-            String usernameRequest = requestDTO.getUsername();
+            String nameRequest = requestDTO.getFullName();
             String emailRequest = requestDTO.getEmail();
             Classes clazz = classRepositories.findClassByCode(classCode);
 
-            importResponse.setUsername(usernameRequest);
+            importResponse.setFullName(nameRequest);
             importResponse.setEmail(emailRequest);
-            if (usernameRequest != null) {
-                if (userRepository.findByAccountName(usernameRequest) == null) {
-                    newTrainee.setAccountName(usernameRequest);
-                } else {
-                    importResponse.setImportStatus("Failed!");
-                    importResponse.setImportMessage("Username have already existed!");
-                    importList.add(importResponse);
-                    continue;
-                }
+            if (nameRequest != null) {
+                String username = nameRequest.replaceAll("\\s+", "").toLowerCase();
+                newTrainee.setAccountName(authService.accountNameGenerate(username));
+                newTrainee.setFullName(nameRequest);
             } else {
-                importResponse.setImportMessage("Username is empty!");
+                importResponse.setImportMessage("Full name is empty!");
                 importResponse.setImportStatus("Failed!");
                 importList.add(importResponse);
                 continue;

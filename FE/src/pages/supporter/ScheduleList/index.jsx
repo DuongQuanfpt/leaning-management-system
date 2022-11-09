@@ -30,10 +30,12 @@ const ScheduleList = () => {
     statusFilter: [],
   })
   const [filter, setFilter] = useState({
-    date: [moment(new Date(), 'YYYY-MM-DD').subtract(3, 'd'), moment(new Date(), 'YYYY-MM-DD').add(3, 'd')],
+    date: [moment(new Date(), 'YYYY-MM-DD').subtract(7, 'd'), moment(new Date(), 'YYYY-MM-DD').add(7, 'd')],
     status: { name: 'Select Attendance Status', value: null },
     class: currentClass,
   })
+
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     //Load filter
@@ -56,6 +58,7 @@ const ScheduleList = () => {
   }, [filter, currentClass])
 
   const loadData = async (page, filter, q = '') => {
+    setLoading(true)
     const [filterDateFrom, filterDateTo] = filter.date
 
     const params = {
@@ -80,8 +83,10 @@ const ScheduleList = () => {
         setTotalItem(response.totalItem)
         setSchedule(response.listResult)
       })
+      .then(() => setLoading(false))
       .catch((error) => {
         console.log(error)
+        setLoading(false)
       })
   }
 
@@ -104,7 +109,7 @@ const ScheduleList = () => {
   const handleReload = () => {
     setFilter((prev) => ({
       ...prev,
-      date: [moment(new Date(), 'YYYY-MM-DD').subtract(3, 'd'), moment(new Date(), 'YYYY-MM-DD').add(3, 'd')],
+      date: [moment(new Date(), 'YYYY-MM-DD').subtract(7, 'd'), moment(new Date(), 'YYYY-MM-DD').add(7, 'd')],
       status: { name: 'Select Attendance Status', value: null },
       class: currentClass,
     }))
@@ -254,7 +259,7 @@ const ScheduleList = () => {
                 </div>
               </div>
               <div className="col-lg-12">
-                <Table bordered dataSource={schedule} columns={columns} pagination={false} />
+                <Table bordered dataSource={schedule} columns={columns} pagination={false} loading={loading} />
               </div>
               <div className="col-lg-12 d-flex justify-content-end">
                 <Pagination current={currentPage} total={totalItem} onChange={handleChangePage} />;

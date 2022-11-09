@@ -70,6 +70,7 @@ const IssueList = () => {
 
   const listGroupAssigned = ofGroup.map((gr) => gr.groupId)
   const [isTrainer, setIsTrainer] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     setIsEditMode(false)
@@ -122,6 +123,7 @@ const IssueList = () => {
   }, [filter, ITEM_PER_PAGE])
 
   const loadData = async (page, filter, q = '') => {
+    setIsLoading(true)
     const params = {
       limit: ITEM_PER_PAGE,
       page: page,
@@ -141,6 +143,7 @@ const IssueList = () => {
         setCurrentPage(page)
         setTotalItem(response.totalItem)
       })
+      .then(() => setIsLoading(false))
       .catch((error) => {
         console.log(error)
       })
@@ -569,6 +572,7 @@ const IssueList = () => {
                         dataSource={listIssue}
                         columns={columns}
                         pagination={false}
+                        loading={isLoading}
                         rowSelection={
                           isEditMode && {
                             type: 'checbox',
@@ -587,6 +591,7 @@ const IssueList = () => {
                   <div className="col-lg-12 d-flex justify-content-end">
                     {filter !== null && (
                       <Pagination
+                        className="mt-3"
                         current={currentPage}
                         total={totalItem}
                         onChange={handleChangePage}
@@ -693,10 +698,6 @@ const IssueList = () => {
                       milestone: listFilter?.milestoneFilter
                         ?.filter((milestone) => milestone.milestoneId === value)
                         ?.shift(),
-                      // requirement: {
-                      //   ...prev.requirement,
-                      //   id: 0,
-                      // },
                     }))
                   }}
                 ></Select>
@@ -749,7 +750,7 @@ const IssueList = () => {
                 <Select
                   className="w-100"
                   disabled={!baseEditBatch.milestoneId}
-                  value={baseEditBatch?.requirement?.id}
+                  value={baseEditBatch?.requirement}
                   options={listFilter?.requirement?.map((require) => ({
                     label: require.title,
                     value: require.id,

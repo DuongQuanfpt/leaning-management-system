@@ -68,6 +68,7 @@ const RequirementList = () => {
   const [isTrainer, setIsTrainer] = useState(false)
 
   const [listGroupLeader, setListGroupLeader] = useState([])
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const baseListGroupLeader = []
@@ -131,6 +132,7 @@ const RequirementList = () => {
   }, [filter, ITEM_PER_PAGE])
 
   const loadData = async (page, filter, q = '') => {
+    setLoading(true)
     const params = {
       limit: ITEM_PER_PAGE,
       page: page,
@@ -150,8 +152,10 @@ const RequirementList = () => {
         setCurrentPage(page)
         setTotalItem(response.totalItem)
       })
+      .then(() => setLoading(false))
       .catch((error) => {
         console.log(error)
+        setLoading(false)
       })
   }
 
@@ -557,6 +561,7 @@ const RequirementList = () => {
                         dataSource={listIssue}
                         columns={columns}
                         pagination={false}
+                        loading={loading}
                         rowSelection={
                           isEditMode && {
                             type: 'checbox',

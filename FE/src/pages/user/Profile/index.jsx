@@ -55,20 +55,19 @@ const Profile = () => {
   }
 
   const handleSaveAvatar = async () => {
-    const data = {
+    const params = {
       avatarBase64: preview,
     }
     await userApi
-      .updateProfile(data)
+      .updateProfile(params)
       .then((response) => {
+        console.log(response)
         setIsEditMode(false)
-        setError('Your avatar has changed successfully')
-        dispatch(setProfile(response))
-        setTimeout(() => {
-          navigateTo(0)
-        }, 4000)
+        setError('You have successfully changed your avatar')
+        // dispatch(setProfile({ ...response }))
       })
       .catch((error) => {
+        console.log(error)
         setError('Change avatar failed, please try again')
       })
   }
@@ -87,8 +86,8 @@ const Profile = () => {
       setError('Your full name must longer than 3 characters')
       return
     }
-    if (mobile?.length < 9 || mobile?.length > 11) {
-      setError('Your mobile number must 9-10 characters')
+    if (mobile?.length < 9 || mobile?.length >= 11) {
+      setError('Your mobile number must 10-11 characters')
       return
     }
     const data = {
@@ -98,9 +97,9 @@ const Profile = () => {
     }
     await userApi
       .updateProfile(data)
-      .then((response) => {
+      .then(() => {
         setIsEditMode(false)
-        setError('You have successfully changed your password')
+        setError('You have successfully changed your profile')
         dispatch(
           setProfile({
             ...currentProfile,
@@ -109,6 +108,12 @@ const Profile = () => {
         )
       })
       .catch((error) => {
+        console.log(error)
+        //Note
+        if (error.response.data.messsage === 'User name already exist') {
+          setError('Username already existed')
+          return
+        }
         setError('Something went wrong, please try again')
       })
   }
@@ -259,10 +264,8 @@ const Profile = () => {
                                 <ErrorMsg
                                   errorMsg={error}
                                   isError={
-                                    error === 'You have successfully changed your password' ||
-                                    error === 'Your avatar has changed successfully'
-                                      ? false
-                                      : true
+                                    error !== 'You have successfully changed your profile' ||
+                                    error !== 'You have successfully changed your avatar'
                                   }
                                 />
                                 <div className="d-flex">
