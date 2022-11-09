@@ -101,7 +101,7 @@ const RequirementDetail = () => {
       description: detail.description,
       milestoneId: detail.milestone.milestoneId,
       groupId: detail.group.groupId,
-      asigneeName: detail.asignee.fullName,
+      asigneeName: detail.asignee.username,
     }
 
     const params = {
@@ -207,7 +207,7 @@ const RequirementDetail = () => {
                                     ...prev,
                                     milestone: milestone,
                                     group: { ...prev.group, groupName: 'Select Group' },
-                                    asignee: { ...prev.asignee, fullName: 'Select Assignee' },
+                                    asignee: { ...prev.asignee, username: 'Select Assignee' },
                                   }))
                                 }
                               >
@@ -236,7 +236,7 @@ const RequirementDetail = () => {
                                   setDetail((prev) => ({
                                     ...prev,
                                     group: newGroup,
-                                    asignee: { ...prev.asignee, fullName: 'Select Assignee' },
+                                    asignee: { ...prev.asignee, username: 'Select Assignee' },
                                   }))
                                   console.log(group)
                                 }}
@@ -256,7 +256,7 @@ const RequirementDetail = () => {
                             color="warning"
                             disabled={!isEditMode || detail?.group?.groupName === 'Select Group'}
                           >
-                            {detail?.asignee?.fullName}
+                            {detail?.asignee?.username}
                           </CDropdownToggle>
                           <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                             {detail?.group?.memberId?.map((member) => (
@@ -264,7 +264,7 @@ const RequirementDetail = () => {
                                 onClick={() =>
                                   setDetail((prev) => ({
                                     ...prev,
-                                    asignee: { ...prev.asignee, fullName: member },
+                                    asignee: { ...prev.asignee, username: member },
                                   }))
                                 }
                               >

@@ -54,6 +54,7 @@ const ScheduleDetail = () => {
     await scheduleApi
       .getDetail(id)
       .then((response) => {
+        console.log(response)
         setDefaultDetail({
           ...response,
           status: response.status === 'Active' ? 1 : response.status === 'Inactive' ? 0 : null,

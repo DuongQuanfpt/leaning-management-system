@@ -126,11 +126,13 @@ const IssueAdd = () => {
     await issueApi
       .addIssue(currentClass, params)
       .then((response) => {
-        console.log(response)
         setError('You have successfully add new issue')
       })
       .catch((error) => {
-        console.log(error)
+        if (error.response.data.message === 'Title already exist') {
+          setError('Requirement Title already existed')
+          return
+        }
         setError('Something went wrong, please try again')
       })
   }
