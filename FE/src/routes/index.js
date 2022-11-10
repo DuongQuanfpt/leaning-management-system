@@ -76,6 +76,9 @@ const RequirementDetail = lazy(() => import('~/pages/trainer/RequirementDetail')
 const RequirementAdd = lazy(() => import('~/pages/trainer/RequirementAdd'))
 
 const AttendanceTracking = lazy(() => import('~/pages/trainer/AttendanceTracking'))
+const AttendanceDetail = lazy(() => import('~/pages/trainer/AttendanceDetail'))
+
+const ScheduleAttendance = lazy(() => import('~/pages/trainee/ScheduleAttendance'))
 
 //404 pages
 const PageNotFound = lazy(() => import('~/pages/common/PageNotFound'))
@@ -139,7 +142,7 @@ const trainerRoutes = [
 ]
 
 // Trainee routes
-const traineeRoutes = []
+const traineeRoutes = [{ path: '/schedule-attendance', component: ScheduleAttendance }]
 
 //Admin and manager routes
 const subjectListRoutes = [
@@ -196,7 +199,10 @@ const issueRoutes = [
   { path: '/requirement-add', component: RequirementAdd },
 ]
 
-const attendanceRoutes = [{ path: '/attendance-tracking', component: AttendanceTracking }]
+const attendanceRoutes = [
+  { path: '/attendance-tracking', component: AttendanceTracking },
+  { path: '/attendance-detail/:id', component: AttendanceDetail },
+]
 
 export {
   commonRoutes,
