@@ -47,13 +47,7 @@ const IssueList = () => {
   const [listFilter, setListFilter] = useState({})
 
   const [filter, setFilter] = useState(null)
-  const [globalFilter, setGlobalFilter] = useState({
-    groupIds: [],
-    statusIds: [],
-    typeIds: [],
-    assigneeNames: [],
-    requirementIds: [],
-  })
+
   const [baseFilter, setBaseFilter] = useState({
     groupIds: [],
     statusIds: [],
@@ -91,11 +85,11 @@ const IssueList = () => {
     issueApi
       .getListFilter(currentClass)
       .then((response) => {
-        console.log(response)
         setListFilter({
           ...response,
           asigneeFilter: ['None', ...response.asigneeFilter],
           groupFilter: [{ groupId: 0, groupName: 'None' }, ...response.groupFilter],
+          requirement: [{ id: 0, title: 'General Requirement' }, ...response.requirement],
           statusFilter: [{ title: 'Open', id: 1 }, ...response.statusFilter, { title: 'Close', id: 0 }],
         })
       })
@@ -129,7 +123,7 @@ const IssueList = () => {
       page: page,
       isIssue: true,
       milestoneId: filter?.milestoneId,
-      filter: btoa(JSON.stringify(globalFilter)),
+      filter: btoa(JSON.stringify(baseFilter)),
     }
     if (q.trim() !== '') {
       params.q = q.trim()
@@ -138,7 +132,6 @@ const IssueList = () => {
     await issueApi
       .getIssue(currentClass, params)
       .then((response) => {
-        console.log(response)
         setListIssue(response.issueList.map((item, index) => ({ ...item, key: index })))
         setCurrentPage(page)
         setTotalItem(response.totalItem)
@@ -210,7 +203,7 @@ const IssueList = () => {
       return arr
     }
 
-    const globalFilter = {
+    const arrayFilter = {
       groupIds: [],
       statusIds: [],
       typeIds: [],
@@ -218,29 +211,48 @@ const IssueList = () => {
       requirementIds: [],
     }
 
-    value.forEach((item) => {
-      if (item.includes('assignee')) {
-        globalFilter.assigneeNames.push(...item)
-      }
-      if (item.includes('group')) {
-        globalFilter.groupIds.push(...item)
-      }
-      if (item.includes('status')) {
-        globalFilter.statusIds.push(...item)
-      }
-      if (item.includes('type')) {
-        globalFilter.typeIds.push(...item)
-      }
-      if (item.includes('requirement')) {
-        globalFilter.requirementIds.push(...item)
-      }
-    })
-    removeItemAll(globalFilter.assigneeNames, 'assignee')
-    removeItemAll(globalFilter.groupIds, 'group')
-    removeItemAll(globalFilter.statusIds, 'status')
-    removeItemAll(globalFilter.typeIds, 'type')
-    removeItemAll(globalFilter.requirementIds, 'requirement')
-    setBaseFilter(globalFilter)
+    try {
+      value.forEach((item) => {
+        if (item.includes('assignee')) {
+          arrayFilter.assigneeNames.push(...item)
+        }
+        if (item.includes('group')) {
+          arrayFilter.groupIds.push(...item)
+        }
+        if (item.includes('status')) {
+          arrayFilter.statusIds.push(...item)
+        }
+        if (item.includes('type')) {
+          arrayFilter.typeIds.push(...item)
+        }
+        if (item.includes('requirement')) {
+          arrayFilter.requirementIds.push(...item)
+        }
+      })
+      removeItemAll(arrayFilter.assigneeNames, 'assignee')
+      removeItemAll(arrayFilter.groupIds, 'group')
+      removeItemAll(arrayFilter.statusIds, 'status')
+      removeItemAll(arrayFilter.typeIds, 'type')
+      removeItemAll(arrayFilter.requirementIds, 'requirement')
+    } finally {
+      setBaseFilter(arrayFilter)
+    }
+  }
+
+  const handleMultipleFilter = () => {
+    try {
+      setIsEditMode(false)
+      setSelectedRow([])
+      setBaseEditBatch({
+        groupIds: [],
+        statusIds: [],
+        typeIds: [],
+        assigneeNames: [],
+        requirementIds: [],
+      })
+    } finally {
+      loadData(1, filter, search)
+    }
   }
 
   const displayRenderCascader = (labels) => {
@@ -276,25 +288,7 @@ const IssueList = () => {
             />
           </Col>
           <Col className="gutter-row" span={2}>
-            <Button
-              type="primary"
-              shape="square"
-              icon={<SearchOutlined />}
-              onClick={() => {
-                setGlobalFilter(baseFilter)
-                setIsEditMode(false)
-                setSelectedRow([])
-                setBaseEditBatch({
-                  groupIds: [],
-                  statusIds: [],
-                  typeIds: [],
-                  assigneeNames: [],
-                  requirementIds: [],
-                })
-
-                loadData(1, filter, search)
-              }}
-            />
+            <Button type="primary" shape="square" icon={<SearchOutlined />} onClick={handleMultipleFilter} />
           </Col>
         </Row>
       ),
