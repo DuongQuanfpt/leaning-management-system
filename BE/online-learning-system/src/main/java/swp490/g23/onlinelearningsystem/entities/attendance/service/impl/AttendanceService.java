@@ -1,8 +1,10 @@
 package swp490.g23.onlinelearningsystem.entities.attendance.service.impl;
 
 import java.text.DecimalFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -84,6 +86,9 @@ public class AttendanceService implements IAttendanceService {
                     countAbsent++;
                 }
             }
+            Comparator<UserAttendanceResponseDTO> comparatorAsc = (att1, att2) -> att1.getDate()
+                    .compareTo(att2.getDate());
+            Collections.sort(userAttendances, comparatorAsc);
             for (Schedule schedule : schedules) {
                 if (schedule.getStatus().equals(ScheduleStatus.Inactive)) {
                     userAttendances.add(new UserAttendanceResponseDTO(
