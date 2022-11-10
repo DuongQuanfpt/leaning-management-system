@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 import { Link } from 'react-router-dom'
-import { Breadcrumb, DatePicker, Modal, Select } from 'antd'
+import { Breadcrumb, DatePicker, Modal } from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 
 import { CButton, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
@@ -126,11 +126,13 @@ const IssueAdd = () => {
     await issueApi
       .addIssue(currentClass, params)
       .then((response) => {
-        console.log(response)
         setError('You have successfully add new issue')
       })
       .catch((error) => {
-        console.log(error)
+        if (error.response.data.message === 'Title already exist') {
+          setError('Requirement Title already existed')
+          return
+        }
         setError('Something went wrong, please try again')
       })
   }

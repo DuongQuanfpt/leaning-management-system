@@ -32,6 +32,11 @@ const contactUsApi = {
     return axiosClient.get(url, header)
   },
 
+  getRequirementAddFilter: (classCode) => {
+    const url = `api/requirement-add-filter/${classCode}`
+    return axiosClient.get(url, header)
+  },
+
   addIssue: (classCode, params) => {
     const url = `/api/issue-add/${classCode}`
     return axiosClient.post(url, params, header)

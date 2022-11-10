@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
-import { Breadcrumb, Table, Tag } from 'antd'
+import { Breadcrumb, Space, Table, Typography } from 'antd'
 
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
@@ -25,20 +25,20 @@ const AttendanceTracking = () => {
       filterClass: currentClass,
     }
     await attendanceApi
-      .getAttendanceDetail(params)
+      .getAttendanceTracking(params)
       .then((response) => {
-        console.log(response)
         setListAttendanceTracking(response)
-        const result = response.map((item) => {
-          const x = {
-            accountName: item.accountName,
-            fullName: item.fullName,
-            absentPercent: item.absentPercent,
-          }
-          item.userAttendance.forEach((index) => (x[index.slot] = index.status))
-          return x
-        })
-        // setListAttendanceTracking(result)
+        // const result = response.map((item) => {
+        //   const x = {
+        //     accountName: item.accountName,
+        //     fullName: item.fullName,
+        //     absentPercent: item.absentPercent,
+        //   }
+        //   item.userAttendance.forEach((index) => (x[index.slot] = index.status))
+        //   return x
+        // })
+        // // setListAttendanceTracking(result)
+        // // setClone(result)
       })
       .then(() => setLoading(false))
       .catch((error) => {
@@ -47,60 +47,70 @@ const AttendanceTracking = () => {
       })
   }
 
-  const x = listAttendanceTracking.map((item) => {
-    const baseObject = {}
-    for (const property in item) {
-      baseObject[property] = item[property]
-    }
-    return baseObject
-  })
-
-  const array = []
-
-  for (const property in x[0]) {
-    array.push({
-      title: property,
-      dataIndex: property,
-      render: () => property,
-    })
-  }
-  // title: 'slot 1',
-  // dataIndex: 'slot 1'
-  // render (_) =>
-  array[0] = {
-    ...array[0],
-    title: 'Username',
-    width: '10%',
-    fixed: 'left',
-  }
-  array[1] = {
-    ...array[1],
-    title: 'Fullname',
-    width: '10%',
-    fixed: 'left',
-  }
-  array[2] = {
-    ...array[2],
-    title: 'Absent Percent',
-    width: '10%',
-    fixed: 'left',
-  }
-
   const column = [
     {
       title: 'Username',
       dataIndex: 'accountName',
+      fixed: 'left',
+      width: '10%',
     },
     {
       title: 'Fullname',
       dataIndex: 'fullName',
+      fixed: 'left',
+      width: '10%',
     },
     {
-      title: 'dummy',
-      dataIndex: 'safdf',
-      render: (_, { userAttendance }) => {
-        console.log(userAttendance)
-        return <span> 1</span>
+      title: 'Absent Percent',
+      dataIndex: 'absentPercent',
+      fixed: 'left',
+      width: '7%',
+    },
+    {
+      title: () => {
+        console.log(listAttendanceTracking[0]?.userAttendance)
+        return (
+          <Space className="w-100">
+            {listAttendanceTracking[0]?.userAttendance?.map((item) => {
+              return (
+                <Space className="d-flex flex-column">
+                  <Typography.Text strong>{item.date}</Typography.Text>
+                  <Typography.Text></Typography.Text>
+                  <Typography.Text strong>{item.slot}</Typography.Text>
+                </Space>
+              )
+            })}
+          </Space>
+        )
+      },
+      dataIndex: 'userAttendance',
+      width: '70%',
+      render: (_, { userAttendance }, index) => {
+        return (
+          <Space className="w-100">
+            {userAttendance.map((item) => {
+              if (item.status === 'Present')
+                return (
+                  <Typography.Text strong type="success">
+                    P
+                  </Typography.Text>
+                )
+              if (item.status === 'Late')
+                return (
+                  <Typography.Text type="warning" strong>
+                    L
+                  </Typography.Text>
+                )
+              if (item.status === 'Absent')
+                return (
+                  <Typography.Text type="danger" strong>
+                    A
+                  </Typography.Text>
+                )
+              return <Typography.Text strong>-</Typography.Text>
+            })}
+          </Space>
+        )
       },
     },
   ]

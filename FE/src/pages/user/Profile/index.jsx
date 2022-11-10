@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { setProfile } from '~/redux/ProfileSlice/profileSlice'
 import Avatar from 'react-avatar-edit'
@@ -15,8 +15,6 @@ import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import avatar from '~/assets/images/profile/pic1.jpg'
 
 const Profile = () => {
-  const navigateTo = useNavigate()
-
   const profileData = useSelector((state) => state.profile)
 
   const [isEditMode, setIsEditMode] = useState(false)
