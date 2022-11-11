@@ -41,6 +41,7 @@ import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository
 import swp490.g23.onlinelearningsystem.entities.user.repositories.criteria.UserRepositoriesCriteria;
 import swp490.g23.onlinelearningsystem.entities.user.service.IUserService;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
+import swp490.g23.onlinelearningsystem.util.StringUltility;
 import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.UserStatusEntity;
 
@@ -170,9 +171,11 @@ public class UserService implements IUserService {
         }
 
         if (username != null) {
+            String accountName = username.replaceAll("\\s+","").toLowerCase();
+            accountName = StringUltility.removeAccent(accountName);
 
-            if (userRepository.findDupeAccountName(username, email).isEmpty()) {
-                user.setAccountName(username);
+            if (userRepository.findDupeAccountName(accountName, email).isEmpty()) {
+                user.setAccountName(accountName);
             } else {
                 throw new CustomException("User name already exist");
             }

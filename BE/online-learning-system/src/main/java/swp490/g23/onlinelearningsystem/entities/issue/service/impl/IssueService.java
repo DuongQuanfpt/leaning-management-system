@@ -144,7 +144,7 @@ public class IssueService implements IIssueService {
         dto.setMilestoneId(milestone.getMilestoneId());
         dto.setMilestoneTitle(milestone.getTitle());
         dto.setTeamwork(milestone.getAssignment().isTeamWork());
-
+        dto.setStatus(milestone.getStatus().toString());
         List<IssueGroupFilterDTO> groups = new ArrayList<>();
         IssueGroupFilterDTO noGroup = new IssueGroupFilterDTO();
         List<String> noGroupMember = new ArrayList<>();
@@ -334,7 +334,7 @@ public class IssueService implements IIssueService {
             groupDTOs.add(toGroupFilterDto(group));
         }
 
-        List<Milestone> milestoneOfClass = milestoneRepository.getByClassCodeInProgress(classCode);
+        List<Milestone> milestoneOfClass = milestoneRepository.getByClassCodeInProgressAndClosed(classCode);
 
         List<IssueMilestoneFilterDTO> dtos = new ArrayList<>();
         for (Milestone milestone : milestoneOfClass) {
