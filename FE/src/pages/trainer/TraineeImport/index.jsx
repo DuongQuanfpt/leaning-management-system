@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { utils, writeFileXLSX, read } from 'xlsx'
-import { Breadcrumb, Button, Modal, Table, Tag, Typography } from 'antd'
-import { ExclamationCircleOutlined, LoadingOutlined } from '@ant-design/icons'
+import { Breadcrumb, Button, message, Modal, Table, Tag, Typography, Upload } from 'antd'
+import { ExclamationCircleOutlined, LoadingOutlined, UploadOutlined } from '@ant-design/icons'
 
 import traineeListApi from '~/api/traineeListApi'
 
@@ -14,10 +14,8 @@ import { useEffect } from 'react'
 
 const TraineeImport = () => {
   const currentClass = useSelector((state) => state.profile.currentClass)
-
   const [listTrainee, setListTrainee] = useState([])
   const [listTraineeImported, setListTraineeImported] = useState([])
-
   const [isImported, setIsImported] = useState(false)
 
   const [numberTraineeCountType, setNumberTraineeCountType] = useState({
@@ -25,88 +23,40 @@ const TraineeImport = () => {
     'Failed!': 0,
   })
 
+  useEffect(() => {
+    handleReset()
+  }, [currentClass])
+
   const handleDownloadTemplate = async () => {
-    const listExport = []
-    const ws = utils.json_to_sheet(listExport)
-    const wb = utils.book_new()
-    utils.sheet_add_aoa(ws, [['Username', 'Email']], { origin: 'A1' })
-    var wscols = [{ wch: 20 }, { wch: 20 }]
-    ws['!cols'] = wscols
-    utils.book_append_sheet(wb, ws, 'Data')
-    writeFileXLSX(wb, 'TraineeImportTemplate.xlsx')
-  }
-
-  const handleReadFile = (file) => {
-    const extensionFile = file.name.split('.').pop()
-    const extensionsValid = ['xlsx', 'xls', 'csv']
-
-    if (!extensionsValid.includes(extensionFile)) {
-      modalError('File type is invalid (support .xlsx, .xls and .csv only)')
-      return
+    try {
+      const listExport = []
+      const ws = utils.json_to_sheet(listExport)
+      const wb = utils.book_new()
+      utils.sheet_add_aoa(ws, [['Fullname', 'Email']], { origin: 'A1' })
+      var wscols = [{ wch: 20 }, { wch: 20 }]
+      ws['!cols'] = wscols
+      utils.book_append_sheet(wb, ws, 'Data')
+      writeFileXLSX(wb, 'TraineeImportTemplate.xlsx')
+      toastMessage('success', 'Download Template Successfully')
+    } catch {
+      toastMessage('error', 'Download Template Failed, try again later')
     }
-
-    const readFile = new Promise((resolve, reject) => {
-      const fileReader = new FileReader()
-      fileReader.readAsArrayBuffer(file)
-
-      fileReader.onload = (e) => {
-        const bufferArray = e.target.result
-        const wb = read(bufferArray, { type: 'buffer' })
-        const ws_name = wb.SheetNames[0]
-        const ws = wb.Sheets[ws_name]
-        const data = utils.sheet_to_json(ws)
-        if (!!!data[0]?.['Username'] && !!!data[0]?.['Email']) {
-          modalError('File data is invalid, follow the template please')
-          setListTrainee([])
-          return
-        }
-        resolve(data)
-      }
-
-      fileReader.onerror = (error) => {
-        setListTrainee([])
-        reject(error)
-        modalError(error)
-      }
-    })
-
-    readFile.then((data) => {
-      setListTrainee(data)
-    })
   }
 
-  const handleImport = async () => {
-    const params = {
-      dto: listTrainee.map((trainee) => ({
-        username: trainee.Username,
-        email: trainee.Email,
-      })),
-    }
-    await traineeListApi
-      .importTrainee(currentClass, params)
-      .then((response) => {
-        setListTraineeImported(response)
-        setIsImported(true)
+  const handleReset = () => {}
 
-        // eslint-disable-next-line no-sequences
-        const objectStatus = response.reduce((c, { importStatus: key }) => ((c[key] = (c[key] || 0) + 1), c), {})
-        setNumberTraineeCountType((prev) => ({ ...prev, ...objectStatus }))
-      })
-      .catch((error) => {
-        console.log(error)
-      })
-  }
-
-  const modalError = (error) => {
-    Modal.error({
-      title: 'Error',
-      content: `${error}`,
+  const toastMessage = (type, mes) => {
+    message[type]({
+      content: mes,
+      style: {
+        transform: `translate(0, 8vh)`,
+      },
     })
   }
 
   const modalConfirm = () => {
     Modal.confirm({
-      title: `Are you want to add a total of ${listTrainee.length} students to class ${currentClass}?`,
+      title: `Are you want to import new trainee?`,
       icon: <ExclamationCircleOutlined />,
       okText: 'OK',
       cancelText: 'Cancel',
@@ -118,37 +68,102 @@ const TraineeImport = () => {
     })
   }
 
-  const handleReset = () => {
-    setListTraineeImported([])
-    setListTrainee([])
-    setNumberTraineeCountType({
-      'Successfully!': 0,
-      'Failed!': 0,
-    })
-    setIsImported(false)
+  const props = {
+    name: 'file',
+    accept: '.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel',
+    multiple: false,
+    maxCount: 1,
+    beforeUpload: () => {
+      return false
+    },
+    onChange(info) {
+      if (info.file.status !== 'uploading') {
+        //Handle read file and verify here
+        const extensionFile = info.file.name.split('.').pop()
+        const extensionsValid = ['xlsx', 'xls', 'csv']
+        if (info.file.status === 'removed') return
+        if (!extensionsValid.includes(extensionFile)) {
+          toastMessage('error', 'File type is invalid (support .xlsx, .xls and .csv only)')
+          return
+        }
+
+        const readFile = new Promise((resolve, reject) => {
+          const fileReader = new FileReader()
+          fileReader.readAsArrayBuffer(info.file)
+
+          fileReader.onload = (e) => {
+            const bufferArray = e.target.result
+            const wb = read(bufferArray, { type: 'buffer' })
+            const ws_name = wb.SheetNames[0]
+            const ws = wb.Sheets[ws_name]
+            const data = utils.sheet_to_json(ws)
+            resolve(data)
+          }
+
+          fileReader.onerror = (error) => {
+            reject(error)
+            setListTrainee([])
+            toastMessage('Error', 'Read file failed, try again later')
+          }
+        })
+
+        readFile.then((data) => {
+          setListTrainee(data)
+          handleReadFile()
+        })
+      }
+    },
   }
 
-  useEffect(() => {
-    handleReset()
-  }, [currentClass])
+  const handleReadFile = () => {
+    setIsImported(false)
+    setListTraineeImported([])
+    console.log(listTrainee)
+    for (let i = 0; i < listTrainee.length; i++) {
+      listTrainee[i]['Fullname'] = listTrainee[i]['Fullname']?.trim()
+      listTrainee[i]['Email'] = listTrainee[i]['Email']?.trim()
+    }
+
+    for (let i = 0; i < listTrainee.length; i++) {
+      if (Object.keys(listTrainee[i]).length !== 2) {
+        toastMessage('error', 'Data is invalid, follow the Template please')
+        return
+      }
+    }
+  }
+
+  const handleImport = async () => {
+    const params = {
+      dto: listTrainee.map((trainee) => ({
+        fullName: trainee.Fullname,
+        email: trainee.Email,
+      })),
+    }
+    await traineeListApi
+      .importTrainee(currentClass, params)
+      .then((response) => {
+        console.log(response)
+        setListTraineeImported(response)
+        setIsImported(true)
+        toastMessage('success', 'Import Trainee Successfully')
+
+        const objectStatus = response.reduce((c, { importStatus: key }) => ((c[key] = (c[key] || 0) + 1), c), {})
+        setNumberTraineeCountType((prev) => ({ ...prev, ...objectStatus }))
+      })
+      .catch((error) => {
+        console.log(error)
+        toastMessage('error', 'Import Trainee Failed, try again please')
+      })
+  }
 
   const columnsTrainee = [
-    {
-      title: 'Username',
-      dataIndex: 'Username',
-      sorter: (a, b) => a['Username']?.length - b['Username']?.length,
-      width: 300,
-    },
-    {
-      title: 'Email',
-      dataIndex: 'Email',
-      sorter: (a, b) => a['Email']?.length - b['Email']?.length,
-      width: 300,
-    },
+    { title: 'Fullname', dataIndex: 'Fullname', width: '20%' },
+    { title: 'Email', dataIndex: 'Email', width: '20%' },
     {
       title: 'Status',
       dataIndex: 'importStatus',
       render: () => <LoadingOutlined />,
+
       width: 150,
     },
     {
@@ -159,33 +174,22 @@ const TraineeImport = () => {
   ]
 
   const columnsTraineeImported = [
-    {
-      title: 'Username',
-      dataIndex: 'username',
-      sorter: (a, b) => a['username']?.length - b['username']?.length,
-      width: 300,
-    },
-    {
-      title: 'Email',
-      dataIndex: 'email',
-      sorter: (a, b) => a['email']?.length - b['email']?.length,
-      width: 300,
-    },
+    { title: 'Fullname', dataIndex: 'fullName', width: '20%' },
+    { title: 'Email', dataIndex: 'email', width: '20%' },
     {
       title: 'Status',
       dataIndex: 'importStatus',
       width: 150,
-      sorter: (a, b) => a['importStatus']?.length - b['importStatus']?.length,
+      sorter: (recordA, recordB) => recordA.length - recordB.length,
       render: (_, { importStatus }) => (
         <Tag color={importStatus === 'Successfully!' ? 'blue' : 'red'} key={importStatus}>
-          {importStatus}
+          {importStatus.slice(0, -1)}
         </Tag>
       ),
     },
     {
       title: 'Message',
       dataIndex: 'importMessage',
-      sorter: (a, b) => a['importMessage']?.length - b['importMessage']?.length,
       ellipsis: true,
     },
   ]
@@ -198,7 +202,7 @@ const TraineeImport = () => {
         <div className="body flex-grow-1 px-3">
           <div className="col-lg-12 m-b30">
             <div className="row">
-              <div className="col-12 d-flex">
+              <div className="col-8 d-flex">
                 <Breadcrumb>
                   <Breadcrumb.Item>
                     <Link to="/dashboard">Dashboard</Link>
@@ -210,30 +214,28 @@ const TraineeImport = () => {
                 </Breadcrumb>
               </div>
 
-              <div className="col-12 d-flex justify-content-end">
+              <div className="col-4 d-flex justify-content-end">
                 <Button type="link" onClick={handleDownloadTemplate}>
                   Download Template
                 </Button>
-                <input
-                  type="file"
-                  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                  onChange={(e) => {
-                    setListTrainee([])
-                    setListTraineeImported([])
-                    e.target.files[0] && handleReadFile(e.target.files[0])
-                  }}
-                />
+                <Upload {...props} className="d-flex flex-column mx-auto justify-content-center align-item-center w-75">
+                  <Button
+                    className="d-flex flex-row mx-auto justify-content-center align-item-center w-100"
+                    icon={<UploadOutlined />}
+                  >
+                    Click to Upload
+                  </Button>
+                </Upload>
               </div>
-              <div className="col-12 d-flex justify-content-center"></div>
               {listTrainee.length !== 0 && (
                 <>
                   {isImported ? (
                     <div className="col-9 d-flex justify-content-start mb-2 mt-2">
-                      <Typography.Text type="success" className="mr-1">
+                      <Typography.Text type="success" className="mr-1" strong>
                         {`Total ${numberTraineeCountType['Successfully!']} trainee imported successfully`}
                       </Typography.Text>
-                      <Typography.Text type="danger">
-                        {` - ${numberTraineeCountType['Failed!']} trainee imported failed!`}
+                      <Typography.Text type="danger" strong>
+                        {` - ${numberTraineeCountType['Failed!']} trainee imported failed`}
                       </Typography.Text>
                     </div>
                   ) : (
@@ -264,11 +266,6 @@ const TraineeImport = () => {
                     {!isImported && (
                       <Button type="primary" onClick={modalConfirm}>
                         Import
-                      </Button>
-                    )}
-                    {isImported && (
-                      <Button type="danger" onClick={handleReset}>
-                        Reset
                       </Button>
                     )}
                   </div>
