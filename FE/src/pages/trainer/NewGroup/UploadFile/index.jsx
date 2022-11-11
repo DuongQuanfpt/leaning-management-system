@@ -64,7 +64,6 @@ const UploadFile = () => {
       })),
     ]
 
-    console.log(listExport)
     const ws = utils.json_to_sheet(listExport)
     const wb = utils.book_new()
     utils.sheet_add_aoa(ws, [['Group Name', 'Email', 'Fullname', 'Username', 'Is Leader']], { origin: 'A1' })
@@ -125,28 +124,23 @@ const UploadFile = () => {
 
     if (groupDetail.traineeList.length !== fileList.length) {
       toastMessage('error', 'Data is invalid, follow the File of Student List please')
-      console.log(1)
       return
     }
     for (let i = 0; i < fileList.length; i++) {
       if (Object.keys(fileList[i]).length !== 5) {
         toastMessage('error', 'Data is invalid, follow the File of Student List please')
-        console.log(2)
         return
       }
       if (groupDetail.traineeList[i].username?.trim() !== fileList[i].Username?.trim()) {
         toastMessage('error', 'Data is invalid, follow the File of Student List please')
-        console.log(3)
         return
       }
       if (groupDetail.traineeList[i].fullName?.trim() !== fileList[i].Fullname?.trim()) {
         toastMessage('error', 'Data is invalid, follow the File of Student List please')
-        console.log(4)
         return
       }
       if (groupDetail.traineeList[i].email?.trim() !== fileList[i].Email?.trim()) {
         toastMessage('error', 'Data is invalid, follow the File of Student List please')
-        console.log(5)
         return
       }
     }

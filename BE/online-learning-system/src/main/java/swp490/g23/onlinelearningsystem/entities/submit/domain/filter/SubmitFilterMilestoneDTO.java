@@ -1,4 +1,4 @@
-package swp490.g23.onlinelearningsystem.entities.issue.domain.filter;
+package swp490.g23.onlinelearningsystem.entities.submit.domain.filter;
 
 import java.util.List;
 
@@ -11,12 +11,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class IssueMilestoneFilterDTO {
+public class SubmitFilterMilestoneDTO {
     Long milestoneId;
     String milestoneTitle;
     String assignmentTitle;
     boolean isTeamwork;
     String status;
-    List<IssueGroupFilterDTO> groups;
-    List<IssueFilterValue> requirements;
+    List<SubmitFilterGroupDTO> groups;
 }

@@ -10,4 +10,10 @@ import swp490.g23.onlinelearningsystem.entities.issue.domain.Issue;
 public interface IssueRepository extends JpaRepository<Issue, Long> {
     @Query(value = "SELECT i FROM Issue i WHERE i.classes.code = :classCode AND i.type IS NULL")
     List<Issue> getRequirementOfClass(String classCode) ;
+
+    @Query(value = "SELECT i FROM Issue i WHERE i.classes.code = :classCode AND i.type IS NULL AND i.title = :title")
+    List<Issue> getRequirementByTitleOfClass(String classCode , String title) ;
+
+    @Query(value = "SELECT i FROM Issue i WHERE i.classes.code = :classCode AND i.type IS NOT NULL AND i.title = :title")
+    List<Issue> getIssueByTitleOfClass(String classCode , String title) ;
 }

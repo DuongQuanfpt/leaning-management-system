@@ -1,5 +1,7 @@
 package swp490.g23.onlinelearningsystem.entities.submit.domain;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,7 +21,7 @@ import swp490.g23.onlinelearningsystem.entities.BaseEntity;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.ClassUser;
 import swp490.g23.onlinelearningsystem.entities.group.domain.Group;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
-import swp490.g23.onlinelearningsystem.util.enumutil.Status;
+import swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum;
 
 @Entity
 @Table(name = "submit_tbl")
@@ -52,12 +54,12 @@ public class Submit extends BaseEntity {
     private String submitFileUrl;
 
     @Column
-    private String submitTime;
+    private LocalDateTime submitTime;
 
     @Column
     private String userNote;
 
     @Column
-    private Status status;
+    private SubmitStatusEnum status;
 
 }

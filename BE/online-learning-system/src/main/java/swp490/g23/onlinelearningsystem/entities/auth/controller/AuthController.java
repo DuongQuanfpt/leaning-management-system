@@ -49,7 +49,7 @@ public class AuthController {
      */
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody @Valid AuthRequest request) {
+    public ResponseEntity<?> register(@RequestBody AuthRequest request) {
      
         return authService.register(request, request.getPassword());
     }

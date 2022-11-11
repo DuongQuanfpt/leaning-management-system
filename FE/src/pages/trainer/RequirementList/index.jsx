@@ -45,13 +45,7 @@ const RequirementList = () => {
   const [listFilter, setListFilter] = useState({})
 
   const [filter, setFilter] = useState(null)
-  const [globalFilter, setGlobalFilter] = useState({
-    groupIds: [],
-    statusIds: [],
-    typeIds: [],
-    assigneeNames: [],
-    requirementIds: [],
-  })
+
   const [baseFilter, setBaseFilter] = useState({
     groupIds: [],
     statusIds: [],
@@ -105,7 +99,10 @@ const RequirementList = () => {
           asigneeFilter: ['None', ...response.asigneeFilter],
           groupFilter: [{ groupId: 0, groupName: 'None' }, ...response.groupFilter],
           requirement: [{ id: 0, title: 'General Requirement' }, ...response.requirement],
-          statusFilter: [{ title: 'Open', id: 1 }, ...response.statusFilter, { title: 'Close', id: 0 }],
+          statusFilter: [
+            { title: 'Open', id: 1 },
+            { title: 'Close', id: 0 },
+          ],
         })
       })
       .catch((error) => {
@@ -138,7 +135,7 @@ const RequirementList = () => {
       page: page,
       isIssue: false,
       milestoneId: filter?.milestoneId,
-      filter: btoa(JSON.stringify(globalFilter)),
+      filter: btoa(JSON.stringify(baseFilter)),
     }
     if (q.trim() !== '') {
       params.q = q.trim()
@@ -173,14 +170,14 @@ const RequirementList = () => {
         value: assignee,
       })),
     },
-    {
-      label: 'Requirement',
-      value: 'requirement',
-      children: listFilter?.requirement?.map((requirement) => ({
-        label: requirement.title,
-        value: requirement.id,
-      })),
-    },
+    // {
+    //   label: 'Requirement',
+    //   value: 'requirement',
+    //   children: listFilter?.requirement?.map((requirement) => ({
+    //     label: requirement.title,
+    //     value: requirement.id,
+    //   })),
+    // },
     {
       label: 'Group',
       value: 'group',
@@ -189,14 +186,14 @@ const RequirementList = () => {
         value: group.groupId,
       })),
     },
-    {
-      label: 'Type',
-      value: 'type',
-      children: listFilter?.typeFilter?.map((type) => ({
-        label: type.title,
-        value: type.id,
-      })),
-    },
+    // {
+    //   label: 'Type',
+    //   value: 'type',
+    //   children: listFilter?.typeFilter?.map((type) => ({
+    //     label: type.title,
+    //     value: type.id,
+    //   })),
+    // },
     {
       label: 'Status',
       value: 'status',
@@ -208,6 +205,7 @@ const RequirementList = () => {
   ]
 
   const onChange = (value) => {
+    console.log(value)
     const removeItemAll = (arr, value) => {
       let i = 0
       while (i < arr.length) {
@@ -220,37 +218,31 @@ const RequirementList = () => {
       return arr
     }
 
-    const globalFilter = {
+    const arrayFilter = {
       groupIds: [],
       statusIds: [],
-      typeIds: [],
       assigneeNames: [],
-      requirementIds: [],
     }
 
-    value.forEach((item) => {
-      if (item.includes('assignee')) {
-        globalFilter.assigneeNames.push(...item)
-      }
-      if (item.includes('group')) {
-        globalFilter.groupIds.push(...item)
-      }
-      if (item.includes('status')) {
-        globalFilter.statusIds.push(...item)
-      }
-      if (item.includes('type')) {
-        globalFilter.typeIds.push(...item)
-      }
-      if (item.includes('requirement')) {
-        globalFilter.requirementIds.push(...item)
-      }
-    })
-    removeItemAll(globalFilter.assigneeNames, 'assignee')
-    removeItemAll(globalFilter.groupIds, 'group')
-    removeItemAll(globalFilter.statusIds, 'status')
-    removeItemAll(globalFilter.typeIds, 'type')
-    removeItemAll(globalFilter.requirementIds, 'requirement')
-    setBaseFilter(globalFilter)
+    try {
+      value.forEach((item) => {
+        if (item.includes('assignee')) {
+          arrayFilter.assigneeNames.push(...item)
+        }
+        if (item.includes('group')) {
+          arrayFilter.groupIds.push(...item)
+        }
+        if (item.includes('status')) {
+          arrayFilter.statusIds.push(...item)
+        }
+      })
+      removeItemAll(arrayFilter.assigneeNames, 'assignee')
+      removeItemAll(arrayFilter.groupIds, 'group')
+      removeItemAll(arrayFilter.statusIds, 'status')
+    } finally {
+      console.log(arrayFilter)
+      setBaseFilter(arrayFilter)
+    }
   }
 
   const displayRenderCascader = (labels) => {
@@ -291,18 +283,19 @@ const RequirementList = () => {
               shape="square"
               icon={<SearchOutlined />}
               onClick={() => {
-                setGlobalFilter(baseFilter)
-                setIsEditMode(false)
-                setSelectedRow([])
-                setBaseEditBatch({
-                  groupIds: [],
-                  statusIds: [],
-                  typeIds: [],
-                  assigneeNames: [],
-                  requirementIds: [],
-                })
-
-                loadData(1, filter, search)
+                try {
+                  setIsEditMode(false)
+                  setSelectedRow([])
+                  setBaseEditBatch({
+                    groupIds: [],
+                    statusIds: [],
+                    typeIds: [],
+                    assigneeNames: [],
+                    requirementIds: [],
+                  })
+                } finally {
+                  loadData(1, filter, search)
+                }
               }}
             />
           </Col>
