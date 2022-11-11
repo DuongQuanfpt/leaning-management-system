@@ -1,5 +1,6 @@
 package swp490.g23.onlinelearningsystem.entities.eval_criteria.domain;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -31,7 +32,8 @@ public class EvalCriteria extends BaseEntity {
 
     private boolean isTeamEval;
 
-    private String evalWeight;
+    @Column(name = "eval_weight", nullable = false)
+    private double evalWeight;
 
     private String expectedWork;
 

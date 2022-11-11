@@ -2,16 +2,21 @@ package swp490.g23.onlinelearningsystem.entities.attendance.service.impl;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.persistence.TypedQuery;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Service;
 
 import swp490.g23.onlinelearningsystem.entities.attendance.domain.Attendance;
@@ -37,6 +42,8 @@ import swp490.g23.onlinelearningsystem.util.enumutil.AttendanceStatus;
 import swp490.g23.onlinelearningsystem.util.enumutil.ScheduleStatus;
 
 @Service
+@Configuration
+@EnableScheduling
 public class AttendanceService implements IAttendanceService {
 
     @Autowired
@@ -56,6 +63,9 @@ public class AttendanceService implements IAttendanceService {
 
     @Autowired
     private AttendanceCriteria attendanceCriteria;
+
+    @Autowired
+    private TaskScheduler scheduler;
 
     @Override
     public ResponseEntity<List<AttendanceResponseDTO>> displayAttendanceList(String classCode, Long userId) {
@@ -144,6 +154,9 @@ public class AttendanceService implements IAttendanceService {
     @Override
     public ResponseEntity<String> updateAttendance(List<AttendanceDetailRequestDTO> dtos, Long id) {
         Schedule schedule = scheduleRepositories.findById(id).get();
+        // ScheduledExecutorService scheduler =
+        // Executors.newSingleThreadScheduledExecutor();
+        RunnableTask task = new RunnableTask(schedule);
         Classes clazz = schedule.getClasses();
         if (schedule.equals(null)) {
             throw new CustomException("Attendance doesn't exist!");
@@ -190,6 +203,7 @@ public class AttendanceService implements IAttendanceService {
                             attendance.setComment(dto.getComment());
                         }
                         schedule.setStatus(ScheduleStatus.Active);
+                        scheduler.scheduleWithFixedDelay(task, 100000);
                         attendances.add(attendance);
                     }
                 }
@@ -220,4 +234,9 @@ public class AttendanceService implements IAttendanceService {
         return ResponseEntity.ok(list);
     }
 
+    public void changeStatus(Schedule schedule) {
+        if (schedule.getStatus().equals(ScheduleStatus.Active)) {
+            schedule.setStatus(ScheduleStatus.Attendance_taken);
+        }
+    }
 }

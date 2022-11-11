@@ -153,7 +153,7 @@ public class EvalCriteriaService implements IEvalCriteriaService {
             evalCriteria.setDescription(dto.getDescription());
         }
         if (dto.getEvalWeight() != null) {
-            evalCriteria.setEvalWeight(dto.getEvalWeight());
+            evalCriteria.setEvalWeight(Double.parseDouble(dto.getEvalWeight()));
         }
         if (dto.getExpectedWork() != null) {
             evalCriteria.setExpectedWork(dto.getExpectedWork());
@@ -180,7 +180,7 @@ public class EvalCriteriaService implements IEvalCriteriaService {
             evalCriteria.setDescription(dto.getDescription());
         }
         if (dto.getEvalWeight() != null) {
-            evalCriteria.setEvalWeight(dto.getEvalWeight());
+            evalCriteria.setEvalWeight(Double.parseDouble(dto.getEvalWeight()));
         }
         if (dto.getExpectedWork() != null) {
             evalCriteria.setExpectedWork(dto.getExpectedWork());
@@ -324,7 +324,7 @@ public class EvalCriteriaService implements IEvalCriteriaService {
             evalCriteria.setDescription(dto.getDescription());
         }
         if (dto.getEvalWeight() != null) {
-            evalCriteria.setEvalWeight(dto.getEvalWeight());
+            evalCriteria.setEvalWeight(Double.parseDouble(dto.getEvalWeight()));
         }
         if (dto.getExpectedWork() != null) {
             evalCriteria.setExpectedWork(dto.getExpectedWork());
@@ -351,7 +351,7 @@ public class EvalCriteriaService implements IEvalCriteriaService {
             evalCriteria.setDescription(dto.getDescription());
         }
         if (dto.getEvalWeight() != null) {
-            evalCriteria.setEvalWeight(dto.getEvalWeight());
+            evalCriteria.setEvalWeight(Double.parseDouble(dto.getEvalWeight()));
         }
         if (dto.getExpectedWork() != null) {
             evalCriteria.setExpectedWork(dto.getExpectedWork());
@@ -386,9 +386,7 @@ public class EvalCriteriaService implements IEvalCriteriaService {
         if (entity.getDescription() != null) {
             responseDTO.setDescription(entity.getDescription());
         }
-        if (entity.getEvalWeight() != null) {
-            responseDTO.setEvalWeight(entity.getEvalWeight());
-        }
+        responseDTO.setEvalWeight(Double.toString(entity.getEvalWeight()));
         if (entity.getExpectedWork() != null) {
             responseDTO.setExpectedWork(entity.getExpectedWork());
         }
