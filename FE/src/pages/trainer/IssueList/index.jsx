@@ -556,7 +556,7 @@ const IssueList = () => {
                             value: milestone.milestoneId,
                             label: milestone.milestoneTitle,
                           }))}
-                          // value={filter?.milestoneId}
+                          value={filter?.milestoneId}
                           onChange={(value) => setFilter((prev) => ({ ...prev, milestoneId: value }))}
                         ></Select>
                       </div>
@@ -642,7 +642,11 @@ const IssueList = () => {
                     if (baseEditBatch.status) {
                       params.updateToApply.statusId = baseEditBatch.status
                     }
+                    if (baseEditBatch.status === 0) {
+                      params.updateToApply.statusId = baseEditBatch.status
+                    }
 
+                    console.log(params)
                     await issueApi
                       .changeBatch(params)
                       .then(() => {

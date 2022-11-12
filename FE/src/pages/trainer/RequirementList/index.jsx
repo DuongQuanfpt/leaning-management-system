@@ -543,6 +543,7 @@ const RequirementList = () => {
                             value: milestone.milestoneId,
                             label: milestone.milestoneTitle,
                           }))}
+                          value={filter?.milestoneId}
                           onChange={(value) => setFilter((prev) => ({ ...prev, milestoneId: value }))}
                         ></Select>
                       </div>
@@ -575,7 +576,7 @@ const RequirementList = () => {
                       />
                     )}
                   </div>
-                  <div className="col-lg-12 d-flex justify-content-end">
+                  <div className="col-lg-12 d-flex justify-content-end mt-3">
                     {filter !== null && (
                       <Pagination
                         current={currentPage}
@@ -669,7 +670,7 @@ const RequirementList = () => {
                     value: milestone.milestoneId,
                     label: milestone.milestoneTitle,
                   }))}
-                  // value={filter?.milestoneId}
+                  value={filter?.milestoneId}
                   onChange={(value) => {
                     setBaseEditBatch((prev) => ({
                       milestoneId: value,
