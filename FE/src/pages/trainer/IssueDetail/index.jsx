@@ -49,7 +49,7 @@ const IssueDetail = () => {
     })
     loadData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentClass])
+  }, [])
 
   const loadData = async () => {
     await issueApi
@@ -98,7 +98,7 @@ const IssueDetail = () => {
 
     const changedDetail = {
       title: detail.title,
-      deadline: moment(detail.deadline).format('YYYY-MM-DD'),
+      deadline: detail.deadline === null ? null : moment(detail.deadline).format('YYYY-MM-DD'),
       statusId: detail.status.id,
       description: detail.description,
       milestoneId: detail.milestone.milestoneId,
@@ -118,6 +118,8 @@ const IssueDetail = () => {
       updateToApply: changedDetail,
     }
 
+    console.log(params)
+    return
     await issueApi
       .changeBatch(params)
       .then(() => {
@@ -338,7 +340,7 @@ const IssueDetail = () => {
                           className="w-100"
                           size={'large'}
                           format={'YYYY-MM-DD'}
-                          value={moment(detail.deadline, 'YYYY-MM-DD')}
+                          value={detail.deadline === null ? null : moment(detail.deadline, 'YYYY-MM-DD')}
                           disabled={!isEditMode}
                           onChange={(date) => setDetail((prev) => ({ ...prev, deadline: date }))}
                           allowClear={false}

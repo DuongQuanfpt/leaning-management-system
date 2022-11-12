@@ -27,6 +27,7 @@ const AttendanceTracking = () => {
     await attendanceApi
       .getAttendanceTracking(params)
       .then((response) => {
+        console.log(response)
         setListAttendanceTracking(response)
         // const result = response.map((item) => {
         //   const x = {
@@ -68,7 +69,6 @@ const AttendanceTracking = () => {
     },
     {
       title: () => {
-        console.log(listAttendanceTracking[0]?.userAttendance)
         return (
           <Space className="w-100">
             {listAttendanceTracking[0]?.userAttendance?.map((item) => {
