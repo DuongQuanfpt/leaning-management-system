@@ -59,6 +59,7 @@ const SubjectSettingDetail = () => {
     await subjectSettingListApi
       .getDetail(id)
       .then((response) => {
+        console.log(response)
         setSubjectSettingDetail(response)
         setType(response.typeName)
         setTitle(response.settingTitle)
@@ -86,8 +87,23 @@ const SubjectSettingDetail = () => {
       return
     }
 
-    if (value === '') {
+    if (value === '' || String(value) === '') {
       setError('Setting Value must not empty')
+      return
+    }
+
+    if (subjectSettingDetail.typeName.value === 'TYPE_COMPLEXITY' && Number(value) > 100) {
+      setError('Complexity value must between 0 and 100')
+      return
+    }
+
+    if (subjectSettingDetail.typeName.value === 'TYPE_COMPLEXITY' && Number(value) < 0) {
+      setError('Complexity value must between 0 and 100')
+      return
+    }
+
+    if (subjectSettingDetail.typeName.value === 'TYPE_QUALITY' && Number(value) < 0) {
+      setError('Quality value must higher than 0')
       return
     }
 
@@ -195,28 +211,22 @@ const SubjectSettingDetail = () => {
                           <div className="form-group col-6">
                             <label className="col-form-label">Value</label>
                             {type.title === 'Subject complexity' && (
-                              <CDropdown className="w-100">
-                                <CDropdownToggle color="warning" disabled={!isEditMode}>
-                                  {value}
-                                </CDropdownToggle>
-                                <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
-                                  {listFilter.complexity.map((complexity) => (
-                                    <CDropdownItem onClick={() => setValue(complexity)}>{complexity}</CDropdownItem>
-                                  ))}
-                                </CDropdownMenu>
-                              </CDropdown>
+                              <input
+                                className="form-control"
+                                type="number"
+                                value={value}
+                                onChange={(e) => setValue(e.target.value)}
+                                disabled={!isEditMode}
+                              />
                             )}
                             {type.title === 'Subject quality' && (
-                              <CDropdown className="w-100">
-                                <CDropdownToggle color="warning" disabled={!isEditMode}>
-                                  {value}
-                                </CDropdownToggle>
-                                <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
-                                  {listFilter.quality.map((quality) => (
-                                    <CDropdownItem onClick={() => setValue(quality)}>{quality}</CDropdownItem>
-                                  ))}
-                                </CDropdownMenu>
-                              </CDropdown>
+                              <input
+                                className="form-control"
+                                type="number"
+                                value={value}
+                                onChange={(e) => setValue(e.target.value)}
+                                disabled={!isEditMode}
+                              />
                             )}
                             {type.title !== 'Subject complexity' && type.title !== 'Subject quality' && (
                               <div>

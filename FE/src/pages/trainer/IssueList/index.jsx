@@ -132,6 +132,7 @@ const IssueList = () => {
     await issueApi
       .getIssue(currentClass, params)
       .then((response) => {
+        console.log(response)
         setListIssue(response.issueList.map((item, index) => ({ ...item, key: index })))
         setCurrentPage(page)
         setTotalItem(response.totalItem)
@@ -555,6 +556,7 @@ const IssueList = () => {
                             value: milestone.milestoneId,
                             label: milestone.milestoneTitle,
                           }))}
+                          // value={filter?.milestoneId}
                           onChange={(value) => setFilter((prev) => ({ ...prev, milestoneId: value }))}
                         ></Select>
                       </div>

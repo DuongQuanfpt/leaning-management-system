@@ -132,6 +132,7 @@ const GroupList = () => {
     await groupApi
       .getGroup(params)
       .then((response) => {
+        console.log(response)
         setIsHaveGroup(response.listResult.length === 0 ? false : true)
         setWaitingList(response.noGroup)
         const waitingGroup = {
@@ -148,6 +149,7 @@ const GroupList = () => {
           status: '',
         }
         const group = [waitingGroup, ...response.listResult.map((item, index) => ({ ...item, key: index }))]
+        console.log(group)
         setGroup(group)
       })
 

@@ -147,6 +147,7 @@ const TraineeImport = () => {
         setIsImported(true)
         toastMessage('success', 'Import Trainee Successfully')
 
+        // eslint-disable-next-line no-sequences
         const objectStatus = response.reduce((c, { importStatus: key }) => ((c[key] = (c[key] || 0) + 1), c), {})
         setNumberTraineeCountType((prev) => ({ ...prev, ...objectStatus }))
       })
