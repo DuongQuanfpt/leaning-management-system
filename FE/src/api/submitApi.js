@@ -16,6 +16,16 @@ const submitApi = {
     const url = `/api/submit-list-filter/${classCode}`
     return axiosClient.get(url, header)
   },
+
+  getListSubmitFilter: (submitId) => {
+    const url = `api/new-submit/${submitId}`
+    return axiosClient.get(url, header)
+  },
+
+  submitFile: (submitId, params) => {
+    const url = `api/new-submit/${submitId}`
+    return axiosClient.post(url, params, header)
+  },
 }
 
 export default submitApi

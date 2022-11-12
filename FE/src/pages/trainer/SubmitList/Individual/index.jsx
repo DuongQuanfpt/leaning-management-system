@@ -4,11 +4,14 @@ import { Button, Pagination, Space, Table, Tag } from 'antd'
 import submitApi from '~/api/submitApi'
 import { useSelector } from 'react-redux'
 import Tooltip from 'antd/es/tooltip'
-import { CheckOutlined, EyeOutlined, UploadOutlined } from '@ant-design/icons'
+import { EyeOutlined, UploadOutlined } from '@ant-design/icons'
+import { useNavigate } from 'react-router-dom'
 
 const Individual = ({ milestoneId }) => {
   let ITEM_PER_PAGE = 10
   const { currentClass } = useSelector((state) => state.profile)
+  const navigateTo = useNavigate()
+
   const [loading, setLoading] = useState(false)
 
   const [tableData, setTableData] = useState({
@@ -31,6 +34,7 @@ const Individual = ({ milestoneId }) => {
       limit: ITEM_PER_PAGE,
       page: page,
       isGroup: false,
+      milestoneId: milestoneId,
     }
     setLoading(true)
     await submitApi
@@ -75,13 +79,13 @@ const Individual = ({ milestoneId }) => {
       width: '15%',
       render: (_, submit) => (
         <Space size="middle" align="baseline">
-          <Tooltip title="Upload" placement="top">
+          <Tooltip title="Submit" placement="top">
             <Button
               shape="circle"
               type="primary"
               icon={<UploadOutlined />}
               onClick={() => {
-                console.log(submit)
+                navigateTo(`/new-submit/${submit.submitId}`)
               }}
             ></Button>
           </Tooltip>
@@ -90,7 +94,7 @@ const Individual = ({ milestoneId }) => {
               shape="circle"
               icon={<EyeOutlined />}
               onClick={() => {
-                console.log(submit)
+                navigateTo(`/submit-detail/${submit.submitId}`)
               }}
             ></Button>
           </Tooltip>
