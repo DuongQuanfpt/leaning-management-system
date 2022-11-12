@@ -118,8 +118,6 @@ const IssueDetail = () => {
       updateToApply: changedDetail,
     }
 
-    console.log(params)
-    return
     await issueApi
       .changeBatch(params)
       .then(() => {
