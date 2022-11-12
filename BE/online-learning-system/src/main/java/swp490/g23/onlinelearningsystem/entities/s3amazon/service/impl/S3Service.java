@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
 
+import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,6 +33,8 @@ public class S3Service implements IFileService {
 
     @Value("${ama.bucketSubmit}")
     private String bucketSubmit;
+
+    private final Tika tika = new Tika();
 
     private final AmazonS3 s3;
 
@@ -61,23 +64,21 @@ public class S3Service implements IFileService {
     }
 
     @Override
-    public String saveAssignment(MultipartFile multipartFile , String fileName) {
+    public String saveAssignment(MultipartFile multipartFile, String fileName) {
         try {
-            File file = toFile(multipartFile);
-            PutObjectResult objectResult = s3.putObject(bucketSubmit,fileName,file);
+            ObjectMetadata objectMetadata = new ObjectMetadata();
+            objectMetadata.setContentLength(multipartFile.getSize());
+            objectMetadata.setContentType(tika.detect(multipartFile.getOriginalFilename()));
+
+            InputStream stream = multipartFile.getInputStream();
+            PutObjectRequest putObjectRequest = new PutObjectRequest(bucketSubmit, fileName, stream, objectMetadata);
+            PutObjectResult putObjectResult = s3.putObject(putObjectRequest);
+
+            // PutObjectResult objectResult = s3.putObject(bucketSubmit, fileName, file);
             return s3.getUrl(bucketSubmit, fileName).toString();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private File toFile(MultipartFile multipartFile) throws IOException {
-        File file = new File(multipartFile.getOriginalFilename());
-        FileOutputStream fos = new FileOutputStream(file);
-        fos.write(multipartFile.getBytes());
-        fos.close();
-
-        return file;
     }
 
     @Override

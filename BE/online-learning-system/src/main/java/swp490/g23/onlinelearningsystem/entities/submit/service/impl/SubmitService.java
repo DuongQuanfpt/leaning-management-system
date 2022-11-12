@@ -11,17 +11,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.amazonaws.Response;
-
 import swp490.g23.onlinelearningsystem.entities.group.domain.Group;
 import swp490.g23.onlinelearningsystem.entities.groupMember.domain.GroupMember;
+import swp490.g23.onlinelearningsystem.entities.issue.domain.Issue;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
 import swp490.g23.onlinelearningsystem.entities.milestone.repositories.MilestoneRepository;
 import swp490.g23.onlinelearningsystem.entities.s3amazon.service.impl.S3Service;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
+import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.NewSubmitFilter;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.SubmitFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.SubmitFilterGroupDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.SubmitFilterMilestoneDTO;
+import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.SubmitRequirementFilter;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.request.SubmitRequirementWrapper;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitPaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitResponseDTO;
@@ -189,6 +190,22 @@ public class SubmitService implements ISubmitService {
             throw new CustomException("file upload failed");
         }
                 
-        return ResponseEntity.ok(submitUrl);
+        return ResponseEntity.ok("submitUrl");
+    }
+
+    @Override
+    public ResponseEntity<NewSubmitFilter> newSubmitFilter(User user, Long submitId) {
+        Submit submit = submitRepository.findById(submitId)
+        .orElseThrow(() -> new CustomException("submit doesnt exist"));
+
+        NewSubmitFilter filter = new NewSubmitFilter();
+        List<SubmitRequirementFilter> requirementFilters = new ArrayList<>();
+        for (Issue issue : submit.getMilestone().getIssues()) {
+            if(issue.getType() == null) {
+                requirementFilters.add(new SubmitRequirementFilter(issue.getTitle(), issue.getIssueId()));
+            }
+        }
+        filter.setRequirement(requirementFilters);
+        return ResponseEntity.ok(filter);
     }
 }
