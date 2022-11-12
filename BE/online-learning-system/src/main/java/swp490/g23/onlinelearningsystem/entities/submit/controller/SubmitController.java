@@ -6,12 +6,16 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.SubmitFilterDTO;
+import swp490.g23.onlinelearningsystem.entities.submit.domain.request.SubmitRequirementWrapper;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitPaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.service.impl.SubmitService;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
@@ -48,5 +52,14 @@ public class SubmitController {
             @AuthenticationPrincipal User user) {
 
         return submitService.getSubmitListFilter(user , classCode);
+    }
+
+    @PostMapping(value = "/new-submit/{submitId}")
+    public ResponseEntity<String> newSubmit(@PathVariable("submitId") Long submitId,
+            @RequestPart(name ="requirementIds", required = false) SubmitRequirementWrapper requirementIds,
+            @RequestPart(name = "submitFile") MultipartFile submitFile,
+            @AuthenticationPrincipal User user) {
+
+        return submitService.newSubmit(user, submitId, requirementIds, submitFile);
     }
 }

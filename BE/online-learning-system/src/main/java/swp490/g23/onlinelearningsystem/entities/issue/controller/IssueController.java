@@ -89,7 +89,7 @@ public class IssueController {
 		return issueService.issueAdd(classCode, dto, user);
 	}
 
-	@PutMapping(value = "/issue-edit/{issueId}")
+	@PutMapping(value = "/issue-detail/{issueId}")
 	public ResponseEntity<String> editIssue(@PathVariable("issueId") Long issueId,
 			@RequestBody IssueRequestDTO dto,
 			@AuthenticationPrincipal User user) {

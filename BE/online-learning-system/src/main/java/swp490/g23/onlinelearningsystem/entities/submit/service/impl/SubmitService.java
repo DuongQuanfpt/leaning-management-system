@@ -9,22 +9,29 @@ import javax.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.amazonaws.Response;
 
 import swp490.g23.onlinelearningsystem.entities.group.domain.Group;
 import swp490.g23.onlinelearningsystem.entities.groupMember.domain.GroupMember;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
 import swp490.g23.onlinelearningsystem.entities.milestone.repositories.MilestoneRepository;
+import swp490.g23.onlinelearningsystem.entities.s3amazon.service.impl.S3Service;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.SubmitFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.SubmitFilterGroupDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.SubmitFilterMilestoneDTO;
+import swp490.g23.onlinelearningsystem.entities.submit.domain.request.SubmitRequirementWrapper;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitPaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitResponseDTO;
+import swp490.g23.onlinelearningsystem.entities.submit.repositories.SubmitRepository;
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.criteria.SubmitCriteria;
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.criteria_entity.SubmitQuery;
 import swp490.g23.onlinelearningsystem.entities.submit.service.ISubmitService;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
+import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.SubmitStatusEntity;
 
@@ -38,11 +45,17 @@ public class SubmitService implements ISubmitService {
     private SubmitCriteria submitCriteria;
 
     @Autowired
+    private SubmitRepository submitRepository;
+
+    @Autowired
     private MilestoneRepository milestoneRepository;
+
+    @Autowired
+    private S3Service s3Service;
 
     @Override
     public ResponseEntity<SubmitPaginateDTO> displaySubmit(int limit, int page, String keyword, Long milestoneId,
-            Long assignmentId, Long groupId, Long statusValue, User user, String classCode , boolean isGroup) {
+            Long assignmentId, Long groupId, Long statusValue, User user, String classCode, boolean isGroup) {
         User currentUser = userRepository.findById(user.getUserId()).get();
         SubmitQuery result = submitCriteria.searchFilterSubmit(keyword, statusValue, milestoneId, groupId, assignmentId,
                 user, classCode, isGroup);
@@ -105,8 +118,8 @@ public class SubmitService implements ISubmitService {
 
         List<SubmitStatusEntity> statusFilter = new ArrayList<>();
         for (SubmitStatusEnum status : new ArrayList<SubmitStatusEnum>(
-            EnumSet.allOf(SubmitStatusEnum.class))) {
-        statusFilter.add(new SubmitStatusEntity(status));
+                EnumSet.allOf(SubmitStatusEnum.class))) {
+            statusFilter.add(new SubmitStatusEntity(status));
         }
 
         filterDTO.setMilestoneFilter(dtos);
@@ -163,5 +176,19 @@ public class SubmitService implements ISubmitService {
         }
         groupDTO.setMemberId(members);
         return groupDTO;
+    }
+
+    @Override
+    public ResponseEntity<String> newSubmit(User user, Long submitId, SubmitRequirementWrapper requestDTO ,MultipartFile file) {
+        Submit submit = submitRepository.findById(submitId)
+                .orElseThrow(() -> new CustomException("submit doesnt exist"));
+        
+        String fileName = submit.getClassUser().getUser().getAccountName() +""+submit.getSubmitId();
+        String submitUrl = s3Service.saveAssignment(file, fileName);
+        if(submitUrl == null){
+            throw new CustomException("file upload failed");
+        }
+                
+        return ResponseEntity.ok(submitUrl);
     }
 }
