@@ -100,7 +100,7 @@ const IssueDetail = () => {
       title: detail.title,
       deadline: detail.deadline === null ? null : moment(detail.deadline).format('YYYY-MM-DD'),
       statusId: detail.status.id,
-      description: detail.description,
+      description: detail.description.trim(),
       milestoneId: detail.milestone.milestoneId,
       typeId: detail.type.id,
       requirementId: detail.requirement.id,
@@ -113,13 +113,8 @@ const IssueDetail = () => {
       changedDetail.asigneeName = detail.asignee.username
     }
 
-    const params = {
-      issueToUpdate: [id],
-      updateToApply: changedDetail,
-    }
-
     await issueApi
-      .changeBatch(params)
+      .changeIssueDetail(id, changedDetail)
       .then(() => {
         setError('You have successfully change issue detail')
         setIsEditMode(false)
