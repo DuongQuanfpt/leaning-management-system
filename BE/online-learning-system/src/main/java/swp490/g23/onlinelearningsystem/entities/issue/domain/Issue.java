@@ -23,6 +23,7 @@ import swp490.g23.onlinelearningsystem.entities.class_setting.domain.ClassSettin
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.group.domain.Group;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
+import swp490.g23.onlinelearningsystem.entities.submit_work.domain.SubmitWork;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 
 @Entity
@@ -71,7 +72,6 @@ public class Issue extends BaseEntity{
     @OneToMany(mappedBy = "requirement")
     private List<Issue> issueOfRequirement = new ArrayList<>();
 
-
     @Column(name = "title", nullable = false)
     private String title;
 
@@ -83,4 +83,7 @@ public class Issue extends BaseEntity{
 
     @Column
     private LocalDate deadline;
+
+    @OneToMany(mappedBy = "work")
+    private List<SubmitWork> submitWorks;
 }

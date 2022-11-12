@@ -23,6 +23,7 @@ import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.eval_criteria.domain.EvalCriteria;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.Issue;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
+import swp490.g23.onlinelearningsystem.entities.submit_work.domain.SubmitWork;
 import swp490.g23.onlinelearningsystem.util.enumutil.MilestoneStatusEnum;
 
 @Entity
@@ -67,5 +68,8 @@ public class Milestone extends BaseEntity {
 
     @OneToMany(mappedBy = "milestone")
     private List<Issue> issues;
+
+    @OneToMany(mappedBy = "milestone")
+    private List<SubmitWork> submitWorks;
 
 }

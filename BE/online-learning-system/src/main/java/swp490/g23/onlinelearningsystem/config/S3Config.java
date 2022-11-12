@@ -22,7 +22,7 @@ public class S3Config {
     @Value("${ama.region}")
     private String region;
 
-    @Value("${ama.bucketName}")
+    @Value("${ama.bucketImage}")
     private String bucket;
 
     @Bean
