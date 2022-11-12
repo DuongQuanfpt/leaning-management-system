@@ -41,6 +41,7 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.util.enumutil.MilestoneStatusEnum;
+import swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.MilestoneStatusEntity;
 
 @Service
@@ -217,7 +218,6 @@ public class MilestoneService implements IMilestoneService {
 
         milestone.setStatus(MilestoneStatusEnum.Open);
 
-        milestoneRepository.save(milestone);
         if (dto.getAssignmentId() != null) {
             milestone.setAssignment(assignmentRepository.findById(dto.getAssignmentId())
                     .orElseThrow(() -> new CustomException("Assignment doesnt exist")));
@@ -237,8 +237,11 @@ public class MilestoneService implements IMilestoneService {
                 Submit submit = new Submit();
                 submit.setClassUser(user);
                 submit.setMilestone(milestone);
-                submits.add(submit);
+                submit.setStatus(SubmitStatusEnum.Pending);
+                submits.add(submit);     
         }
+
+        milestoneRepository.save(milestone);
         submitRepository.saveAll(submits);
         return ResponseEntity.ok("Milestone added");
     }

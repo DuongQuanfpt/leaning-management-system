@@ -46,6 +46,7 @@ import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomExcep
 import swp490.g23.onlinelearningsystem.util.enumutil.MemberStatusEnum;
 import swp490.g23.onlinelearningsystem.util.enumutil.MilestoneStatusEnum;
 import swp490.g23.onlinelearningsystem.util.enumutil.Status;
+import swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum;
 import swp490.g23.onlinelearningsystem.util.enumutil.TraineeStatus;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.MemberStatusEntity;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
@@ -345,6 +346,7 @@ public class GroupService implements IGroupService {
             Submit submit = new Submit();
             submit.setGroup(group);
             submit.setMilestone(milestone);
+            submit.setStatus(SubmitStatusEnum.Pending);
 
             submits.add(submit);
 
@@ -362,6 +364,7 @@ public class GroupService implements IGroupService {
                 submit.setGroup(group);
                 submit.setMilestone(tempM);
                 submits.add(submit);
+                submit.setStatus(SubmitStatusEnum.Pending);
 
                 for (Submit memberSubmit : tempM.getSubmits()) {
                     if (memberSubmit.getClassUser() != null
@@ -463,6 +466,7 @@ public class GroupService implements IGroupService {
             Submit groupSubmit = new Submit();
             groupSubmit.setGroup(newGroup);
             groupSubmit.setMilestone(milestone);
+            groupSubmit.setStatus(SubmitStatusEnum.Pending);
             submits.add(groupSubmit);
 
             if (!requestDTO.getMembers().isEmpty()) {
@@ -535,7 +539,7 @@ public class GroupService implements IGroupService {
             Submit submitGroup = new Submit();
             submitGroup.setGroup(group);
             submitGroup.setMilestone(milestone);
-
+            submitGroup.setStatus(SubmitStatusEnum.Pending);
             submits.add(submitGroup);
 
             // assign group to trainee in milestone
@@ -602,6 +606,7 @@ public class GroupService implements IGroupService {
             Submit groupSubmit = new Submit();
             groupSubmit.setGroup(newGroup);
             groupSubmit.setMilestone(milestone);
+            groupSubmit.setStatus(SubmitStatusEnum.Pending);
             submits.add(groupSubmit);
 
             for (GroupMember member : group.getGroupMembers()) {

@@ -20,13 +20,15 @@ public class SubmitStatusEntity {
             this.value = "1";
         }
 
-        if (statusEnum == SubmitStatusEnum.Pending) {
+        if (statusEnum == SubmitStatusEnum.Submitted) {
             this.value = "0";
         }
 
-        if (statusEnum == SubmitStatusEnum.Submitted) {
+        if (statusEnum == SubmitStatusEnum.Pending) {
             this.value = "-1";
         }
+
+       
     }
 
 }

@@ -13,7 +13,6 @@ public class AuthRequest {
     @Email
     private String email;
 
-    @Pattern(regexp="[^\s]{4,30}")
     private String password;
 
     private String fullName;

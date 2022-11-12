@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import swp490.g23.onlinelearningsystem.entities.BaseEntity;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.ClassUser;
 import swp490.g23.onlinelearningsystem.entities.schedule.domain.Schedule;
 import swp490.g23.onlinelearningsystem.util.enumutil.AttendanceStatus;
@@ -23,7 +24,7 @@ import swp490.g23.onlinelearningsystem.util.enumutil.AttendanceStatus;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Attendance {
+public class Attendance extends BaseEntity {
     @EmbeddedId
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private AttendanceKey id = new AttendanceKey();

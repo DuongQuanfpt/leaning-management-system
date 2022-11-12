@@ -63,7 +63,7 @@ public class IssueCriteria {
 
                 for (Long statusId : statusFilter) {
                     if (statusId == 1) {
-                        query.append(" i.isClosed = 0");
+                        query.append(" i.isClosed = 0 AND i.status IS NULL");
                     } else if (statusId == 0) {
                         query.append(" i.isClosed = 1");
                     } else {
