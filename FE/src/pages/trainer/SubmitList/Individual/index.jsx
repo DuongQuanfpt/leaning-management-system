@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { Pagination, Table, Tag } from 'antd'
+import { Button, Pagination, Space, Table, Tag } from 'antd'
 
 import submitApi from '~/api/submitApi'
 import { useSelector } from 'react-redux'
+import Tooltip from 'antd/es/tooltip'
+import { CheckOutlined, EyeOutlined, UploadOutlined } from '@ant-design/icons'
 
 const Individual = ({ milestoneId }) => {
   let ITEM_PER_PAGE = 10
@@ -55,19 +57,46 @@ const Individual = ({ milestoneId }) => {
   }
 
   const columns = [
-    { title: 'Assignment', dataIndex: 'assignmentTitle' },
-    { title: 'Milestone', dataIndex: 'milestoneTitle' },
-    { title: 'Group', dataIndex: 'groupTitle' },
-    { title: 'Trainee Assigned', dataIndex: 'traineeTitle' },
+    { title: 'Assignment', dataIndex: 'assignmentTitle', width: '18%' },
+    { title: 'Milestone', dataIndex: 'milestoneTitle', width: '18%' },
+    { title: 'Trainee Assigned', dataIndex: 'traineeTitle', width: '18%' },
     {
       title: 'Status',
       dataIndex: 'status',
+      width: '10%',
       render: (_, { status }) => (
         <Tag color={status === 'Pending' ? 'green' : status === 'Submited' ? 'magenta' : 'purple'}> {status}</Tag>
       ),
     },
-    { title: 'Last Updated', dataIndex: 'lastUpdate' },
-    { title: 'Actions', dataIndex: '' },
+    { title: 'Last Updated', dataIndex: 'lastUpdate', width: '20%' },
+    {
+      title: 'Actions',
+      dataIndex: '',
+      width: '15%',
+      render: (_, submit) => (
+        <Space size="middle" align="baseline">
+          <Tooltip title="Upload" placement="top">
+            <Button
+              shape="circle"
+              type="primary"
+              icon={<UploadOutlined />}
+              onClick={() => {
+                console.log(submit)
+              }}
+            ></Button>
+          </Tooltip>
+          <Tooltip title="View" placement="top">
+            <Button
+              shape="circle"
+              icon={<EyeOutlined />}
+              onClick={() => {
+                console.log(submit)
+              }}
+            ></Button>
+          </Tooltip>
+        </Space>
+      ),
+    },
   ]
 
   const customLocaleWhenEmpty = {

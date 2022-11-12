@@ -15,7 +15,7 @@ import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 import { useSelector } from 'react-redux'
 
 const RequirementDetail = () => {
-  const { currentClass } = useSelector((state) => state.profile)
+  const { currentClass, ofGroup } = useSelector((state) => state.profile)
   const { id } = useParams()
 
   const [defaultDetail, setDefaultDetail] = useState({})
@@ -24,6 +24,14 @@ const RequirementDetail = () => {
 
   const [isEditMode, setIsEditMode] = useState(false)
   const [error, setError] = useState('')
+
+  let listGroupAssigned = ofGroup.map((group) => {
+    if (group.isLeader) {
+      return group.groupId
+    }
+    // eslint-disable-next-line array-callback-return
+    return
+  })
 
   useEffect(() => {
     setFilter({})
@@ -308,22 +316,24 @@ const RequirementDetail = () => {
                       errorMsg={error}
                       isError={error === 'You have successfully change requirement detail' ? false : true}
                     />
-                    <div className="d-flex">
-                      {isEditMode ? (
-                        <>
-                          <CButton size="md" className="mr-3" color="warning" onClick={modalConfirm}>
-                            Save
+                    {listGroupAssigned.includes(defaultDetail?.group?.groupId) && (
+                      <div className="d-flex">
+                        {isEditMode ? (
+                          <>
+                            <CButton size="md" className="mr-3" color="warning" onClick={modalConfirm}>
+                              Save
+                            </CButton>
+                            <CButton size="md" className="mr-3" color="warning" onClick={handleCancel}>
+                              Cancel
+                            </CButton>
+                          </>
+                        ) : (
+                          <CButton size="md" className="mr-3" color="warning" onClick={handleEdit}>
+                            Edit
                           </CButton>
-                          <CButton size="md" className="mr-3" color="warning" onClick={handleCancel}>
-                            Cancel
-                          </CButton>
-                        </>
-                      ) : (
-                        <CButton size="md" className="mr-3" color="warning" onClick={handleEdit}>
-                          Edit
-                        </CButton>
-                      )}
-                    </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
