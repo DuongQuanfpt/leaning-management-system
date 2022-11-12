@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import { Breadcrumb, Segmented } from 'antd'
-import {} from '@ant-design/icons'
+import { Breadcrumb, Segmented, Select } from 'antd'
 
 import submitApi from '~/api/submitApi'
 import { useSelector } from 'react-redux'
@@ -19,36 +18,30 @@ const SubmitList = () => {
   const [mode, setMode] = useState('Group')
 
   const { currentClass } = useSelector((state) => state.profile)
-  const [listData, setListData] = useState([])
+
   const [listFilter, setListFilter] = useState([])
+  const [milestoneSelected, setMilestoneSelected] = useState(null)
 
   useEffect(() => {
-    loadData()
+    setListFilter([])
+    setMilestoneSelected(null)
+    loadMilestone()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentClass])
 
-  const loadData = async () => {
-    const params = {
-      isGroup: false,
-    }
-    await submitApi
-      .getListSubmit(currentClass, params)
-      .then((response) => {
-        console.log(response)
-        setListData(response)
-      })
-      .catch((error) => {
-        console.log(error)
-      })
-
+  const loadMilestone = async () => {
     await submitApi
       .getListfilter(currentClass)
       .then((response) => {
-        console.log(response)
+        setListFilter(response)
       })
       .catch((error) => {
         console.log(error)
       })
+  }
+
+  const handleChangeMilestone = (id) => {
+    setMilestoneSelected(id)
   }
 
   return (
@@ -70,7 +63,18 @@ const SubmitList = () => {
                     </Breadcrumb>
                   </div>
                   <div className="col-4 d-flex align-items-center"></div>
-                  <div className="col-4 d-flex align-items-center"></div>
+                  <div className="col-4 d-flex align-items-center">
+                    <Select
+                      className="w-100"
+                      placeholder="Select Milestone"
+                      options={listFilter?.milestoneFilter?.map((milestone) => ({
+                        value: milestone.milestoneId,
+                        label: milestone.milestoneTitle,
+                      }))}
+                      value={milestoneSelected}
+                      onChange={(value) => handleChangeMilestone(value)}
+                    ></Select>
+                  </div>
                 </div>
               </div>
               <div className="col-lg-12 m-b30">
@@ -90,8 +94,8 @@ const SubmitList = () => {
                     onChange={setMode}
                   />
                   <div className="widget-box">
-                    {mode === 'Group' && <Group listData={listData} />}
-                    {mode === 'Individual' && <Individual listData={listData} />}
+                    {mode === 'Group' && <Group milestoneId={milestoneSelected} />}
+                    {mode === 'Individual' && <Individual milestoneId={milestoneSelected} />}
                   </div>
                 </div>
               </div>

@@ -6,7 +6,7 @@ const header = {
   headers: { Authorization: `Bearer ${currentAccessToken}` },
 }
 
-const subjectListApi = {
+const submitApi = {
   getListSubmit: (classCode, params) => {
     const url = `/api/submit/${classCode}`
     return axiosClient.get(url, { ...header, params })
@@ -18,4 +18,4 @@ const subjectListApi = {
   },
 }
 
-export default subjectListApi
+export default submitApi
