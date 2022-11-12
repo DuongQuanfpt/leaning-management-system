@@ -18,6 +18,7 @@ import {
   scheduleListRoutes,
   issueRoutes,
   attendanceRoutes,
+  submitRoutes,
 } from '~/routes'
 import RequireAuth from '~/utils/RequireAuth'
 
@@ -126,6 +127,10 @@ const User = () => {
 
           <Route element={<RequireAuth allowedRoles={['trainer', 'trainee']} />}>
             {issueRoutes.map((route, index) => {
+              const Page = route.component
+              return <Route key={index} path={route.path} element={<Page />} />
+            })}
+            {submitRoutes.map((route, index) => {
               const Page = route.component
               return <Route key={index} path={route.path} element={<Page />} />
             })}

@@ -14,19 +14,25 @@ const AccessDenied = lazy(() => import('~/pages/common/AccessDenied'))
 const Dashboard = lazy(() => import('~/pages/admin/AdminDashboard'))
 const Profile = lazy(() => import('~/pages/user/Profile'))
 const ChangePassword = lazy(() => import('~/pages/user/ChangePassword'))
+
 const SettingList = lazy(() => import('~/pages/admin/AdminSettingList'))
 const SettingDetail = lazy(() => import('~/pages/admin/AdminSettingDetail'))
 const SettingAdd = lazy(() => import('~/pages/admin/AdminSettingAdd'))
+
 const UserList = lazy(() => import('~/pages/admin/AdminUserList'))
 const UserDetail = lazy(() => import('~/pages/admin/AdminUserDetail'))
 const UserAdd = lazy(() => import('~/pages/admin/AdminUserAdd'))
+
 const SystemPermission = lazy(() => import('~/pages/admin/SystemPermission'))
+
 const SubjectList = lazy(() => import('~/pages/manager/SubjectList'))
 const SubjectDetail = lazy(() => import('~/pages/manager/SubjectDetail'))
 const SubjectAdd = lazy(() => import('~/pages/manager/SubjectAdd'))
+
 const AssignmentList = lazy(() => import('~/pages/manager/AssignmentList'))
 const AssignmentDetail = lazy(() => import('~/pages/manager/AssignmentDetail'))
 const AssignmentAdd = lazy(() => import('~/pages/manager/AssignmentAdd'))
+
 const EvalCriteriaList = lazy(() => import('~/pages/manager/EvalCriteriaList'))
 const EvalCriteriaDetail = lazy(() => import('~/pages/manager/EvalCriteriaDetail'))
 const EvalCriteriaAdd = lazy(() => import('~/pages/manager/EvalCriteriaAdd'))
@@ -35,6 +41,7 @@ const EvalCriteriaAdd = lazy(() => import('~/pages/manager/EvalCriteriaAdd'))
 const ClassList = lazy(() => import('~/pages/manager/ClassList'))
 const ClassDetail = lazy(() => import('~/pages/manager/ClassDetail'))
 const ClassAdd = lazy(() => import('~/pages/manager/ClassAdd'))
+
 const SubjectSettingList = lazy(() => import('~/pages/manager/SubjectSettingList'))
 const SubjectSettingDetail = lazy(() => import('~/pages/manager/SubjectSettingDetail'))
 const SubjectSettingAdd = lazy(() => import('~/pages/manager/SubjectSettingAdd'))
@@ -71,6 +78,7 @@ const GroupDetail = lazy(() => import('~/pages/trainer/GroupDetail'))
 const IssueList = lazy(() => import('~/pages/trainer/IssueList'))
 const IssueDetail = lazy(() => import('~/pages/trainer/IssueDetail'))
 const IssueAdd = lazy(() => import('~/pages/trainer/IssueAdd'))
+
 const RequirementList = lazy(() => import('~/pages/trainer/RequirementList'))
 const RequirementDetail = lazy(() => import('~/pages/trainer/RequirementDetail'))
 const RequirementAdd = lazy(() => import('~/pages/trainer/RequirementAdd'))
@@ -79,6 +87,10 @@ const AttendanceTracking = lazy(() => import('~/pages/trainer/AttendanceTracking
 const AttendanceDetail = lazy(() => import('~/pages/trainer/AttendanceDetail'))
 
 const ScheduleAttendance = lazy(() => import('~/pages/trainee/ScheduleAttendance'))
+
+const SubmitList = lazy(() => import('~/pages/trainer/SubmitList'))
+const SubmitDetail = lazy(() => import('~/pages/trainer/SubmitDetail'))
+const NewSubmit = lazy(() => import('~/pages/trainer/NewSubmit'))
 
 //404 pages
 const PageNotFound = lazy(() => import('~/pages/common/PageNotFound'))
@@ -204,6 +216,12 @@ const attendanceRoutes = [
   { path: '/attendance-detail/:id', component: AttendanceDetail },
 ]
 
+const submitRoutes = [
+  { path: '/submit-list', component: SubmitList },
+  { path: '/submit-detail/:id', component: SubmitDetail },
+  { path: '/new-submit', component: NewSubmit },
+]
+
 export {
   commonRoutes,
   userRoutes,
@@ -222,4 +240,5 @@ export {
   scheduleListRoutes,
   issueRoutes,
   attendanceRoutes,
+  submitRoutes,
 }

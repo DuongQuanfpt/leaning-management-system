@@ -124,6 +124,12 @@ const _nav = [
     to: '/schedule-attendance',
     icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
   },
+  {
+    component: CNavItem,
+    name: 'Submit List',
+    to: '/submit-list',
+    icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+  },
 ]
 
 export default _nav

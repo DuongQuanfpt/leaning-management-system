@@ -38,7 +38,7 @@ const SubjectSettingAdd = () => {
       value: '',
     },
     settingTitle: '',
-    settingValue: 'Select Value',
+    settingValue: '',
     status: 0,
     displayOrder: '',
     description: '',
@@ -47,14 +47,6 @@ const SubjectSettingAdd = () => {
   useEffect(() => {
     loadData()
   }, [])
-
-  useEffect(() => {
-    if (result.typeName.title !== 'Subject complexity' && result.typeName.title !== 'Subject quality') {
-      setResult((prev) => ({ ...prev, settingValue: '' }))
-    } else {
-      setResult((prev) => ({ ...prev, settingValue: 'Select Value' }))
-    }
-  }, [result.typeName.title])
 
   useEffect(() => {
     setError('')
@@ -98,13 +90,28 @@ const SubjectSettingAdd = () => {
       return
     }
 
-    if (result.settingValue === '') {
+    if (result.settingValue === '' || String(result.settingValue) === '') {
       setError('Setting Value must not empty')
       return
     }
 
     if (result.displayOrder === '') {
       setError('Display Order must not empty')
+      return
+    }
+
+    if (result.typeName.value === 'TYPE_COMPLEXITY' && Number(result.settingValue) > 100) {
+      setError('Complexity value must between 0 and 100')
+      return
+    }
+
+    if (result.typeName.value === 'TYPE_COMPLEXITY' && Number(result.settingValue) < 0) {
+      setError('Complexity value must between 0 and 100')
+      return
+    }
+
+    if (result.typeName.value === 'TYPE_QUALITY' && Number(result.settingValue) < 0) {
+      setError('Quality value must higher than 0')
       return
     }
 
@@ -205,32 +212,24 @@ const SubjectSettingAdd = () => {
                           <div className="form-group col-6">
                             <label className="col-form-label">Value</label>
                             {result.typeName.title === 'Subject complexity' && (
-                              <CDropdown className="w-100">
-                                <CDropdownToggle color="warning">{result.settingValue}</CDropdownToggle>
-                                <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
-                                  {listFilter.complexity.map((complexity) => (
-                                    <CDropdownItem
-                                      onClick={() => setResult((prev) => ({ ...prev, settingValue: complexity }))}
-                                    >
-                                      {complexity}
-                                    </CDropdownItem>
-                                  ))}
-                                </CDropdownMenu>
-                              </CDropdown>
+                              <div>
+                                <input
+                                  className="form-control"
+                                  type="number"
+                                  value={result.settingValue}
+                                  onChange={(e) => setResult((prev) => ({ ...prev, settingValue: e.target.value }))}
+                                />
+                              </div>
                             )}
                             {result.typeName.title === 'Subject quality' && (
-                              <CDropdown className="w-100">
-                                <CDropdownToggle color="warning">{result.settingValue}</CDropdownToggle>
-                                <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
-                                  {listFilter.quality.map((quality) => (
-                                    <CDropdownItem
-                                      onClick={() => setResult((prev) => ({ ...prev, settingValue: quality }))}
-                                    >
-                                      {quality}
-                                    </CDropdownItem>
-                                  ))}
-                                </CDropdownMenu>
-                              </CDropdown>
+                              <div>
+                                <input
+                                  className="form-control"
+                                  type="number"
+                                  value={result.settingValue}
+                                  onChange={(e) => setResult((prev) => ({ ...prev, settingValue: e.target.value }))}
+                                />
+                              </div>
                             )}
                             {result.typeName.title !== 'Subject complexity' &&
                               result.typeName.title !== 'Subject quality' && (
@@ -281,7 +280,9 @@ const SubjectSettingAdd = () => {
 
                           <ErrorMsg
                             errorMsg={error}
-                            isError={error === 'You have successfully add new subject setting detail' ? false : true}
+                            isError={
+                              error === 'You have successfully add new your subject setting detail' ? false : true
+                            }
                           />
                           <div className="d-flex">
                             <CButton className="mr-3" size="md" color="warning" onClick={modalConfirm}>
