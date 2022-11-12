@@ -40,6 +40,7 @@ import swp490.g23.onlinelearningsystem.entities.submit.repositories.SubmitReposi
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
+import swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum;
 import swp490.g23.onlinelearningsystem.util.enumutil.TraineeStatus;
 import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.TraineeStatusEntity;
@@ -296,10 +297,10 @@ public class ClassUserService implements IClassUserService {
                 Submit submit = new Submit();
                 submit.setClassUser(classUser);
                 submit.setGroup(null);
+                submit.setStatus(SubmitStatusEnum.Pending);
                 submit.setMilestone(milestone);
 
                 newSubmits.add(submit);
-
             }
             submitRepository.saveAll(newSubmits);
         }

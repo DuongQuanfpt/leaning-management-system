@@ -22,6 +22,7 @@ import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.SubmitRepository;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.util.enumutil.MilestoneStatusEnum;
+import swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum;
 import swp490.g23.onlinelearningsystem.util.enumutil.TraineeStatus;
 
 @Service
@@ -168,6 +169,7 @@ public class GroupMemberService implements IGroupMemberService {
             submit.setClassUser(classUser);
             submit.setGroup(newGroup);
             submit.setMilestone(milestone);
+            submit.setStatus(SubmitStatusEnum.Pending);
             newSubmit.add(submit);
         }
 

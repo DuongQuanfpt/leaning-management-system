@@ -29,17 +29,18 @@ public class SubmitController {
             @RequestParam(name = "page", required = false) String currentPage,
             @RequestParam(name = "limit", required = false) String requestLimit,
             @RequestParam(name = "q", required = false) String keyword,
+            @RequestParam(name = "isGroup", required = false) boolean isGroup,
             @RequestParam(name = "milestoneId", required = false) Long milestoneId,
             @RequestParam(name = "assignmentId", required = false) Long assignmentId,
             @RequestParam(name = "groupId", required = false) Long groupId,
-            @RequestParam(name = "statusValue", required = false) String statusValue,
+            @RequestParam(name = "statusValue", required = false) Long statusValue,
             @PathVariable("classCode") String classCode,
             @AuthenticationPrincipal User user) {
 
         int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
         int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
         return submitService.displaySubmit(limit, page, keyword, milestoneId, assignmentId, groupId, statusValue, user,
-                classCode);
+                classCode ,isGroup);
     }
 
     @GetMapping(value = "/submit-list-filter/{classCode}")
