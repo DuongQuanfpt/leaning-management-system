@@ -3,6 +3,7 @@ package swp490.g23.onlinelearningsystem.entities.submit.service;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
+import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.NewSubmitFilter;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.SubmitFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.request.SubmitRequirementWrapper;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitDetailDTO;
@@ -13,9 +14,11 @@ public interface ISubmitService {
     ResponseEntity<SubmitPaginateDTO> displaySubmit(int limit, int page, String keyword, Long milestoneId,
             Long assignmentId, Long groupId, Long statusValue, User user, String classCode, boolean isGroup);
 
+    ResponseEntity<SubmitDetailDTO> submitDetail(Long id);
+
     ResponseEntity<SubmitFilterDTO> getSubmitListFilter(User user, String classCode);
 
-    ResponseEntity<String> newSubmit(User user, Long submitId, SubmitRequirementWrapper requestDTO, MultipartFile file);
+    ResponseEntity<NewSubmitFilter> newSubmitFilter(User user, Long submitId);
 
-    ResponseEntity<SubmitDetailDTO> submitDetail(Long id);
+    ResponseEntity<String> newSubmit(User user, Long submitId, SubmitRequirementWrapper requestDTO, MultipartFile file);
 }

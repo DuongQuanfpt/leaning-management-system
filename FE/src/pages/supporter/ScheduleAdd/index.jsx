@@ -213,7 +213,6 @@ const ScheduleAdd = () => {
                             showNow={false}
                             minuteStep={10}
                             secondStep={60}
-                            disabledHours={() => range(0, Number(moment(new Date()).format('HH')))}
                             allowClear={false}
                             value={detail.fromTime}
                             onChange={(time) => setDetail((prev) => ({ ...prev, fromTime: time }))}

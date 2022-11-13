@@ -146,10 +146,12 @@ public class IssueService implements IIssueService {
         dto.setTeamwork(milestone.getAssignment().isTeamWork());
         dto.setStatus(milestone.getStatus().toString());
         List<IssueGroupFilterDTO> groups = new ArrayList<>();
+
         IssueGroupFilterDTO noGroup = new IssueGroupFilterDTO();
         List<String> noGroupMember = new ArrayList<>();
         noGroup.setGroupId((long) 0);
         noGroup.setGroupName("Waiting List");
+
         for (Submit submit : milestone.getSubmits()) {
             if (!groupOfTrainee.isEmpty()) {
                 if (submit.getGroup() != null && groupOfTrainee.contains(submit.getGroup())) {
@@ -165,10 +167,10 @@ public class IssueService implements IIssueService {
                     if (exist == false) {
                         groups.add(toGroupFilterDto(submit.getGroup()));
                     }
-                } else if (submit.getGroup() == null) {
-                    noGroupMember.add(submit.getClassUser().getUser().getAccountName());
                 }
+              
             } else {
+             
                 if (submit.getGroup() != null) {
 
                     boolean exist = false;
@@ -185,6 +187,7 @@ public class IssueService implements IIssueService {
                 } else if (submit.getGroup() == null) {
                     noGroupMember.add(submit.getClassUser().getUser().getAccountName());
                 }
+               
             }
 
         }
@@ -197,8 +200,11 @@ public class IssueService implements IIssueService {
         }
         dto.setRequirements(requirements);
 
-        noGroup.setMemberId(noGroupMember);
-        groups.add(noGroup);
+        if(groupOfTrainee.isEmpty()){
+            noGroup.setMemberId(noGroupMember);
+            groups.add(noGroup);
+        }
+      
         dto.setGroups(groups);
         return dto;
     }
@@ -692,17 +698,24 @@ public class IssueService implements IIssueService {
             }
         }
 
-        if (requestDTO.getGroupId() != null && requestDTO.getGroupId() != 0) {
-            Group group = groupRepository.findById(requestDTO.getGroupId())
-                    .orElseThrow(() -> new CustomException("Group doesnt exist"));
-            issue.setGroup(group);
+        if (requestDTO.getGroupId() != null) {
+            if (requestDTO.getGroupId() == 0) {
+                issue.setGroup(null);
+            } else {
+                Group group = groupRepository.findById(requestDTO.getGroupId())
+                        .orElseThrow(() -> new CustomException("Group doesnt exist"));
+                issue.setGroup(group);
+            }
+
         }
 
-        if (requestDTO.getAsigneeName() != null && !requestDTO.getAsigneeName().equalsIgnoreCase("Unassigned") ) {
-            User aisgnee = userRepository.findByAccountName(requestDTO.getAsigneeName());
-            issue.setAsignee(aisgnee);
-        } else if(requestDTO.getAsigneeName().equalsIgnoreCase("Unassigned")){
-            issue.setAsignee(null);
+        if (requestDTO.getAsigneeName() != null) {
+            if (requestDTO.getAsigneeName().equalsIgnoreCase("Unassigned")) {
+                issue.setAsignee(null);
+            } else {
+                User aisgnee = userRepository.findByAccountName(requestDTO.getAsigneeName());
+                issue.setAsignee(aisgnee);
+            }
         }
 
         if (requestDTO.getDescription() != null) {
@@ -731,13 +744,18 @@ public class IssueService implements IIssueService {
 
             }
 
-            if (requestDTO.getRequirementId() != null && requestDTO.getRequirementId() != 0) {
-                Issue requirement = issueRepository.findById(requestDTO.getRequirementId())
-                        .orElseThrow(() -> new CustomException("Issue doesnt exist"));
-                issue.setRequirement(requirement);
-            } else if (requestDTO.getRequirementId() == 0) {
-                issue.setRequirement(null);
+            if (requestDTO.getRequirementId() != null) {
+
+                if (requestDTO.getRequirementId() == 0) {
+                    issue.setRequirement(null);
+                } else {
+                    Issue requirement = issueRepository.findById(requestDTO.getRequirementId())
+                            .orElseThrow(() -> new CustomException("Issue doesnt exist"));
+                    issue.setRequirement(requirement);
+                }
+
             }
+
         } else {
             issue.setAsignee(null);
             issue.setGroup(null);

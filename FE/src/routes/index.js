@@ -219,7 +219,7 @@ const attendanceRoutes = [
 const submitRoutes = [
   { path: '/submit-list', component: SubmitList },
   { path: '/submit-detail/:id', component: SubmitDetail },
-  { path: '/new-submit', component: NewSubmit },
+  { path: '/new-submit/:id', component: NewSubmit },
 ]
 
 export {

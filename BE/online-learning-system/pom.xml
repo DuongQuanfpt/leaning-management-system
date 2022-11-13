@@ -96,6 +96,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-parsers</artifactId>
+			<version>1.17</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
@@ -113,7 +119,7 @@
 						<arg>-verbose</arg>
 						<arg>-parameters</arg>
 					</compilerArgs>
-					
+
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>

@@ -72,9 +72,6 @@ public class Issue extends BaseEntity{
     @OneToMany(mappedBy = "requirement")
     private List<Issue> issueOfRequirement = new ArrayList<>();
 
-    @OneToMany(mappedBy = "requirement")
-    private List<Issue> a = new ArrayList<>();
-
     @Column(name = "title", nullable = false)
     private String title;
 
