@@ -10,6 +10,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class IssueRequestDTO {
+    Long issueId;
+
     String title;
     
     Long milestoneId;

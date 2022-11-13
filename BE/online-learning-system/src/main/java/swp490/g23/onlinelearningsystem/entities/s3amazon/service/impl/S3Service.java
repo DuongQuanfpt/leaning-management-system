@@ -60,22 +60,23 @@ public class S3Service implements IFileService {
     }
 
     @Override
-    public String saveAssignment(MultipartFile multipartFile, String fileName) {
+    public String saveSubmit(MultipartFile multipartFile, String fileKey) {
         try {
             ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentLength(multipartFile.getSize());
             objectMetadata.setContentType(tika.detect(multipartFile.getOriginalFilename()));
 
             String extension = FilenameUtils.getExtension(multipartFile.getOriginalFilename());
-            String fileKey = fileName +"."+extension;
-         
+            String name = fileKey+"_"+FilenameUtils.removeExtension(multipartFile.getOriginalFilename());
+            String fileName = name +"."+extension;
+
             InputStream stream = multipartFile.getInputStream();
-            PutObjectRequest putObjectRequest = new PutObjectRequest(bucketSubmit,fileKey, stream, objectMetadata)
+            PutObjectRequest putObjectRequest = new PutObjectRequest(bucketSubmit,fileName, stream, objectMetadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead);
             s3.putObject(putObjectRequest);
 
             // PutObjectResult objectResult = s3.putObject(bucketSubmit, fileName, file);
-            return s3.getUrl(bucketSubmit, fileKey).toString();
+            return s3.getUrl(bucketSubmit, fileName).toString();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -95,8 +96,10 @@ public class S3Service implements IFileService {
     }
 
     @Override
-    public void deteleFile(String fileName) {
-        s3.deleteObject(bucketImage, fileName);
+    public void deteleSubmit(String Url) {
+        String fileName = Url.split("/")[3];
+        System.out.print("FILE NAME :"+fileName);
+        s3.deleteObject(bucketSubmit, fileName);
     }
 
     public byte[] convertToImage(String base64Image) throws IOException {

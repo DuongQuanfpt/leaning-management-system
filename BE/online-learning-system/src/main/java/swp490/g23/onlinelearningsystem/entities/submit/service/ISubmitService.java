@@ -14,9 +14,7 @@ public interface ISubmitService {
     ResponseEntity<SubmitPaginateDTO> displaySubmit(int limit, int page, String keyword, Long milestoneId,
             Long assignmentId, Long groupId, Long statusValue, User user, String classCode, boolean isGroup);
 
-    ResponseEntity<SubmitDetailDTO> submitDetail(Long id);
-
-    ResponseEntity<SubmitFilterDTO> getSubmitListFilter(User user, String classCode);
+    ResponseEntity<SubmitFilterDTO> getSubmitListFilter(User user, String classCode, boolean isGroup);
 
     ResponseEntity<NewSubmitFilter> newSubmitFilter(User user, Long submitId);
 

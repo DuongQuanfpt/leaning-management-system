@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.filter.IssueFilter;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.request.IssueBatchRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.request.IssueFilterRequestDTO;
+import swp490.g23.onlinelearningsystem.entities.issue.domain.request.IssueMultiRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.request.IssueRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueDetailDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueListDTO;
@@ -95,6 +96,13 @@ public class IssueController {
 			@AuthenticationPrincipal User user) {
 
 		return issueService.issueEdit(issueId, dto, user);
+	}
+
+	@PutMapping(value = "/issue-multichange")
+	public ResponseEntity<String> multiChangeRequirement(@RequestBody IssueMultiRequestDTO dto,
+			@AuthenticationPrincipal User user) {
+
+		return issueService.issueMultiChange(user, dto);
 	}
 
 	@PutMapping(value = "/issue-batch-update")
