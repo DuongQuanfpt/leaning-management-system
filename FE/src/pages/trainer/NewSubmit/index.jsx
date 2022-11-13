@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
-import { Button, Input, message, Select, Table, Tag, Typography, Upload } from 'antd'
+import { Button, Input, message, Modal, Pagination, Select, Table, Tag, Typography, Upload } from 'antd'
 import { InboxOutlined, UploadOutlined } from '@ant-design/icons'
 
 import submitApi from '~/api/submitApi'
@@ -14,6 +14,7 @@ const NewSubmit = () => {
   const { id } = useParams()
   const navigateTo = useNavigate()
   const [loading, setLoading] = useState(false)
+  const [open, setOpen] = useState(false)
 
   const [listSubmitFilter, setListSubmitFilter] = useState([])
   const [requirementSelected, setRequirementSelected] = useState([])
@@ -255,11 +256,48 @@ const NewSubmit = () => {
                       <Typography.Text>Found 10 requirements which you can choose to submit</Typography.Text>
                     </div>
                     <div className="col-3 d-flex justify-content-end">
-                      <Typography.Link>Update Requirement</Typography.Link>
+                      <Button type="link" onClick={() => setOpen(true)}>
+                        Update Requirement
+                      </Button>
+                      <Modal
+                        title="Requirement Update"
+                        centered
+                        maskClosable={false}
+                        open={open}
+                        onOk={() => setOpen(false)}
+                        onCancel={() => setOpen(false)}
+                        width={1200}
+                        footer={[
+                          <Button key="submit" type="primary" onClick={() => setOpen(false)}>
+                            Submit
+                          </Button>,
+                          <Button type="primary" onClick={() => setOpen(false)}>
+                            Reset
+                          </Button>,
+                          <Button key="back" type="secondary" onClick={() => setOpen(false)}>
+                            Cancel
+                          </Button>,
+                        ]}
+                      >
+                        <div className="col-lg-12 m-b10">
+                          <div className="row">
+                            <div className="col-lg-6">
+                              <Input.Search placeholder="Input text to search trainee" allowClear />
+                            </div>
+                            <div className="col-lg-2">
+                              <Select className="w-100" placeholder="Select Status" allowClear />
+                            </div>
+                            <div className="col-lg-4">
+                              <Select className="w-100" placeholder="Select Milestone" allowClear />
+                            </div>
+                          </div>
+                          <div className="col-lg-12 m-b10"></div>
+                        </div>
+                      </Modal>
                     </div>
                   </div>
                 </div>
-                <div className="col-lg-12 ">
+                <div className="col-lg-12">
                   <div className="row">
                     <Table
                       columns={columns}
@@ -273,6 +311,16 @@ const NewSubmit = () => {
                         },
                       }}
                     />
+                  </div>
+                </div>
+                <div className="col-lg-12 mt-3">
+                  <div className="row ">
+                    <div className="col-lg-3 d-flex justify-content-start">
+                      <Button type="primary">Submit Milestone</Button>
+                    </div>
+                    <div className="col-lg-9 d-flex justify-content-end">
+                      <Pagination />
+                    </div>
                   </div>
                 </div>
               </div>
