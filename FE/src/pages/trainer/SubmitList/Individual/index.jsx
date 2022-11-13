@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom'
 
 const Individual = ({ milestoneId }) => {
   let ITEM_PER_PAGE = 10
-  const { currentClass } = useSelector((state) => state.profile)
+  const { currentClass, username } = useSelector((state) => state.profile)
   const navigateTo = useNavigate()
 
   const [loading, setLoading] = useState(false)
@@ -72,23 +72,32 @@ const Individual = ({ milestoneId }) => {
         <Tag color={status === 'Pending' ? 'green' : status === 'Submited' ? 'magenta' : 'purple'}> {status}</Tag>
       ),
     },
-    { title: 'Last Updated', dataIndex: 'lastUpdate', width: '20%' },
+    {
+      title: 'Last Updated',
+      dataIndex: 'lastUpdate',
+      width: '20%',
+      render: (_, { lastUpdate }) => lastUpdate?.slice(0, -4),
+    },
     {
       title: 'Actions',
       dataIndex: '',
       width: '15%',
       render: (_, submit) => (
         <Space size="middle" align="baseline">
-          <Tooltip title="Submit" placement="top">
-            <Button
-              shape="circle"
-              type="primary"
-              icon={<UploadOutlined />}
-              onClick={() => {
-                navigateTo(`/new-submit/${submit.submitId}`)
-              }}
-            ></Button>
-          </Tooltip>
+          {username === submit.traineeTitle ? (
+            <Tooltip title="Submit" placement="top">
+              <Button
+                shape="circle"
+                type="primary"
+                icon={<UploadOutlined />}
+                onClick={() => {
+                  navigateTo(`/new-submit/${submit.submitId}`)
+                }}
+              ></Button>
+            </Tooltip>
+          ) : (
+            <Button></Button>
+          )}
           <Tooltip title="View" placement="top">
             <Button
               shape="circle"

@@ -15,7 +15,7 @@ import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 import userListApi from '~/api/userListApi'
 
 const AdminUserList = () => {
-  const ITEM_PER_PAGE = 10
+  let ITEM_PER_PAGE = 10
 
   const navigateTo = useNavigate()
 
@@ -34,6 +34,7 @@ const AdminUserList = () => {
     filterRole: '',
     filterStatus: '',
   })
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     userListApi.getFilter().then((response) => {
@@ -47,6 +48,7 @@ const AdminUserList = () => {
   }, [filter])
 
   const loadData = async (page, filter, q = '') => {
+    setLoading(true)
     const params = {
       limit: ITEM_PER_PAGE,
       page: page,
@@ -60,11 +62,18 @@ const AdminUserList = () => {
     if (filter.filterStatus !== '') {
       params.filterStatus = filter.filterStatus
     }
-    await userListApi.getPage(params).then((response) => {
-      setCurrentPage(page)
-      setTotalItem(response.totalItem)
-      setListUser(response.listResult)
-    })
+    await userListApi
+      .getPage(params)
+      .then((response) => {
+        setCurrentPage(page)
+        setTotalItem(response.totalItem)
+        setListUser(response.listResult)
+      })
+      .then(() => setLoading(false))
+      .catch((error) => {
+        setLoading(false)
+        console.log(error)
+      })
   }
 
   const handleActive = async (id) => {
@@ -302,10 +311,19 @@ const AdminUserList = () => {
             </div>
           </div>
           <div className="col-lg-12">
-            <Table bordered dataSource={listUser} columns={columns} pagination={false} />
+            <Table bordered dataSource={listUser} columns={columns} pagination={false} loading={loading} />
           </div>
-          <div className="col-lg-12 d-flex justify-content-end">
-            <Pagination current={currentPage} total={totalItem} onChange={handleChangePage} />;
+          <div className="col-lg-12 d-flex justify-content-end mt-3">
+            <Pagination
+              current={currentPage}
+              total={totalItem}
+              onChange={handleChangePage}
+              showSizeChanger
+              onShowSizeChange={(current, pageSize) => {
+                ITEM_PER_PAGE = pageSize
+              }}
+            />
+            ;
           </div>
         </div>
         <AdminFooter />

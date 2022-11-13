@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 
 import { Breadcrumb, Button, message, Select, Typography, Upload } from 'antd'
+import { InboxOutlined } from '@ant-design/icons'
 
 import submitApi from '~/api/submitApi'
 
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
-import { InboxOutlined } from '@ant-design/icons'
 
 const NewSubmit = () => {
   const { id } = useParams()
+  const navigateTo = useNavigate()
 
   const [listSubmitFilter, setListSubmitFilter] = useState([])
   const [requirementSelected, setRequirementSelected] = useState([])
@@ -21,7 +22,11 @@ const NewSubmit = () => {
     submitApi
       .getListSubmitFilter(id)
       .then((response) => {
+        console.log(response)
         setListSubmitFilter(response)
+        if (response?.requirementSubmitted) {
+          setRequirementSelected(response.requirementSubmitted.map((req) => req.id))
+        }
       })
       .catch((error) => {
         console.log(error)
@@ -60,13 +65,22 @@ const NewSubmit = () => {
           toastMessage('error', 'File type is invalid (support .zip only)')
           return
         }
-
+        //File bigger than 10MB
+        if (info.file.size >= 10000000) {
+          toastMessage('error', 'File must smaller than 10MB')
+          return
+        }
         toastMessage('success', `${info.file.name} file uploaded successfully.`)
+
         const formData = new FormData()
-        console.log(info.fileList[0].name, info.fileList[0])
-        formData.append('name', info.fileList[0])
-        setZipFile(formData)
+        formData.append('file', info.file)
+
+        setZipFile(formData.values().next().value)
       }
+    },
+    onRemove(e) {
+      console.log('Remove files', e)
+      setZipFile(null)
     },
   }
 
@@ -75,21 +89,25 @@ const NewSubmit = () => {
       toastMessage('error', 'You must select at lease one requirement')
       return
     }
-    console.log(requirementSelected)
-    console.log(zipFile)
+    if (zipFile === null) {
+      toastMessage('error', 'You must choose file to submit')
+      return
+    }
 
     const params = {
-      base64Requirement: btoa(JSON.stringify(requirementSelected)),
+      requirementIds: btoa(JSON.stringify({ requirementIds: requirementSelected })),
       submitFile: zipFile,
     }
 
+    console.log(params)
     submitApi
       .submitFile(id, params)
       .then((response) => {
-        console.log(response)
+        toastMessage('success', `Submit file successfully`)
       })
       .catch((error) => {
         console.log(error)
+        toastMessage('error', `Submit file failed, try again please`)
       })
   }
 
@@ -101,7 +119,7 @@ const NewSubmit = () => {
         <div className="body flex-grow-1 px-3">
           <div className="col-lg-12 m-b30">
             <div className="row">
-              <div className="col-lg-12 m-b30">
+              <div className="col-lg-12 p-b30">
                 <div className="row">
                   <div className="col-12 d-flex align-items-center">
                     <Breadcrumb>
@@ -114,10 +132,21 @@ const NewSubmit = () => {
                       <Breadcrumb.Item>New Submit</Breadcrumb.Item>
                     </Breadcrumb>
                   </div>
-                  <div className="row">
-                    <div className="col-4 d-flex align-items-center"></div>
-                    <div className="col-4 d-flex align-items-center"></div>
-                    <div className="col-4 d-flex align-items-center">
+                  <div className="row mt-3">
+                    <div className="col-6 d-flex align-items-center">
+                      <Typography.Text>
+                        Last Submited:{' '}
+                        <Typography.Link href={listSubmitFilter?.currentSubmitUrl} target="_blank">
+                          {/* {listSubmitFilter?.currentSubmitUrl?.lastIndexOf('.com')} */}
+                          {listSubmitFilter?.currentSubmitUrl?.slice(
+                            listSubmitFilter?.currentSubmitUrl?.lastIndexOf('.amazonaws.com') + 15,
+                            listSubmitFilter?.currentSubmitUrl.length,
+                          )}
+                        </Typography.Link>{' '}
+                        at `Time submitted here`
+                      </Typography.Text>
+                    </div>
+                    <div className="col-6 d-flex align-items-center">
                       <Select
                         mode="multiple"
                         allowClear
@@ -137,7 +166,7 @@ const NewSubmit = () => {
                 </div>
               </div>
               <div className="row">
-                <div className="col-lg-12 d-flex justify-content-end">
+                <div className="col-lg-12 d-flex justify-content-end mb-1">
                   <Typography.Text>Maximum file for new file: 10MB</Typography.Text>
                 </div>
                 <div className="col-lg-12 m-b30">
@@ -150,8 +179,11 @@ const NewSubmit = () => {
                   </Upload.Dragger>
                 </div>
                 <div className="col-lg-12 m-b30 d-flex justify-content-center">
-                  <Button type="primary" onClick={handleSubmit}>
+                  <Button type="primary" onClick={async () => handleSubmit()}>
                     Submit
+                  </Button>
+                  <Button type="secondary" className="ml-3" onClick={() => navigateTo('/submit-list')}>
+                    Cancel
                   </Button>
                 </div>
               </div>
