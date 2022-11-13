@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
-import { Breadcrumb, Button, message, Select, Typography, Upload } from 'antd'
-import { InboxOutlined } from '@ant-design/icons'
+import { Button, Input, message, Select, Table, Tag, Typography, Upload } from 'antd'
+import { InboxOutlined, UploadOutlined } from '@ant-design/icons'
 
 import submitApi from '~/api/submitApi'
 
@@ -13,6 +13,7 @@ import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 const NewSubmit = () => {
   const { id } = useParams()
   const navigateTo = useNavigate()
+  const [loading, setLoading] = useState(false)
 
   const [listSubmitFilter, setListSubmitFilter] = useState([])
   const [requirementSelected, setRequirementSelected] = useState([])
@@ -111,33 +112,82 @@ const NewSubmit = () => {
       })
   }
 
+  const columns = [
+    { title: 'Requirement', dataIndex: 'requirement', width: '60%' },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      width: '20%',
+      render: (_, { status }) => <Tag color="green">{status}</Tag>,
+    },
+    {
+      title: 'Assignee',
+      dataIndex: 'assignee',
+      width: '20%',
+      render: (_, { assignee }) => (
+        <Select
+          className="w-100"
+          allowClear
+          options={assignee.map((ass) => ({
+            label: ass,
+            value: ass,
+          }))}
+          placeholder="Select Assignee"
+        />
+      ),
+    },
+  ]
+
+  const dataSource = [
+    {
+      requirement: 'requirement 0',
+      key: 0,
+      status: 'Doing',
+      assignee: ['hoang1', 'hoang2', 'hoang3'],
+    },
+    {
+      requirement: 'requirement 1',
+      key: 1,
+      status: 'Done',
+      assignee: ['hoang1', 'hoang2', 'hoang3'],
+    },
+    {
+      requirement: 'requirement 2',
+      key: 2,
+
+      status: 'Open',
+      assignee: ['hoang1', 'hoang2', 'hoang3'],
+    },
+    {
+      requirement: 'requirement 3',
+      key: 3,
+
+      status: 'Close',
+      assignee: ['hoang1', 'hoang2', 'hoang3'],
+    },
+    {
+      requirement: 'requirement 4',
+      key: 4,
+      status: 'Somthing custom',
+      assignee: ['hoang1', 'hoang2', 'hoang3'],
+    },
+  ]
+
   return (
     <div>
       <AdminSidebar />
       <div className="wrapper d-flex flex-column min-vh-100 bg-light">
         <AdminHeader />
         <div className="body flex-grow-1 px-3">
-          <div className="col-lg-12 m-b30">
+          <div className="col-lg-12">
             <div className="row">
-              <div className="col-lg-12 p-b30">
+              <div className="col-lg-12 p-b20">
                 <div className="row">
-                  <div className="col-12 d-flex align-items-center">
-                    <Breadcrumb>
-                      <Breadcrumb.Item>
-                        <Link to="/dashboard">Dashboard</Link>
-                      </Breadcrumb.Item>
-                      <Breadcrumb.Item>
-                        <Link to="/submit-list">Submit List</Link>
-                      </Breadcrumb.Item>
-                      <Breadcrumb.Item>New Submit</Breadcrumb.Item>
-                    </Breadcrumb>
-                  </div>
                   <div className="row mt-3">
-                    <div className="col-6 d-flex align-items-center">
+                    {/* <div className="col-6 d-flex align-items-center">
                       <Typography.Text>
                         Last Submited:{' '}
                         <Typography.Link href={listSubmitFilter?.currentSubmitUrl} target="_blank">
-                          {/* {listSubmitFilter?.currentSubmitUrl?.lastIndexOf('.com')} */}
                           {listSubmitFilter?.currentSubmitUrl?.slice(
                             listSubmitFilter?.currentSubmitUrl?.lastIndexOf('.amazonaws.com') + 15,
                             listSubmitFilter?.currentSubmitUrl.length,
@@ -145,8 +195,8 @@ const NewSubmit = () => {
                         </Typography.Link>{' '}
                         at `Time submitted here`
                       </Typography.Text>
-                    </div>
-                    <div className="col-6 d-flex align-items-center">
+                    </div> */}
+                    {/* <div className="col-6 d-flex align-items-center">
                       <Select
                         mode="multiple"
                         allowClear
@@ -161,12 +211,25 @@ const NewSubmit = () => {
                           value: requirement.id,
                         }))}
                       />
+                    </div> */}
+                    <div className="col-9 d-flex justify-content-end"></div>
+                    <div className="col-3 d-flex justify-content-start">
+                      <Typography.Text>{`Choose submit package (zip file, <= 20MB)`}</Typography.Text>
+                    </div>
+                    <div className="col-4 d-flex align-items-center">
+                      <Input placeholder="Milestone name here" readOnly />
+                    </div>
+                    <div className="col-5 d-flex align-items-center"></div>
+                    <div className="col-3 d-flex  justify-content-start">
+                      <Upload {...props}>
+                        <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                      </Upload>
                     </div>
                   </div>
                 </div>
               </div>
               <div className="row">
-                <div className="col-lg-12 d-flex justify-content-end mb-1">
+                {/* <div className="col-lg-12 d-flex justify-content-end mb-1">
                   <Typography.Text>Maximum file for new file: 10MB</Typography.Text>
                 </div>
                 <div className="col-lg-12 m-b30">
@@ -185,6 +248,32 @@ const NewSubmit = () => {
                   <Button type="secondary" className="ml-3" onClick={() => navigateTo('/submit-list')}>
                     Cancel
                   </Button>
+                </div> */}
+                <div className="col-lg-12 m-b10">
+                  <div className="row">
+                    <div className="col-9 d-flex justify-content-start">
+                      <Typography.Text>Found 10 requirements which you can choose to submit</Typography.Text>
+                    </div>
+                    <div className="col-3 d-flex justify-content-end">
+                      <Typography.Link>Update Requirement</Typography.Link>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-lg-12 ">
+                  <div className="row">
+                    <Table
+                      columns={columns}
+                      dataSource={dataSource}
+                      pagination={false}
+                      loading={loading}
+                      rowSelection={{
+                        type: 'checkbox',
+                        onChange: (selectedRowKeys, selectedRows) => {
+                          console.log(selectedRowKeys, selectedRows)
+                        },
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
             </div>

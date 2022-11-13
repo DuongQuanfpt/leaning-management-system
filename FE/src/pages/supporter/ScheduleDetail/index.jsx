@@ -115,16 +115,6 @@ const ScheduleDetail = () => {
     setIsEditMode(false)
   }
 
-  const range = (start, end) => {
-    const arr = []
-    let i = start
-    while (i < end) {
-      arr.push(i)
-      i++
-    }
-    return arr
-  }
-
   const modalConfirm = () => {
     setError('')
     Modal.confirm({
