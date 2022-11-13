@@ -215,20 +215,23 @@ public class AttendanceService implements IAttendanceService {
 
     @Override
     public ResponseEntity<List<ScheduleAttendanceDTO>> scheduleAttendance(Long id, String clasCode) {
-        // User user = userRepository.findById(id).get();
-        // Classes clazz = classRepositories.findClassByCode(clasCode);
+        User user = userRepository.findById(id).get();
+        Classes clazz = classRepositories.findClassByCode(clasCode);
         List<ScheduleAttendanceDTO> list = new ArrayList<>();
-        ClassUser classUser = classUserRepositories.findByClassesAndUser(id, clasCode);
-        List<Attendance> attendances = classUser.getAttendances();
-        for (Attendance attendance : attendances) {
+        List<Schedule> schedules = scheduleRepositories.findByClasses(clazz);
+        for (Schedule schedule : schedules) {
             ScheduleAttendanceDTO dto = new ScheduleAttendanceDTO();
-            dto.setSlot(attendance.getSchedule().getClassSetting().getSettingValue());
-            dto.setDate(attendance.getSchedule().getTrainingDate());
-            dto.setFromTime(attendance.getSchedule().getFromTime());
-            dto.setToTime(attendance.getSchedule().getToTime());
-            dto.setRoom(attendance.getSchedule().getSetting().getSettingTitle());
-            dto.setScheduleStatus(attendance.getSchedule().getStatus());
-            dto.setAttendanceStatus(attendance.getStatus());
+            Attendance attendance = attendanceRepositories.findByScheduleAndUser(user, schedule);
+            dto.setSlot(schedule.getClassSetting().getSettingValue());
+            dto.setTopic(schedule.getTopic());
+            dto.setDate(schedule.getTrainingDate());
+            dto.setFromTime(schedule.getFromTime());
+            dto.setToTime(schedule.getToTime());
+            dto.setRoom(schedule.getSetting().getSettingTitle());
+            dto.setScheduleStatus(schedule.getStatus());
+            if (attendance != null) {
+                dto.setAttendanceStatus(attendance.getStatus());
+            }
             list.add(dto);
         }
         return ResponseEntity.ok(list);

@@ -42,6 +42,8 @@ public class Schedule extends BaseEntity {
 
     private ScheduleStatus status;
 
+    private String topic;
+
     @ManyToOne
     @JoinColumn(name = "class_id")
     private Classes classes;

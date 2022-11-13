@@ -23,14 +23,17 @@ import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.SubmitFilte
 import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.SubmitFilterGroupDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.SubmitFilterMilestoneDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.request.SubmitRequirementWrapper;
+import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitDetailDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitPaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.SubmitRepository;
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.criteria.SubmitCriteria;
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.criteria_entity.SubmitQuery;
 import swp490.g23.onlinelearningsystem.entities.submit.service.ISubmitService;
+import swp490.g23.onlinelearningsystem.entities.submit_work.domain.SubmitWork;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
+import swp490.g23.onlinelearningsystem.entities.work_eval.domain.WorkEval;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum;
 import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.SubmitStatusEntity;
@@ -179,16 +182,33 @@ public class SubmitService implements ISubmitService {
     }
 
     @Override
-    public ResponseEntity<String> newSubmit(User user, Long submitId, SubmitRequirementWrapper requestDTO ,MultipartFile file) {
+    public ResponseEntity<String> newSubmit(User user, Long submitId, SubmitRequirementWrapper requestDTO,
+            MultipartFile file) {
         Submit submit = submitRepository.findById(submitId)
                 .orElseThrow(() -> new CustomException("submit doesnt exist"));
-        
-        String fileName = submit.getClassUser().getUser().getAccountName() +""+submit.getSubmitId();
+
+        String fileName = submit.getClassUser().getUser().getAccountName() + "" + submit.getSubmitId();
         String submitUrl = s3Service.saveAssignment(file, fileName);
-        if(submitUrl == null){
+        if (submitUrl == null) {
             throw new CustomException("file upload failed");
         }
-                
+
         return ResponseEntity.ok(submitUrl);
+    }
+
+    @Override
+    public ResponseEntity<SubmitDetailDTO> submitDetail(Long id) {
+        SubmitDetailDTO dto = new SubmitDetailDTO();
+        Submit submit = submitRepository.findById(id).get();
+        List<SubmitWork> submitWorks = submit.getSubmitWorks();
+        for (SubmitWork submitWork : submitWorks) {
+            List<WorkEval> workEvals = submitWork.getWorkEvals();
+            for (WorkEval workEval : workEvals) {
+                dto.setStatus(submitWork.getStatus());
+                dto.setComplexity(workEval.getComplexityId().getSettingValue());
+                dto.setQuality(workEval.getQualityId().getSettingValue());
+            }
+        }
+        return ResponseEntity.ok(dto);
     }
 }

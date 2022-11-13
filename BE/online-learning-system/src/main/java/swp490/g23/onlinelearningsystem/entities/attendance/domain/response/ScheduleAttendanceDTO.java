@@ -18,6 +18,8 @@ public class ScheduleAttendanceDTO {
 
     private String slot;
 
+    private String topic;
+
     private LocalDate date;
 
     private LocalTime fromTime;
