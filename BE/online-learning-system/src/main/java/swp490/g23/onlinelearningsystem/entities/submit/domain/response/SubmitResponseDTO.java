@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.SubmitFilterGroupDTO;
 
 @Getter
 @Setter
@@ -17,9 +18,13 @@ public class SubmitResponseDTO {
 
     String milestoneTitle;
 
-    String groupTitle;
+    SubmitFilterGroupDTO group;
 
     String traineeTitle;
+
+    String fullName;
+
+    String submitUrl;
 
     String status;
 

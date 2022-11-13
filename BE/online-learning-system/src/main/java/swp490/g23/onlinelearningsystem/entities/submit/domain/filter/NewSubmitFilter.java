@@ -12,5 +12,15 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NewSubmitFilter {
+    
+    String currentSubmitUrl;
+    String lastSubmit;
+    String status;
+    String milestone;
+    List<SubmitSettingFilterDTO> requirementStatus;
     List<SubmitRequirementFilter> requirement;
+    List<SubmitRequirementFilter> requirementSubmitted;
+    List<SubmitMemberFilterDTO> assigneeOfGroup;
+    List<String> milestoneOfGroup
+
 }

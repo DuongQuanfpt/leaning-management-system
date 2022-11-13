@@ -28,6 +28,7 @@ import swp490.g23.onlinelearningsystem.entities.issue.domain.filter.IssueMilesto
 import swp490.g23.onlinelearningsystem.entities.issue.domain.filter.IssueSettingFilterDto;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.request.IssueBatchRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.request.IssueFilterRequestDTO;
+import swp490.g23.onlinelearningsystem.entities.issue.domain.request.IssueMultiRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.request.IssueRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueUserDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueDetailDTO;
@@ -168,9 +169,9 @@ public class IssueService implements IIssueService {
                         groups.add(toGroupFilterDto(submit.getGroup()));
                     }
                 }
-              
+
             } else {
-             
+
                 if (submit.getGroup() != null) {
 
                     boolean exist = false;
@@ -187,7 +188,7 @@ public class IssueService implements IIssueService {
                 } else if (submit.getGroup() == null) {
                     noGroupMember.add(submit.getClassUser().getUser().getAccountName());
                 }
-               
+
             }
 
         }
@@ -200,11 +201,11 @@ public class IssueService implements IIssueService {
         }
         dto.setRequirements(requirements);
 
-        if(groupOfTrainee.isEmpty()){
+        if (groupOfTrainee.isEmpty()) {
             noGroup.setMemberId(noGroupMember);
             groups.add(noGroup);
         }
-      
+
         dto.setGroups(groups);
         return dto;
     }
@@ -886,6 +887,38 @@ public class IssueService implements IIssueService {
         }
         issueRepository.saveAll(issueList);
         return ResponseEntity.ok("all issue updated ");
+    }
+
+    @Override
+    public ResponseEntity<String> issueMultiChange(User user, IssueMultiRequestDTO multiRequestDTO) {
+        List<Issue> issuesNew = new ArrayList<>();
+        for (IssueRequestDTO issueDTO : multiRequestDTO.getIssues()) {
+            Issue issue = issueRepository.findById(issueDTO.getIssueId())
+                    .orElseThrow(() -> new CustomException("Issue doesnt exist"));
+
+            Milestone milestone = milestoneRepository.findById(issueDTO.getMilestoneId())
+                    .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
+            issue.setMilestone(milestone);
+
+            if (issueDTO.getStatusId() != null) {
+                if (issueDTO.getStatusId() == 0) {
+                    issue.setStatus(null);
+                    issue.setClosed(true);
+                } else if (issueDTO.getStatusId() == 1) {
+                    issue.setStatus(null);
+                    issue.setClosed(false);
+                } else {
+                    ClassSetting statusSetting = classSettingRepository.findById(issueDTO.getStatusId())
+                            .orElseThrow(() -> new CustomException("Status doesnt exist"));
+                    issue.setStatus(statusSetting);
+                    issue.setClosed(false);
+                }
+
+            }
+            issuesNew.add(issue);
+        }
+        issueRepository.saveAll(issuesNew);
+        return ResponseEntity.ok(issuesNew.size() + " issue updated");
     }
 
 }

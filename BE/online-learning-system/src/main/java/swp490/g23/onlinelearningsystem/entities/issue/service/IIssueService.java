@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.filter.IssueFilter;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.request.IssueBatchRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.request.IssueFilterRequestDTO;
+import swp490.g23.onlinelearningsystem.entities.issue.domain.request.IssueMultiRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.request.IssueRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueDetailDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.response.IssueListDTO;
@@ -27,4 +28,6 @@ public interface IIssueService {
     ResponseEntity<String> updateBatchIssue(IssueBatchRequestDTO requestDTO, User user);
 
     ResponseEntity<IssueDetailDTO> issueDetail(Long issueId , User user);
+
+    ResponseEntity<String> issueMultiChange(User user , IssueMultiRequestDTO multiRequestDTO);
 }
