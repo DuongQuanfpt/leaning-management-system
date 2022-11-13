@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 import { Breadcrumb, Table, Typography } from 'antd'
 
@@ -8,7 +9,6 @@ import attendanceApi from '~/api/attendanceApi'
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
-import { useSelector } from 'react-redux'
 
 const ScheduleAttendance = () => {
   const { currentClass } = useSelector((state) => state.profile)

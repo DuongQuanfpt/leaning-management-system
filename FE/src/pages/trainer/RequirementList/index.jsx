@@ -94,15 +94,13 @@ const RequirementList = () => {
     issueApi
       .getListFilter(currentClass)
       .then((response) => {
+        console.log(response)
         setListFilter({
           ...response,
           asigneeFilter: ['None', ...response.asigneeFilter],
           groupFilter: [{ groupId: 0, groupName: 'None' }, ...response.groupFilter],
           requirement: [{ id: 0, title: 'General Requirement' }, ...response.requirement],
-          statusFilter: [
-            { title: 'Open', id: 1 },
-            { title: 'Close', id: 0 },
-          ],
+          statusFilter: [{ title: 'Open', id: 1 }, ...response.statusFilter, { title: 'Close', id: 0 }],
         })
       })
       .catch((error) => {
@@ -564,11 +562,8 @@ const RequirementList = () => {
                               setSelectedRow(selected)
                             },
                             getCheckboxProps: (record) => {
-                              console.log(record)
-                              console.log(listGroupLeader)
                               return {
                                 disabled: isTrainer ? false : !listGroupLeader.includes(record?.group?.groupId),
-                                // Column configuration not to be checked
                               }
                             },
                           }
@@ -670,7 +665,6 @@ const RequirementList = () => {
                     value: milestone.milestoneId,
                     label: milestone.milestoneTitle,
                   }))}
-                  value={filter?.milestoneId}
                   onChange={(value) => {
                     setBaseEditBatch((prev) => ({
                       milestoneId: value,
@@ -770,7 +764,8 @@ const RequirementList = () => {
                 >
                   No Deadline
                 </Checkbox>
-              </Space>
+              </Space> */}
+
               <Space className="w-100 d-flex flex-column mt-2">
                 <Typography.Text>Status</Typography.Text>
                 <Select
@@ -782,7 +777,7 @@ const RequirementList = () => {
                   onChange={(value) => setBaseEditBatch((prev) => ({ ...prev, status: value }))}
                   allowClear={true}
                 ></Select>
-              </Space> */}
+              </Space>
             </Layout.Sider>
           )}
         </Layout>

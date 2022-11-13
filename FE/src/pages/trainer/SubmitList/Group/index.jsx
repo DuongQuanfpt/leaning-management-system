@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Pagination, Space, Table, Tag, Tooltip } from 'antd'
+import { Button, Pagination, Space, Table, Tag, Tooltip, Typography } from 'antd'
 
 import submitApi from '~/api/submitApi'
 import { useSelector } from 'react-redux'
@@ -63,7 +63,16 @@ const Group = ({ milestoneId }) => {
   const columns = [
     { title: 'Assignment', dataIndex: 'assignmentTitle', width: '15%%' },
     { title: 'Milestone', dataIndex: 'milestoneTitle', width: '15%%' },
-    { title: 'Group', dataIndex: 'groupTitle', width: '15%%' },
+    {
+      title: 'Group',
+      dataIndex: 'groupTitle',
+      width: '15%%',
+      render: (_, { group }) => (
+        <Tooltip title={() => <>name here</>}>
+          <Typography.Link>{group.groupName}</Typography.Link>
+        </Tooltip>
+      ),
+    },
     { title: 'Trainee Assigned', dataIndex: 'traineeTitle', width: '15%%' },
     {
       title: 'Status',
