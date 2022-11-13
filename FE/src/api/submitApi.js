@@ -1,3 +1,4 @@
+import axios from 'axios'
 import axiosClient from './axiosClient'
 
 const currentAccessToken = JSON.parse(JSON.parse(localStorage.getItem('persist:LMS')).auth).token
@@ -24,7 +25,9 @@ const submitApi = {
 
   submitFile: (submitId, params) => {
     const url = `api/new-submit/${submitId}`
-    return axiosClient.post(url, params, header)
+    return axiosClient.post(url, params, {
+      headers: { Authorization: `Bearer ${currentAccessToken}`, 'content-type': 'multipart/form-data' },
+    })
   },
 }
 
