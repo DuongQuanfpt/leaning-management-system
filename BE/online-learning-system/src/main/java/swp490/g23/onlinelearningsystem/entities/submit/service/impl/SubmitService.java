@@ -276,12 +276,19 @@ public class SubmitService implements ISubmitService {
 
         if (submit.getSubmitFileUrl() != null) {
             filter.setCurrentSubmitUrl(submit.getSubmitFileUrl());
-
         }
 
         if (submit.getSubmitTime() != null) {
             filter.setLastSubmit(submit.getSubmitTime().toString());
         }
+
+        List<SubmitMemberFilterDTO> memberFilterDTOs = new ArrayList<>();
+        if(submit.getGroup() != null){
+            for (GroupMember member : submit.getGroup().getGroupMembers()) {
+                memberFilterDTOs.add(toMemberDTO(member));
+            }
+        }
+
 
         List<SubmitRequirementFilter> requirementSubmitted = new ArrayList<>();
         if (!submit.getSubmitWorks().isEmpty()) {
@@ -297,7 +304,10 @@ public class SubmitService implements ISubmitService {
                 requirementFilters.add(toRequirementFilter(issue));
             }
         }
-
+        filter.setMilestone(submit.getMilestone().getTitle());
+        filter.setAssigneeOfGroup(memberFilterDTOs);
+        filter.setMilestoneOfGroup(null);
+        filter.setRequirementStatus(null);
         filter.setStatus(submit.getStatus().toString());
         filter.setRequirementSubmitted(requirementSubmitted);
         filter.setRequirement(requirementFilters);
