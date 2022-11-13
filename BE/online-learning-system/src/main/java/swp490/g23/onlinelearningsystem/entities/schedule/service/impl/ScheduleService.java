@@ -202,7 +202,6 @@ public class ScheduleService implements IScheduleService {
                 }
             }
             settingClass.setSettingValue(dto.getSlot());
-            settingClass.setSettingTitle(dto.getTopic());
             settingClass.setClasses(clazz);
             settingClass.setStatus(Status.Active);
             settingClass.setType(settingRepositories.findBySettingValue("TYPE_CLASS_MODULE"));
@@ -239,6 +238,9 @@ public class ScheduleService implements IScheduleService {
                 }
             }
         }
+        if (dto.getTopic() != null) {
+            schedule.setTopic(dto.getTopic());
+        }
         schedule.setStatus(ScheduleStatus.Inactive);
         scheduleRepositories.save(schedule);
         return ResponseEntity.ok("Schedule add successfully!");
@@ -268,8 +270,7 @@ public class ScheduleService implements IScheduleService {
                 for (Schedule sche : setting.getSchedules()) {
                     if (slot.equalsIgnoreCase(sche.getClassSetting().getSettingValue())) {
                         if (dto.getTopic() != null) {
-                            classSetting.setSettingTitle(dto.getTopic());
-                            classSettingRepository.save(classSetting);
+                            schedule.setTopic(dto.getTopic());
                             if (dto.getDate() != null) {
                                 if (requestDate.equals(sche.getTrainingDate())
                                         && requestFromTime.equals(sche.getFromTime())
@@ -335,8 +336,7 @@ public class ScheduleService implements IScheduleService {
             responseDTO.setClassCode(clazz.getCode());
         }
         if (entity.getClassSetting() != null) {
-            responseDTO.setModules(new ModuleTypeResponseDTO(entity.getClassSetting().getSettingValue(),
-                    entity.getClassSetting().getSettingTitle(), entity.getClasses().getCode()));
+            responseDTO.setSlot(entity.getClassSetting().getSettingValue());
         }
         if (entity.getSetting() != null) {
             responseDTO.setRoom(new SettingTypeResponseDTO(entity.getSetting().getSettingTitle(),
@@ -350,6 +350,9 @@ public class ScheduleService implements IScheduleService {
         }
         if (entity.getTrainingDate() != null) {
             responseDTO.setDate(entity.getTrainingDate());
+        }
+        if (entity.getTopic() != null) {
+            responseDTO.setTopic(entity.getTopic());
         }
         responseDTO.setStatus(entity.getStatus());
         return responseDTO;

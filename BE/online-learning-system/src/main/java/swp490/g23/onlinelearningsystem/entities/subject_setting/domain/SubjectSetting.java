@@ -1,5 +1,7 @@
 package swp490.g23.onlinelearningsystem.entities.subject_setting.domain;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -7,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -16,6 +19,7 @@ import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.BaseEntity;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
+import swp490.g23.onlinelearningsystem.entities.work_eval.domain.WorkEval;
 import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 
 @Entity
@@ -52,6 +56,15 @@ public class SubjectSetting extends BaseEntity {
     @Column
     private String displayOrder;
 
+    @OneToMany(mappedBy = "complexityId")
+    private List<WorkEval> workEvalComplexity;
 
+    @OneToMany(mappedBy = "qualityId")
+    private List<WorkEval> workEvalQuality;
 
+    @OneToMany(mappedBy = "newComplexityId")
+    private List<WorkEval> workEvalNewComplexity;
+
+    @OneToMany(mappedBy = "newQualityId")
+    private List<WorkEval> workEvalNewQuality;
 }

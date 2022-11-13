@@ -27,6 +27,7 @@ import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.SubmitFilte
 import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.SubmitMemberFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.SubmitRequirementFilter;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.request.SubmitRequirementWrapper;
+import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitDetailDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitPaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.SubmitRepository;
@@ -35,8 +36,10 @@ import swp490.g23.onlinelearningsystem.entities.submit.repositories.criteria_ent
 import swp490.g23.onlinelearningsystem.entities.submit.service.ISubmitService;
 import swp490.g23.onlinelearningsystem.entities.submit_work.domain.SubmitWork;
 import swp490.g23.onlinelearningsystem.entities.submit_work.repositories.SubmitWorkRepository;
+import swp490.g23.onlinelearningsystem.entities.submit_work.domain.SubmitWork;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
+import swp490.g23.onlinelearningsystem.entities.work_eval.domain.WorkEval;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum;
 import swp490.g23.onlinelearningsystem.util.enumutil.SubmitWorkStatusEnum;

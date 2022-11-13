@@ -17,7 +17,10 @@ public class ScheduleResponseDTO {
 
     private Long id;
 
-    private ModuleTypeResponseDTO modules;
+    // private ModuleTypeResponseDTO modules;
+    private String slot;
+
+    private String topic;
 
     private LocalDate date;
 
