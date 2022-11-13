@@ -1,4 +1,4 @@
-package swp490.g23.onlinelearningsystem.entities.submit.domain.response;
+package swp490.g23.onlinelearningsystem.entities.issue.domain.request;
 
 import java.util.List;
 
@@ -11,8 +11,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SubmitGroupDTO {
-    Long groupId;
-    String groupCode;
-    List<String> members;
+public class IssueMultiRequestDTO {
+    List<IssueRequestDTO> issues;
 }

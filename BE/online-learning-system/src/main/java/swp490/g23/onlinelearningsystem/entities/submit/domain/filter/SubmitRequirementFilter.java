@@ -11,5 +11,9 @@ import lombok.Setter;
 @AllArgsConstructor
 public class SubmitRequirementFilter {
     String title;
+    String status;
+    String milestone;
+    String assignee;
+    boolean isSubmitted;
     Long id;
 }

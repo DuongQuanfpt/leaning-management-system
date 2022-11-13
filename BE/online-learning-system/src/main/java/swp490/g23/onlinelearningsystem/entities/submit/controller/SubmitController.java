@@ -56,9 +56,10 @@ public class SubmitController {
 
     @GetMapping(value = "/submit-list-filter/{classCode}")
     public ResponseEntity<SubmitFilterDTO> getSubmitListFilter(@PathVariable("classCode") String classCode,
+            @RequestParam(name = "isGroup", required = true) boolean isGroup,
             @AuthenticationPrincipal User user) {
 
-        return submitService.getSubmitListFilter(user, classCode);
+        return submitService.getSubmitListFilter(user, classCode , isGroup);
     }
 
     @GetMapping(value = "/new-submit/{submitId}")
@@ -77,7 +78,7 @@ public class SubmitController {
         SubmitRequirementWrapper requirementWrapper = new SubmitRequirementWrapper();
         if (base64Requirement != null) {
             byte[] result = Base64.getDecoder().decode(base64Requirement);
-            String decoded= new String(result);
+            String decoded = new String(result);
             requirementWrapper = new ObjectMapper().readValue(decoded, SubmitRequirementWrapper.class);
             System.out.println("DECODED REQUIREMENT : " + requirementWrapper.getRequirementIds().toString());
         }
