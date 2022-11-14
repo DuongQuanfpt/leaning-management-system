@@ -17,5 +17,4 @@ public class SubmitFilterMilestoneDTO {
     String assignmentTitle;
     boolean isTeamwork;
     String status;
-    List<SubmitFilterGroupDTO> groups;
 }

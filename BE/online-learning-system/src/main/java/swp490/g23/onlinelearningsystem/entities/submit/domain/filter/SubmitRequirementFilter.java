@@ -10,10 +10,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SubmitRequirementFilter {
+    Long id;
+    Long groupId;
+    String groupTitle;
     String title;
     String status;
     String milestone;
     String assignee;
     boolean isSubmitted;
-    Long id;
 }

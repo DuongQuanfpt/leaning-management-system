@@ -17,10 +17,12 @@ public class NewSubmitFilter {
     String lastSubmit;
     String status;
     String milestone;
+    Long milestoneId;
+    Long groupId;
+    String groupCode;
     List<SubmitSettingFilterDTO> requirementStatus;
     List<SubmitRequirementFilter> requirement;
-    List<SubmitRequirementFilter> requirementSubmitted;
     List<SubmitMemberFilterDTO> assigneeOfGroup;
-    List<String> milestoneOfGroup
+    List<SubmitFilterMilestoneDTO> milestoneOfGroup;
 
 }

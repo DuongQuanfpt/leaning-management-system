@@ -117,7 +117,7 @@
 				<configuration>
 					<compilerArgs>
 						<arg>-verbose</arg>
-						<arg>-parameters</arg>
+						<arg>-parameters.</arg>
 					</compilerArgs>
 
 					<excludes>

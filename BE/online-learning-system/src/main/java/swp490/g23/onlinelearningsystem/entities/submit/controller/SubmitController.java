@@ -80,7 +80,7 @@ public class SubmitController {
             byte[] result = Base64.getDecoder().decode(base64Requirement);
             String decoded = new String(result);
             requirementWrapper = new ObjectMapper().readValue(decoded, SubmitRequirementWrapper.class);
-            System.out.println("DECODED REQUIREMENT : " + requirementWrapper.getRequirementIds().toString());
+            System.out.println("DECODED REQUIREMENT : " + requirementWrapper.getRequirements().toString());
         }
 
         return submitService.newSubmit(user, submitId, requirementWrapper, submitFile);

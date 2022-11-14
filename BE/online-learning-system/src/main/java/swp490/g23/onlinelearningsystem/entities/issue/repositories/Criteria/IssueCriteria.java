@@ -29,7 +29,7 @@ public class IssueCriteria {
             query.append(" AND i.type IS NOT NULL");
         }
 
-        if (filterMilestoneId != null) {
+        if (filterMilestoneId != null && filterMilestoneId != 0) {
             query.append(" AND i.milestone.milestoneId = '" + filterMilestoneId + "'");
         }
 
