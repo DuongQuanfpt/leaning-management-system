@@ -154,7 +154,7 @@ const trainerRoutes = [
 ]
 
 // Trainee routes
-const traineeRoutes = [{ path: '/schedule-attendance', component: ScheduleAttendance }]
+const traineeRoutes = [{ path: '/class-attendance', component: ScheduleAttendance }]
 
 //Admin and manager routes
 const subjectListRoutes = [
@@ -212,8 +212,8 @@ const issueRoutes = [
 ]
 
 const attendanceRoutes = [
-  { path: '/attendance-tracking', component: AttendanceTracking },
-  { path: '/attendance-detail/:id', component: AttendanceDetail },
+  { path: '/attendance-report', component: AttendanceTracking },
+  { path: '/attendance-tracking/:id', component: AttendanceDetail },
 ]
 
 const submitRoutes = [

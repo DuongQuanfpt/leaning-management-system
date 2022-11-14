@@ -31,8 +31,8 @@ const AdminHeader = () => {
     '/issue-add',
     '/requirement-list',
     '/requirement-add',
-    '/attendance-tracking',
-    '/schedule-attendance',
+    '/attendance-report',
+    '/class-attendance',
     '/submit-list',
   ]
 

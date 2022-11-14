@@ -11,7 +11,7 @@ import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 import { CButton, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import { cilPlus, cilReload, cilSearch } from '@coreui/icons'
+import { cilCalendar, cilPlus, cilReload, cilSearch } from '@coreui/icons'
 import moment from 'moment'
 import { useSelector } from 'react-redux'
 
@@ -42,6 +42,7 @@ const ScheduleList = () => {
     scheduleApi
       .getFilter()
       .then((response) => {
+        console.log(response)
         setListFilter((prev) => ({
           ...prev,
           ...response,
@@ -119,15 +120,13 @@ const ScheduleList = () => {
   const columns = [
     {
       title: 'Slot',
-      dataIndex: 'modules',
+      dataIndex: 'slot',
       width: '10%',
-      render: (_, { modules }) => modules.slot,
     },
     {
       title: 'Topic',
-      dataIndex: 'modules',
+      dataIndex: 'topic',
       width: '20%',
-      render: (_, { modules }) => modules.topic,
     },
     {
       title: 'Date',
@@ -161,11 +160,11 @@ const ScheduleList = () => {
       // Attendance taken: điểm danh rồi, không đc điểm danh nữa -> không đc sửa
       render: (_, { status, id }) =>
         status === 'Active' ? (
-          <Button type="link" className="p-0 m-0" onClick={() => navigateTo(`/attendance-detail/${id}`)}>
+          <Button type="link" className="p-0 m-0" onClick={() => navigateTo(`/attendance-tracking/${id}`)}>
             <Typography.Link underline>Edit Attendance</Typography.Link>
           </Button>
         ) : status === 'Inactive' ? (
-          <Button type="link" className="p-0 m-0" onClick={() => navigateTo(`/attendance-detail/${id}`)}>
+          <Button type="link" className="p-0 m-0" onClick={() => navigateTo(`/attendance-tracking/${id}`)}>
             <Typography.Link underline>Take Attendance</Typography.Link>
           </Button>
         ) : (
@@ -255,13 +254,23 @@ const ScheduleList = () => {
                         <CIcon icon={cilPlus} />
                       </CButton>
                     </Tooltip>
+                    <Tooltip title="Attendance Reports" placement="top">
+                      <CButton
+                        color="warning"
+                        type="submit"
+                        className="text-light ml-3"
+                        onClick={() => navigateTo('/attendance-report')}
+                      >
+                        <CIcon icon={cilCalendar} />
+                      </CButton>
+                    </Tooltip>
                   </div>
                 </div>
               </div>
               <div className="col-lg-12">
                 <Table bordered dataSource={schedule} columns={columns} pagination={false} loading={loading} />
               </div>
-              <div className="col-lg-12 d-flex justify-content-end">
+              <div className="col-lg-12 d-flex justify-content-end mt-3">
                 <Pagination current={currentPage} total={totalItem} onChange={handleChangePage} />;
               </div>
             </div>
