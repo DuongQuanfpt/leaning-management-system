@@ -114,7 +114,7 @@ const ScheduleAttendance = () => {
                       <Breadcrumb.Item>
                         <Link to="/dashboard">Dashboard</Link>
                       </Breadcrumb.Item>
-                      <Breadcrumb.Item>Schedule Attendance</Breadcrumb.Item>
+                      <Breadcrumb.Item>Class Attendance</Breadcrumb.Item>
                     </Breadcrumb>
                   </div>
                 </div>

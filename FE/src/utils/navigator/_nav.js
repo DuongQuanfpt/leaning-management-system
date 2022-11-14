@@ -114,14 +114,14 @@ const _nav = [
   },
   {
     component: CNavItem,
-    name: 'Attendance Tracking',
-    to: '/attendance-tracking',
+    name: 'Attendance Report',
+    to: '/attendance-report',
     icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
   },
   {
     component: CNavItem,
-    name: 'Schedule Attendance',
-    to: '/schedule-attendance',
+    name: 'Class Attendance',
+    to: '/class-attendance',
     icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
   },
   {

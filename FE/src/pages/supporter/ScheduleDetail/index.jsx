@@ -82,8 +82,8 @@ const ScheduleDetail = () => {
 
   const handleSave = async () => {
     const params = {
-      slot: detail.modules.slot,
-      topic: detail.modules.topic.trim(),
+      slot: detail?.slot?.trim(),
+      topic: detail?.topic?.trim(),
       date: moment(detail.date).format('YYYY-MM-DD'),
       fromTime: moment(detail.fromTime).format('HH:mm:ss'),
       toTime: moment(detail.toTime).format('HH:mm:ss'),
@@ -159,7 +159,7 @@ const ScheduleDetail = () => {
                     <div className="row">
                       <div className="form-group col-6">
                         <label className="col-form-label">Slot</label>
-                        <input className="form-control" type="text" value={detail.modules.slot} disabled={true} />
+                        <input className="form-control" type="text" value={detail?.slot} disabled={true} />
                       </div>
                       <div className="form-group col-6">
                         <label className="col-form-label">Topic</label>
@@ -167,10 +167,8 @@ const ScheduleDetail = () => {
                           <input
                             className="form-control"
                             type="text"
-                            value={detail.modules.topic}
-                            onChange={(e) =>
-                              setDetail((prev) => ({ ...prev, modules: { ...prev.modules, topic: e.target.value } }))
-                            }
+                            value={detail?.topic}
+                            onChange={(e) => setDetail((prev) => ({ ...prev, topic: e.target.value }))}
                             disabled={!isEditMode}
                           />
                         </div>

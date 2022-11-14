@@ -253,7 +253,7 @@ const NewSubmit = () => {
                 <div className="col-lg-12 m-b10">
                   <div className="row">
                     <div className="col-9 d-flex justify-content-start">
-                      <Typography.Text>Found 10 requirements which you can choose to submit</Typography.Text>
+                      <Typography.Text strong>Found 10 requirements which you can choose to submit</Typography.Text>
                     </div>
                     <div className="col-3 d-flex justify-content-end">
                       <Button type="link" onClick={() => setOpen(true)}>
@@ -261,25 +261,26 @@ const NewSubmit = () => {
                       </Button>
                       <Modal
                         title="Requirement Update"
+                        style={{
+                          left: 30,
+                        }}
                         centered
                         maskClosable={false}
                         open={open}
                         onOk={() => setOpen(false)}
                         onCancel={() => setOpen(false)}
-                        width={1200}
+                        width={'85%'}
                         footer={[
                           <Button key="submit" type="primary" onClick={() => setOpen(false)}>
                             Submit
                           </Button>,
-                          <Button type="primary" onClick={() => setOpen(false)}>
-                            Reset
-                          </Button>,
+
                           <Button key="back" type="secondary" onClick={() => setOpen(false)}>
                             Cancel
                           </Button>,
                         ]}
                       >
-                        <div className="col-lg-12 m-b10">
+                        <div className="col-lg-12">
                           <div className="row">
                             <div className="col-lg-6">
                               <Input.Search placeholder="Input text to search trainee" allowClear />
@@ -291,7 +292,12 @@ const NewSubmit = () => {
                               <Select className="w-100" placeholder="Select Milestone" allowClear />
                             </div>
                           </div>
-                          <div className="col-lg-12 m-b10"></div>
+                          <div className="col-lg-12 m-b10">Table Modal Here</div>
+                          <div className="col-lg-12 p-0 d-flex justify-content-end">
+                            <Button className="m-0" type="primary" onClick={() => setOpen(false)}>
+                              Reset
+                            </Button>
+                          </div>
                         </div>
                       </Modal>
                     </div>
