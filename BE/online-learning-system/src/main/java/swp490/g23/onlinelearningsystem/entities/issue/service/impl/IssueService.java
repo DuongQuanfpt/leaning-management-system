@@ -261,6 +261,7 @@ public class IssueService implements IIssueService {
 
         if (issue.getMilestone() != null) {
             IssueMilestoneDTO milestoneViewDTO = new IssueMilestoneDTO();
+            milestoneViewDTO.setMilestoneId(issue.getMilestone().getMilestoneId());
             milestoneViewDTO.setDeadline(issue.getMilestone().getToDate().toString());
             milestoneViewDTO.setTitle(issue.getMilestone().getTitle());
             dto.setMilestone(milestoneViewDTO);
