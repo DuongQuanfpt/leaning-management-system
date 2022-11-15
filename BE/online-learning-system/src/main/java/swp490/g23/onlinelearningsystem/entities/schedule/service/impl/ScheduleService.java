@@ -3,6 +3,8 @@ package swp490.g23.onlinelearningsystem.entities.schedule.service.impl;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -20,6 +22,7 @@ import swp490.g23.onlinelearningsystem.entities.schedule.domain.Schedule;
 import swp490.g23.onlinelearningsystem.entities.schedule.domain.filter.ScheduleFilter;
 import swp490.g23.onlinelearningsystem.entities.schedule.domain.request.ScheduleRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.schedule.domain.response.ModuleTypeResponseDTO;
+import swp490.g23.onlinelearningsystem.entities.schedule.domain.response.MyClassesDTO;
 import swp490.g23.onlinelearningsystem.entities.schedule.domain.response.SchedulePaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.schedule.domain.response.ScheduleResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.schedule.domain.response.SettingTypeResponseDTO;
@@ -324,6 +327,35 @@ public class ScheduleService implements IScheduleService {
         }
         scheduleRepositories.save(schedule);
         return ResponseEntity.ok("Schedule status updated");
+    }
+
+    @Override
+    public ResponseEntity<MyClassesDTO> myClassesSchedule(Long id) {
+        User user = userRepository.findById(id).get();
+        LocalDate today = LocalDate.now();
+        LocalDate yesterday = today.minusDays(1);
+        LocalDate threeDaysAgo = today.minusDays(3);
+        List<Schedule> todayList = scheduleRepositories.findByToday(user, today);
+        List<Schedule> threeDaysAgoList = scheduleRepositories.findByThreeDaysAgo(threeDaysAgo, yesterday);
+        MyClassesDTO dto = new MyClassesDTO();
+        List<ScheduleResponseDTO> list1 = new ArrayList<>();
+        List<ScheduleResponseDTO> list2 = new ArrayList<>();
+        for (Schedule schedule : todayList) {
+            ScheduleResponseDTO responseDTO = new ScheduleResponseDTO();
+            responseDTO = toDTO(schedule);
+            list1.add(responseDTO);
+        }
+        for (Schedule schedule : threeDaysAgoList) {
+            ScheduleResponseDTO responseDTO = new ScheduleResponseDTO();
+            responseDTO = toDTO(schedule);
+            list2.add(responseDTO);
+            Comparator<ScheduleResponseDTO> comparatorAsc = (sche1, sche2) -> sche1.getDate()
+                    .compareTo(sche1.getDate());
+            Collections.sort(list2, comparatorAsc);
+        }
+        dto.setTodayClasses(list1);
+        dto.setThreeDaysAgo(list2);
+        return ResponseEntity.ok(dto);
     }
 
     public ScheduleResponseDTO toDTO(Schedule entity) {

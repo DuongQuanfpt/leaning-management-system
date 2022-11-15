@@ -12,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NewSubmitFilter {
-    
+
     String currentSubmitUrl;
     String lastSubmit;
     String status;
