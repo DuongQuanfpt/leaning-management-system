@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 
 import swp490.g23.onlinelearningsystem.entities.schedule.domain.filter.ScheduleFilter;
 import swp490.g23.onlinelearningsystem.entities.schedule.domain.request.ScheduleRequestDTO;
+import swp490.g23.onlinelearningsystem.entities.schedule.domain.response.MyClassesDTO;
 import swp490.g23.onlinelearningsystem.entities.schedule.domain.response.SchedulePaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.schedule.domain.response.ScheduleResponseDTO;
 
@@ -21,4 +22,6 @@ public interface IScheduleService {
     ResponseEntity<String> updateSchedule(ScheduleRequestDTO dto, Long id);
 
     ResponseEntity<String> updateScheduleStatus(Long id);
+
+    ResponseEntity<MyClassesDTO> myClassesSchedule(Long id);
 }
