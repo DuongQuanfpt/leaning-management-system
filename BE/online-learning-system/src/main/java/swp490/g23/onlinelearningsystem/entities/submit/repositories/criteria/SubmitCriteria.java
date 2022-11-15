@@ -57,7 +57,7 @@ public class SubmitCriteria {
             query.append(" AND s.classUser.user.accountName LIKE '%" + keyword + "%' ");
         }
 
-        if (milestoneId != null) {
+        if (milestoneId != null && milestoneId != 0) {
             query.append(" AND s.milestone.milestoneId = '" + milestoneId + "'");
         }
 

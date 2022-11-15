@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import swp490.g23.onlinelearningsystem.entities.schedule.domain.filter.ScheduleFilter;
 import swp490.g23.onlinelearningsystem.entities.schedule.domain.request.ScheduleRequestDTO;
+import swp490.g23.onlinelearningsystem.entities.schedule.domain.response.MyClassesDTO;
 import swp490.g23.onlinelearningsystem.entities.schedule.domain.response.SchedulePaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.schedule.domain.response.ScheduleResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.schedule.service.impl.ScheduleService;
@@ -69,5 +70,10 @@ public class ScheduleController {
     public ResponseEntity<ScheduleFilter> scheduleFilter(@AuthenticationPrincipal User user) {
 
         return scheduleService.getFilter(user.getUserId());
+    }
+
+    @GetMapping(value = "/my-schedule")
+    public ResponseEntity<MyClassesDTO> mySchedule(@AuthenticationPrincipal User user) {
+        return scheduleService.myClassesSchedule(user.getUserId());
     }
 }

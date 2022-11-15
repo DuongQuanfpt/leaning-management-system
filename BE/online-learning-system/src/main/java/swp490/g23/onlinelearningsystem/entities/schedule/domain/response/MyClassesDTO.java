@@ -1,4 +1,4 @@
-package swp490.g23.onlinelearningsystem.entities.submit.domain.request;
+package swp490.g23.onlinelearningsystem.entities.schedule.domain.response;
 
 import java.util.List;
 
@@ -11,6 +11,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SubmitRequirementWrapper {
-    List<SubmitRequirementRequestDTO> requirements;
+public class MyClassesDTO {
+    List<ScheduleResponseDTO> todayClasses;
+    List<ScheduleResponseDTO> threeDaysAgo;
 }

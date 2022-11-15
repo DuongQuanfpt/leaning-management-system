@@ -15,7 +15,6 @@ import javax.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Service;
 
@@ -63,9 +62,6 @@ public class AttendanceService implements IAttendanceService {
 
     @Autowired
     private AttendanceCriteria attendanceCriteria;
-
-    @Autowired
-    private TaskScheduler scheduler;
 
     @Override
     public ResponseEntity<List<AttendanceResponseDTO>> displayAttendanceList(String classCode, Long userId) {
@@ -154,9 +150,7 @@ public class AttendanceService implements IAttendanceService {
     @Override
     public ResponseEntity<String> updateAttendance(List<AttendanceDetailRequestDTO> dtos, Long id) {
         Schedule schedule = scheduleRepositories.findById(id).get();
-        // ScheduledExecutorService scheduler =
-        // Executors.newSingleThreadScheduledExecutor();
-        RunnableTask task = new RunnableTask(schedule);
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
         Classes clazz = schedule.getClasses();
         if (schedule.equals(null)) {
             throw new CustomException("Attendance doesn't exist!");
@@ -202,12 +196,13 @@ public class AttendanceService implements IAttendanceService {
                         if (dto.getComment() != null) {
                             attendance.setComment(dto.getComment());
                         }
-                        schedule.setStatus(ScheduleStatus.Active);
-                        scheduler.scheduleWithFixedDelay(task, 100000);
                         attendances.add(attendance);
                     }
                 }
             }
+            RunnableTask task = new RunnableTask(schedule, scheduleRepositories);
+            schedule.setStatus(ScheduleStatus.Active);
+            scheduler.schedule(task, 1, TimeUnit.DAYS);
             attendanceRepositories.saveAll(attendances);
         }
         return ResponseEntity.ok("update successfully!");
@@ -235,11 +230,5 @@ public class AttendanceService implements IAttendanceService {
             list.add(dto);
         }
         return ResponseEntity.ok(list);
-    }
-
-    public void changeStatus(Schedule schedule) {
-        if (schedule.getStatus().equals(ScheduleStatus.Active)) {
-            schedule.setStatus(ScheduleStatus.Attendance_taken);
-        }
     }
 }
