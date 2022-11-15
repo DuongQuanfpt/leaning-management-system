@@ -4,12 +4,12 @@ import { Button, Input, Pagination, Select, Space, Table, Tag, Typography } from
 import submitApi from '~/api/submitApi'
 import { useSelector } from 'react-redux'
 import Tooltip from 'antd/es/tooltip'
-import { CrownTwoTone, EyeOutlined, UploadOutlined } from '@ant-design/icons'
+import { CrownTwoTone, EyeOutlined, FormOutlined, UploadOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 
 const Group = () => {
   let ITEM_PER_PAGE = 10
-  const { currentClass, username } = useSelector((state) => state.profile)
+  const { currentClass, username, roles } = useSelector((state) => state.profile)
   const navigateTo = useNavigate()
 
   const [loading, setLoading] = useState(false)
@@ -21,29 +21,38 @@ const Group = () => {
   })
 
   const [listFilter, setListFilter] = useState([])
-  const [filter, setFilter] = useState({})
+  const [filter, setFilter] = useState({ milestoneId: 0 })
+  const [isTrainer, setIsTrainer] = useState(false)
 
   useEffect(() => {
+    if (roles.includes('trainer')) {
+      setIsTrainer(true)
+    }
     const params = {
       isGroup: true,
     }
     submitApi
       .getListfilter(currentClass, params)
       .then((response) => {
+        console.log(response)
         setListFilter(response)
       })
       .catch((error) => {
         console.log(error)
       })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [currentClass])
 
   useEffect(() => {
-    if (filter.milestoneId !== undefined) {
-      loadData(tableData.currentPage, filter)
-    }
+    setFilter({ milestoneId: 0 })
+    loadData(tableData.currentPage, filter)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentClass, filter])
+  }, [currentClass])
+
+  useEffect(() => {
+    loadData(tableData.currentPage, filter)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter])
 
   const loadData = async (page, filter) => {
     const params = {
@@ -81,13 +90,14 @@ const Group = () => {
   }
 
   const columns = [
-    { title: '#', dataIndex: 'submitId', width: '5%' },
-    { title: 'Trainee', dataIndex: 'traineeTitle', width: '15%' },
-    { title: 'Full Name', dataIndex: 'fullName', width: '15%' },
+    { title: '#', dataIndex: 'submitId', width: '6%' },
+    { title: 'Trainee', dataIndex: 'traineeTitle', width: '14.5%' },
+    { title: 'Full Name', dataIndex: 'fullName', width: '14.5%' },
     {
       title: 'Group',
       dataIndex: 'group',
       width: '10%',
+
       render: (_, { group }) => (
         <Tooltip
           title={
@@ -110,6 +120,7 @@ const Group = () => {
       title: 'Submit File',
       dataIndex: 'submitUrl',
       width: '10%',
+      ellipsis: true,
       render: (_, { submitUrl }) => (
         <Typography.Link href={submitUrl} target="_blank">
           {submitUrl?.slice(
@@ -151,6 +162,18 @@ const Group = () => {
               ></Button>
             </Tooltip>
           )}
+          {isTrainer && submit.status === 'Submitted' && (
+            <Tooltip title="Evaluation" placement="top">
+              <Button
+                shape="circle"
+                type="primary"
+                icon={<FormOutlined />}
+                onClick={() => {
+                  navigateTo(`/work-evaluation/${submit.submitId}`)
+                }}
+              ></Button>
+            </Tooltip>
+          )}
           <Tooltip title="View" placement="top">
             <Button
               shape="circle"
@@ -177,7 +200,6 @@ const Group = () => {
             <div className="col-lg-6">
               <Input.Search
                 placeholder="Input text to search trainee"
-                disabled={!filter?.milestoneId}
                 onSearch={(value) => setFilter((prev) => ({ ...prev, search: value }))}
                 allowClear
                 onClear={() => setFilter((prev) => ({ ...prev, search: undefined }))}
@@ -187,7 +209,6 @@ const Group = () => {
               <Select
                 className="w-100"
                 placeholder="Select Status"
-                disabled={!filter?.milestoneId}
                 options={listFilter?.statusFilter?.map((status) => ({
                   value: status.value,
                   label: status.name,
@@ -221,17 +242,15 @@ const Group = () => {
             pagination={false}
           />
           <div className="d-flex justify-content-end mt-3">
-            {tableData.totalItem >= 10 && (
-              <Pagination
-                current={tableData.currentPage}
-                total={tableData.totalItem}
-                onChange={handleChangePage}
-                showSizeChanger
-                onShowSizeChange={(current, pageSize) => {
-                  ITEM_PER_PAGE = pageSize
-                }}
-              />
-            )}
+            <Pagination
+              current={tableData.currentPage}
+              total={tableData.totalItem}
+              onChange={handleChangePage}
+              showSizeChanger
+              onShowSizeChange={(current, pageSize) => {
+                ITEM_PER_PAGE = pageSize
+              }}
+            />
           </div>
         </div>
       </div>

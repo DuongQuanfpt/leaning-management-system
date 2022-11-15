@@ -188,11 +188,11 @@ const Profile = () => {
                               </div>
                             </div>
                             {isAvatarMode ? (
-                              <div className="row col-9">
+                              <div className="row col-9 justify-content-center">
                                 <Avatar
                                   width={900}
-                                  height={500}
-                                  imageHeight={500}
+                                  height={400}
+                                  imageWidth={900}
                                   onCrop={handleCropAvatar}
                                   onClose={handleCloseAvatar}
                                   src={src}

@@ -92,6 +92,8 @@ const SubmitList = lazy(() => import('~/pages/trainer/SubmitList'))
 const SubmitDetail = lazy(() => import('~/pages/trainer/SubmitDetail'))
 const NewSubmit = lazy(() => import('~/pages/trainer/NewSubmit'))
 
+const MySchedule = lazy(() => import('~/pages/trainer/MySchedule'))
+
 //404 pages
 const PageNotFound = lazy(() => import('~/pages/common/PageNotFound'))
 
@@ -222,6 +224,8 @@ const submitRoutes = [
   { path: '/new-submit/:id', component: NewSubmit },
 ]
 
+const myScheduleRoutes = [{ path: '/my-schedule', component: MySchedule }]
+
 export {
   commonRoutes,
   userRoutes,
@@ -241,4 +245,5 @@ export {
   issueRoutes,
   attendanceRoutes,
   submitRoutes,
+  myScheduleRoutes,
 }

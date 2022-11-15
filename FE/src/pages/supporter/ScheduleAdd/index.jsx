@@ -92,7 +92,7 @@ const ScheduleAdd = () => {
           setError('Time From must before Time To')
           return
         }
-        if (error.response.data.message === 'Slot name already existed') {
+        if (error.response.data.message === 'Class had this slot already! Try again!') {
           setError('Slot name already existed')
           return
         }

@@ -1,4 +1,3 @@
-import axios from 'axios'
 import axiosClient from './axiosClient'
 
 const currentAccessToken = JSON.parse(JSON.parse(localStorage.getItem('persist:LMS')).auth).token
@@ -28,6 +27,11 @@ const submitApi = {
     return axiosClient.post(url, params, {
       headers: { Authorization: `Bearer ${currentAccessToken}`, 'content-type': 'multipart/form-data' },
     })
+  },
+
+  requirementChange: (params) => {
+    const url = `/api/issue-multichange`
+    return axiosClient.put(url, params, header)
   },
 }
 
