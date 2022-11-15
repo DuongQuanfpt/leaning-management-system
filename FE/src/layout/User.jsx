@@ -61,6 +61,10 @@ const User = () => {
               const Page = route.component
               return <Route key={index} path={route.path} element={<Page />} />
             })}
+            {scheduleListRoutes.map((route, index) => {
+              const Page = route.component
+              return <Route key={index} path={route.path} element={<Page />} />
+            })}
           </Route>
           {/* Only users with trainer role can access */}
           <Route element={<RequireAuth allowedRoles={['trainer']} />}>
@@ -108,10 +112,7 @@ const User = () => {
               const Page = route.component
               return <Route key={index} path={route.path} element={<Page />} />
             })}
-            {scheduleListRoutes.map((route, index) => {
-              const Page = route.component
-              return <Route key={index} path={route.path} element={<Page />} />
-            })}
+
             {attendanceRoutes.map((route, index) => {
               const Page = route.component
               return <Route key={index} path={route.path} element={<Page />} />

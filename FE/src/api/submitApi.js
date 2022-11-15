@@ -13,9 +13,9 @@ const submitApi = {
     return axiosClient.get(url, { ...header, params })
   },
 
-  getListfilter: (classCode) => {
+  getListfilter: (classCode, params) => {
     const url = `/api/submit-list-filter/${classCode}`
-    return axiosClient.get(url, header)
+    return axiosClient.get(url, { ...header, params })
   },
 
   getListSubmitFilter: (submitId) => {

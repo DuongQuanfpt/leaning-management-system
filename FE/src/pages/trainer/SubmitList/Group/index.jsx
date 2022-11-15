@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Pagination, Space, Table, Tag, Tooltip, Typography } from 'antd'
+import { Button, Input, Pagination, Select, Space, Table, Tag, Typography } from 'antd'
 
 import submitApi from '~/api/submitApi'
 import { useSelector } from 'react-redux'
-import { UploadOutlined, EyeOutlined } from '@ant-design/icons'
+import Tooltip from 'antd/es/tooltip'
+import { CrownTwoTone, EyeOutlined, UploadOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 
-const Group = ({ milestoneId }) => {
+const Group = () => {
   let ITEM_PER_PAGE = 10
   const { currentClass, username } = useSelector((state) => state.profile)
-  const profile = useSelector((state) => state.profile)
   const navigateTo = useNavigate()
 
   const [loading, setLoading] = useState(false)
@@ -20,23 +20,43 @@ const Group = ({ milestoneId }) => {
     totalItem: 1,
   })
 
+  const [listFilter, setListFilter] = useState([])
   const [filter, setFilter] = useState({})
 
   useEffect(() => {
-    if (milestoneId !== null) {
-      loadData()
+    const params = {
+      isGroup: true,
+    }
+    submitApi
+      .getListfilter(currentClass, params)
+      .then((response) => {
+        setListFilter(response)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    if (filter.milestoneId !== undefined) {
+      loadData(tableData.currentPage, filter)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentClass, milestoneId])
+  }, [currentClass, filter])
 
   const loadData = async (page, filter) => {
     const params = {
       limit: ITEM_PER_PAGE,
       page: page,
       isGroup: true,
-      milestoneId: milestoneId,
+      milestoneId: filter?.milestoneId,
+      statusValue: filter?.statusId,
+      q: filter?.search?.trim(),
     }
+
     setLoading(true)
+
     await submitApi
       .getListSubmit(currentClass, params)
       .then((response) => {
@@ -61,19 +81,50 @@ const Group = ({ milestoneId }) => {
   }
 
   const columns = [
-    { title: 'Assignment', dataIndex: 'assignmentTitle', width: '15%%' },
-    { title: 'Milestone', dataIndex: 'milestoneTitle', width: '15%%' },
+    { title: '#', dataIndex: 'submitId', width: '5%' },
+    { title: 'Trainee', dataIndex: 'traineeTitle', width: '15%' },
+    { title: 'Full Name', dataIndex: 'fullName', width: '15%' },
     {
       title: 'Group',
-      dataIndex: 'groupTitle',
-      width: '15%%',
+      dataIndex: 'group',
+      width: '10%',
       render: (_, { group }) => (
-        <Tooltip title={() => <>name here</>}>
-          <Typography.Link>{group.groupName}</Typography.Link>
+        <Tooltip
+          title={
+            <>
+              {group?.memberId?.map((member) => (
+                <Space className="d-flex flex-row">
+                  <p className="p-0 m-0 d-flex align-items-center">{member?.username}</p>
+                  <p className="p-0 m-0 d-flex align-items-center">{member?.leader && <CrownTwoTone />}</p>
+                </Space>
+              ))}
+            </>
+          }
+        >
+          <Typography.Text>{group.groupName}</Typography.Text>
         </Tooltip>
       ),
     },
-    { title: 'Trainee Assigned', dataIndex: 'traineeTitle', width: '15%%' },
+    { title: 'Milestone', dataIndex: 'milestoneTitle', width: '15%' },
+    {
+      title: 'Submit File',
+      dataIndex: 'submitUrl',
+      width: '10%',
+      render: (_, { submitUrl }) => (
+        <Typography.Link href={submitUrl} target="_blank">
+          {submitUrl?.slice(
+            submitUrl?.lastIndexOf('https://lms-assignment-g23.s3.ap-southeast-1.amazonaws.com') + 59,
+            submitUrl?.length,
+          )}
+        </Typography.Link>
+      ),
+    },
+    {
+      title: 'Submit At',
+      dataIndex: 'lastUpdate',
+      width: '10%',
+      render: (_, { lastUpdate }) => lastUpdate?.slice(0, -4),
+    },
     {
       title: 'Status',
       dataIndex: 'status',
@@ -83,18 +134,12 @@ const Group = ({ milestoneId }) => {
       ),
     },
     {
-      title: 'Last Updated',
-      dataIndex: 'lastUpdate',
-      width: '20%',
-      render: (_, { lastUpdate }) => lastUpdate?.slice(0, -4),
-    },
-    {
       title: 'Actions',
       dataIndex: '',
-      width: '15%',
+      width: '10%',
       render: (_, submit) => (
         <Space size="middle" align="baseline">
-          {username === submit.traineeTitle ? (
+          {username === submit.traineeTitle && (
             <Tooltip title="Submit" placement="top">
               <Button
                 shape="circle"
@@ -105,8 +150,6 @@ const Group = ({ milestoneId }) => {
                 }}
               ></Button>
             </Tooltip>
-          ) : (
-            <Button></Button>
           )}
           <Tooltip title="View" placement="top">
             <Button
@@ -123,30 +166,74 @@ const Group = ({ milestoneId }) => {
   ]
 
   const customLocaleWhenEmpty = {
-    emptyText: milestoneId !== null ? 'No Data' : 'Select Milestone To Load Submit',
+    emptyText: filter?.milestoneId !== null ? 'No Data' : 'Select Milestone To Load Submit',
   }
 
   return (
     <div className="widget-inner">
-      <Table
-        dataSource={tableData.listData}
-        columns={columns}
-        loading={loading}
-        locale={customLocaleWhenEmpty}
-        pagination={false}
-      />
-      <div className="d-flex justify-content-end mt-3">
-        {tableData.listData.length >= 10 && (
-          <Pagination
-            current={tableData.currentPage}
-            total={tableData.totalItem}
-            onChange={handleChangePage}
-            showSizeChanger
-            onShowSizeChange={(current, pageSize) => {
-              ITEM_PER_PAGE = pageSize
-            }}
+      <div className="row">
+        <div className="col-lg-12 m-b30">
+          <div className="row">
+            <div className="col-lg-6">
+              <Input.Search
+                placeholder="Input text to search trainee"
+                disabled={!filter?.milestoneId}
+                onSearch={(value) => setFilter((prev) => ({ ...prev, search: value }))}
+                allowClear
+                onClear={() => setFilter((prev) => ({ ...prev, search: undefined }))}
+              />
+            </div>
+            <div className="col-lg-2">
+              <Select
+                className="w-100"
+                placeholder="Select Status"
+                disabled={!filter?.milestoneId}
+                options={listFilter?.statusFilter?.map((status) => ({
+                  value: status.value,
+                  label: status.name,
+                }))}
+                value={filter?.statusId}
+                onChange={(value) => setFilter((prev) => ({ ...prev, statusId: value }))}
+                allowClear
+                onClear={() => setFilter((prev) => ({ ...prev, statusId: undefined }))}
+              ></Select>
+            </div>
+            <div className="col-lg-4">
+              <Select
+                className="w-100"
+                placeholder="Select Milestone"
+                options={listFilter?.milestoneFilter?.map((milestone) => ({
+                  value: milestone.milestoneId,
+                  label: milestone.milestoneTitle,
+                }))}
+                value={filter?.milestoneId}
+                onChange={(value) => setFilter((prev) => ({ ...prev, milestoneId: value }))}
+              ></Select>
+            </div>
+          </div>
+        </div>
+        <div className="col-lg-12 m-b30">
+          <Table
+            dataSource={tableData.listData}
+            columns={columns}
+            loading={loading}
+            locale={customLocaleWhenEmpty}
+            pagination={false}
           />
-        )}
+          <div className="d-flex justify-content-end mt-3">
+            {tableData.totalItem >= 10 && (
+              <Pagination
+                current={tableData.currentPage}
+                total={tableData.totalItem}
+                onChange={handleChangePage}
+                showSizeChanger
+                onShowSizeChange={(current, pageSize) => {
+                  ITEM_PER_PAGE = pageSize
+                }}
+              />
+            )}
+          </div>
+        </div>
       </div>
     </div>
   )

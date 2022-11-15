@@ -6,7 +6,6 @@ import org.springframework.web.multipart.MultipartFile;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.NewSubmitFilter;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.SubmitFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.request.SubmitRequirementWrapper;
-import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitDetailDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitPaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 

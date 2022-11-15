@@ -130,7 +130,7 @@ const AttendanceTracking = () => {
                       <Breadcrumb.Item>
                         <Link to="/dashboard">Dashboard</Link>
                       </Breadcrumb.Item>
-                      <Breadcrumb.Item>Attendance Tracking</Breadcrumb.Item>
+                      <Breadcrumb.Item>Attendance Report</Breadcrumb.Item>
                     </Breadcrumb>
                   </div>
                 </div>

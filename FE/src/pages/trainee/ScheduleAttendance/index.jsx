@@ -46,6 +46,11 @@ const ScheduleAttendance = () => {
       width: '12.5%',
     },
     {
+      title: 'Topic',
+      dataIndex: 'topic',
+      width: '12.5%',
+    },
+    {
       title: 'Date',
       dataIndex: 'date',
       width: '12.5%',
@@ -68,13 +73,13 @@ const ScheduleAttendance = () => {
     {
       title: 'Is Attendance',
       dataIndex: 'scheduleStatus',
-      width: '17.5%',
+      width: '12.5%',
       render: (_, { scheduleStatus }) => (scheduleStatus === 'Inactive' ? 'No' : 'Yes'),
     },
     {
       title: 'My Attendance',
       dataIndex: 'attendanceStatus',
-      width: '20%',
+      width: '12.5%',
       render: (_, { attendanceStatus }) => (
         <Typography.Text
           type={
@@ -109,7 +114,7 @@ const ScheduleAttendance = () => {
                       <Breadcrumb.Item>
                         <Link to="/dashboard">Dashboard</Link>
                       </Breadcrumb.Item>
-                      <Breadcrumb.Item>Schedule Attendance</Breadcrumb.Item>
+                      <Breadcrumb.Item>Class Attendance</Breadcrumb.Item>
                     </Breadcrumb>
                   </div>
                 </div>

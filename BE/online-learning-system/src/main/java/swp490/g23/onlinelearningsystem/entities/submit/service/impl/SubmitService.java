@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import swp490.g23.onlinelearningsystem.entities.class_setting.domain.ClassSetting;
 import swp490.g23.onlinelearningsystem.entities.group.domain.Group;
 import swp490.g23.onlinelearningsystem.entities.groupMember.domain.GroupMember;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.Issue;
@@ -26,8 +27,9 @@ import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.SubmitFilte
 import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.SubmitFilterMilestoneDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.SubmitMemberFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.SubmitRequirementFilter;
+import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.SubmitSettingFilterDTO;
+import swp490.g23.onlinelearningsystem.entities.submit.domain.request.SubmitRequirementRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.request.SubmitRequirementWrapper;
-import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitDetailDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitPaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.SubmitRepository;
@@ -36,10 +38,8 @@ import swp490.g23.onlinelearningsystem.entities.submit.repositories.criteria_ent
 import swp490.g23.onlinelearningsystem.entities.submit.service.ISubmitService;
 import swp490.g23.onlinelearningsystem.entities.submit_work.domain.SubmitWork;
 import swp490.g23.onlinelearningsystem.entities.submit_work.repositories.SubmitWorkRepository;
-import swp490.g23.onlinelearningsystem.entities.submit_work.domain.SubmitWork;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
-import swp490.g23.onlinelearningsystem.entities.work_eval.domain.WorkEval;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum;
 import swp490.g23.onlinelearningsystem.util.enumutil.SubmitWorkStatusEnum;
@@ -132,14 +132,19 @@ public class SubmitService implements ISubmitService {
         SubmitFilterDTO filterDTO = new SubmitFilterDTO();
 
         List<Milestone> milestoneOfClass = milestoneRepository.getByClassCodeInProgressAndClosed(classCode);
-        List<SubmitFilterMilestoneDTO> dtos = new ArrayList<>();
+        List<SubmitFilterMilestoneDTO> filterMilestoneDTOs = new ArrayList<>();
+        SubmitFilterMilestoneDTO allMilestone = new SubmitFilterMilestoneDTO();
+        allMilestone.setMilestoneId((long) 0);
+        allMilestone.setMilestoneTitle("All Milestone");
+
+        filterMilestoneDTOs.add(allMilestone);
         for (Milestone milestone : milestoneOfClass) {
             if (isGroup == true && milestone.getAssignment().isTeamWork()) {
-                dtos.add(toMilestoneFilterDto(milestone));
+                filterMilestoneDTOs.add(toMilestoneFilterDto(milestone));
             }
 
             if (isGroup == false && !milestone.getAssignment().isTeamWork()) {
-                dtos.add(toMilestoneFilterDto(milestone));
+                filterMilestoneDTOs.add(toMilestoneFilterDto(milestone));
             }
 
         }
@@ -150,7 +155,7 @@ public class SubmitService implements ISubmitService {
             statusFilter.add(new SubmitStatusEntity(status));
         }
 
-        filterDTO.setMilestoneFilter(dtos);
+        filterDTO.setMilestoneFilter(filterMilestoneDTOs);
         filterDTO.setStatusFilter(statusFilter);
         return ResponseEntity.ok(filterDTO);
     }
@@ -162,37 +167,7 @@ public class SubmitService implements ISubmitService {
         dto.setMilestoneTitle(milestone.getTitle());
         dto.setTeamwork(milestone.getAssignment().isTeamWork());
         dto.setStatus(milestone.getStatus().toString());
-        List<SubmitFilterGroupDTO> groups = new ArrayList<>();
-        SubmitFilterGroupDTO noGroup = new SubmitFilterGroupDTO();
-        List<SubmitMemberFilterDTO> noGroupMember = new ArrayList<>();
-        noGroup.setGroupId((long) 0);
-        noGroup.setGroupName("Waiting List");
 
-        for (Submit submit : milestone.getSubmits()) {
-            if (submit.getGroup() != null) {
-
-                boolean exist = false;
-                for (SubmitFilterGroupDTO groupFilterDTO : groups) {
-                    if (groupFilterDTO.getGroupId() == submit.getGroup().getGroupId()) {
-                        exist = true;
-                        break;
-                    }
-                }
-
-                if (exist == false) {
-                    groups.add(toGroupFilterDto(submit.getGroup()));
-                }
-            } else if (submit.getGroup() == null) {
-                SubmitMemberFilterDTO memberFilterDTO = new SubmitMemberFilterDTO();
-
-                memberFilterDTO.setId(submit.getClassUser().getUser().getUserId());
-                memberFilterDTO.setUsername(submit.getClassUser().getUser().getAccountName());
-                noGroupMember.add(memberFilterDTO);
-            }
-        }
-        noGroup.setMemberId(noGroupMember);
-        groups.add(noGroup);
-        dto.setGroups(groups);
         return dto;
     }
 
@@ -222,25 +197,50 @@ public class SubmitService implements ISubmitService {
     @Override
     public ResponseEntity<String> newSubmit(User user, Long submitId, SubmitRequirementWrapper requestDTO,
             MultipartFile file) {
-        Submit submit = submitRepository.findById(submitId)
+        Submit currentSubmit = submitRepository.findById(submitId)
                 .orElseThrow(() -> new CustomException("submit doesnt exist"));
 
         User currentUser = userRepository.findById(user.getUserId()).get();
-        if (!currentUser.equals(submit.getClassUser().getUser())) {
+        if (!currentUser.equals(currentSubmit.getClassUser().getUser())) {
             throw new CustomException("not owner of this submit");
         }
 
-        List<Issue> requirements = new ArrayList<>();
-        for (Long rId : requestDTO.getRequirementIds()) {
-            Issue requirement = issueRepository.findById(rId)
+        List<SubmitWork> submitWorks = new ArrayList<>();
+        for (SubmitRequirementRequestDTO requirementRequest : requestDTO.getRequirements()) {
+            Submit author = new Submit();
+            if (requirementRequest.getAssigneeName() == null) {
+                continue;
+            }
+
+            if (currentSubmit.getGroup() != null) {
+                for (Submit submit : currentSubmit.getGroup().getSubmits()) {
+                    if (submit.getClassUser() != null
+                            && submit.getClassUser().getUser().getAccountName()
+                                    .equals(requirementRequest.getAssigneeName())
+                            && submit.getMilestone().equals(currentSubmit.getMilestone())) {
+                        author = submit;
+                        break;
+                    }
+                }
+            } else {
+                author = currentSubmit;
+            }
+
+            Issue requirement = issueRepository.findById(requirementRequest.getRequirementId())
                     .orElseThrow(() -> new CustomException("requirement doesnt exist"));
-            requirements.add(requirement);
+            SubmitWork submitWork = new SubmitWork();
+            submitWork.setSubmit(author);
+            submitWork.setWork(requirement);
+            submitWork.setMilestone(currentSubmit.getMilestone());
+            submitWork.setStatus(SubmitWorkStatusEnum.Submitted);
+
+            submitWorks.add(submitWork);
         }
 
-        String fileName = submit.getClassUser().getUser().getAccountName() + "" + submit.getSubmitId();
+        String fileName = currentSubmit.getClassUser().getUser().getAccountName() + "" + currentSubmit.getSubmitId();
 
-        if (submit.getSubmitFileUrl() != null) {
-            s3Service.deteleSubmit(submit.getSubmitFileUrl());
+        if (currentSubmit.getSubmitFileUrl() != null) {
+            s3Service.deteleSubmit(currentSubmit.getSubmitFileUrl());
         }
 
         String submitUrl = s3Service.saveSubmit(file, fileName);
@@ -248,25 +248,36 @@ public class SubmitService implements ISubmitService {
             throw new CustomException("file upload failed");
         }
 
-        submit.setSubmitFileUrl(submitUrl);
-        submit.setSubmitTime(LocalDateTime.now());
-        submit.setStatus(SubmitStatusEnum.Submitted);
-        submitRepository.save(submit);
+        List<Submit> submitOfGroup = new ArrayList<>();
+        if (currentSubmit.getGroup() != null) {
+            for (Submit submit : currentSubmit.getGroup().getSubmits()) {
+                if (submit.getMilestone().equals(currentSubmit.getMilestone())) {
+                    submitOfGroup.add(submit);
+                }
+            }
+        } else {
+            submitOfGroup.add(currentSubmit);
+        }
 
-        submitWorkRepository.removeWorkOfSubmit(submit);
+        List<Submit> submitChanged = new ArrayList<>();
+        for (Submit submit : submitOfGroup) {
+            submit.setSubmitFileUrl(submitUrl);
+            submit.setSubmitTime(LocalDateTime.now());
+            submit.setStatus(SubmitStatusEnum.Submitted);
+            submitChanged.add(submit);
+        }
 
-        List<SubmitWork> submitWorks = new ArrayList<>();
-        for (Issue requirement : requirements) {
-            SubmitWork submitWork = new SubmitWork();
-            submitWork.setSubmit(submit);
-            submitWork.setWork(requirement);
-            submitWork.setMilestone(submit.getMilestone());
-            submitWork.setStatus(SubmitWorkStatusEnum.Submitted);
-
-            submitWorks.add(submitWork);
+        if (currentSubmit.getGroup() != null) {
+            List<SubmitWork> worksToRemove = submitWorkRepository.getByGroupAndMilestone(currentSubmit.getGroup(),
+                    currentSubmit.getMilestone());
+            submitWorkRepository.deleteAll(worksToRemove);
+        } else {
+            submitWorkRepository.removeWorkOfSubmit(currentSubmit);
         }
 
         submitWorkRepository.saveAll(submitWorks);
+        submitRepository.saveAll(submitChanged);
+
         return ResponseEntity.ok("file submitted");
     }
 
@@ -279,41 +290,107 @@ public class SubmitService implements ISubmitService {
 
         if (submit.getSubmitFileUrl() != null) {
             filter.setCurrentSubmitUrl(submit.getSubmitFileUrl());
-
         }
 
         if (submit.getSubmitTime() != null) {
             filter.setLastSubmit(submit.getSubmitTime().toString());
         }
 
-        List<SubmitRequirementFilter> requirementSubmitted = new ArrayList<>();
-        if (!submit.getSubmitWorks().isEmpty()) {
-            for (SubmitWork work : submit.getSubmitWorks()) {
-                requirementSubmitted
-                        .add(toRequirementFilter(work.getWork()));
+        List<SubmitSettingFilterDTO> statusFilter = new ArrayList<>();
+        for (ClassSetting classSetting : submit.getClassUser().getClasses().getTypes()) {
+            if (classSetting.getType() != null
+                    && classSetting.getType().getSettingValue().equals("TYPE_ISSUE_STATUS")) {
+                statusFilter.add(toSettingFilterDTO(classSetting));
             }
+        }
+
+        List<SubmitMemberFilterDTO> memberFilterDTOs = new ArrayList<>();
+        List<SubmitFilterMilestoneDTO> milestones = new ArrayList<>();
+
+        SubmitFilterMilestoneDTO allMilestone = new SubmitFilterMilestoneDTO();
+        allMilestone.setMilestoneId((long) 0);
+        allMilestone.setMilestoneTitle("All Milestone");
+        milestones.add(allMilestone);
+
+        if (submit.getGroup() != null) {
+            filter.setGroupId(submit.getGroup().getGroupId());
+            filter.setGroupCode(submit.getGroup().getGroupCode());
+            Group group = submit.getGroup();
+            for (GroupMember member : group.getGroupMembers()) {
+                memberFilterDTOs.add(toMemberDTO(member));
+            }
+
+            List<Milestone> milestoneOfGroup = milestoneRepository
+                    .getByGroupInProgressAndClosed(submit.getGroup().getGroupId());
+            for (Milestone milestone : milestoneOfGroup) {
+                milestones.add(toMilestoneFilterDto(milestone));
+            }
+
+        } else {
+            SubmitMemberFilterDTO memberFilterDTO = new SubmitMemberFilterDTO();
+            memberFilterDTO.setId(submit.getClassUser().getUser().getUserId());
+            memberFilterDTO.setUsername(submit.getClassUser().getUser().getAccountName());
+            memberFilterDTOs.add(memberFilterDTO);
+            milestones.add(toMilestoneFilterDto(submit.getMilestone()));
         }
 
         List<SubmitRequirementFilter> requirementFilters = new ArrayList<>();
         for (Issue issue : submit.getMilestone().getIssues()) {
             if (issue.getType() == null) {
-                requirementFilters.add(toRequirementFilter(issue));
+                SubmitRequirementFilter requirementFilter = toRequirementFilter(issue);
+                requirementFilter.setSubmitted(false);
+
+                if (!issue.getSubmitWorks().isEmpty()) {
+                    for (SubmitWork sk : issue.getSubmitWorks()) {
+                        if (submit.getGroup() != null) {
+                            for (Submit s : submit.getGroup().getSubmits()) {
+                                if (sk.getSubmit().equals(s)) {
+                                    requirementFilter.setSubmitted(true);
+                                    requirementFilter.setAssignee(s.getClassUser().getUser().getAccountName());
+                                    break;
+                                }
+                            }
+                        } else {
+                            if (sk.getSubmit().equals(submit)) {
+                                requirementFilter.setSubmitted(true);
+                                requirementFilter.setAssignee(submit.getClassUser().getUser().getAccountName());
+                            }
+                        }
+
+                    }
+                }
+
+                requirementFilters.add(requirementFilter);
             }
         }
 
+        filter.setMilestone(submit.getMilestone().getTitle());
+        filter.setMilestoneId(submit.getMilestone().getMilestoneId());
+        filter.setAssigneeOfGroup(memberFilterDTOs);
+        filter.setMilestoneOfGroup(milestones);
+        filter.setRequirementStatus(statusFilter);
         filter.setStatus(submit.getStatus().toString());
-        filter.setRequirementSubmitted(requirementSubmitted);
         filter.setRequirement(requirementFilters);
         return ResponseEntity.ok(filter);
+    }
+
+    public SubmitSettingFilterDTO toSettingFilterDTO(ClassSetting classSetting) {
+        SubmitSettingFilterDTO dto = new SubmitSettingFilterDTO();
+        dto.setId(classSetting.getClassSettingId());
+        dto.setTitle(classSetting.getSettingValue());
+
+        return dto;
     }
 
     public SubmitRequirementFilter toRequirementFilter(Issue issue) {
         SubmitRequirementFilter requirementFilter = new SubmitRequirementFilter();
         requirementFilter.setId(issue.getIssueId());
         requirementFilter.setTitle(issue.getTitle());
+        requirementFilter.setMilestone(issue.getMilestone().getTitle());
 
-        if (issue.getAsignee() != null) {
-            requirementFilter.setAssignee(issue.getAsignee().getAccountName());
+        if (issue.getGroup() != null) {
+            requirementFilter.setGroupId((issue.getGroup().getGroupId()));
+            requirementFilter.setGroupTitle((issue.getGroup().getGroupCode()));
         }
 
         if (issue.isClosed()) {
@@ -322,7 +399,7 @@ public class SubmitService implements ISubmitService {
             if (issue.getStatus() == null) {
                 requirementFilter.setStatus("Open");
             } else {
-                requirementFilter.setStatus(issue.getStatus().toString());
+                requirementFilter.setStatus(issue.getStatus().getSettingValue());
             }
         }
 
