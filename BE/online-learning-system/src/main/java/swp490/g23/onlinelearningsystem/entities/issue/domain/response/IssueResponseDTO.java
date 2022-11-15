@@ -29,6 +29,8 @@ public class IssueResponseDTO {
 
     String status;
 
+    Long statusId;
+
     String classCode;
 
     String description;
