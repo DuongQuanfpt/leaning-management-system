@@ -24,6 +24,7 @@ import swp490.g23.onlinelearningsystem.entities.class_setting.domain.ClassSettin
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.contact.domain.WebContact;
 import swp490.g23.onlinelearningsystem.entities.permission.domain.SettingPermission;
+import swp490.g23.onlinelearningsystem.entities.post.domain.Post;
 import swp490.g23.onlinelearningsystem.entities.schedule.domain.Schedule;
 import swp490.g23.onlinelearningsystem.entities.subject_setting.domain.SubjectSetting;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
@@ -101,6 +102,9 @@ public class Setting extends BaseEntity {
 
     @OneToMany(mappedBy = "setting")
     private List<Schedule> schedules;
+
+    @OneToMany(mappedBy = "category")
+    private List<Post> postOfCategory;
 
     // @OneToMany(mappedBy = "api" ,cascade = CascadeType.ALL)
     // private List<SettingPermission> apis;
