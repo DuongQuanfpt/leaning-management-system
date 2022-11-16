@@ -44,8 +44,7 @@ const Group = () => {
   }, [currentClass])
 
   useEffect(() => {
-    setFilter({ milestoneId: 0 })
-    loadData(tableData.currentPage, filter)
+    setFilter((prev) => ({ ...prev, search: undefined, milestoneId: 0 }))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentClass])
 
@@ -200,6 +199,7 @@ const Group = () => {
             <div className="col-lg-6">
               <Input.Search
                 placeholder="Input text to search trainee"
+                value={filter?.search}
                 onSearch={(value) => setFilter((prev) => ({ ...prev, search: value }))}
                 allowClear
                 onClear={() => setFilter((prev) => ({ ...prev, search: undefined }))}

@@ -9,6 +9,8 @@ const Register = lazy(() => import('~/pages/common/Register'))
 const RegisterProcessed = lazy(() => import('~/pages/common/RegisterProcessed'))
 const Verify = lazy(() => import('~/pages/common/Verify'))
 const AccessDenied = lazy(() => import('~/pages/common/AccessDenied'))
+const Post = lazy(() => import('~/pages/user/Post'))
+const NewPost = lazy(() => import('~/pages/user/NewPost'))
 
 // Admin pages
 const Dashboard = lazy(() => import('~/pages/admin/AdminDashboard'))
@@ -94,6 +96,8 @@ const NewSubmit = lazy(() => import('~/pages/trainer/NewSubmit'))
 
 const MySchedule = lazy(() => import('~/pages/trainer/MySchedule'))
 
+const PostEdit = lazy(() => import('~/pages/user/PostEdit'))
+
 //404 pages
 const PageNotFound = lazy(() => import('~/pages/common/PageNotFound'))
 
@@ -109,6 +113,8 @@ const commonRoutes = [
   { path: '/verify', component: Verify },
   { path: '/404', component: PageNotFound },
   { path: '/access-denied', component: AccessDenied },
+  { path: '/post/:id', component: Post },
+  { path: '/new-post', component: NewPost },
 ]
 // User routes
 const userRoutes = [
@@ -226,6 +232,8 @@ const submitRoutes = [
 
 const myScheduleRoutes = [{ path: '/my-schedule', component: MySchedule }]
 
+const postEditRoutes = [{ path: '/post-edit/:id', component: PostEdit }]
+
 export {
   commonRoutes,
   userRoutes,
@@ -246,4 +254,5 @@ export {
   attendanceRoutes,
   submitRoutes,
   myScheduleRoutes,
+  postEditRoutes,
 }
