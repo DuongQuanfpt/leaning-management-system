@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Input, Pagination, Select, Space, Table, Tag } from 'antd'
+import { Button, Input, Pagination, Select, Space, Table, Tag, Typography } from 'antd'
 
 import submitApi from '~/api/submitApi'
 import { useSelector } from 'react-redux'
 import Tooltip from 'antd/es/tooltip'
-import { EyeOutlined, UploadOutlined } from '@ant-design/icons'
+import { EyeOutlined, FormOutlined, UploadOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 
 const Individual = () => {
   let ITEM_PER_PAGE = 10
-  const { currentClass, username } = useSelector((state) => state.profile)
+  const { currentClass, username, roles } = useSelector((state) => state.profile)
   const navigateTo = useNavigate()
 
   const [loading, setLoading] = useState(false)
@@ -21,9 +21,14 @@ const Individual = () => {
   })
 
   const [listFilter, setListFilter] = useState([])
-  const [filter, setFilter] = useState({})
+  const [filter, setFilter] = useState({ milestoneId: 0 })
+  const [isTrainer, setIsTrainer] = useState(false)
 
   useEffect(() => {
+    if (roles.includes('trainer')) {
+      setIsTrainer(true)
+    }
+
     const params = {
       isGroup: false,
     }
@@ -36,12 +41,16 @@ const Individual = () => {
         console.log(error)
       })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [currentClass])
 
   useEffect(() => {
-    if (filter.milestoneId !== undefined) {
-      loadData(tableData.currentPage, filter)
-    }
+    setFilter({ milestoneId: 0 })
+    loadData(tableData.currentPage, filter)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentClass])
+
+  useEffect(() => {
+    loadData(tableData.currentPage, filter)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentClass, filter])
 
@@ -80,11 +89,24 @@ const Individual = () => {
   }
 
   const columns = [
-    { title: '#', dataIndex: 'submitId', width: '5%' },
-    { title: 'Trainee', dataIndex: 'traineeTitle', width: '15%' },
-    { title: 'Full Name', dataIndex: 'fullName', width: '15%' },
+    { title: '#', dataIndex: 'submitId', width: '6%' },
+    { title: 'Trainee', dataIndex: 'traineeTitle', width: '14.5%' },
+    { title: 'Full Name', dataIndex: 'fullName', width: '14.5%' },
     { title: 'Milestone', dataIndex: 'milestoneTitle', width: '15%' },
-    { title: 'Submit File', dataIndex: 'submitUrl', width: '15%' },
+    {
+      title: 'Submit File',
+      dataIndex: 'submitUrl',
+      width: '15%',
+      ellipsis: true,
+      render: (_, { submitUrl }) => (
+        <Typography.Link href={submitUrl} target="_blank">
+          {submitUrl?.slice(
+            submitUrl?.lastIndexOf('https://lms-assignment-g23.s3.ap-southeast-1.amazonaws.com') + 59,
+            submitUrl?.length,
+          )}
+        </Typography.Link>
+      ),
+    },
     {
       title: 'Submit At',
       dataIndex: 'lastUpdate',
@@ -116,6 +138,18 @@ const Individual = () => {
               ></Button>
             </Tooltip>
           )}
+          {isTrainer && submit.status === 'Submitted' && (
+            <Tooltip title="Evaluation" placement="top">
+              <Button
+                shape="circle"
+                type="primary"
+                icon={<FormOutlined />}
+                onClick={() => {
+                  navigateTo(`/work-evaluation/${submit.submitId}`)
+                }}
+              ></Button>
+            </Tooltip>
+          )}
           <Tooltip title="View" placement="top">
             <Button
               shape="circle"
@@ -142,7 +176,6 @@ const Individual = () => {
             <div className="col-lg-6">
               <Input.Search
                 placeholder="Input text to search trainee"
-                disabled={!filter?.milestoneId}
                 onSearch={(value) => setFilter((prev) => ({ ...prev, search: value }))}
                 allowClear
                 onClear={() => setFilter((prev) => ({ ...prev, search: undefined }))}
@@ -152,7 +185,6 @@ const Individual = () => {
               <Select
                 className="w-100"
                 placeholder="Select Status"
-                disabled={!filter?.milestoneId}
                 options={listFilter?.statusFilter?.map((status) => ({
                   value: status.value,
                   label: status.name,
@@ -186,17 +218,15 @@ const Individual = () => {
             pagination={false}
           />
           <div className="d-flex justify-content-end mt-3">
-            {tableData.totalItem >= 10 && (
-              <Pagination
-                current={tableData.currentPage}
-                total={tableData.totalItem}
-                onChange={handleChangePage}
-                showSizeChanger
-                onShowSizeChange={(current, pageSize) => {
-                  ITEM_PER_PAGE = pageSize
-                }}
-              />
-            )}
+            <Pagination
+              current={tableData.currentPage}
+              total={tableData.totalItem}
+              onChange={handleChangePage}
+              showSizeChanger
+              onShowSizeChange={(current, pageSize) => {
+                ITEM_PER_PAGE = pageSize
+              }}
+            />
           </div>
         </div>
       </div>

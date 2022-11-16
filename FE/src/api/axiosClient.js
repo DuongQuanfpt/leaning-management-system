@@ -45,8 +45,8 @@ axiosClient.interceptors.response.use(
     if (error?.response?.data?.message === 'Missing auth token') {
       //Response return fail by not loggin yet
       //Then logout account and navigate to login page
-      // localStorage.removeItem('persist:LMS')
-      // window.location.replace('/login')
+      localStorage.removeItem('persist:LMS')
+      window.location.replace('/login')
       console.warn('Error 401', error)
     }
 
