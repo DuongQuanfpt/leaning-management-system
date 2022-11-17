@@ -20,6 +20,8 @@ public class PostResponseDTO {
 
     private String authorFullName;
 
+    private String authorMobile;
+
     private Long categoryId;
 
     private String categoryName;
@@ -33,4 +35,6 @@ public class PostResponseDTO {
     private String status;
 
     private Long viewCount;
+
+    private String lastUpdate;
 }

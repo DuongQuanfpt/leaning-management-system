@@ -30,6 +30,9 @@ public class S3Service implements IFileService {
     @Value("${ama.bucketSubmit}")
     private String bucketSubmit;
 
+    @Value("${ama.bucketThumbnail}")
+    private String bucketThumbnail;
+
     private final Tika tika = new Tika();
 
     private final AmazonS3 s3;
@@ -108,5 +111,31 @@ public class S3Service implements IFileService {
 
         return imgBytes;
 
+    }
+
+    @Override
+    public String saveThumbnail(String thumbnailBase64, String imgName) {
+        try {
+            byte[] contents = convertToImage(thumbnailBase64);
+            InputStream stream = new ByteArrayInputStream(contents);
+
+            ObjectMetadata meta = new ObjectMetadata();
+            meta.setContentLength(contents.length);
+            meta.setContentType("image/png");
+
+            PutObjectRequest objectRequest = new PutObjectRequest(bucketThumbnail, imgName, stream, meta)
+                    .withCannedAcl(CannedAccessControlList.PublicRead);
+            s3.putObject(objectRequest);
+            return s3.getUrl(bucketThumbnail, imgName).toString();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void deteleThumbnail(String Url) {
+        String fileName = Url.split("/")[3];
+        System.out.print("FILE NAME :"+fileName);
+        s3.deleteObject(bucketThumbnail, fileName);
     }
 }
