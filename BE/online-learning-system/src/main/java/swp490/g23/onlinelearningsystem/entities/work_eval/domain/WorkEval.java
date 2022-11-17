@@ -43,17 +43,22 @@ public class WorkEval {
     private SubmitWork submitWork;
 
     @ManyToOne
+    @JoinColumn(name = "milestone_id")
     private Milestone milestone;
 
     @ManyToOne
-    private SubjectSetting complexityId;
+    @JoinColumn(name = "complexity_id")
+    private SubjectSetting complexity;
 
     @ManyToOne
-    private SubjectSetting qualityId;
+    @JoinColumn(name = "quality_id")
+    private SubjectSetting quality;
 
     @ManyToOne
-    private SubjectSetting newComplexityId;
+    @JoinColumn(name = "new_complexity_id")
+    private SubjectSetting newComplexity;
 
     @ManyToOne
-    private SubjectSetting newQualityId;
+    @JoinColumn(name = "new_quality_id")
+    private SubjectSetting newQuality;
 }

@@ -56,15 +56,15 @@ public class SubjectSetting extends BaseEntity {
     @Column
     private String displayOrder;
 
-    @OneToMany(mappedBy = "complexityId")
+    @OneToMany(mappedBy = "complexity")
     private List<WorkEval> workEvalComplexity;
 
-    @OneToMany(mappedBy = "qualityId")
+    @OneToMany(mappedBy = "quality")
     private List<WorkEval> workEvalQuality;
 
-    @OneToMany(mappedBy = "newComplexityId")
+    @OneToMany(mappedBy = "newComplexity")
     private List<WorkEval> workEvalNewComplexity;
 
-    @OneToMany(mappedBy = "newQualityId")
+    @OneToMany(mappedBy = "newQuality")
     private List<WorkEval> workEvalNewQuality;
 }

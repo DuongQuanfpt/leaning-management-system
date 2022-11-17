@@ -73,7 +73,7 @@ public class SubmitService implements ISubmitService {
     @Override
     public ResponseEntity<SubmitPaginateDTO> displaySubmit(int limit, int page, String keyword, Long milestoneId,
             Long assignmentId, Long groupId, Long statusValue, User user, String classCode, boolean isGroup) {
-        User currentUser = userRepository.findById(user.getUserId()).get();
+        // User currentUser = userRepository.findById(user.getUserId()).get();
         SubmitQuery result = submitCriteria.searchFilterSubmit(keyword, statusValue, milestoneId, groupId, assignmentId,
                 user, classCode, isGroup);
         TypedQuery<Submit> queryResult = result.getResultQuery();
