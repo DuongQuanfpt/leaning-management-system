@@ -18,9 +18,9 @@ public class SubmitDetailDTO {
 
     private String assignee;
 
-    private String complexity;
+    private String milestone;
 
-    private String quality;
+    private String team;
 
     private long grade;
 
