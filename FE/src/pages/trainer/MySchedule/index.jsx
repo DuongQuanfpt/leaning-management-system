@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
-import { Breadcrumb, Table, Typography, Button } from 'antd'
+import { Table, Typography, Button } from 'antd'
 
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
@@ -82,18 +82,6 @@ const MySchedule = () => {
         <div className="body flex-grow-1 px-3">
           <div className="col-lg-12 m-b30">
             <div className="row">
-              <div className="col-lg-12 m-b30">
-                <div className="row">
-                  <div className="col-12 d-flex align-items-center">
-                    <Breadcrumb>
-                      <Breadcrumb.Item>
-                        <Link to="/dashboard">Dashboard</Link>
-                      </Breadcrumb.Item>
-                      <Breadcrumb.Item>My Schedule</Breadcrumb.Item>
-                    </Breadcrumb>
-                  </div>
-                </div>
-              </div>
               <div className="col-lg-12 mb-3">
                 <Typography.Title level={4}>{`Schedule for ${
                   mode === 'today' ? 'today' : '3 days ago'

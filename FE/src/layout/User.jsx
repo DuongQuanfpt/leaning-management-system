@@ -20,6 +20,7 @@ import {
   attendanceRoutes,
   submitRoutes,
   myScheduleRoutes,
+  postEditRoutes,
 } from '~/routes'
 import RequireAuth from '~/utils/RequireAuth'
 
@@ -137,6 +138,10 @@ const User = () => {
               return <Route key={index} path={route.path} element={<Page />} />
             })}
             {myScheduleRoutes.map((route, index) => {
+              const Page = route.component
+              return <Route key={index} path={route.path} element={<Page />} />
+            })}
+            {postEditRoutes.map((route, index) => {
               const Page = route.component
               return <Route key={index} path={route.path} element={<Page />} />
             })}

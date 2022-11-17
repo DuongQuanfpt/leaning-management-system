@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 
-import { Button, Input, message, Modal, Select, Table, Tag, Typography, Upload } from 'antd'
+import { Breadcrumb, Button, Input, message, Modal, Select, Table, Tag, Typography, Upload } from 'antd'
 import { UploadOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
 
@@ -382,6 +382,19 @@ const NewSubmit = () => {
         <div className="body flex-grow-1 px-3">
           <div className="col-lg-12">
             <div className="row">
+              <div className="row">
+                <div className="col-lg-12">
+                  <Breadcrumb>
+                    <Breadcrumb.Item>
+                      <Link to="/dashboard">Dashboard</Link>
+                    </Breadcrumb.Item>
+                    <Breadcrumb.Item>
+                      <Link to="/submit-list">Submit List</Link>
+                    </Breadcrumb.Item>
+                    <Breadcrumb.Item>New Submit</Breadcrumb.Item>
+                  </Breadcrumb>
+                </div>
+              </div>
               <div className="row">
                 <div className="col-lg-12 p-b20">
                   <div className="row mt-3">

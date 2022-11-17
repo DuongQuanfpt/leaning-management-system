@@ -96,6 +96,10 @@ const ScheduleAdd = () => {
           setError('Slot name already existed')
           return
         }
+        if (error.response.data.mess === 'This time had already asigned by one slot! Try again!') {
+          setError('This time already assigned by another slot')
+          return
+        }
         setError('Something went wrong, please try again')
       })
   }
