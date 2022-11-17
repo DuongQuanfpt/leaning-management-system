@@ -13,7 +13,7 @@ import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
 import swp490.g23.onlinelearningsystem.entities.submit_work.domain.SubmitWork;
 import swp490.g23.onlinelearningsystem.entities.submit_work.domain.SubmitWorkKey;
 
-public interface SubmitWorkRepository extends JpaRepository<SubmitWork ,SubmitWorkKey> {
+public interface SubmitWorkRepository extends JpaRepository<SubmitWork, SubmitWorkKey> {
     @Transactional
     @Modifying
     @Query(value = "DELETE FROM SubmitWork sk WHERE sk.submit = :submit ")
@@ -25,5 +25,5 @@ public interface SubmitWorkRepository extends JpaRepository<SubmitWork ,SubmitWo
     int removeWorkOfSubmits(List<Submit> submits);
 
     @Query(value = "SELECT sk FROM SubmitWork sk WHERE sk.submit.group = :group AND sk.milestone = :milestone ")
-    List<SubmitWork> getByGroupAndMilestone(Group group , Milestone milestone);
+    List<SubmitWork> getByGroupAndMilestone(Group group, Milestone milestone);
 }
