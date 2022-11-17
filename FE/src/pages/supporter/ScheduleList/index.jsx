@@ -76,6 +76,7 @@ const ScheduleList = () => {
       params.filterStatus = filter.status.value
     }
 
+    console.log(params)
     await scheduleApi
       .getSchedule(params)
       .then((response) => {
@@ -100,6 +101,7 @@ const ScheduleList = () => {
   }
 
   const handleFilterStatus = (status) => {
+    console.log(status)
     setFilter((prev) => ({ ...prev, status: status }))
   }
 

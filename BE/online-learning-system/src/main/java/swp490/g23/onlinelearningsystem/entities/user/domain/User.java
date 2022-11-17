@@ -29,6 +29,7 @@ import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.contact.domain.WebContact;
 import swp490.g23.onlinelearningsystem.entities.groupMember.domain.GroupMember;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.Issue;
+import swp490.g23.onlinelearningsystem.entities.post.domain.Post;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
 import swp490.g23.onlinelearningsystem.entities.user_roles.domain.UserRoles;
@@ -108,6 +109,9 @@ public class User extends BaseEntity implements UserDetails {
 
     @OneToMany(mappedBy = "author")
     private List<Issue> issueOfAuthor;
+
+    @OneToMany(mappedBy = "author")
+    private List<Post> postOfAuthor;
 
     @OneToMany(mappedBy = "asignee")
     private List<Issue> issueOfAsignee;

@@ -27,19 +27,7 @@ const AttendanceTracking = () => {
     await attendanceApi
       .getAttendanceTracking(params)
       .then((response) => {
-        console.log(response)
         setListAttendanceTracking(response)
-        // const result = response.map((item) => {
-        //   const x = {
-        //     accountName: item.accountName,
-        //     fullName: item.fullName,
-        //     absentPercent: item.absentPercent,
-        //   }
-        //   item.userAttendance.forEach((index) => (x[index.slot] = index.status))
-        //   return x
-        // })
-        // // setListAttendanceTracking(result)
-        // // setClone(result)
       })
       .then(() => setLoading(false))
       .catch((error) => {

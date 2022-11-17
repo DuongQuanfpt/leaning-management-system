@@ -142,7 +142,6 @@ const RequirementList = () => {
     await issueApi
       .getIssue(currentClass, params)
       .then((response) => {
-        console.log(response)
         setListIssue(response.issueList.map((item, index) => ({ ...item, key: index })))
         setCurrentPage(page)
         setTotalItem(response.totalItem)

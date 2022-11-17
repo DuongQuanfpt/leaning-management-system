@@ -47,6 +47,8 @@ import swp490.g23.onlinelearningsystem.entities.milestone.repositories.Milestone
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
+import swp490.g23.onlinelearningsystem.entities.submit_work.domain.SubmitWork;
+import swp490.g23.onlinelearningsystem.entities.submit_work.repositories.SubmitWorkRepository;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
@@ -65,6 +67,9 @@ public class IssueService implements IIssueService {
 
     @Autowired
     private GroupRepository groupRepository;
+
+    @Autowired
+    private SubmitWorkRepository workRepository;
 
     @Autowired
     private ClassSettingRepository classSettingRepository;
@@ -261,6 +266,7 @@ public class IssueService implements IIssueService {
 
         if (issue.getMilestone() != null) {
             IssueMilestoneDTO milestoneViewDTO = new IssueMilestoneDTO();
+            milestoneViewDTO.setMilestoneId(issue.getMilestone().getMilestoneId());
             milestoneViewDTO.setDeadline(issue.getMilestone().getToDate().toString());
             milestoneViewDTO.setTitle(issue.getMilestone().getTitle());
             dto.setMilestone(milestoneViewDTO);
@@ -285,12 +291,15 @@ public class IssueService implements IIssueService {
         if (issue.isClosed() != true) {
             if (issue.getStatus() != null) {
                 dto.setStatus(issue.getStatus().getSettingTitle());
+                dto.setStatusId(issue.getStatus().getClassSettingId());
             } else {
                 dto.setStatus("Open");
+                dto.setStatusId((long)1);
             }
 
         } else {
             dto.setStatus("Closed");
+            dto.setStatusId((long)0);
         }
 
         return dto;
@@ -892,6 +901,7 @@ public class IssueService implements IIssueService {
     @Override
     public ResponseEntity<String> issueMultiChange(User user, IssueMultiRequestDTO multiRequestDTO) {
         List<Issue> issuesNew = new ArrayList<>();
+        List<SubmitWork> submitWorksNew = new ArrayList<>();
         for (IssueRequestDTO issueDTO : multiRequestDTO.getIssues()) {
             Issue issue = issueRepository.findById(issueDTO.getIssueId())
                     .orElseThrow(() -> new CustomException("Issue doesnt exist"));
@@ -900,6 +910,12 @@ public class IssueService implements IIssueService {
                     .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
             issue.setMilestone(milestone);
 
+            if(issue.getSubmitWorks() != null) {
+                for (SubmitWork submitWork : issue.getSubmitWorks()) {
+                    submitWorksNew.add(submitWork);
+                }
+            }
+            
             if (issueDTO.getStatusId() != null) {
                 if (issueDTO.getStatusId() == 0) {
                     issue.setStatus(null);
@@ -918,6 +934,7 @@ public class IssueService implements IIssueService {
             issuesNew.add(issue);
         }
         issueRepository.saveAll(issuesNew);
+        workRepository.deleteAll(submitWorksNew);
         return ResponseEntity.ok(issuesNew.size() + " issue updated");
     }
 

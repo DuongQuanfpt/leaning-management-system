@@ -65,6 +65,7 @@ const IssueList = () => {
   const listGroupAssigned = ofGroup.map((gr) => gr.groupId)
   const [isTrainer, setIsTrainer] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [isClose, setIsClose] = useState(false)
 
   useEffect(() => {
     setIsEditMode(false)
@@ -85,6 +86,7 @@ const IssueList = () => {
     issueApi
       .getListFilter(currentClass)
       .then((response) => {
+        console.log(response)
         setListFilter({
           ...response,
           asigneeFilter: ['None', ...response.asigneeFilter],
@@ -557,7 +559,16 @@ const IssueList = () => {
                             label: milestone.milestoneTitle,
                           }))}
                           value={filter?.milestoneId}
-                          onChange={(value) => setFilter((prev) => ({ ...prev, milestoneId: value }))}
+                          onChange={(value) => {
+                            const milestoneSelect = listFilter.milestoneFilter.filter(
+                              (item) => item.milestoneId === value,
+                            )
+                            console.log(milestoneSelect)
+                            if (milestoneSelect?.[0].status === 'Closed') {
+                              setIsClose(true)
+                            }
+                            setFilter((prev) => ({ ...prev, milestoneId: value }))
+                          }}
                         ></Select>
                       </div>
                     </div>
@@ -577,7 +588,11 @@ const IssueList = () => {
                               setSelectedRow(selected)
                             },
                             getCheckboxProps: (record) => ({
-                              disabled: isTrainer ? false : !listGroupAssigned.includes(record?.group?.groupId), // Column configuration not to be checked
+                              disabled: isClose
+                                ? true
+                                : isTrainer
+                                ? false
+                                : !listGroupAssigned.includes(record?.group?.groupId),
                             }),
                           }
                         }

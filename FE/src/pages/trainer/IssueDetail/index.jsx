@@ -28,8 +28,6 @@ const IssueDetail = () => {
 
   let listGroupAssigned = ofGroup.map((group) => group.groupId)
 
-  console.log(listGroupAssigned)
-
   useEffect(() => {
     setFilter({})
     setDetail({
@@ -74,19 +72,20 @@ const IssueDetail = () => {
       .then((response) => {
         console.log(response)
 
-        const groupModified = response?.milestone?.groups
-          ?.filter((group) => group?.groupId === response?.group?.groupId)
-          ?.shift()
+        // const groupModified = response?.milestone?.groups
+        //   ?.filter((group) => group?.groupId === response?.group?.groupId)
+        //   ?.shift()
 
-        groupModified?.memberId?.unshift('Unassigned')
+        // console.log(groupModified)
+        // groupModified?.memberId?.unshift('Unassigned')
 
         setDefaultDetail({
           ...response,
-          group: groupModified,
+          // group: groupModified,
         })
         setDetail({
           ...response,
-          group: groupModified,
+          // group: groupModified,
         })
       })
       .catch((error) => {
@@ -233,7 +232,7 @@ const IssueDetail = () => {
                         <label className="col-form-label">Group</label>
                         <CDropdown className="w-100">
                           <CDropdownToggle color="warning" disabled={!isEditMode}>
-                            {detail?.group?.groupName}
+                            {detail?.group?.groupName || detail?.group?.groupCode}
                           </CDropdownToggle>
                           <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                             {detail?.milestone?.groups?.map((group) => (
@@ -247,9 +246,7 @@ const IssueDetail = () => {
                                     ...prev,
                                     group: newGroup,
                                     asignee: { ...prev.asignee, username: 'Select Assignee' },
-                                    // requirement: { title: 'General Requirement', value: null },
                                   }))
-                                  console.log(group)
                                 }}
                               >
                                 {group?.groupName}
@@ -270,6 +267,13 @@ const IssueDetail = () => {
                             {detail?.asignee?.username}
                           </CDropdownToggle>
                           <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
+                            <CDropdownItem
+                              onClick={() =>
+                                setDetail((prev) => ({ ...prev, asignee: { ...prev.asignee, username: 'Unassigned' } }))
+                              }
+                            >
+                              Unassigned
+                            </CDropdownItem>
                             {detail?.group?.memberId?.map((member) => (
                               <CDropdownItem
                                 onClick={() =>

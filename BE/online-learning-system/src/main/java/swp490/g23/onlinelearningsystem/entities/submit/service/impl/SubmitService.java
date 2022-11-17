@@ -332,12 +332,29 @@ public class SubmitService implements ISubmitService {
             memberFilterDTO.setId(submit.getClassUser().getUser().getUserId());
             memberFilterDTO.setUsername(submit.getClassUser().getUser().getAccountName());
             memberFilterDTOs.add(memberFilterDTO);
-            milestones.add(toMilestoneFilterDto(submit.getMilestone()));
+
+            for (Milestone milestone : submit.getClassUser().getClasses().getMilestones()) {
+                if(!milestone.getAssignment().isTeamWork()){
+                    milestones.add(toMilestoneFilterDto(submit.getMilestone()));
+                }     
+            }
+           
         }
 
         List<SubmitRequirementFilter> requirementFilters = new ArrayList<>();
         for (Issue issue : submit.getMilestone().getIssues()) {
             if (issue.getType() == null) {
+                if(submit.getGroup() != null ){
+                    if(issue.getGroup() == null) {
+                        continue;
+                    }
+
+                    if(issue.getGroup() != null && !issue.getGroup().equals(submit.getGroup())){
+                        continue;
+                    }
+                   
+                }
+
                 SubmitRequirementFilter requirementFilter = toRequirementFilter(issue);
                 requirementFilter.setSubmitted(false);
 

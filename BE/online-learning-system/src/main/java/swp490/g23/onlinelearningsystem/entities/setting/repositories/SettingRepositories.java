@@ -55,4 +55,7 @@ public interface SettingRepositories extends JpaRepository<Setting, Long> {
 
     @Query(value = "SELECT s FROM Setting s WHERE s.type.settingValue = 'TYPE_ROOM'")
     List<Setting> findAllRoom();
+
+    @Query(value = "SELECT s FROM Setting s WHERE s.type.settingValue = 'TYPE_POST'")
+    List<Setting> getPostCategory();
 }
