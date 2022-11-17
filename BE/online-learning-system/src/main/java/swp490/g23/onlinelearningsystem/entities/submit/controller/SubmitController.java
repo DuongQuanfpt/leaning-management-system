@@ -1,6 +1,7 @@
 package swp490.g23.onlinelearningsystem.entities.submit.controller;
 
 import java.util.Base64;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.NewSubmitFilter;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.SubmitFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.request.SubmitRequirementWrapper;
+import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitDetailDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitPaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.service.impl.SubmitService;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
@@ -59,7 +61,7 @@ public class SubmitController {
             @RequestParam(name = "isGroup", required = true) boolean isGroup,
             @AuthenticationPrincipal User user) {
 
-        return submitService.getSubmitListFilter(user, classCode , isGroup);
+        return submitService.getSubmitListFilter(user, classCode, isGroup);
     }
 
     @GetMapping(value = "/new-submit/{submitId}")
@@ -84,5 +86,10 @@ public class SubmitController {
         }
 
         return submitService.newSubmit(user, submitId, requirementWrapper, submitFile);
+    }
+
+    @GetMapping(value = "/submit-detail/{id}")
+    public ResponseEntity<List<SubmitDetailDTO>> viewDetail(@PathVariable("id") Long id) {
+        return submitService.viewSubmit(id);
     }
 }

@@ -30,6 +30,7 @@ import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.SubmitRequi
 import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.SubmitSettingFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.request.SubmitRequirementRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.request.SubmitRequirementWrapper;
+import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitDetailDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitPaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.SubmitRepository;
@@ -404,5 +405,42 @@ public class SubmitService implements ISubmitService {
         }
 
         return requirementFilter;
+    }
+
+    @Override
+    public ResponseEntity<List<SubmitDetailDTO>> viewSubmit(Long id) {
+        List<SubmitDetailDTO> list = new ArrayList<>();
+        Submit currentSubmit = submitRepository.findById(id)
+                .orElseThrow(() -> new CustomException("submit doesnt exist"));
+
+        // User currentUser = userRepository.findById(user.getUserId()).get();
+        // if (!currentUser.equals(currentSubmit.getClassUser().getUser())) {
+        // throw new CustomException("not owner of this submit");
+        // }
+        List<SubmitWork> submitWorks = currentSubmit.getSubmitWorks();
+        for (SubmitWork submitWork : submitWorks) {
+            SubmitDetailDTO dto = new SubmitDetailDTO();
+            if (currentSubmit.getGroup() == null) {
+                dto.setId(currentSubmit.getSubmitId());
+                dto.setAssignee(currentSubmit.getClassUser().getUser().getAccountName());
+                dto.setMilestone(submitWork.getMilestone().getTitle());
+                dto.setRequirement(submitWork.getWork().getTitle());
+                dto.setStatus(submitWork.getStatus());
+                list.add(dto);
+            } else {
+                List<SubmitWork> submits = submitWorkRepository.getByGroupAndMilestone(currentSubmit.getGroup(),
+                        currentSubmit.getMilestone());
+                for (SubmitWork submit : submits) {
+                    dto.setId(currentSubmit.getSubmitId());
+                    dto.setAssignee(submit.getSubmit().getClassUser().getUser().getAccountName());
+                    dto.setMilestone(submitWork.getMilestone().getTitle());
+                    dto.setRequirement(submitWork.getWork().getTitle());
+                    dto.setStatus(submitWork.getStatus());
+                    dto.setTeam(currentSubmit.getGroup().getGroupCode());
+                    list.add(dto);
+                }
+            }
+        }
+        return ResponseEntity.ok(list);
     }
 }
