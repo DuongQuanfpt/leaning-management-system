@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import parse from 'html-react-parser'
 
-import { Typography, Button, Space, Skeleton } from 'antd'
+import { Typography, Button, Space, Skeleton, Breadcrumb, Image } from 'antd'
 
 import postApi from '~/api/postApi'
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 import { useSelector } from 'react-redux'
+import { FormOutlined } from '@ant-design/icons'
 
 const Post = () => {
   const { id } = useParams()
@@ -47,34 +48,52 @@ const Post = () => {
         <AdminSidebar />
         <div className="wrapper d-flex flex-column min-vh-100 bg-light">
           <AdminHeader />
-          <Space>
-            <Skeleton loading={loading}>
-              <div className="body flex-grow-1 px-5">
-                <div className="row">
-                  <div className="col-lg-12">
-                    <Typography.Title level={2}>
-                      {post.postTitle}
-                      {(isTrainer || username === post.authorName) && (
-                        <Button type="link" onClick={() => navigateTo(`/post-edit/${id}`)}>
-                          Edit
-                        </Button>
-                      )}
-                    </Typography.Title>
+          <div className="body flex-grow-1">
+            <div className="col-lg-12">
+              <Space>
+                <Skeleton loading={loading}>
+                  <div className="body flex-grow-1 px-2">
+                    <div className="row">
+                      <div className="col-lg-12">
+                        <Typography.Title level={2}>
+                          {post.postTitle}
+                          {(isTrainer || username === post.authorName) && (
+                            <Button
+                              type="link"
+                              onClick={() => navigateTo(`/post-edit/${id}`)}
+                              icon={<FormOutlined />}
+                            ></Button>
+                          )}
+                        </Typography.Title>
+                      </div>
+                      <div className="col-lg-6 mb-4 d-flex justify-content-start">
+                        <Typography.Text
+                          type="primary"
+                          style={{ fontSize: '12px' }}
+                        >{`${post.authorFullName} (${post.authorName}, ${post.authorMobile})`}</Typography.Text>
+                        <Typography.Text type="secondary" className="ml-2" style={{ fontSize: '12px' }}>
+                          {post.viewCount} views
+                        </Typography.Text>
+                      </div>
+                      <div className="col-lg-6 mb-4 d-flex justify-content-end">
+                        <Typography.Text
+                          type="secondary"
+                          style={{ fontSize: '12px' }}
+                        >{`${post.lastUpdate}`}</Typography.Text>
+                      </div>
+                      <div className="col-lg-12 mb-3">
+                        <Typography.Text type="secondary" italic>{`${post.excerpt}`}</Typography.Text>
+                      </div>
+                      <div className="col-lg-12 mb-3 d-flex justify-content-center">
+                        <Image src={post.thumbnail_Url} preview={false} />
+                      </div>
+                      <div className="col-lg-12 mb-3">{parse(post?.content)}</div>
+                    </div>
                   </div>
-                  <div className="col-lg-6 mb-3 d-flex justify-content-start">
-                    <Typography.Text type="primary">{`${post.authorFullName} (${post.authorName}, ${post.authorMobile})`}</Typography.Text>
-                  </div>
-                  <div className="col-lg-6 mb-3 d-flex justify-content-end">
-                    <Typography.Text type="secondary">{`${post.lastUpdate}`}</Typography.Text>
-                  </div>
-                  <div className="col-lg-12 mb-3">
-                    <Typography.Text type="secondary" italic>{`${post.excerpt}`}</Typography.Text>
-                  </div>
-                  <div className="col-lg-12 mb-3">{parse(post?.content)}</div>
-                </div>
-              </div>
-            </Skeleton>
-          </Space>
+                </Skeleton>
+              </Space>
+            </div>
+          </div>
           <AdminFooter />
         </div>
       </div>

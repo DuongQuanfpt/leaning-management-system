@@ -1,7 +1,7 @@
 import React from 'react'
 import CIcon from '@coreui/icons-react'
-import { cilSettings, cilUser, cilHome } from '@coreui/icons'
-import { CNavItem } from '@coreui/react'
+import { cilSettings, cilHome, cilBook, cilGroup, cilPen } from '@coreui/icons'
+import { CNavGroup, CNavItem } from '@coreui/react'
 
 const _nav = [
   {
@@ -11,136 +11,137 @@ const _nav = [
     icon: <CIcon icon={cilHome} customClassName="nav-icon" />,
   },
   {
-    component: CNavItem,
-    name: 'Users list',
-    to: '/user-list',
-    icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
+    component: CNavGroup,
+    name: 'System Adminitration',
+    icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+    items: [
+      {
+        component: CNavItem,
+        name: 'System Settings',
+        to: '/setting-list',
+      },
+      {
+        component: CNavItem,
+        name: 'User Management',
+        to: '/user-list',
+      },
+      {
+        component: CNavItem,
+        name: 'Subject Management',
+        to: '/subject-list',
+      },
+      {
+        component: CNavItem,
+        name: 'Web Supports',
+        to: '/contact-list',
+      },
+    ],
   },
   {
-    component: CNavItem,
-    name: 'Settings list',
-    to: '/setting-list',
-    icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+    component: CNavGroup,
+    name: 'Training Subjects',
+    icon: <CIcon icon={cilBook} customClassName="nav-icon" />,
+    items: [
+      {
+        component: CNavItem,
+        name: 'Subject Settings',
+        to: '/subject-setting-list',
+      },
+      {
+        component: CNavItem,
+        name: 'Subject Assignments',
+        to: '/assignment-list',
+      },
+      {
+        component: CNavItem,
+        name: 'Evaluation Criteria',
+        to: '/criteria-list',
+      },
+      {
+        component: CNavItem,
+        name: 'Class Management',
+        to: '/class-list',
+      },
+    ],
   },
   {
-    component: CNavItem,
-    name: 'System Permission',
-    to: '/system-permission',
-    icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+    component: CNavGroup,
+    name: 'Class Configuration',
+    icon: <CIcon icon={cilGroup} customClassName="nav-icon" />,
+    items: [
+      {
+        component: CNavItem,
+        name: 'Class Settings',
+        to: '/class-setting-list',
+      },
+      {
+        component: CNavItem,
+        name: 'Class Schedule',
+        to: '/schedule-list',
+      },
+      {
+        component: CNavItem,
+        name: 'Class Trainees',
+        to: '/trainee-list',
+      },
+      {
+        component: CNavItem,
+        name: 'Class Assignments',
+        to: '/eval-criteria-list',
+      },
+      {
+        component: CNavItem,
+        name: 'Trainee Groups',
+        to: '/group-list',
+      },
+    ],
   },
   {
-    component: CNavItem,
-    name: 'Subject List',
-    to: '/subject-list',
-    icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
-  },
-  {
-    component: CNavItem,
-    name: 'Class List',
-    to: '/class-list',
-    icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
-  },
-  {
-    component: CNavItem,
-    name: 'Contact List',
-    to: '/contact-list',
-    icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
-  },
-  {
-    component: CNavItem,
-    name: 'Trainee List',
-    to: '/trainee-list',
-    icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
-  },
-  {
-    component: CNavItem,
-    name: 'Subject Setting List',
-    to: '/subject-setting-list',
-    icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
-  },
-  {
-    component: CNavItem,
-    name: 'Class Setting List',
-    to: '/class-setting-list',
-    icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
-  },
-  {
-    component: CNavItem,
-    name: 'Assignment List',
-    to: '/assignment-list',
-    icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
-  },
-  {
-    component: CNavItem,
-    name: 'Eval Criteria List',
-    to: '/criteria-list',
-    icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
-  },
-  {
-    component: CNavItem,
-    name: 'Milestone List',
-    to: '/milestone-list',
-    icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
-  },
-  {
-    component: CNavItem,
-    name: 'Class Eval Criteria List',
-    to: '/class-criteria-list',
-    icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
-  },
-  {
-    component: CNavItem,
-    name: 'Group List',
-    to: '/group-list',
-    icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
-  },
-  {
-    component: CNavItem,
-    name: 'Schedule List',
-    to: '/schedule-list',
-    icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
-  },
-  {
-    component: CNavItem,
-    name: 'Issue List',
-    to: '/issue-list',
-    icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
-  },
-  {
-    component: CNavItem,
-    name: 'Requirement List',
-    to: '/requirement-list',
-    icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
-  },
-  {
-    component: CNavItem,
-    name: 'Attendance Report',
-    to: '/attendance-report',
-    icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
-  },
-  {
-    component: CNavItem,
-    name: 'Class Attendance',
-    to: '/class-attendance',
-    icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
-  },
-  {
-    component: CNavItem,
-    name: 'Submit List',
-    to: '/submit-list',
-    icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
-  },
-  {
-    component: CNavItem,
-    name: 'My Schedule',
-    to: '/my-schedule',
-    icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
-  },
-  {
-    component: CNavItem,
-    name: 'New Post',
-    to: '/new-post',
-    icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
+    component: CNavGroup,
+    name: 'Training Tracking',
+    icon: <CIcon icon={cilPen} customClassName="nav-icon" />,
+    items: [
+      {
+        component: CNavItem,
+        name: 'Class Attendance',
+        to: '/class-attendance',
+      },
+      {
+        component: CNavItem,
+        name: 'Class Requirements',
+        to: '/requirement-list',
+      },
+      {
+        component: CNavItem,
+        name: 'Issue Management',
+        to: '/issue-list',
+      },
+      {
+        component: CNavItem,
+        name: 'Assignment Submits',
+        to: '/submit-list',
+      },
+      {
+        component: CNavItem,
+        name: 'Work Submits (TBA)',
+        to: '/',
+      },
+      {
+        component: CNavItem,
+        name: 'Attendance Report',
+        to: '/attendance-report',
+      },
+      {
+        component: CNavItem,
+        name: 'Class Evaluations (TBA)',
+        to: '/',
+      },
+      {
+        component: CNavItem,
+        name: 'Assignment Evaluations (TBA)',
+        to: '/',
+      },
+    ],
   },
 ]
 
