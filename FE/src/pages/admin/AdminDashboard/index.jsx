@@ -3,7 +3,7 @@ import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 import postApi from '~/api/postApi'
-import { Card, Image, Space, Typography } from 'antd'
+import { Button, Card, Image, Space, Typography } from 'antd'
 import { Link, useNavigate } from 'react-router-dom'
 import moment from 'moment'
 
@@ -43,9 +43,17 @@ const AdminDashboard = () => {
           <div className="col-lg-12 m-b30">
             <div className="row">
               <div className="col-lg-12">
-                <Typography.Title level={4} className="mb-3">
-                  Trainee Blogs
-                </Typography.Title>
+                <Space>
+                  <Typography.Title level={4} className="mb-3">
+                    Notice Board
+                  </Typography.Title>
+                </Space>
+                <Space className="ml-3">
+                  <Button type="primary" onClick={() => navigateTo(`/new-notice`)}>
+                    Create Notice
+                  </Button>
+                </Space>
+
                 {listPost?.listResult?.map((post) => (
                   <Card className="w-100 mb-3" loading={loading}>
                     <Card.Meta

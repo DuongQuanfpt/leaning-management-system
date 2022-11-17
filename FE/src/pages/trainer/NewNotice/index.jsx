@@ -21,7 +21,7 @@ const StyledUpload = styled(Upload)`
   gap: 10px;
 `
 
-const NewPost = () => {
+const NewNotice = () => {
   const [postDetail, setPostDetail] = useState({
     postTitle: '',
     excerpt: '',
@@ -71,19 +71,13 @@ const NewPost = () => {
   const handleSave = async () => {
     if (postDetail.postTitle?.trim() === '') {
       Modal.error({
-        content: 'Post title must not empty',
+        content: 'Notice title must not empty',
       })
       return
     }
     if (postDetail.excerpt?.trim() === '') {
       Modal.error({
-        content: 'Post excerpt must not empty',
-      })
-      return
-    }
-    if (postDetail.categoryId === undefined) {
-      Modal.error({
-        content: 'Category must not empty',
+        content: 'Notice excerpt must not empty',
       })
       return
     }
@@ -95,14 +89,13 @@ const NewPost = () => {
     }
     if (postDetail.content?.trim() === '') {
       Modal.error({
-        content: 'Post content must not empty',
+        content: 'Notice content must not empty',
       })
       return
     }
 
     const params = {
       postTitle: postDetail.postTitle.trim(),
-      categoryId: postDetail.categoryId,
       content: postDetail.content.trim(),
       excerpt: postDetail.excerpt.trim(),
     }
@@ -118,14 +111,14 @@ const NewPost = () => {
       .then((response) => {
         console.log(response)
         Modal.success({
-          content: 'Create Post Successfully',
+          content: 'Create Notice Successfully',
         })
       })
       .then(() => setLoading(false))
       .catch((error) => {
         console.log(error)
         Modal.error({
-          content: 'Create Post Failed, try again later',
+          content: 'Create Notice Failed, try again later',
         })
         setLoading(false)
       })
@@ -206,19 +199,6 @@ const NewPost = () => {
               <div className="col-lg-12 mb-3">
                 <div className="row">
                   <div className="col-lg-6 mb-3">
-                    <Typography.Text strong>Category</Typography.Text>
-                    <Select
-                      className="w-100"
-                      placeholder="Select Category"
-                      value={postDetail.categoryId}
-                      options={listCategory?.map((item) => ({
-                        label: item.categoryName,
-                        value: item.categoryId,
-                      }))}
-                      onChange={(value) => setPostDetail((prev) => ({ ...prev, categoryId: value }))}
-                    />
-                  </div>
-                  <div className="col-lg-6 mb-3">
                     <Typography.Text strong>Thumbnail Image</Typography.Text>
                     <StyledUpload {...props}>
                       <Button icon={<UploadOutlined />}>Click to Upload</Button>
@@ -249,4 +229,4 @@ const NewPost = () => {
   )
 }
 
-export default NewPost
+export default NewNotice

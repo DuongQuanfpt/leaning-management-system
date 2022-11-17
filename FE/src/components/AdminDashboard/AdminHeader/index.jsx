@@ -1,13 +1,13 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import { NavLink, useLocation } from 'react-router-dom'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { setCurrentClass } from '~/redux/ProfileSlice/profileSlice'
 import { setSidebarShow } from '~/redux/SidebarSlice/sidebarSlice'
 import { CContainer, CHeader, CHeaderBrand, CHeaderNav, CHeaderToggler, CNavLink, CNavItem } from '@coreui/react'
 
 import { DownOutlined } from '@ant-design/icons'
-import { Dropdown, Menu, Space } from 'antd'
+import { Dropdown, Input, Menu, Space } from 'antd'
 
 import CIcon from '@coreui/icons-react'
 import { cilMenu } from '@coreui/icons'
@@ -15,6 +15,7 @@ import { cilMenu } from '@coreui/icons'
 import AdminHeaderDropdown from './AdminHeaderDropdown'
 import { logo } from 'src/assets/brand/logo'
 import { memo } from 'react'
+import logoWhite from '~/assets/images/logo.png'
 
 const AdminHeader = () => {
   const location = useLocation()
@@ -68,13 +69,21 @@ const AdminHeader = () => {
         <CHeaderBrand className="mx-auto d-md-none" to="/">
           <CIcon icon={logo} height={48} alt="Logo" />
         </CHeaderBrand>
-        <CHeaderNav className="d-none d-md-flex me-auto">
+        <CHeaderNav className="d-none d-md-flex me-auto ml-3" style={{ width: '700px' }}>
           <CNavItem>
-            <CNavLink to="/dashboard" component={NavLink}>
-              Dashboard
-            </CNavLink>
+            <div className="menu-logo" style={{ height: '50px' }}>
+              <Link to="/dashboard">
+                <img src={logoWhite} alt="" />
+              </Link>
+            </div>
           </CNavItem>
+          {['/dashboard'].includes(location.pathname) && (
+            <CNavItem className="w-100 d-flex align-items-center ml-3">
+              <Input.Search className="w-100" size="large" placeholder="Enter text search for the notice" />
+            </CNavItem>
+          )}
         </CHeaderNav>
+
         {showDropdownClassPathname.includes(location.pathname) && (
           <CHeaderNav>
             <Dropdown overlay={menu}>

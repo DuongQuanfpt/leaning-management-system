@@ -4,12 +4,14 @@ import { useSelector } from 'react-redux'
 
 import { CKEditor } from '@ckeditor/ckeditor5-react'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
-import { Input, Select, Typography, Upload, Button, Modal } from 'antd'
+
+import { Input, Select, Typography, Upload, Button, Modal, Skeleton } from 'antd'
 import { UploadOutlined } from '@ant-design/icons'
 
 import styled from 'styled-components'
 
 import postApi from '~/api/postApi'
+import { customConfiguration } from '~/utils/CustomClassicEditor'
 
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
@@ -30,17 +32,15 @@ const PostEdit = () => {
   const [listCategory, setListCategory] = useState([])
   const [thumbnail, setThumbnail] = useState(null)
   const [loading, setLoading] = useState(false)
-  const [isTrainer, setIsTrainer] = useState(false)
+  const [loadingSubmit, setLoadingSubmit] = useState(false)
 
   useEffect(() => {
-    if (roles.includes('trainer')) {
-      setIsTrainer(true)
-    }
     loadData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const loadData = async () => {
+    setLoading(true)
     const params = {
       isNotice: true,
       topView: 5,
@@ -51,8 +51,10 @@ const PostEdit = () => {
         console.log(response)
         setListCategory(response?.categoryFilter)
       })
+      .then(() => setLoading(false))
       .catch((error) => {
         console.log(error)
+        setLoading(false)
       })
 
     postApi
@@ -69,17 +71,23 @@ const PostEdit = () => {
           url: response?.thumbnail_Url,
           thumbUrl: response?.thumbnail_Url,
         })
+
         return response
       })
       .then((response) => {
-        if (!isTrainer && username !== response.authorName) {
-          console.log(username)
-          console.log(response.authorName)
+        if (roles.includes('trainer')) {
+          console.log('isTrainer')
+        } else if (username === response.authorName) {
+          console.log('isAuthor')
+        } else {
           navigateTo('/access-denied')
+          console.log('access-denied')
         }
       })
+      .then(() => setLoading(false))
       .catch((error) => {
         console.log(error)
+        setLoading(false)
       })
   }
 
@@ -137,7 +145,7 @@ const PostEdit = () => {
       params.thumbnailBase64 = base64
     }
     console.log(params)
-    setLoading(true)
+    setLoadingSubmit(true)
     postApi
       .editPost(id, params)
       .then((response) => {
@@ -146,9 +154,9 @@ const PostEdit = () => {
           content: 'Update Post Successfully',
         })
       })
-      .then(() => setLoading(false))
+      .then(() => setLoadingSubmit(false))
       .catch((error) => {
-        setLoading(false)
+        setLoadingSubmit(false)
         Modal.error({
           content: 'Update Post Failed, try again later',
         })
@@ -206,66 +214,69 @@ const PostEdit = () => {
         <AdminSidebar />
         <div className="wrapper d-flex flex-column min-vh-100 bg-light">
           <AdminHeader />
-          <div className="body flex-grow-1 px-5">
-            <div className="row">
-              <div className="col-lg-12 mb-3">
-                <Typography.Text strong>Title</Typography.Text>
-                <Input
-                  value={postDetail.postTitle}
-                  onChange={(e) => setPostDetail((prev) => ({ ...prev, postTitle: e.target.value }))}
-                />
-              </div>
-              <div className="col-lg-12 mb-3">
-                <Typography.Text strong>Excerpt</Typography.Text>
-                <Input.TextArea
-                  showCount
-                  maxLength={200}
-                  value={postDetail.excerpt}
-                  onChange={(e) => setPostDetail((prev) => ({ ...prev, excerpt: e.target.value }))}
-                />
-              </div>
-              <div className="col-lg-12 mb-3">
-                <div className="row">
-                  <div className="col-lg-6 mb-3">
-                    <Typography.Text strong>Category</Typography.Text>
-                    <Select
-                      className="w-100"
-                      placeholder="Select Category"
-                      value={postDetail.categoryId}
-                      options={listCategory?.map((item) => ({
-                        label: item.categoryName,
-                        value: item.categoryId,
-                      }))}
-                      onChange={(value) => setPostDetail((prev) => ({ ...prev, categoryId: value }))}
-                    />
-                  </div>
-                  <div className="col-lg-6 mb-3">
-                    <Typography.Text strong>Thumbnail Image</Typography.Text>
-                    <StyledUpload {...props}>
-                      <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                    </StyledUpload>
+          <Skeleton loading={loading}>
+            <div className="body flex-grow-1 px-5">
+              <div className="row">
+                <div className="col-lg-12 mb-3">
+                  <Typography.Text strong>Title</Typography.Text>
+                  <Input
+                    value={postDetail.postTitle}
+                    onChange={(e) => setPostDetail((prev) => ({ ...prev, postTitle: e.target.value }))}
+                  />
+                </div>
+                <div className="col-lg-12 mb-3">
+                  <Typography.Text strong>Excerpt</Typography.Text>
+                  <Input.TextArea
+                    showCount
+                    maxLength={200}
+                    value={postDetail.excerpt}
+                    onChange={(e) => setPostDetail((prev) => ({ ...prev, excerpt: e.target.value }))}
+                  />
+                </div>
+                <div className="col-lg-12 mb-3">
+                  <div className="row">
+                    <div className="col-lg-6 mb-3">
+                      <Typography.Text strong>Category</Typography.Text>
+                      <Select
+                        className="w-100"
+                        placeholder="Select Category"
+                        value={postDetail.categoryId}
+                        options={listCategory?.map((item) => ({
+                          label: item.categoryName,
+                          value: item.categoryId,
+                        }))}
+                        onChange={(value) => setPostDetail((prev) => ({ ...prev, categoryId: value }))}
+                      />
+                    </div>
+                    <div className="col-lg-6 mb-3">
+                      <Typography.Text strong>Thumbnail Image</Typography.Text>
+                      <StyledUpload {...props}>
+                        <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                      </StyledUpload>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="col-lg-12 mb-3">
-                <Typography.Text strong>Content</Typography.Text>
-                <CKEditor
-                  editor={ClassicEditor}
-                  data={postDetail?.content}
-                  onChange={(e, editor) => setPostDetail((prev) => ({ ...prev, content: editor.getData() }))}
-                  onWarning={(e) => console.log(e)}
-                />
-              </div>
-              <div className="col-lg-12 mb-3">
-                <Button type="primary" onClick={handleSave} loading={loading} className="mr-3">
-                  Save
-                </Button>
-                <Button type="secondary" onClick={() => navigateTo(`/post/${id}`)} className="mr-3">
-                  Back
-                </Button>
+                <div className="col-lg-12 mb-3">
+                  <Typography.Text strong>Content</Typography.Text>
+                  <CKEditor
+                    editor={ClassicEditor}
+                    data={postDetail?.content}
+                    onChange={(e, editor) => setPostDetail((prev) => ({ ...prev, content: editor.getData() }))}
+                    config={customConfiguration}
+                  />
+                </div>
+
+                <div className="col-lg-12 mb-3">
+                  <Button type="primary" onClick={handleSave} loading={loadingSubmit} className="mr-3">
+                    Save
+                  </Button>
+                  <Button type="secondary" onClick={() => navigateTo(`/post/${id}`)} className="mr-3">
+                    Back
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
+          </Skeleton>
           <AdminFooter />
         </div>
       </div>

@@ -97,6 +97,7 @@ const NewSubmit = lazy(() => import('~/pages/trainer/NewSubmit'))
 const MySchedule = lazy(() => import('~/pages/trainer/MySchedule'))
 
 const PostEdit = lazy(() => import('~/pages/user/PostEdit'))
+const NewNotice = lazy(() => import('~/pages/trainer/NewNotice'))
 
 //404 pages
 const PageNotFound = lazy(() => import('~/pages/common/PageNotFound'))
@@ -159,6 +160,7 @@ const supporterRoutes = [
 const trainerRoutes = [
   { path: '/new-milestone', component: NewMilestone },
   { path: '/new-group/:id', component: NewGroup },
+  { path: '/new-notice', component: NewNotice },
 ]
 
 // Trainee routes
