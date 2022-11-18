@@ -21,27 +21,28 @@ public class SubmitDetailCriteria {
     public TypedQuery<SubmitWork> getSubmitWorks(String keyword, String filterTeam,
             String filterAssignee, String filterStatus, User currentUser) {
 
-        List<Setting> settings = currentUser.getSettings();
-        List<String> roles = new ArrayList<>();
-        for (Setting setting : settings) {
-            roles.add(setting.getSettingValue());
-        }
+        // List<Setting> settings = currentUser.getSettings();
+        // List<String> roles = new ArrayList<>();
+        // for (Setting setting : settings) {
+        // roles.add(setting.getSettingValue());
+        // }
 
         StringBuilder query = new StringBuilder(
-                "SELECT s FROM SubmitWork s JOIN s.submit as su JOIN su.classUser as cu WHERE 1=1");
+                "SELECT s FROM SubmitWork s JOIN s.submit as su JOIN su.classUser as cu JOIN cu.classes as c JOIN c.userTrainer as t WHERE 1=1");
 
-        if (roles.contains("ROLE_TRAINER") && roles.contains("ROLE_TRAINEE")) {
-            query.append(" AND cu.classes.userTrainer.accountName = '" + currentUser.getAccountName()
-                    + "' OR cu.user.accountName = '"
-                    + currentUser.getAccountName() + "'");
-        } else {
-            if (roles.contains("ROLE_TRAINER")) {
-                query.append(" AND cu.classes.userTrainer.accountName = '" + currentUser.getAccountName() + "'");
-            }
-            if (roles.contains("ROLE_TRAINEE")) {
-                query.append(" AND cu.user.accountName = '" + currentUser.getAccountName() + "'");
-            }
-        }
+        // if (roles.contains("ROLE_TRAINER") && roles.contains("ROLE_TRAINEE")) {
+        // query.append(" AND t.accountName = '" + currentUser.getAccountName()
+        // + "' OR cu.user.accountName = '"
+        // + currentUser.getAccountName() + "'");
+        // } else {
+        // if (roles.contains("ROLE_TRAINER")) {
+        // query.append(" AND t.accountName = '" + currentUser.getAccountName() + "'");
+        // }
+        // if (roles.contains("ROLE_TRAINEE")) {
+        // query.append(" AND cu.user.accountName = '" + currentUser.getAccountName() +
+        // "'");
+        // }
+        // }
 
         if (keyword != null) {
             query.append(" AND (s.work.title LIKE '%" + keyword + "%')");

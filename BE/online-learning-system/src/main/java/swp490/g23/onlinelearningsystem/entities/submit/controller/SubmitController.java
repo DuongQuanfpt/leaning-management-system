@@ -94,6 +94,6 @@ public class SubmitController {
             @RequestParam(name = "filterAssignee", required = false) String assigneeFilter,
             @RequestParam(name = "filterStatus", required = false) String statusFiler,
             @AuthenticationPrincipal User user) {
-        return submitService.viewSubmit(id, keyword, teamFilter, assigneeFilter, statusFiler, user);
+        return submitService.viewSubmit(id, keyword, teamFilter, assigneeFilter, statusFiler, user.getUserId());
     }
 }

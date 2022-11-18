@@ -433,7 +433,8 @@ public class SubmitService implements ISubmitService {
     @Override
     public ResponseEntity<SubmitDetailFilterDTO> viewSubmit(Long id, String keyword,
             String filterTeam,
-            String filterAssignee, String filterStatus, User user) {
+            String filterAssignee, String filterStatus, Long userId) {
+        User user = userRepository.findById(userId).get();
         List<SubmitDetailDTO> list = new ArrayList<>();
         List<SubmitWorkStatusEntity> statusFilter = new ArrayList<>();
         List<String> teamList = new ArrayList<>();
@@ -462,26 +463,41 @@ public class SubmitService implements ISubmitService {
                 dto.setMilestone(submitWork.getMilestone().getTitle());
                 dto.setRequirement(submitWork.getWork().getTitle());
                 dto.setStatus(submitWork.getStatus());
+                if (!submitWork.getWorkEvals().isEmpty()) {
+                    if (submitWork.getWorkEvals().get(0).getNewWorkEval() != 0) {
+                        dto.setGrade(submitWork.getWorkEvals().get(0).getNewWorkEval());
+                    } else {
+                        dto.setGrade(submitWork.getWorkEvals().get(0).getWorkEval());
+                    }
+                } else {
+                    dto.setGrade(null);
+                }
                 list.add(dto);
                 assigneeList.add(currentSubmit.getClassUser().getUser().getAccountName());
             } else {
-                List<SubmitWork> submits = submitWorkRepository.getByGroupAndMilestone(currentSubmit.getGroup(),
-                        currentSubmit.getMilestone());
-                for (SubmitWork submit : submits) {
-                    SubmitDetailDTO dto = new SubmitDetailDTO();
-                    dto.setId(submit.getSubmit().getSubmitId());
-                    dto.setAssignee(submit.getSubmit().getClassUser().getUser().getAccountName());
-                    dto.setMilestone(submitWork.getMilestone().getTitle());
-                    dto.setRequirement(submitWork.getWork().getTitle());
-                    dto.setStatus(submitWork.getStatus());
-                    dto.setTeam(submit.getSubmit().getGroup().getGroupCode());
-                    list.add(dto);
-                    if (!assigneeList.contains(submit.getSubmit().getClassUser().getUser().getAccountName())) {
-                        assigneeList.add(submit.getSubmit().getClassUser().getUser().getAccountName());
+                // List<SubmitWork> submits =
+                // submitWorkRepository.getByGroupAndMilestone(currentSubmit.getGroup(),
+                // currentSubmit.getMilestone());
+                SubmitDetailDTO dto = new SubmitDetailDTO();
+                dto.setId(submitWork.getSubmit().getSubmitId());
+                dto.setAssignee(submitWork.getSubmit().getClassUser().getUser().getAccountName());
+                dto.setMilestone(submitWork.getMilestone().getTitle());
+                dto.setRequirement(submitWork.getWork().getTitle());
+                dto.setStatus(submitWork.getStatus());
+                dto.setTeam(submitWork.getSubmit().getGroup().getGroupCode());
+                if (!submitWork.getWorkEvals().isEmpty()) {
+                    if (submitWork.getWorkEvals().get(0).getNewWorkEval() != 0) {
+                        dto.setGrade(submitWork.getWorkEvals().get(0).getNewWorkEval());
+                    } else {
+                        dto.setGrade(submitWork.getWorkEvals().get(0).getWorkEval());
                     }
-                    if (!teamList.contains(submit.getSubmit().getGroup().getGroupCode())) {
-                        teamList.add(submit.getSubmit().getGroup().getGroupCode());
-                    }
+                }
+                list.add(dto);
+                if (!assigneeList.contains(submitWork.getSubmit().getClassUser().getUser().getAccountName())) {
+                    assigneeList.add(submitWork.getSubmit().getClassUser().getUser().getAccountName());
+                }
+                if (!teamList.contains(submitWork.getSubmit().getGroup().getGroupCode())) {
+                    teamList.add(submitWork.getSubmit().getGroup().getGroupCode());
                 }
             }
         }
