@@ -6,7 +6,6 @@ import Header from '~/components/Homepage/Header'
 import MainSlider from '~/components/Homepage/MainSlider'
 import ContactUs from '~/components/Homepage/ContactUs'
 import Footer from '~/components/Homepage/Footer'
-import { PlusOutlined } from '@ant-design/icons'
 import { useSelector } from 'react-redux'
 
 const HomePage = () => {
@@ -156,7 +155,11 @@ const HomePage = () => {
                             onClick={() => navigateTo(`/post/${topView.postId}`)}
                             style={{ color: 'black' }}
                           >
-                            {`${index + 1}.   ${topView.postTitle}`}
+                            {`${index + 1}. ${
+                              topView.postTitle.length > 100
+                                ? topView.postTitle.substring(0, 100) + ' ...'
+                                : topView.postTitle
+                            }`}
                             <Typography.Text type="secondary" className="pl-3">
                               {topView.viewCount} views
                             </Typography.Text>

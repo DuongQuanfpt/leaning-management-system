@@ -4,8 +4,8 @@ import { useSelector } from 'react-redux'
 import $ from 'jquery'
 import Sticky from 'react-stickynode'
 
-import { CAvatar, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
-import { cilCreditCard, cilAccountLogout, cilSettings, cilUser } from '@coreui/icons'
+import { CAvatar, CDropdown, CDropdownDivider, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
+import { cilAccountLogout, cilUser, cilHome, cilLockLocked, cilCalendar, cilDescription } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
 
 // Images
@@ -14,7 +14,7 @@ import adv from '~/assets/images/adv/adv.jpg'
 import logoWhite from '~/assets/images/logo-white.png'
 import avatar from '~/assets/images/profile/pic1.jpg'
 
-const Header = () => {
+const Header = ({ isPost = false }) => {
   const [logged, setLogged] = useState(false)
   const navigateTo = useNavigate()
 
@@ -147,7 +147,13 @@ const Header = () => {
 
   return (
     <>
-      <header className="header-client rs-nav header-transparent">
+      <header
+        className={
+          isPost
+            ? 'header-client rs-nav header-transparent custom-background-color'
+            : 'header-client rs-nav header-transparent'
+        }
+      >
         <Sticky enabled={true} className="sticky-header navbar-expand-lg">
           <div className="menu-bar clearfix">
             <div className="container clearfix">
@@ -185,15 +191,24 @@ const Header = () => {
                         </CDropdownToggle>
                         <CDropdownMenu className="pt-0" placement="bottom-end">
                           <CDropdownItem onClick={() => navigateTo('/dashboard')}>
-                            <CIcon icon={cilUser} className="me-2" />
+                            <CIcon icon={cilHome} className="me-2" />
                             <Link to="/dashboard">Dashboard</Link>
                           </CDropdownItem>
                           <CDropdownItem onClick={() => navigateTo('/profile')}>
-                            <CIcon icon={cilSettings} className="me-2" />
-                            <Link to="/profile">Profile</Link>
+                            <CIcon icon={cilUser} className="me-2" />
+                            <Link to="/profile">User Profile</Link>
                           </CDropdownItem>
+                          <CDropdownItem onClick={() => navigateTo('/my-schedule')}>
+                            <CIcon icon={cilCalendar} className="me-2" />
+                            <Link to="/my-schedule">My Schedule</Link>
+                          </CDropdownItem>
+                          <CDropdownItem onClick={() => navigateTo('/new-post')}>
+                            <CIcon icon={cilDescription} className="me-2" />
+                            <Link to="/new-post">New Post</Link>
+                          </CDropdownItem>
+                          <CDropdownDivider />
                           <CDropdownItem onClick={() => navigateTo('/change-password')}>
-                            <CIcon icon={cilCreditCard} className="me-2" />
+                            <CIcon icon={cilLockLocked} className="me-2" />
                             <Link to="/change-password">Change Password</Link>
                           </CDropdownItem>
                           <CDropdownItem onClick={() => handleLogout()}>
@@ -220,7 +235,7 @@ const Header = () => {
                 </div>
               </div>
               {/* <!-- Navigation Menu ==== --> */}
-              <div className="menu-links navbar-collapse collapse justify-content-start" id="menuDropdown">
+              {/* <div className="menu-links navbar-collapse collapse justify-content-start" id="menuDropdown">
                 <div className="menu-logo">
                   <Link to="/">
                     <img src={logo} alt="" />
@@ -358,7 +373,7 @@ const Header = () => {
                     <i className="fa fa-linkedin"></i>
                   </Link>
                 </div>
-              </div>
+              </div> */}
               {/* <!-- Navigation Menu END ==== --> */}
             </div>
           </div>

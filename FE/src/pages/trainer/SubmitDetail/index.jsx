@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
 import { Breadcrumb, Button, Input, Select, Table, Typography } from 'antd'
@@ -11,6 +11,7 @@ import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 
 const SubmitDetail = () => {
+  const { id } = useParams()
   const { currentClass } = useSelector((state) => state.profile)
   const navigateTo = useNavigate()
   const [loading, setLoading] = useState(false)
@@ -22,26 +23,18 @@ const SubmitDetail = () => {
   }, [currentClass])
 
   const loadData = async () => {
-    setListSubmitDetail([
-      {
-        id: 1,
-      },
-      {
-        id: 2,
-      },
-      {
-        id: 3,
-      },
-      {
-        id: 4,
-      },
-      {
-        id: 5,
-      },
-      {
-        id: 6,
-      },
-    ])
+    setLoading(true)
+    await submitApi
+      .getSubmitDetail(id)
+      .then((response) => {
+        console.log(response)
+        // setListSubmitDetail(response)
+      })
+      .then(() => setLoading(false))
+      .catch((error) => {
+        setLoading(false)
+        console.log(error)
+      })
   }
 
   const columns = [
@@ -83,14 +76,16 @@ const SubmitDetail = () => {
         <div className="body flex-grow-1 px-3">
           <div className="col-lg-12 m-b30">
             <div className="row">
-              <div className="col-lg-12">
-                <div className="row">
-                  <div className="col-12 d-flex align-items-center">
-                    <Typography.Title level={3}>Submit Detail</Typography.Title>
-                  </div>
-                </div>
-              </div>
-              <div className="widget-box">
+              <Breadcrumb>
+                <Breadcrumb.Item>
+                  <Link to="/dashboard">Dashboard</Link>
+                </Breadcrumb.Item>
+                <Breadcrumb.Item>
+                  <Link to="/submit-list">Submit List</Link>
+                </Breadcrumb.Item>
+                <Breadcrumb.Item>Submit Detail</Breadcrumb.Item>
+              </Breadcrumb>
+              <div className="widget-box mt-3">
                 <div className="row">
                   <div className="col-lg-12">
                     <div className="row">

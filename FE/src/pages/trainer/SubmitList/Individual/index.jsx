@@ -145,7 +145,7 @@ const Individual = () => {
                 type="primary"
                 icon={<FormOutlined />}
                 onClick={() => {
-                  navigateTo(`/work-evaluation/${submit.submitId}`)
+                  navigateTo(`/assignment-evaluation/${submit.submitId}`)
                 }}
               ></Button>
             </Tooltip>
