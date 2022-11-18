@@ -40,6 +40,7 @@ import swp490.g23.onlinelearningsystem.entities.submit.repositories.criteria.Sub
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.criteria_entity.SubmitQuery;
 import swp490.g23.onlinelearningsystem.entities.submit.service.ISubmitService;
 import swp490.g23.onlinelearningsystem.entities.submit_work.domain.SubmitWork;
+import swp490.g23.onlinelearningsystem.entities.submit_work.domain.SubmitWorkKey;
 import swp490.g23.onlinelearningsystem.entities.submit_work.repositories.SubmitWorkRepository;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
@@ -434,6 +435,7 @@ public class SubmitService implements ISubmitService {
     public ResponseEntity<SubmitDetailFilterDTO> viewSubmit(Long id, String keyword,
             String filterTeam,
             String filterAssignee, String filterStatus, Long userId) {
+
         User user = userRepository.findById(userId).get();
         List<SubmitDetailDTO> list = new ArrayList<>();
         List<SubmitWorkStatusEntity> statusFilter = new ArrayList<>();
@@ -450,48 +452,22 @@ public class SubmitService implements ISubmitService {
                 SubmitWorkStatusEnum.class))) {
             statusFilter.add(new SubmitWorkStatusEntity(status));
         }
-        // User currentUser = userRepository.findById(user.getUserId()).get();
-        // if (!currentUser.equals(currentSubmit.getClassUser().getUser())) {
-        // throw new CustomException("not owner of this submit");
-        // }
-        // List<SubmitWork> submitWorks = currentSubmit.getSubmitWorks();
+
         for (SubmitWork submitWork : submitList) {
+            SubmitWorkKey key = new SubmitWorkKey();
             if (currentSubmit.getGroup() == null) {
                 SubmitDetailDTO dto = new SubmitDetailDTO();
-                dto.setId(currentSubmit.getSubmitId());
-                dto.setAssignee(currentSubmit.getClassUser().getUser().getAccountName());
-                dto.setMilestone(submitWork.getMilestone().getTitle());
-                dto.setRequirement(submitWork.getWork().getTitle());
-                dto.setStatus(submitWork.getStatus());
-                if (!submitWork.getWorkEvals().isEmpty()) {
-                    if (submitWork.getWorkEvals().get(0).getNewWorkEval() != 0) {
-                        dto.setGrade(submitWork.getWorkEvals().get(0).getNewWorkEval());
-                    } else {
-                        dto.setGrade(submitWork.getWorkEvals().get(0).getWorkEval());
-                    }
-                } else {
-                    dto.setGrade(null);
-                }
+                key.setIssueId(submitWork.getWork().getIssueId());
+                key.setSubmitId(submitWork.getSubmit().getSubmitId());
+                dto.setSubmitWorkId(key);
                 list.add(dto);
                 assigneeList.add(currentSubmit.getClassUser().getUser().getAccountName());
             } else {
-                // List<SubmitWork> submits =
-                // submitWorkRepository.getByGroupAndMilestone(currentSubmit.getGroup(),
-                // currentSubmit.getMilestone());
-                SubmitDetailDTO dto = new SubmitDetailDTO();
-                dto.setId(submitWork.getSubmit().getSubmitId());
-                dto.setAssignee(submitWork.getSubmit().getClassUser().getUser().getAccountName());
-                dto.setMilestone(submitWork.getMilestone().getTitle());
-                dto.setRequirement(submitWork.getWork().getTitle());
-                dto.setStatus(submitWork.getStatus());
+                SubmitDetailDTO dto = toDetail(submitWork);
                 dto.setTeam(submitWork.getSubmit().getGroup().getGroupCode());
-                if (!submitWork.getWorkEvals().isEmpty()) {
-                    if (submitWork.getWorkEvals().get(0).getNewWorkEval() != 0) {
-                        dto.setGrade(submitWork.getWorkEvals().get(0).getNewWorkEval());
-                    } else {
-                        dto.setGrade(submitWork.getWorkEvals().get(0).getWorkEval());
-                    }
-                }
+                key.setIssueId(submitWork.getWork().getIssueId());
+                key.setSubmitId(submitWork.getSubmit().getSubmitId());
+                dto.setSubmitWorkId(key);
                 list.add(dto);
                 if (!assigneeList.contains(submitWork.getSubmit().getClassUser().getUser().getAccountName())) {
                     assigneeList.add(submitWork.getSubmit().getClassUser().getUser().getAccountName());
@@ -501,11 +477,31 @@ public class SubmitService implements ISubmitService {
                 }
             }
         }
+
         SubmitDetailFilterDTO filterDTO = new SubmitDetailFilterDTO();
         filterDTO.setListResult(list);
         filterDTO.setStatusFilter(statusFilter);
         filterDTO.setAssigneeFilter(assigneeList);
         filterDTO.setTeamFilter(teamList);
         return ResponseEntity.ok(filterDTO);
+    }
+
+    public SubmitDetailDTO toDetail(SubmitWork submitWork) {
+        SubmitDetailDTO dto = new SubmitDetailDTO();
+        dto.setId(submitWork.getSubmit().getSubmitId());
+        dto.setAssignee(submitWork.getSubmit().getClassUser().getUser().getAccountName());
+        dto.setMilestone(submitWork.getMilestone().getTitle());
+        dto.setRequirement(submitWork.getWork().getTitle());
+        dto.setStatus(submitWork.getStatus());
+        if (!submitWork.getWorkEvals().isEmpty()) {
+            if (submitWork.getWorkEvals().get(0).getNewWorkEval() != 0) {
+                dto.setGrade(submitWork.getWorkEvals().get(0).getNewWorkEval());
+            } else {
+                dto.setGrade(submitWork.getWorkEvals().get(0).getWorkEval());
+            }
+        } else {
+            dto.setGrade(null);
+        }
+        return dto;
     }
 }
