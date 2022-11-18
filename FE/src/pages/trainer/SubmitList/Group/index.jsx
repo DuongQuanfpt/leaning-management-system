@@ -4,7 +4,7 @@ import { Button, Input, Pagination, Select, Space, Table, Tag, Typography } from
 import submitApi from '~/api/submitApi'
 import { useSelector } from 'react-redux'
 import Tooltip from 'antd/es/tooltip'
-import { CrownTwoTone, EyeOutlined, FormOutlined, UploadOutlined } from '@ant-design/icons'
+import { CrownTwoTone, EyeOutlined, ForkOutlined, FormOutlined, UploadOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 
 const Group = () => {
@@ -182,6 +182,15 @@ const Group = () => {
               }}
             ></Button>
           </Tooltip>
+          {/* <Tooltip title="Assignment Evaluation" placement="top">
+            <Button
+              shape="circle"
+              icon={<ForkOutlined />}
+              onClick={() => {
+                navigateTo(`/submit-detail/${submit.submitId}`)
+              }}
+            ></Button>
+          </Tooltip> */}
         </Space>
       ),
     },

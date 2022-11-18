@@ -28,7 +28,7 @@ const SubmitDetail = () => {
       .getSubmitDetail(id)
       .then((response) => {
         console.log(response)
-        // setListSubmitDetail(response)
+        setListSubmitDetail(response.listResult)
       })
       .then(() => setLoading(false))
       .catch((error) => {
@@ -39,11 +39,12 @@ const SubmitDetail = () => {
 
   const columns = [
     { title: '#', dataIndex: 'id', width: '6%' },
-    { title: 'Milestone', dataIndex: 'id', width: '21%' },
-    { title: 'Requirement', dataIndex: 'id', width: '21%' },
-    { title: 'Assignee', dataIndex: 'id', width: '11%' },
-    { title: 'Status', dataIndex: 'id', width: '11%' },
-    { title: 'WP', dataIndex: 'id', width: '6%' },
+    { title: 'Milestone', dataIndex: 'milestone', width: '18%' },
+    { title: 'Group', dataIndex: 'team', width: '6%' },
+    { title: 'Requirement', dataIndex: 'requirement', width: '18%' },
+    { title: 'Assignee', dataIndex: 'assignee', width: '11%' },
+    { title: 'Status', dataIndex: 'status', width: '11%' },
+    { title: 'WP', dataIndex: 'grade', width: '6%' },
     {
       title: 'Actions',
       width: '12%',

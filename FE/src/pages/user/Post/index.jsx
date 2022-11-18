@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import parse from 'html-react-parser'
 
-import { Typography, Button, Space, Skeleton, Image, Card, Layout } from 'antd'
+import { Typography, Button, Space, Skeleton, Image, Card } from 'antd'
 
 import postApi from '~/api/postApi'
 import Header from '~/components/Homepage/Header'
@@ -74,7 +74,7 @@ const Post = () => {
   }
 
   return (
-    <div className="d-flex flex-column ">
+    <div className="d-flex flex-column" style={{ minHeight: '100vh' }}>
       <Header isPost={true} />
       <div className="page-content bg-white" style={{ width: '100vw' }}>
         <div className="body flex-grow-1 px-3 py-3" style={{ backgroundColor: '#ebedef' }}>
@@ -96,20 +96,22 @@ const Post = () => {
                       </Typography.Title>
                     </Skeleton>
                   </div>
-                  <div className="col-lg-6 mb-4 d-flex justify-content-start">
-                    <Typography.Text
-                      type="primary"
-                      style={{ fontSize: '12px' }}
-                    >{`${post.authorFullName} (${post.authorName}, ${post.authorMobile})`}</Typography.Text>
-                    <Typography.Text type="secondary" className="ml-2" style={{ fontSize: '12px' }}>
-                      {post.viewCount} views
-                    </Typography.Text>
-                  </div>
-                  <div className="col-lg-6 mb-4 d-flex justify-content-end">
-                    <Typography.Text
-                      type="secondary"
-                      style={{ fontSize: '12px' }}
-                    >{`${post.lastUpdate}`}</Typography.Text>
+                  <div className="col-lg-12 d-flex">
+                    <div className="col-lg-6 mb-4 d-flex justify-content-start p-0">
+                      <Typography.Text
+                        type="primary"
+                        style={{ fontSize: '12px' }}
+                      >{`${post.categoryName} ${post.authorFullName} (${post.authorName}, ${post.authorMobile})`}</Typography.Text>
+                      <Typography.Text type="secondary" className="ml-2" style={{ fontSize: '12px' }}>
+                        {post.viewCount} views
+                      </Typography.Text>
+                    </div>
+                    <div className="col-lg-6 mb-4 d-flex justify-content-end">
+                      <Typography.Text
+                        type="secondary"
+                        style={{ fontSize: '12px' }}
+                      >{`${post.lastUpdate}`}</Typography.Text>
+                    </div>
                   </div>
                   <div className="col-lg-12 mb-3">
                     <Typography.Text type="secondary" italic>{`${post.excerpt}`}</Typography.Text>
