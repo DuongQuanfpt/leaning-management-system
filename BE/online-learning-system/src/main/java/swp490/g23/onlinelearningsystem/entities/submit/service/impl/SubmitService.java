@@ -371,6 +371,7 @@ public class SubmitService implements ISubmitService {
                                 if (sk.getSubmit().equals(s)) {
                                     requirementFilter.setSubmitted(true);
                                     requirementFilter.setAssignee(s.getClassUser().getUser().getAccountName());
+                                    requirementFilter.setSubmitStatus(sk.getStatus().toString());
                                     break;
                                 }
                             }
@@ -378,6 +379,7 @@ public class SubmitService implements ISubmitService {
                             if (sk.getSubmit().equals(submit)) {
                                 requirementFilter.setSubmitted(true);
                                 requirementFilter.setAssignee(submit.getClassUser().getUser().getAccountName());
+                                requirementFilter.setSubmitStatus(sk.getStatus().toString());
                             }
                         }
 

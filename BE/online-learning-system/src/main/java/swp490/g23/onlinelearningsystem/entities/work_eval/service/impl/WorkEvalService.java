@@ -142,6 +142,7 @@ public class WorkEvalService implements IWorkEvalService {
         if(requestDTO.getComment()!= null){
             submitWork.setRejectReason(requestDTO.getComment());
         }
+        
         submitWork.setStatus(SubmitWorkStatusEnum.Rejected);
         workRepository.save(submitWork);
         return ResponseEntity.ok("rejected");

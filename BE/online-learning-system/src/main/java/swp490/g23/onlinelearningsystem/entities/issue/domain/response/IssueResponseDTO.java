@@ -40,4 +40,6 @@ public class IssueResponseDTO {
     String createdDate;
 
     String modifiedDate;
+
+    boolean submitted;
 }

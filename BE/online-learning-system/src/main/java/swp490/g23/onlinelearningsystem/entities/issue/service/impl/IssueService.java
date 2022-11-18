@@ -235,6 +235,11 @@ public class IssueService implements IIssueService {
         dto.setIssueId(issue.getIssueId());
         dto.setTitle(issue.getTitle());
         dto.setClassCode(issue.getClasses().getCode());
+        if(issue.getSubmitWorks().isEmpty()){
+            dto.setSubmitted(false);
+        } else {
+            dto.setSubmitted(true);
+        }
 
         if (issue.getType() != null) {
             dto.setType(issue.getType().getSettingTitle());
@@ -908,8 +913,12 @@ public class IssueService implements IIssueService {
 
             Milestone milestone = milestoneRepository.findById(issueDTO.getMilestoneId())
                     .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
-            issue.setMilestone(milestone);
+    
+            if(issue.getMilestone().equals(milestone)){
+                continue;
+            }
 
+            issue.setMilestone(milestone);
             if(issue.getSubmitWorks() != null) {
                 for (SubmitWork submitWork : issue.getSubmitWorks()) {
                     submitWorksNew.add(submitWork);
