@@ -33,6 +33,16 @@ const submitApi = {
     const url = `/api/issue-multichange`
     return axiosClient.put(url, params, header)
   },
+
+  getSubmitDetail: (submitId) => {
+    const url = `/api/submit-detail/${submitId}`
+    return axiosClient.get(url, header)
+  },
+
+  getWorkEval: (submitId, workId) => {
+    const url = `api/work-eval/${submitId}/${workId}`
+    return axiosClient.get(url, header)
+  },
 }
 
 export default submitApi

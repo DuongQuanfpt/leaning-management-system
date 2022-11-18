@@ -28,15 +28,15 @@ public class SubmitDetailCriteria {
         }
 
         StringBuilder query = new StringBuilder(
-                "SELECT s FROM SubmitWork s JOIN s.submit as su JOIN su.classUser as cu WHERE 1=1");
+                "SELECT s FROM SubmitWork s JOIN s.submit as su JOIN su.classUser as cu JOIN cu.classes as c JOIN c.userTrainer as t WHERE 1=1");
 
         if (roles.contains("ROLE_TRAINER") && roles.contains("ROLE_TRAINEE")) {
-            query.append(" AND cu.classes.userTrainer.accountName = '" + currentUser.getAccountName()
+            query.append(" AND t.accountName = '" + currentUser.getAccountName()
                     + "' OR cu.user.accountName = '"
                     + currentUser.getAccountName() + "'");
         } else {
             if (roles.contains("ROLE_TRAINER")) {
-                query.append(" AND cu.classes.userTrainer.accountName = '" + currentUser.getAccountName() + "'");
+                query.append(" AND t.accountName = '" + currentUser.getAccountName() + "'");
             }
             if (roles.contains("ROLE_TRAINEE")) {
                 query.append(" AND cu.user.accountName = '" + currentUser.getAccountName() + "'");
