@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
-import swp490.g23.onlinelearningsystem.entities.schedule.domain.Schedule;
 
 public interface ClassRepositories extends JpaRepository<Classes, Long> {
 

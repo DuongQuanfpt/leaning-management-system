@@ -1,7 +1,6 @@
 package swp490.g23.onlinelearningsystem.entities.submit.controller;
 
 import java.util.Base64;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +23,7 @@ import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.NewSubmitFilter;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.SubmitFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.request.SubmitRequirementWrapper;
-import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitDetailDTO;
+import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitDetailFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitPaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.service.impl.SubmitService;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
@@ -89,7 +88,12 @@ public class SubmitController {
     }
 
     @GetMapping(value = "/submit-detail/{id}")
-    public ResponseEntity<List<SubmitDetailDTO>> viewDetail(@PathVariable("id") Long id) {
-        return submitService.viewSubmit(id);
+    public ResponseEntity<SubmitDetailFilterDTO> viewDetail(@PathVariable("id") Long id,
+            @RequestParam(name = "q", required = false) String keyword,
+            @RequestParam(name = "filterTeam", required = false) String teamFilter,
+            @RequestParam(name = "filterAssignee", required = false) String assigneeFilter,
+            @RequestParam(name = "filterStatus", required = false) String statusFiler,
+            @AuthenticationPrincipal User user) {
+        return submitService.viewSubmit(id, keyword, teamFilter, assigneeFilter, statusFiler, user);
     }
 }

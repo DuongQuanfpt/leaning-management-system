@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import swp490.g23.onlinelearningsystem.entities.attendance.domain.request.AttendanceDetailRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.attendance.domain.request.AttendanceDetailWrapper;
-import swp490.g23.onlinelearningsystem.entities.attendance.domain.request.AttendanceRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.attendance.domain.response.AttendanceDetailResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.attendance.domain.response.AttendanceResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.attendance.domain.response.ScheduleAttendanceDTO;
