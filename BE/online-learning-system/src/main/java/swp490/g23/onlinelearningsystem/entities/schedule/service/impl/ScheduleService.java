@@ -256,9 +256,7 @@ public class ScheduleService implements IScheduleService {
             throw new CustomException("schedule doesn't exist!");
         }
         Setting setting = settingRepositories.findBySettingValue(dto.getRoom());
-        String clazz = schedule.getClasses().getCode();
         String slot = dto.getSlot();
-        ClassSetting classSetting = classSettingRepository.findByValueAndClass(slot, clazz);
         LocalDate dateNow = LocalDate.now();
         LocalTime timeNow = LocalTime.now();
         LocalDate requestDate = LocalDate.parse(dto.getDate());

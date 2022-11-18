@@ -1,6 +1,5 @@
 package swp490.g23.onlinelearningsystem.entities.work_eval.domain;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
