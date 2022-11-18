@@ -22,7 +22,7 @@ public class SubmitDetailDTO {
 
     private String team;
 
-    private long grade;
+    private Long grade;
 
     private SubmitWorkStatusEnum status;
 }
