@@ -6,9 +6,13 @@ public interface IFileService {
     
     String saveImg(String imgBase64 ,  String imgName) ;
 
+    String saveThumbnail(String thumbnailBase64 ,  String imgName) ;
+
     String saveSubmit(MultipartFile file , String fileName);
 
     byte[] dowloadFile(String fileName);
 
-    void deteleSubmit(String fileName);
+    void deteleSubmit(String Url);
+
+    void deteleThumbnail(String Url);
 }

@@ -3,18 +3,26 @@ import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 import postApi from '~/api/postApi'
-import { Card, Image, Space, Typography } from 'antd'
+import { Button, Card, Image, Pagination, Space, Typography } from 'antd'
 import { Link, useNavigate } from 'react-router-dom'
 import moment from 'moment'
+import { useSelector } from 'react-redux'
 
 const AdminDashboard = () => {
+  let ITEM_PER_PAGE = 10
   const navigateTo = useNavigate()
+  const { roles } = useSelector((state) => state.profile)
   const [listPost, setListPost] = useState([])
   const [loading, setLoading] = useState(false)
+  const [paginate, setPaginate] = useState({
+    totalItem: 0,
+    currentPage: 1,
+  })
 
   useEffect(() => {
-    loadData()
-  }, [])
+    loadData(paginate.currentPage)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ITEM_PER_PAGE])
 
   const loadData = async () => {
     setLoading(true)
@@ -27,6 +35,10 @@ const AdminDashboard = () => {
       .then((response) => {
         console.log(response)
         setListPost(response)
+        setPaginate({
+          totalItem: response.totalItem,
+          currentPage: response.currentPage,
+        })
       })
       .then(() => setLoading(false))
       .catch((error) => {
@@ -43,9 +55,19 @@ const AdminDashboard = () => {
           <div className="col-lg-12 m-b30">
             <div className="row">
               <div className="col-lg-12">
-                <Typography.Title level={4} className="mb-3">
-                  Trainee Blogs
-                </Typography.Title>
+                <Space>
+                  <Typography.Title level={4} className="mb-3">
+                    Notice Board
+                  </Typography.Title>
+                </Space>
+                {roles.includes('trainer') && (
+                  <Space className="ml-3">
+                    <Button type="primary" onClick={() => navigateTo(`/new-notice`)}>
+                      Create Notice
+                    </Button>
+                  </Space>
+                )}
+
                 {listPost?.listResult?.map((post) => (
                   <Card className="w-100 mb-3" loading={loading}>
                     <Card.Meta
@@ -90,6 +112,20 @@ const AdminDashboard = () => {
                     />
                   </Card>
                 ))}
+                <div className="col-lg-12 d-flex justify-content-end">
+                  <Pagination
+                    total={paginate?.totalItem}
+                    current={paginate.currentPage}
+                    onChange={(pageNumber) => {
+                      setPaginate((prev) => ({ ...prev, currentPage: pageNumber }))
+                    }}
+                    showSizeChanger
+                    onShowSizeChange={(current, pageSize) => {
+                      ITEM_PER_PAGE = pageSize
+                      loadData(paginate.currentPage)
+                    }}
+                  />
+                </div>
               </div>
             </div>
           </div>
