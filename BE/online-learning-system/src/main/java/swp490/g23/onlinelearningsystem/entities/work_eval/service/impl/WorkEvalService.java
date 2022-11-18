@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import swp490.g23.onlinelearningsystem.entities.subject_setting.domain.SubjectSetting;
 import swp490.g23.onlinelearningsystem.entities.subject_setting.repositories.SubjectSettingRepository;
+import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
+import swp490.g23.onlinelearningsystem.entities.submit.repositories.SubmitRepository;
 import swp490.g23.onlinelearningsystem.entities.submit_work.domain.SubmitWork;
 import swp490.g23.onlinelearningsystem.entities.submit_work.repositories.SubmitWorkRepository;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
@@ -19,6 +21,7 @@ import swp490.g23.onlinelearningsystem.entities.work_eval.domain.response.EvalSe
 import swp490.g23.onlinelearningsystem.entities.work_eval.repositories.WorkEvalRepository;
 import swp490.g23.onlinelearningsystem.entities.work_eval.service.IWorkEvalService;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
+import swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum;
 import swp490.g23.onlinelearningsystem.util.enumutil.SubmitWorkStatusEnum;
 
 @Service
@@ -28,6 +31,9 @@ public class WorkEvalService implements IWorkEvalService {
 
     @Autowired
     private SubjectSettingRepository subjectSettingRepository;
+
+    @Autowired
+    private SubmitRepository submitRepository;
 
     @Autowired
     private WorkEvalRepository workEvalRepository;
@@ -127,7 +133,12 @@ public class WorkEvalService implements IWorkEvalService {
         }
 
         workEvalRepository.save(eval);
+
         submitWork.setStatus(SubmitWorkStatusEnum.Evaluated);
+        Submit submit = submitWork.getSubmit();
+        submit.setStatus(SubmitStatusEnum.Evaluated);
+
+        submitRepository.save(submit);
         workRepository.save(submitWork);
         return ResponseEntity.ok("evaluated");
     }
@@ -143,7 +154,12 @@ public class WorkEvalService implements IWorkEvalService {
             submitWork.setRejectReason(requestDTO.getComment());
         }
         
-        submitWork.setStatus(SubmitWorkStatusEnum.Rejected);
+        if(submitWork.getStatus() == SubmitWorkStatusEnum.Rejected){
+            submitWork.setStatus(SubmitWorkStatusEnum.Submitted);
+        } else {
+            submitWork.setStatus(SubmitWorkStatusEnum.Rejected);
+        }
+      
         workRepository.save(submitWork);
         return ResponseEntity.ok("rejected");
     }

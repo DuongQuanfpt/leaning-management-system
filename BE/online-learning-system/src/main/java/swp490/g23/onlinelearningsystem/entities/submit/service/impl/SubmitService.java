@@ -372,6 +372,11 @@ public class SubmitService implements ISubmitService {
                                     requirementFilter.setSubmitted(true);
                                     requirementFilter.setAssignee(s.getClassUser().getUser().getAccountName());
                                     requirementFilter.setSubmitStatus(sk.getStatus().toString());
+                                    if(sk.getStatus() == SubmitWorkStatusEnum.Rejected){
+                                        requirementFilter.setComment(sk.getRejectReason());
+                                    } else {
+                                        requirementFilter.setComment(sk.getWorkEvals().get(0).getComment());
+                                    }
                                     break;
                                 }
                             }

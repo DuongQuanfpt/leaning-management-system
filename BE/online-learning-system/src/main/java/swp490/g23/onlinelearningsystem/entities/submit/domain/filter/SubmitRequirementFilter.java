@@ -16,6 +16,7 @@ public class SubmitRequirementFilter {
     String title;
     String status;
     String submitStatus;
+    String comment;
     String milestone;
     String assignee;
     boolean isSubmitted;
