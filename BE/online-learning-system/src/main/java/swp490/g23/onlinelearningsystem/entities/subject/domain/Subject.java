@@ -60,7 +60,7 @@ public class Subject extends BaseEntity {
     @OneToMany(mappedBy = "subject")
 	private List<Classes> classes;
 
-    @OneToMany(mappedBy = "type")
+    @OneToMany(mappedBy = "subject")
     private List<SubjectSetting> settings ;
 
 

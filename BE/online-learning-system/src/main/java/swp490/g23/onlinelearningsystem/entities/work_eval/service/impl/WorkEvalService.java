@@ -8,10 +8,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import swp490.g23.onlinelearningsystem.entities.subject_setting.domain.SubjectSetting;
+import swp490.g23.onlinelearningsystem.entities.subject_setting.repositories.SubjectSettingRepository;
 import swp490.g23.onlinelearningsystem.entities.submit_work.domain.SubmitWork;
 import swp490.g23.onlinelearningsystem.entities.submit_work.repositories.SubmitWorkRepository;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.work_eval.domain.WorkEval;
+import swp490.g23.onlinelearningsystem.entities.work_eval.domain.request.EvalRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.work_eval.domain.response.EvalResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.work_eval.domain.response.EvalSettingDTO;
 import swp490.g23.onlinelearningsystem.entities.work_eval.service.IWorkEvalService;
@@ -21,6 +23,9 @@ import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomExcep
 public class WorkEvalService implements IWorkEvalService {
     @Autowired
     private SubmitWorkRepository workRepository;
+
+    @Autowired
+    private SubjectSettingRepository subjectSettingRepository;
 
     @Override
     public ResponseEntity<EvalResponseDTO> getWorkEval(User user, Long submitId, Long workId) {
@@ -48,13 +53,14 @@ public class WorkEvalService implements IWorkEvalService {
 
         List<EvalSettingDTO> complexityDtos = new ArrayList<>();
         List<EvalSettingDTO> qualityDtos = new ArrayList<>();
+        
         for (SubjectSetting setting  : submitWork.getSubmit().getMilestone().getAssignment().getForSubject().getSettings()) {
             if(setting.getType().getSettingValue().equals("TYPE_COMPLEXITY")){
-                complexityDtos.add(null);
+                complexityDtos.add(toSettingDTO(setting));
             }
-
+         
             if(setting.getType().getSettingValue().equals("TYPE_QUALITY")){
-                qualityDtos.add(null);
+                qualityDtos.add(toSettingDTO(setting));
             }
         }
        
@@ -78,7 +84,30 @@ public class WorkEvalService implements IWorkEvalService {
         EvalSettingDTO evalSettingDTO = new EvalSettingDTO();
         evalSettingDTO.setTitle(subjectSetting.getSettingTitle());
         evalSettingDTO.setId(subjectSetting.getSubjectSettingId());
+        evalSettingDTO.setValue(Long.parseLong(subjectSetting.getSettingValue()));
         return evalSettingDTO;
+    }
+
+    @Override
+    public ResponseEntity<String> workEval(User user, Long submitId, Long workId , EvalRequestDTO requestDTO) {
+        SubmitWork submitWork = workRepository.getBySubmitAndWork(submitId, workId);
+        if(submitWork == null) {
+            throw new CustomException("submit work doesnt exist");
+        }
+
+        SubjectSetting complexity = subjectSettingRepository.findById(requestDTO.getComplexityId()).orElseThrow();
+        SubjectSetting quality = subjectSettingRepository.findById(requestDTO.getQualityId()).orElseThrow();
+
+        WorkEval eval = new WorkEval();
+        eval.setSubmitWork(submitWork);
+        eval.setComplexity(null);
+        eval.setQuality(null);
+        eval.setWorkEval(0);
+        if(requestDTO.getComment() != null){
+            eval.setComment(requestDTO.getComment());
+        }
+        
+        return ResponseEntity.ok("evaluated");
     }
 
 }

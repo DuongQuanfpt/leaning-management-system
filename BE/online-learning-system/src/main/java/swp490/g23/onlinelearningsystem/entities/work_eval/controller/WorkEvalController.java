@@ -7,11 +7,13 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
+import swp490.g23.onlinelearningsystem.entities.work_eval.domain.request.EvalRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.work_eval.domain.response.EvalResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.work_eval.service.impl.WorkEvalService;
 
@@ -31,10 +33,12 @@ public class WorkEvalController {
         return evalService.getWorkEval(user, submitId, workId);
     }
 
-    @PutMapping(value = "/work-eval/{submitWorkId}")
-    public ResponseEntity<?> workEvaluation(@PathVariable("submitId") Long submitId,
+    @PutMapping(value = "/work-eval/{submitId}/{workId}")
+    public ResponseEntity<String> workEvaluation(@PathVariable("submitId") Long submitId,
+            @PathVariable("workId") Long workId,
+            @RequestBody EvalRequestDTO requestDTO,
             @AuthenticationPrincipal User user) {
 
-        return null;
+        return evalService.workEval(user, submitId, workId);
     }
 }
