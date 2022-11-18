@@ -9,6 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import swp490.g23.onlinelearningsystem.entities.post.domain.Post;
 
 public interface PostRepository extends JpaRepository<Post,Long> {
-    @Query("SELECT p FROM Post p ORDER BY p.viewCount DESC")
+    @Query("SELECT p FROM Post p WHERE p.category IS NOT NULL ORDER BY p.viewCount DESC")
     List<Post> getTopViewPost(Pageable pageable);
 }

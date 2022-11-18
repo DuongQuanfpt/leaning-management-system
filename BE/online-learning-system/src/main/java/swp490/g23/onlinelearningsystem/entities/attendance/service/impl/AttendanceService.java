@@ -29,7 +29,6 @@ import swp490.g23.onlinelearningsystem.entities.attendance.repositories.Attendan
 import swp490.g23.onlinelearningsystem.entities.attendance.repositories.criteria.AttendanceCriteria;
 import swp490.g23.onlinelearningsystem.entities.attendance.service.IAttendanceService;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.ClassUser;
-import swp490.g23.onlinelearningsystem.entities.class_user.repositories.ClassUserRepositories;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.classes.repositories.ClassRepositories;
 import swp490.g23.onlinelearningsystem.entities.schedule.domain.Schedule;
@@ -47,9 +46,6 @@ public class AttendanceService implements IAttendanceService {
 
     @Autowired
     private AttendanceRepositories attendanceRepositories;
-
-    @Autowired
-    private ClassUserRepositories classUserRepositories;
 
     @Autowired
     private ClassRepositories classRepositories;

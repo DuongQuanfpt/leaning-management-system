@@ -69,7 +69,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/contact-subjects").permitAll()
                 .antMatchers("/api/contact-add").permitAll()
                 .antMatchers("/api/post").permitAll()
-                .antMatchers("/api/post-view").permitAll()
+                .antMatchers("/api/post-view/**").permitAll()
                 .antMatchers("/error").permitAll()
                 .antMatchers("/user/forgot-processing").permitAll()
                 .antMatchers("/auth/register").permitAll()

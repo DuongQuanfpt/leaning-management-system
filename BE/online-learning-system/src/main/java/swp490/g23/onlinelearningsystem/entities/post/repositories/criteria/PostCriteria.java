@@ -33,6 +33,8 @@ public class PostCriteria {
             query.append(" AND p.category IS NULL");
         }
 
+        query.append("  ORDER BY p.modifiedDate DESC");
+
         StringBuilder queryCount = new StringBuilder(query.toString().replaceAll("SELECT p", "SELECT COUNT(*)"));
         TypedQuery<Long> countQuery = em.createQuery(queryCount.toString(), Long.class);
         TypedQuery<Post> typedQuery = em.createQuery(query.toString(), Post.class);
