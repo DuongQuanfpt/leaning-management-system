@@ -165,6 +165,10 @@ public class PostService implements IPostService {
 
     @Override
     public ResponseEntity<String> editPost(PostRequestDTO requestDTO, User user, Long postId) {
+        if (user == null) {
+            throw new CustomException("must login to edit post");
+        }
+
         User author = userRepository.findById(user.getUserId())
                 .orElseThrow(() -> new CustomException("user doesnt exist"));
 
@@ -192,7 +196,7 @@ public class PostService implements IPostService {
     }
 
     @Override
-    public ResponseEntity< List<PostCategoryDTO>> uploadFilter() {
+    public ResponseEntity<List<PostCategoryDTO>> uploadFilter() {
         List<PostCategoryDTO> categoryFilter = new ArrayList<>();
         List<Setting> list = settingRepositories.getPostCategory();
         for (Setting category : list) {

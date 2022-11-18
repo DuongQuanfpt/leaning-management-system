@@ -30,6 +30,8 @@ public class WorkEval {
 
     private String comment;
 
+    private String newComment;
+
     private long workEval;
 
     private long newWorkEval;

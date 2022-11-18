@@ -32,4 +32,10 @@ public class EvalResponseDTO {
 
     EvalSettingDTO currentQuality;
 
+    Long newWorkPoint;
+
+    EvalSettingDTO newComplexity;
+
+    EvalSettingDTO newQuality;
+
 }

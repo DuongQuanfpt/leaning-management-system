@@ -6,6 +6,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,12 +34,21 @@ public class WorkEvalController {
         return evalService.getWorkEval(user, submitId, workId);
     }
 
-    @PutMapping(value = "/work-eval/{submitId}/{workId}")
+    @PostMapping(value = "/work-eval/{submitId}/{workId}")
     public ResponseEntity<String> workEvaluation(@PathVariable("submitId") Long submitId,
             @PathVariable("workId") Long workId,
             @RequestBody EvalRequestDTO requestDTO,
             @AuthenticationPrincipal User user) {
 
-        return evalService.workEval(user, submitId, workId);
+        return evalService.workEval(user, submitId, workId ,requestDTO);
+    }
+
+    @PutMapping(value = "/work-eval/{submitId}/{workId}")
+    public ResponseEntity<String> workReject(@PathVariable("submitId") Long submitId,
+            @PathVariable("workId") Long workId,
+            @RequestBody EvalRequestDTO requestDTO,
+            @AuthenticationPrincipal User user) {
+
+        return evalService.workReject(user, submitId, workId ,requestDTO);
     }
 }
