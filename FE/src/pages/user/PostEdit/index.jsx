@@ -228,7 +228,7 @@ const PostEdit = () => {
                   <Typography.Text strong>Excerpt</Typography.Text>
                   <Input.TextArea
                     showCount
-                    maxLength={200}
+                    maxLength={300}
                     value={postDetail.excerpt}
                     onChange={(e) => setPostDetail((prev) => ({ ...prev, excerpt: e.target.value }))}
                   />

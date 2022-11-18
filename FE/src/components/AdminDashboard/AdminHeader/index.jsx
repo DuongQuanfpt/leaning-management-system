@@ -69,7 +69,7 @@ const AdminHeader = () => {
         <CHeaderBrand className="mx-auto d-md-none" to="/">
           <CIcon icon={logo} height={48} alt="Logo" />
         </CHeaderBrand>
-        <CHeaderNav className="d-none d-md-flex me-auto ml-3" style={{ width: '700px' }}>
+        <CHeaderNav className="d-none d-md-flex me-auto ml-3" style={{ width: '600px' }}>
           <CNavItem>
             <div className="menu-logo" style={{ height: '50px' }}>
               <Link to="/dashboard">

@@ -93,7 +93,7 @@ const AdminDashboard = () => {
                               style={{ color: 'black' }}
                               className="p-0 m-0"
                               level={5}
-                              onClick={() => navigateTo(`/post/${post.postId}`)}
+                              onClick={() => navigateTo(`/notice/${post.postId}`)}
                             >
                               {post.postTitle}
                             </Typography.Link>
