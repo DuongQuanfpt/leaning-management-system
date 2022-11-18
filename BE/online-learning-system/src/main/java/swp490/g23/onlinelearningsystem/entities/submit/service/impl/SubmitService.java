@@ -465,11 +465,21 @@ public class SubmitService implements ISubmitService {
                 dto.setMilestone(submitWork.getMilestone().getTitle());
                 dto.setRequirement(submitWork.getWork().getTitle());
                 dto.setStatus(submitWork.getStatus());
+                if (!submitWork.getWorkEvals().isEmpty()) {
+                    if (submitWork.getWorkEvals().get(0).getNewWorkEval() != 0) {
+                        dto.setGrade(submitWork.getWorkEvals().get(0).getNewWorkEval());
+                    } else {
+                        dto.setGrade(submitWork.getWorkEvals().get(0).getWorkEval());
+                    }
+                } else {
+                    dto.setGrade(null);
+                }
                 list.add(dto);
                 assigneeList.add(currentSubmit.getClassUser().getUser().getAccountName());
             } else {
-                // List<SubmitWork> submits = submitWorkRepository.getByGroupAndMilestone(currentSubmit.getGroup(),
-                //         currentSubmit.getMilestone());
+                // List<SubmitWork> submits =
+                // submitWorkRepository.getByGroupAndMilestone(currentSubmit.getGroup(),
+                // currentSubmit.getMilestone());
                 SubmitDetailDTO dto = new SubmitDetailDTO();
                 dto.setId(submitWork.getSubmit().getSubmitId());
                 dto.setAssignee(submitWork.getSubmit().getClassUser().getUser().getAccountName());
@@ -477,6 +487,13 @@ public class SubmitService implements ISubmitService {
                 dto.setRequirement(submitWork.getWork().getTitle());
                 dto.setStatus(submitWork.getStatus());
                 dto.setTeam(submitWork.getSubmit().getGroup().getGroupCode());
+                if (!submitWork.getWorkEvals().isEmpty()) {
+                    if (submitWork.getWorkEvals().get(0).getNewWorkEval() != 0) {
+                        dto.setGrade(submitWork.getWorkEvals().get(0).getNewWorkEval());
+                    } else {
+                        dto.setGrade(submitWork.getWorkEvals().get(0).getWorkEval());
+                    }
+                }
                 list.add(dto);
                 if (!assigneeList.contains(submitWork.getSubmit().getClassUser().getUser().getAccountName())) {
                     assigneeList.add(submitWork.getSubmit().getClassUser().getUser().getAccountName());

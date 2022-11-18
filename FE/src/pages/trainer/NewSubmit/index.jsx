@@ -299,6 +299,7 @@ const NewSubmit = () => {
             const cloneRequirementList = [...listSubmitFilter.requirement]
             cloneRequirementList[positionChange].assignee = value
             setListSubmitFilter((prev) => ({ ...prev, requirement: cloneRequirementList }))
+            console.log(cloneRequirementList[positionChange])
           }}
           onClear={() => {
             const positionChange = listSubmitFilter.requirement.findIndex((item) => item.id === requirement.id)
@@ -328,6 +329,7 @@ const NewSubmit = () => {
       width: '25%',
       render: (_, requirement) => (
         <Select
+          disabled={requirement.submitted}
           className="w-100"
           placeholder="Select Status"
           value={requirement.status}
@@ -353,6 +355,7 @@ const NewSubmit = () => {
       width: '25%',
       render: (_, requirement) => (
         <Select
+          disabled={requirement.submitted}
           className="w-100"
           placeholder="Select Milestone"
           value={requirement.milestone?.title}
@@ -559,6 +562,7 @@ const NewSubmit = () => {
                         selectedRowKeys: requirementSelectedKeys,
                         type: 'checkbox',
                         onChange: (selectedRowKeys, selectedRows) => {
+                          console.log(selectedRows)
                           setRequirementSelected(selectedRows)
                           setRequirementSelectedKey(selectedRowKeys)
                         },

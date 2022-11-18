@@ -53,41 +53,47 @@ const Notice = () => {
               <Space>
                 <Skeleton loading={loading}>
                   <div className="body flex-grow-1 px-2">
-                    <div className="row">
-                      <div className="col-lg-12">
-                        <Typography.Title level={2}>
-                          {post.postTitle}
-                          {(isTrainer || username === post.authorName) && (
-                            <Button
-                              type="link"
-                              onClick={() => navigateTo(`/post-edit/${id}`)}
-                              icon={<FormOutlined />}
-                            ></Button>
-                          )}
-                        </Typography.Title>
+                    <div className="col-lg-12">
+                      <div className="row">
+                        <div className="col-lg-12" style={{ wordBreak: 'break-word' }}>
+                          <div className="col-lg-12">
+                            <Typography.Title level={2}>
+                              {post.postTitle}
+                              {(isTrainer || username === post.authorName) && (
+                                <Button
+                                  type="link"
+                                  onClick={() => navigateTo(`/post-edit/${id}`)}
+                                  icon={<FormOutlined />}
+                                ></Button>
+                              )}
+                            </Typography.Title>
+                          </div>
+                          <div className="col-lg-12 d-flex p-0">
+                            <div className="col-lg-6 mb-4 d-flex justify-content-start">
+                              <Typography.Text
+                                type="primary"
+                                style={{ fontSize: '12px' }}
+                              >{`${post.authorFullName} (${post.authorName}, ${post.authorMobile})`}</Typography.Text>
+                              <Typography.Text type="secondary" className="ml-2" style={{ fontSize: '12px' }}>
+                                {post.viewCount} views
+                              </Typography.Text>
+                            </div>
+                            <div className="col-lg-6 mb-4 d-flex justify-content-end">
+                              <Typography.Text
+                                type="secondary"
+                                style={{ fontSize: '12px' }}
+                              >{`${post.lastUpdate}`}</Typography.Text>
+                            </div>
+                          </div>
+                          <div className="col-lg-12 mb-3">
+                            <Typography.Text type="secondary" italic>{`${post.excerpt}`}</Typography.Text>
+                          </div>
+                          <div className="col-lg-12 mb-3 d-flex justify-content-center">
+                            <Image src={post.thumbnail_Url} preview={false} />
+                          </div>
+                          <div className="col-lg-12 mb-3">{parse(post?.content)}</div>
+                        </div>
                       </div>
-                      <div className="col-lg-6 mb-4 d-flex justify-content-start">
-                        <Typography.Text
-                          type="primary"
-                          style={{ fontSize: '12px' }}
-                        >{`${post.authorFullName} (${post.authorName}, ${post.authorMobile})`}</Typography.Text>
-                        <Typography.Text type="secondary" className="ml-2" style={{ fontSize: '12px' }}>
-                          {post.viewCount} views
-                        </Typography.Text>
-                      </div>
-                      <div className="col-lg-6 mb-4 d-flex justify-content-end">
-                        <Typography.Text
-                          type="secondary"
-                          style={{ fontSize: '12px' }}
-                        >{`${post.lastUpdate}`}</Typography.Text>
-                      </div>
-                      <div className="col-lg-12 mb-3">
-                        <Typography.Text type="secondary" italic>{`${post.excerpt}`}</Typography.Text>
-                      </div>
-                      <div className="col-lg-12 mb-3 d-flex justify-content-center">
-                        <Image src={post.thumbnail_Url} preview={false} />
-                      </div>
-                      <div className="col-lg-12 mb-3">{parse(post?.content)}</div>
                     </div>
                   </div>
                 </Skeleton>
