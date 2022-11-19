@@ -14,7 +14,8 @@ import swp490.g23.onlinelearningsystem.entities.submit_work.domain.SubmitWork;
 import swp490.g23.onlinelearningsystem.entities.submit_work.domain.SubmitWorkKey;
 
 public interface SubmitWorkRepository extends JpaRepository<SubmitWork, SubmitWorkKey> {
-
+    
+    
     @Transactional
     @Modifying
     @Query(value = "DELETE FROM SubmitWork sk WHERE sk.submit = :submit ")
@@ -31,3 +32,4 @@ public interface SubmitWorkRepository extends JpaRepository<SubmitWork, SubmitWo
     @Query(value = "SELECT sk FROM SubmitWork sk WHERE sk.submit.submitId = :submitId AND sk.work.issueId = :workId ")
     SubmitWork getBySubmitAndWork(Long submitId, Long workId);
 }
+

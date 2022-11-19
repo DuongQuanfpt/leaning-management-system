@@ -59,6 +59,8 @@ public class Milestone extends BaseEntity {
     @Column
     private String description;
 
+    
+
     @Column
     private MilestoneStatusEnum status;
 

@@ -128,8 +128,15 @@ public class AssignmentService implements IAssignmentService {
         if (dto.getEval_weight() != null) {
             assignment.setEval_weight(dto.getEval_weight());
         }
+
         if (dto.getStatus() != null) {
             assignment.setStatus(Status.getFromValue(Integer.parseInt(dto.getStatus())).get());
+        }
+
+        if(dto.getIsFinal() == 1) {
+            assignment.setFinal(true);
+        } else {
+            assignment.setFinal(false);
         }
       
         if (dto.getIsTeamWork() == 1) {
@@ -223,6 +230,12 @@ public class AssignmentService implements IAssignmentService {
             assignment.setTeamWork(false);
         }
 
+        if (dto.getIsFinal() == 1) {
+            assignment.setFinal(true);
+        } else {
+            assignment.setFinal(false);
+        }
+
         assignmentRepository.save(assignment);
         return ResponseEntity.ok("Assignment add successfully!");
     }
@@ -264,6 +277,7 @@ public class AssignmentService implements IAssignmentService {
             responseDTO.setSubjectName(entity.getForSubject().getSubjectCode());
         }
         responseDTO.setIsOnGoing(entity.isOnGoing() ? 1 : 0);
+        responseDTO.setIsOnGoing(entity.isFinal() ? 1 : 0);
         responseDTO.setIsTeamWork(entity.isTeamWork() ? 1 : 0);
         responseDTO.setStatus(entity.getStatus());
 

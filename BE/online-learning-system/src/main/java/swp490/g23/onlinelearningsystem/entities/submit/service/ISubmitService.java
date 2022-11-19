@@ -23,5 +23,5 @@ public interface ISubmitService {
                         MultipartFile file);
 
         ResponseEntity<SubmitDetailFilterDTO> viewSubmit(Long id, String keyword, String filterTeam,
-                        String filterAssignee, Long statusValue, Long userId, String classCode);
+                        String filterAssignee, Long statusValue, Long userId , String classCode);
 }

@@ -7,6 +7,6 @@ import swp490.g23.onlinelearningsystem.entities.submit_work.domain.SubmitWork;
 import swp490.g23.onlinelearningsystem.entities.work_eval.domain.WorkEval;
 
 public interface WorkEvalRepository extends JpaRepository<WorkEval, Long> {
-    @Query(value = "DELETE FROM SubmitWork sk WHERE sk.submit = :submit ")
+    @Query(value = "SELECT wk FROM WorkEval wk WHERE wk.submitWork = :submitWork ")
     WorkEval getLatestEvalOfSubmitWork(SubmitWork submitWork);
 }

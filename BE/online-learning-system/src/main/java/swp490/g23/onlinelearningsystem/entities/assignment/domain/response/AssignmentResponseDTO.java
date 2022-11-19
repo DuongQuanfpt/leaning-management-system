@@ -24,6 +24,8 @@ public class AssignmentResponseDTO {
 
     private int isOnGoing;
 
+    private int isFinal;
+
     private Status status;
 
     private String subjectName;

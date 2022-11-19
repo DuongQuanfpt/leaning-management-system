@@ -62,9 +62,4 @@ public class SubjectSetting extends BaseEntity {
     @OneToMany(mappedBy = "quality")
     private List<WorkEval> workEvalQuality;
 
-    @OneToMany(mappedBy = "newComplexity")
-    private List<WorkEval> workEvalNewComplexity;
-
-    @OneToMany(mappedBy = "newQuality")
-    private List<WorkEval> workEvalNewQuality;
 }

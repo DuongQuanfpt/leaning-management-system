@@ -49,6 +49,9 @@ public class Assignment extends BaseEntity {
     private boolean isOnGoing;
 
     @Column
+    private boolean isFinal;
+
+    @Column
     private Status status;
 
     @ManyToOne
