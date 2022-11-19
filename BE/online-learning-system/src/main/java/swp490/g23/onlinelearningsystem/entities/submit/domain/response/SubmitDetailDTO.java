@@ -19,6 +19,8 @@ public class SubmitDetailDTO {
 
     private String assignee;
 
+    private String fullName;
+
     private String milestone;
 
     private String team;

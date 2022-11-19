@@ -500,6 +500,7 @@ public class SubmitService implements ISubmitService {
         SubmitDetailDTO dto = new SubmitDetailDTO();
         dto.setId(submitWork.getSubmit().getSubmitId());
         dto.setAssignee(submitWork.getSubmit().getClassUser().getUser().getAccountName());
+        dto.setFullName(submitWork.getSubmit().getClassUser().getUser().getFullName());
         dto.setMilestone(submitWork.getMilestone().getTitle());
         dto.setRequirement(submitWork.getWork().getTitle());
         dto.setStatus(submitWork.getStatus());
