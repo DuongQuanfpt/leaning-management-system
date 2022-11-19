@@ -92,8 +92,8 @@ public class SubmitController {
             @RequestParam(name = "q", required = false) String keyword,
             @RequestParam(name = "filterTeam", required = false) String teamFilter,
             @RequestParam(name = "filterAssignee", required = false) String assigneeFilter,
-            @RequestParam(name = "filterStatus", required = false) String statusFiler,
+            @RequestParam(name = "filterStatus", required = false) Long statusValue,
             @AuthenticationPrincipal User user) {
-        return submitService.viewSubmit(id, keyword, teamFilter, assigneeFilter, statusFiler, user.getUserId());
+        return submitService.viewSubmit(id, keyword, teamFilter, assigneeFilter, statusValue, user.getUserId());
     }
 }

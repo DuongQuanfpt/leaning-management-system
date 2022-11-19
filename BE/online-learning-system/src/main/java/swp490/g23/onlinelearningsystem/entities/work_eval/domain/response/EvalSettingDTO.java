@@ -11,6 +11,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class EvalSettingDTO {
     String title;
-    Long value;
+    Long point;
     Long id;
 }

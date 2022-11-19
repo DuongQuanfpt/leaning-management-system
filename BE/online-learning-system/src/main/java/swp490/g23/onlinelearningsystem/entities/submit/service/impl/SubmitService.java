@@ -2,6 +2,7 @@ package swp490.g23.onlinelearningsystem.entities.submit.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -44,6 +45,8 @@ import swp490.g23.onlinelearningsystem.entities.submit_work.domain.SubmitWorkKey
 import swp490.g23.onlinelearningsystem.entities.submit_work.repositories.SubmitWorkRepository;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
+import swp490.g23.onlinelearningsystem.entities.work_eval.domain.WorkEval;
+import swp490.g23.onlinelearningsystem.entities.work_eval.repositories.WorkEvalRepository;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum;
 import swp490.g23.onlinelearningsystem.util.enumutil.SubmitWorkStatusEnum;
@@ -64,6 +67,9 @@ public class SubmitService implements ISubmitService {
 
     @Autowired
     private SubmitWorkRepository submitWorkRepository;
+
+    @Autowired
+    private WorkEvalRepository workEvalRepository;
 
     @Autowired
     private IssueRepository issueRepository;
@@ -373,13 +379,13 @@ public class SubmitService implements ISubmitService {
                                     requirementFilter.setSubmitted(true);
                                     requirementFilter.setAssignee(s.getClassUser().getUser().getAccountName());
                                     requirementFilter.setSubmitStatus(sk.getStatus().toString());
-                                    if(sk.getStatus() == SubmitWorkStatusEnum.Rejected){
+                                    if (sk.getStatus() == SubmitWorkStatusEnum.Rejected) {
                                         requirementFilter.setComment(sk.getRejectReason());
                                     } else {
-                                        if(!sk.getWorkEvals().isEmpty()){
+                                        if (!sk.getWorkEvals().isEmpty()) {
                                             requirementFilter.setComment(sk.getWorkEvals().get(0).getComment());
                                         }
-                                       
+
                                     }
                                     break;
                                 }
@@ -444,7 +450,7 @@ public class SubmitService implements ISubmitService {
     @Override
     public ResponseEntity<SubmitDetailFilterDTO> viewSubmit(Long id, String keyword,
             String filterTeam,
-            String filterAssignee, String filterStatus, Long userId) {
+            String filterAssignee, Long statusValue, Long userId) {
 
         User user = userRepository.findById(userId).get();
         List<SubmitDetailDTO> list = new ArrayList<>();
@@ -455,7 +461,7 @@ public class SubmitService implements ISubmitService {
                 .orElseThrow(() -> new CustomException("submit doesnt exist"));
         TypedQuery<SubmitWork> queryResult = submitDetailCriteria.getSubmitWorks(keyword,
                 filterTeam,
-                filterAssignee, filterStatus, user);
+                filterAssignee, statusValue, user);
         List<SubmitWork> submitList = queryResult.getResultList();
 
         for (SubmitWorkStatusEnum status : new ArrayList<SubmitWorkStatusEnum>(EnumSet.allOf(
@@ -505,10 +511,16 @@ public class SubmitService implements ISubmitService {
         dto.setRequirement(submitWork.getWork().getTitle());
         dto.setStatus(submitWork.getStatus());
         if (!submitWork.getWorkEvals().isEmpty()) {
-            if (submitWork.getWorkEvals().get(0).getNewWorkEval() != 0) {
-                dto.setGrade(submitWork.getWorkEvals().get(0).getNewWorkEval());
-            } else {
-                dto.setGrade(submitWork.getWorkEvals().get(0).getWorkEval());
+            // if (submitWork.getWorkEvals().get(0).getNewWorkEval() != 0) {
+            // dto.setGrade(submitWork.getWorkEvals().get(0).getNewWorkEval());
+            // } else {
+            // dto.setGrade(submitWork.getWorkEvals().get(0).getWorkEval());
+            // }
+
+            for (WorkEval eval : submitWork.getWorkEvals()) {
+                if (submitWork.getMilestone().equals(eval.getMilestone())) {
+                    dto.setGrade(submitWork.getWorkEvals().get(0).getNewWorkEval());
+                }
             }
         } else {
             dto.setGrade(null);

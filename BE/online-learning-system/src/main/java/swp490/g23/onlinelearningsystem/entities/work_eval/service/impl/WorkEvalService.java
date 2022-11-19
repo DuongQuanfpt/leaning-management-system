@@ -96,7 +96,7 @@ public class WorkEvalService implements IWorkEvalService {
         EvalSettingDTO evalSettingDTO = new EvalSettingDTO();
         evalSettingDTO.setTitle(subjectSetting.getSettingTitle());
         evalSettingDTO.setId(subjectSetting.getSubjectSettingId());
-        evalSettingDTO.setValue(Long.parseLong(subjectSetting.getSettingValue()));
+        evalSettingDTO.setPoint(Long.parseLong(subjectSetting.getSettingValue()));
         return evalSettingDTO;
     }
 
@@ -122,15 +122,16 @@ public class WorkEvalService implements IWorkEvalService {
                 eval.setComment(requestDTO.getComment());
             }
 
-        } else {
-            eval = submitWork.getWorkEvals().get(0);
-            eval.setNewComplexity(complexity);
-            eval.setNewQuality(quality);
-            eval.setNewWorkEval(requestDTO.getWorkPoint());
-            if (requestDTO.getComment() != null) {
-                eval.setNewComment(requestDTO.getComment());
-            }
-        }
+        } 
+        // else {
+        //     eval = submitWork.getWorkEvals().get(0);
+        //     eval.setNewComplexity(complexity);
+        //     eval.setNewQuality(quality);
+        //     eval.setNewWorkEval(requestDTO.getWorkPoint());
+        //     if (requestDTO.getComment() != null) {
+        //         eval.setNewComment(requestDTO.getComment());
+        //     }
+        // }
 
         workEvalRepository.save(eval);
 

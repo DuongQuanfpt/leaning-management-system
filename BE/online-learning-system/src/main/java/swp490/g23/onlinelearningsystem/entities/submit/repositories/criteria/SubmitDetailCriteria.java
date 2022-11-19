@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.submit_work.domain.SubmitWork;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
+import swp490.g23.onlinelearningsystem.util.enumutil.SubmitWorkStatusEnum;
 
 @Repository
 @RequiredArgsConstructor
@@ -19,7 +20,7 @@ public class SubmitDetailCriteria {
     private final EntityManager em;
 
     public TypedQuery<SubmitWork> getSubmitWorks(String keyword, String filterTeam,
-            String filterAssignee, String filterStatus, User currentUser) {
+            String filterAssignee, Long statusValue, User currentUser) {
 
         // List<Setting> settings = currentUser.getSettings();
         // List<String> roles = new ArrayList<>();
@@ -48,9 +49,21 @@ public class SubmitDetailCriteria {
             query.append(" AND (s.work.title LIKE '%" + keyword + "%')");
         }
 
-        if (filterStatus != null) {
+        if (statusValue != null) {
+            SubmitWorkStatusEnum status = SubmitWorkStatusEnum.fromInt(statusValue.intValue());
+            if (status == SubmitWorkStatusEnum.Evaluated) {
+                query.append(
+                        " AND s.status = swp490.g23.onlinelearningsystem.util.enumutil.SubmitWorkStatusEnum.Evaluated ");
+            }
 
-            query.append(" AND s.status = '" + filterStatus + "'");
+            if (status == SubmitWorkStatusEnum.Rejected) {
+                query.append(
+                        " AND s.status = swp490.g23.onlinelearningsystem.util.enumutil.SubmitWorkStatusEnum.Rejected ");
+            }
+
+            if (status == SubmitWorkStatusEnum.Submitted) {
+                query.append(" AND s.status IS NULL");
+            }
         }
 
         // if (filterMilestone != null) {
