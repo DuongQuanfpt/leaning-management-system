@@ -90,12 +90,8 @@ public class SubmitController {
     @GetMapping(value = "/submit-detail/{id}")
     public ResponseEntity<SubmitDetailFilterDTO> viewDetail(@PathVariable("id") Long id,
             @RequestParam(name = "q", required = false) String keyword,
-            @RequestParam(name = "filterTeam", required = false) String teamFilter,
             @RequestParam(name = "filterAssignee", required = false) String assigneeFilter,
-            @RequestParam(name = "filterStatus", required = false) Long statusValue,
-            @RequestParam(name = "classCode", required = true) String classCode,
-            @AuthenticationPrincipal User user) {
-        return submitService.viewSubmit(id, keyword, teamFilter, assigneeFilter, statusValue, user.getUserId(),
-                classCode);
+            @RequestParam(name = "filterStatus", required = false) Long statusValue) {
+        return submitService.viewSubmit(id, keyword, assigneeFilter, statusValue);
     }
 }

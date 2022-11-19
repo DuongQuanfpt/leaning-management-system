@@ -444,62 +444,72 @@ public class SubmitService implements ISubmitService {
 
     @Override
     public ResponseEntity<SubmitDetailFilterDTO> viewSubmit(Long id, String keyword,
-            String filterTeam,
-            String filterAssignee, Long statusValue, Long userId , String classCode) {
+            String filterAssignee, Long statusValue) {
 
-        User user = userRepository.findById(userId).get();
         List<SubmitDetailDTO> list = new ArrayList<>();
         List<SubmitWorkStatusEntity> statusFilter = new ArrayList<>();
-        List<String> teamList = new ArrayList<>();
         List<String> assigneeList = new ArrayList<>();
         Submit currentSubmit = submitRepository.findById(id)
                 .orElseThrow(() -> new CustomException("submit doesnt exist"));
-        TypedQuery<SubmitWork> queryResult = submitDetailCriteria.getSubmitWorks(keyword,
-                filterTeam,
-                filterAssignee, statusValue, user , classCode);
-        List<SubmitWork> submitList = queryResult.getResultList();
+        String classCode = currentSubmit.getClassUser().getClasses().getCode();
+        Group group = currentSubmit.getGroup();
+        Milestone milestone = currentSubmit.getMilestone();
 
         for (SubmitWorkStatusEnum status : new ArrayList<SubmitWorkStatusEnum>(EnumSet.allOf(
                 SubmitWorkStatusEnum.class))) {
             statusFilter.add(new SubmitWorkStatusEntity(status));
         }
-
-        for (SubmitWork submitWork : submitList) {
+        if (group == null) {
             SubmitWorkKey key = new SubmitWorkKey();
-            if (currentSubmit.getGroup() == null) {
-                SubmitDetailDTO dto = new SubmitDetailDTO();
-                key.setIssueId(submitWork.getWork().getIssueId());
-                key.setSubmitId(submitWork.getSubmit().getSubmitId());
-                dto.setSubmitWorkId(key);
-                list.add(dto);
-                assigneeList.add(currentSubmit.getClassUser().getUser().getAccountName());
+            SubmitDetailDTO dto = new SubmitDetailDTO();
+            key.setIssueId(currentSubmit.getSubmitWorks().get(0).getWork().getIssueId());
+            key.setSubmitId(currentSubmit.getSubmitWorks().get(0).getSubmit().getSubmitId());
+            dto.setSubmitWorkId(key);
+            dto.setAssignee(currentSubmit.getClassUser().getUser().getAccountName());
+            dto.setFullName(currentSubmit.getClassUser().getUser().getFullName());
+            dto.setMilestone(currentSubmit.getMilestone().getTitle());
+            dto.setRequirement(currentSubmit.getSubmitWorks().get(0).getWork().getTitle());
+            dto.setStatus(currentSubmit.getSubmitWorks().get(0).getStatus());
+            if (!currentSubmit.getSubmitWorks().get(0).getWorkEvals().isEmpty()) {
+                // if (currentSubmit.getSubmitWorks().get(0).getWorkEvals().get(0).getNewWorkEval() != 0) {
+                //     dto.setGrade(currentSubmit.getSubmitWorks().get(0).getWorkEvals().get(0).getNewWorkEval());
+                // } else {
+                //     dto.setGrade(currentSubmit.getSubmitWorks().get(0).getWorkEvals().get(0).getWorkEval());
+                // }
             } else {
-                SubmitDetailDTO dto = toDetail(submitWork);
-                dto.setTeam(submitWork.getSubmit().getGroup().getGroupCode());
-                key.setIssueId(submitWork.getWork().getIssueId());
-                key.setSubmitId(submitWork.getSubmit().getSubmitId());
-                dto.setSubmitWorkId(key);
-                list.add(dto);
+                dto.setGrade(null);
+            }
+            list.add(dto);
+            assigneeList.add(currentSubmit.getClassUser().getUser().getAccountName());
+        } else {
+            TypedQuery<SubmitWork> queryResult = submitDetailCriteria.getSubmitWorks(keyword,
+                    filterAssignee, statusValue, classCode, group.getGroupId(), milestone.getMilestoneId());
+            List<SubmitWork> submitList = queryResult.getResultList();
+            for (SubmitWork submitWork : submitList) {
+                if (submitWork.getSubmit().getClassUser() != null) {
+                    SubmitDetailDTO dto = toDetail(submitWork);
+                    list.add(dto);
+                }
                 if (!assigneeList.contains(submitWork.getSubmit().getClassUser().getUser().getAccountName())) {
                     assigneeList.add(submitWork.getSubmit().getClassUser().getUser().getAccountName());
                 }
-                if (!teamList.contains(submitWork.getSubmit().getGroup().getGroupCode())) {
-                    teamList.add(submitWork.getSubmit().getGroup().getGroupCode());
-                }
             }
         }
-
         SubmitDetailFilterDTO filterDTO = new SubmitDetailFilterDTO();
         filterDTO.setListResult(list);
         filterDTO.setStatusFilter(statusFilter);
         filterDTO.setAssigneeFilter(assigneeList);
-        filterDTO.setTeamFilter(teamList);
         return ResponseEntity.ok(filterDTO);
     }
 
     public SubmitDetailDTO toDetail(SubmitWork submitWork) {
         SubmitDetailDTO dto = new SubmitDetailDTO();
+        SubmitWorkKey key = new SubmitWorkKey();
         dto.setId(submitWork.getSubmit().getSubmitId());
+        dto.setTeam(submitWork.getSubmit().getGroup().getGroupCode());
+        key.setIssueId(submitWork.getWork().getIssueId());
+        key.setSubmitId(submitWork.getSubmit().getSubmitId());
+        dto.setSubmitWorkId(key);
         dto.setAssignee(submitWork.getSubmit().getClassUser().getUser().getAccountName());
         dto.setFullName(submitWork.getSubmit().getClassUser().getUser().getFullName());
         dto.setMilestone(submitWork.getMilestone().getTitle());
