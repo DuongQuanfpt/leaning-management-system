@@ -62,10 +62,11 @@ public class ScheduleService implements IScheduleService {
 
     @Override
     public ResponseEntity<SchedulePaginateDTO> displaySchedule(String keyword, int limit, int page,
-            String filterStatus, String filterDateFrom, String filterDateTo, String filterClass, Long userId) {
+            Long statusValue, String filterDateFrom, String filterDateTo, String filterClass, Long userId) {
 
         User user = userRepository.findById(userId).get();
-        ScheduleQuery result = scheduleCriteria.searchFilterSchedule(keyword, filterStatus,
+        ScheduleQuery result = scheduleCriteria.searchFilterSchedule(keyword,
+                statusValue,
                 filterDateFrom, filterDateTo, filterClass, user);
 
         TypedQuery<Schedule> queryResult = result.getResultQuery();

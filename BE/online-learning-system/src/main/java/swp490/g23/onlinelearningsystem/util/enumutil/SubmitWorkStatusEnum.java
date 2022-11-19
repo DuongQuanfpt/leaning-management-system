@@ -1,7 +1,8 @@
 package swp490.g23.onlinelearningsystem.util.enumutil;
 
 public enum SubmitWorkStatusEnum {
-    Rejected (false), Evaluated  (true), Submitted(null);
+    Rejected(false), Evaluated(true), Submitted(null);
+
     SubmitWorkStatusEnum(Boolean value) {
         this.value = value;
     }
@@ -12,7 +13,6 @@ public enum SubmitWorkStatusEnum {
         return value;
     }
 
-    
     public static SubmitWorkStatusEnum fromValue(Boolean value) {
         if (value == null) {
             return SubmitWorkStatusEnum.Submitted;
@@ -26,7 +26,7 @@ public enum SubmitWorkStatusEnum {
             return SubmitWorkStatusEnum.Rejected;
         }
 
-        throw new IllegalArgumentException("Attendance [" + value + "] not supported.");
+        throw new IllegalArgumentException("Submit work [" + value + "] not supported.");
 
     }
 
@@ -43,7 +43,7 @@ public enum SubmitWorkStatusEnum {
             return SubmitWorkStatusEnum.Submitted;
         }
 
-        throw new IllegalArgumentException("Attendance [" + value + "] not supported.");
+        throw new IllegalArgumentException("Submit work [" + value + "] not supported.");
 
     }
 }

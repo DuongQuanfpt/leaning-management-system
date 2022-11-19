@@ -37,13 +37,13 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "category_id")
     private Setting category;
 
-    @Column
+    @Column(columnDefinition="TEXT")
     private String postTitle;
 
     @Column
     private String thumbnail_Url;
 
-    @Column
+    @Column(columnDefinition="TEXT")
     private String excerpt;
 
     @Column(columnDefinition="TEXT")

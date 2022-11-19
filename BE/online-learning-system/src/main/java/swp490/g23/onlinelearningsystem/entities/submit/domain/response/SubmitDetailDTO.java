@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import swp490.g23.onlinelearningsystem.entities.submit_work.domain.SubmitWorkKey;
 import swp490.g23.onlinelearningsystem.util.enumutil.SubmitWorkStatusEnum;
 
 @Getter
@@ -18,11 +19,15 @@ public class SubmitDetailDTO {
 
     private String assignee;
 
+    private String fullName;
+
     private String milestone;
 
     private String team;
 
     private Long grade;
+
+    private SubmitWorkKey submitWorkId;
 
     private SubmitWorkStatusEnum status;
 }

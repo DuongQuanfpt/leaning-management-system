@@ -23,6 +23,7 @@ import swp490.g23.onlinelearningsystem.entities.BaseEntity;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.ClassUser;
 import swp490.g23.onlinelearningsystem.entities.group.domain.Group;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
+import swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.MilestoneEval;
 import swp490.g23.onlinelearningsystem.entities.submit_work.domain.SubmitWork;
 import swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum;
 
@@ -67,4 +68,7 @@ public class Submit extends BaseEntity {
 
     @OneToMany(mappedBy = "submit")
     private List<SubmitWork> submitWorks;
+
+    @OneToMany(mappedBy = "submit")
+    private List<MilestoneEval> milestoneEvals;
 }

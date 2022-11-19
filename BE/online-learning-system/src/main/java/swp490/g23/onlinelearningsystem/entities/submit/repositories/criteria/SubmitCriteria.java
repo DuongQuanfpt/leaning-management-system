@@ -68,17 +68,19 @@ public class SubmitCriteria {
         if (statusValue != null) {
             SubmitStatusEnum status = SubmitStatusEnum.fromInt(statusValue.intValue());
             if (status == SubmitStatusEnum.Evaluated) {
-                query.append(" AND s.status = swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum.Evaluated ");
+                query.append(
+                        " AND s.status = swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum.Evaluated ");
             }
 
             if (status == SubmitStatusEnum.Submitted) {
-                query.append(" AND s.status = swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum.Submitted ");
+                query.append(
+                        " AND s.status = swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum.Submitted ");
             }
 
             if (status == SubmitStatusEnum.Pending) {
                 query.append(" AND s.status IS NULL");
             }
-            
+
         }
 
         StringBuilder queryCount = new StringBuilder(query.toString().replaceAll("SELECT s", "SELECT COUNT(*)"));

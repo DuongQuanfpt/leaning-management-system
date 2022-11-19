@@ -21,6 +21,8 @@ public class AssignmentRequestDTO {
 
     private int isTeamWork;
 
+    private int isFinal;
+
     private int isOnGoing;
 
     private String status;

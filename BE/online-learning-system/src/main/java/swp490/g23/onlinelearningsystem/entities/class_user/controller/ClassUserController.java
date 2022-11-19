@@ -43,12 +43,12 @@ public class ClassUserController {
 			@RequestParam(name = "limit", required = false) String requestLimit,
 			@RequestParam(name = "q", required = false) String keyword,
 			@RequestParam(name = "filterClass", required = false) String classFilter,
-			@RequestParam(name = "filterStatus", required = false) String statusFilter,
+			@RequestParam(name = "filterStatus", required = false) Long statusValue,
 			@AuthenticationPrincipal User user) {
 
 		int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
 		int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
-		return classUserService.displayTrainee(limit, page, keyword, classFilter, statusFilter, user.getUserId());
+		return classUserService.displayTrainee(limit, page, keyword, classFilter, statusValue, user.getUserId());
 	}
 
 	@GetMapping(value = "/trainee-filter")

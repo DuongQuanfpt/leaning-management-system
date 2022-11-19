@@ -1,5 +1,7 @@
 package swp490.g23.onlinelearningsystem.entities.eval_criteria.domain;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -7,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,6 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.BaseEntity;
 import swp490.g23.onlinelearningsystem.entities.assignment.domain.Assignment;
+import swp490.g23.onlinelearningsystem.entities.eval_detail.domain.EvalDetail;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
 import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 
@@ -32,6 +36,8 @@ public class EvalCriteria extends BaseEntity {
 
     private boolean isTeamEval;
 
+    private boolean isWorkEval;
+
     @Column(name = "eval_weight", nullable = false)
     private double evalWeight;
 
@@ -48,4 +54,7 @@ public class EvalCriteria extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "milestone_id")
     private Milestone milestone;
+
+    @OneToMany(mappedBy = "evalCriteria")
+    private List<EvalDetail> evalDetails;
 }
