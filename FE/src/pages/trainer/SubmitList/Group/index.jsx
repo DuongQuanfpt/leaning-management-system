@@ -4,7 +4,7 @@ import { Button, Input, Pagination, Select, Space, Table, Tag, Typography } from
 import submitApi from '~/api/submitApi'
 import { useSelector } from 'react-redux'
 import Tooltip from 'antd/es/tooltip'
-import { CrownTwoTone, EyeOutlined, ForkOutlined, FormOutlined, UploadOutlined } from '@ant-design/icons'
+import { CrownTwoTone, EyeOutlined, FormOutlined, UploadOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 
 const Group = () => {
@@ -140,7 +140,7 @@ const Group = () => {
       dataIndex: 'status',
       width: '10%',
       render: (_, { status }) => (
-        <Tag color={status === 'Pending' ? 'green' : status === 'Submited' ? 'magenta' : 'purple'}> {status}</Tag>
+        <Tag color={status === 'Pending' ? 'green' : status === 'Submitted' ? 'blue' : 'purple'}> {status}</Tag>
       ),
     },
     {
@@ -208,7 +208,6 @@ const Group = () => {
             <div className="col-lg-6">
               <Input.Search
                 placeholder="Input text to search trainee"
-                value={filter?.search}
                 onSearch={(value) => setFilter((prev) => ({ ...prev, search: value }))}
                 allowClear
                 onClear={() => setFilter((prev) => ({ ...prev, search: undefined }))}

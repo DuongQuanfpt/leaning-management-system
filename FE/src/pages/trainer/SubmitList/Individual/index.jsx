@@ -176,7 +176,6 @@ const Individual = () => {
             <div className="col-lg-6">
               <Input.Search
                 placeholder="Input text to search trainee"
-                value={filter?.search}
                 onSearch={(value) => setFilter((prev) => ({ ...prev, search: value }))}
                 allowClear
                 onClear={() => setFilter((prev) => ({ ...prev, search: undefined }))}

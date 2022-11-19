@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import parse from 'html-react-parser'
 
-import { Typography, Button, Space, Skeleton, Breadcrumb, Image } from 'antd'
+import { Typography, Button, Space, Skeleton, Image } from 'antd'
 
 import postApi from '~/api/postApi'
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
@@ -50,7 +50,7 @@ const Notice = () => {
           <AdminHeader />
           <div className="body flex-grow-1">
             <div className="col-lg-12">
-              <Space>
+              <Space className="w-100">
                 <Skeleton loading={loading}>
                   <div className="body flex-grow-1 px-2">
                     <div className="col-lg-12">

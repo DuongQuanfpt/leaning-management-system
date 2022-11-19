@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
-import { Breadcrumb, Button, Checkbox, Image, Input, message, Radio, Space, Table } from 'antd'
+import { Breadcrumb, Button, Table } from 'antd'
 
 import submitApi from '~/api/submitApi'
 
@@ -11,7 +11,9 @@ import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 
 const WorkEvaluation = () => {
   const { id } = useParams()
+  // eslint-disable-next-line no-unused-vars
   const [loading, setLoading] = useState(false)
+  // eslint-disable-next-line no-unused-vars
   const [listWork, setListWork] = useState([])
 
   useEffect(() => {

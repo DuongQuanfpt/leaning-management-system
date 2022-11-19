@@ -34,14 +34,24 @@ const submitApi = {
     return axiosClient.put(url, params, header)
   },
 
-  getSubmitDetail: (submitId) => {
+  getSubmitDetail: (submitId, params) => {
     const url = `/api/submit-detail/${submitId}`
-    return axiosClient.get(url, header)
+    return axiosClient.get(url, { ...header, params })
   },
 
   getWorkEval: (submitId, workId) => {
     const url = `api/work-eval/${submitId}/${workId}`
     return axiosClient.get(url, header)
+  },
+
+  submitWorkEval: (submitId, workId, params) => {
+    const url = `api/work-eval/${submitId}/${workId}`
+    return axiosClient.post(url, params, header)
+  },
+
+  rejectWorkEval: (submitId, workId, params) => {
+    const url = `api/work-eval/${submitId}/${workId}`
+    return axiosClient.put(url, params, header)
   },
 }
 
