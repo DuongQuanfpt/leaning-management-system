@@ -13,13 +13,14 @@ import swp490.g23.onlinelearningsystem.entities.schedule.domain.Schedule;
 import swp490.g23.onlinelearningsystem.entities.schedule.repositories.criteria_entity.ScheduleQuery;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
+import swp490.g23.onlinelearningsystem.util.enumutil.ScheduleStatus;
 
 @Repository
 @RequiredArgsConstructor
 public class ScheduleCriteria {
     private final EntityManager em;
 
-    public ScheduleQuery searchFilterSchedule(String keyword, String filterStatus, String filterDateFrom,
+    public ScheduleQuery searchFilterSchedule(String keyword, Long statusValue, String filterDateFrom,
             String filterDateTo, String filterClass, User user) {
 
         List<Setting> settings = user.getSettings();
@@ -46,8 +47,21 @@ public class ScheduleCriteria {
                     " AND (s.classSetting.settingTitle LIKE '%" + keyword + "%')");
         }
 
-        if (filterStatus != null) {
-            query.append(" AND s.status = '" + filterStatus + "'");
+        if (statusValue != null) {
+            ScheduleStatus status = ScheduleStatus.fromInt(statusValue.intValue());
+            if (status == ScheduleStatus.Active) {
+                query.append(
+                        " AND s.status = swp490.g23.onlinelearningsystem.util.enumutil.ScheduleStatus.Active ");
+            }
+
+            if (status == ScheduleStatus.Inactive) {
+                query.append(
+                        " AND s.status = swp490.g23.onlinelearningsystem.util.enumutil.ScheduleStatus.Inactive ");
+            }
+
+            if (status == ScheduleStatus.Attendance_taken) {
+                query.append(" AND s.status IS NULL");
+            }
         }
 
         if (filterDateFrom != null && filterDateTo != null) {

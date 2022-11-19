@@ -35,7 +35,7 @@ public class ScheduleController {
             @RequestParam(name = "page", required = false) String currentPage,
             @RequestParam(name = "limit", required = false) String requestLimit,
             @RequestParam(name = "q", required = false) String keyword,
-            @RequestParam(name = "filterStatus", required = false) String statusFilter,
+            @RequestParam(name = "filterStatus", required = false) Long statusValue,
             @RequestParam(name = "filterDateFrom", required = false) String dateFromFilter,
             @RequestParam(name = "filterDateTo", required = false) String dateToFilter,
             @RequestParam(name = "filterClass", required = false) String classFilter,
@@ -43,7 +43,8 @@ public class ScheduleController {
 
         int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
         int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
-        return scheduleService.displaySchedule(keyword, limit, page, statusFilter,
+        return scheduleService.displaySchedule(keyword, limit, page,
+                statusValue,
                 dateFromFilter, dateToFilter, classFilter, user.getUserId());
     }
 

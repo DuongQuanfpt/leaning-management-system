@@ -434,7 +434,7 @@ public class SubmitService implements ISubmitService {
     @Override
     public ResponseEntity<SubmitDetailFilterDTO> viewSubmit(Long id, String keyword,
             String filterTeam,
-            String filterAssignee, Long statusValue, Long userId) {
+            String filterAssignee, Long statusValue, Long userId, String classCode) {
 
         User user = userRepository.findById(userId).get();
         List<SubmitDetailDTO> list = new ArrayList<>();
@@ -445,7 +445,7 @@ public class SubmitService implements ISubmitService {
                 .orElseThrow(() -> new CustomException("submit doesnt exist"));
         TypedQuery<SubmitWork> queryResult = submitDetailCriteria.getSubmitWorks(keyword,
                 filterTeam,
-                filterAssignee, statusValue, user);
+                filterAssignee, statusValue, user, classCode);
         List<SubmitWork> submitList = queryResult.getResultList();
 
         for (SubmitWorkStatusEnum status : new ArrayList<SubmitWorkStatusEnum>(EnumSet.allOf(
