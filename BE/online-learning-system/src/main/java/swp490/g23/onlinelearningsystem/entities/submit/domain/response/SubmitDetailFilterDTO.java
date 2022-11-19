@@ -16,6 +16,5 @@ import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.SubmitWorkStat
 public class SubmitDetailFilterDTO {
     private List<SubmitDetailDTO> listResult = new ArrayList<>();
     List<SubmitWorkStatusEntity> statusFilter = new ArrayList<>();
-    List<String> teamFilter = new ArrayList<>();
     List<String> assigneeFilter = new ArrayList<>();
 }
