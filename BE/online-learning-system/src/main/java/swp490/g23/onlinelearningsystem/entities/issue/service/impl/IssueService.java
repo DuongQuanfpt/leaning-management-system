@@ -235,7 +235,7 @@ public class IssueService implements IIssueService {
         dto.setIssueId(issue.getIssueId());
         dto.setTitle(issue.getTitle());
         dto.setClassCode(issue.getClasses().getCode());
-        if(issue.getSubmitWorks().isEmpty()){
+        if (issue.getSubmitWorks().isEmpty()) {
             dto.setSubmitted(false);
         } else {
             dto.setSubmitted(true);
@@ -299,12 +299,12 @@ public class IssueService implements IIssueService {
                 dto.setStatusId(issue.getStatus().getClassSettingId());
             } else {
                 dto.setStatus("Open");
-                dto.setStatusId((long)1);
+                dto.setStatusId((long) 1);
             }
 
         } else {
             dto.setStatus("Closed");
-            dto.setStatusId((long)0);
+            dto.setStatusId((long) 0);
         }
 
         return dto;
@@ -913,18 +913,7 @@ public class IssueService implements IIssueService {
 
             Milestone milestone = milestoneRepository.findById(issueDTO.getMilestoneId())
                     .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
-    
-            if(issue.getMilestone().equals(milestone)){
-                continue;
-            }
 
-            issue.setMilestone(milestone);
-            if(issue.getSubmitWorks() != null) {
-                for (SubmitWork submitWork : issue.getSubmitWorks()) {
-                    submitWorksNew.add(submitWork);
-                }
-            }
-            
             if (issueDTO.getStatusId() != null) {
                 if (issueDTO.getStatusId() == 0) {
                     issue.setStatus(null);
@@ -940,6 +929,19 @@ public class IssueService implements IIssueService {
                 }
 
             }
+
+            if (issue.getMilestone().equals(milestone)) {
+                issuesNew.add(issue);
+                continue;
+            }
+
+            issue.setMilestone(milestone);
+            if (issue.getSubmitWorks() != null) {
+                for (SubmitWork submitWork : issue.getSubmitWorks()) {
+                    submitWorksNew.add(submitWork);
+                }
+            }
+
             issuesNew.add(issue);
         }
         issueRepository.saveAll(issuesNew);

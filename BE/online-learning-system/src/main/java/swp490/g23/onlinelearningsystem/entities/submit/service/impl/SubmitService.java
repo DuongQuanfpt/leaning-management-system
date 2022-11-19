@@ -376,7 +376,10 @@ public class SubmitService implements ISubmitService {
                                     if(sk.getStatus() == SubmitWorkStatusEnum.Rejected){
                                         requirementFilter.setComment(sk.getRejectReason());
                                     } else {
-                                        requirementFilter.setComment(sk.getWorkEvals().get(0).getComment());
+                                        if(!sk.getWorkEvals().isEmpty()){
+                                            requirementFilter.setComment(sk.getWorkEvals().get(0).getComment());
+                                        }
+                                       
                                     }
                                     break;
                                 }
