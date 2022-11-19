@@ -479,10 +479,10 @@ public class SubmitService implements ISubmitService {
                 }
                 if (isAdd) {
                     dto = toDetail(submitWork);
+                    list.add(dto);
                 }
 
             }
-            list.add(dto);
             assigneeList.add(currentSubmit.getClassUser().getUser().getAccountName());
         } else {
             TypedQuery<SubmitWork> queryResult = submitDetailCriteria.getSubmitWorks(keyword,
