@@ -1,4 +1,4 @@
-package swp490.g23.onlinelearningsystem.entities.eval_detail.repositories.criteriaEntity;
+package swp490.g23.onlinelearningsystem.entities.eval_detail.repositories.criteria_entity;
 
 import javax.persistence.TypedQuery;
 
