@@ -1,7 +1,5 @@
 package swp490.g23.onlinelearningsystem.entities.submit.service;
 
-import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,5 +23,5 @@ public interface ISubmitService {
                         MultipartFile file);
 
         ResponseEntity<SubmitDetailFilterDTO> viewSubmit(Long id, String keyword, String filterTeam,
-                        String filterAssignee, Long statusValue, Long userId);
+                        String filterAssignee, Long statusValue, Long userId, String classCode);
 }

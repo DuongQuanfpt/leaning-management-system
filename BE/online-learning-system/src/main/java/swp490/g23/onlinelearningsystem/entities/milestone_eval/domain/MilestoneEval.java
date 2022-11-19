@@ -1,9 +1,7 @@
-package swp490.g23.onlinelearningsystem.entities.submit.domain;
+package swp490.g23.onlinelearningsystem.entities.milestone_eval.domain;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -13,39 +11,43 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import swp490.g23.onlinelearningsystem.entities.BaseEntity;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.ClassUser;
-import swp490.g23.onlinelearningsystem.entities.group.domain.Group;
+import swp490.g23.onlinelearningsystem.entities.eval_detail.domain.EvalDetail;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
-import swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.MilestoneEval;
-import swp490.g23.onlinelearningsystem.entities.submit_work.domain.SubmitWork;
-import swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum;
+import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
 
 @Entity
-@Table(name = "submit_tbl")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Submit extends BaseEntity {
+public class MilestoneEval {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long submitId;
+    private Long milestoneEvalId;
+
+    private Long bonus;
+
+    private Long grade;
+
+    private String comment;
+
+    @OneToMany(mappedBy = "milestoneEval")
+    private List<EvalDetail> evalDetails;
 
     @ManyToOne
     @JoinColumn(name = "milestone_id")
     private Milestone milestone;
 
     @ManyToOne
-    @JoinColumn(name = "group_id")
-    private Group group;
+    @JoinColumn(name = "submit_id")
+    private Submit submit;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
@@ -53,22 +55,4 @@ public class Submit extends BaseEntity {
             @JoinColumn(name = "user_Id", referencedColumnName = "user_Id")
     })
     private ClassUser classUser;
-
-    @Column
-    private String submitFileUrl;
-
-    @Column
-    private LocalDateTime submitTime;
-
-    @Column
-    private String userNote;
-
-    @Column
-    private SubmitStatusEnum status;
-
-    @OneToMany(mappedBy = "submit")
-    private List<SubmitWork> submitWorks;
-
-    @OneToMany(mappedBy = "submit")
-    private List<MilestoneEval> milestoneEvals;
 }

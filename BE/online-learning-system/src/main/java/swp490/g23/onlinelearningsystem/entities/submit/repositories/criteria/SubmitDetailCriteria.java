@@ -20,7 +20,7 @@ public class SubmitDetailCriteria {
     private final EntityManager em;
 
     public TypedQuery<SubmitWork> getSubmitWorks(String keyword, String filterTeam,
-            String filterAssignee, Long statusValue, User currentUser) {
+            String filterAssignee, Long statusValue, User currentUser, String classCode) {
 
         // List<Setting> settings = currentUser.getSettings();
         // List<String> roles = new ArrayList<>();
@@ -29,7 +29,8 @@ public class SubmitDetailCriteria {
         // }
 
         StringBuilder query = new StringBuilder(
-                "SELECT s FROM SubmitWork s JOIN s.submit as su JOIN su.classUser as cu JOIN cu.classes as c JOIN c.userTrainer as t WHERE 1=1");
+                "SELECT s FROM SubmitWork s JOIN s.submit as su JOIN su.classUser as cu JOIN cu.classes as c JOIN c.userTrainer as t WHERE c.code = '"
+                        + classCode + "'");
 
         // if (roles.contains("ROLE_TRAINER") && roles.contains("ROLE_TRAINEE")) {
         // query.append(" AND t.accountName = '" + currentUser.getAccountName()
