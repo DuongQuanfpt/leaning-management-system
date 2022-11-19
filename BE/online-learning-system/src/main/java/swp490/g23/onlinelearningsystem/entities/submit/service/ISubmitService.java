@@ -1,7 +1,5 @@
 package swp490.g23.onlinelearningsystem.entities.submit.service;
 
-import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
