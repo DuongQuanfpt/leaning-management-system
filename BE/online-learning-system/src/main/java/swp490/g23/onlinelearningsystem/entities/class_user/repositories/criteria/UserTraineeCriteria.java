@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.ClassUser;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
+import swp490.g23.onlinelearningsystem.util.enumutil.TraineeStatus;
 
 @Repository
 @RequiredArgsConstructor
@@ -19,7 +20,7 @@ public class UserTraineeCriteria {
 
     private final EntityManager em;
 
-    public TypedQuery<ClassUser> displayTrainee(String keyword, String filterClass, String filterStatus,
+    public TypedQuery<ClassUser> displayTrainee(String keyword, String filterClass, Long statusValue,
             User user) {
 
         List<Setting> settings = user.getSettings();
@@ -49,8 +50,21 @@ public class UserTraineeCriteria {
                     + "%' OR u.user.email LIKE  '%" + keyword + "%')");
         }
 
-        if (filterStatus != null) {
-            query.append(" AND u.status = '" + filterStatus + "'");
+        if (statusValue != null) {
+            TraineeStatus status = TraineeStatus.fromInt(statusValue.intValue());
+            if (status == TraineeStatus.Active) {
+                query.append(
+                        " AND u.status = swp490.g23.onlinelearningsystem.util.enumutil.TraineeStatus.Active ");
+            }
+
+            if (status == TraineeStatus.Inactive) {
+                query.append(
+                        " AND u.status = swp490.g23.onlinelearningsystem.util.enumutil.TraineeStatus.Inactive ");
+            }
+
+            if (status == TraineeStatus.Dropout) {
+                query.append(" AND u.status IS NULL");
+            }
         }
         if (filterClass != null) {
             query.append(" AND u.classes.code = '" + filterClass + "'");
