@@ -77,13 +77,13 @@ public class ClassUserService implements IClassUserService {
 
     @Override
     public ResponseEntity<TraineeResponsePaginateDTP> displayTrainee(int limit, int currentPage, String keyword,
-            String filterClass, String filterStatus, Long userId) {
+            String filterClass, Long statusValue, Long userId) {
         User user = userRepository.findById(userId).get();
         List<TraineeResponseDTO> trainees = new ArrayList<>();
         List<String> classList = new ArrayList<>();
         List<TraineeStatusEntity> statusList = new ArrayList<>();
 
-        TypedQuery<ClassUser> queryResult = traineeCriteria.displayTrainee(keyword, filterClass, filterStatus, user);
+        TypedQuery<ClassUser> queryResult = traineeCriteria.displayTrainee(keyword, filterClass, statusValue, user);
 
         List<ClassUser> classUsers = queryResult.getResultList();
 

@@ -12,7 +12,7 @@ import swp490.g23.onlinelearningsystem.entities.class_user.domain.response.Train
 
 public interface IClassUserService {
     ResponseEntity<TraineeResponsePaginateDTP> displayTrainee(int limit, int currentPage, String keyword,
-            String filterClass, String filterStatus, Long userId);
+            String filterClass, Long statusValue, Long userId);
 
     ResponseEntity<TraineeFilterDTO> getFilter();
 
