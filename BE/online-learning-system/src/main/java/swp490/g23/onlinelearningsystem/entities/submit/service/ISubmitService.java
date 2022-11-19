@@ -22,11 +22,6 @@ public interface ISubmitService {
         ResponseEntity<String> newSubmit(User user, Long submitId, SubmitRequirementWrapper requestDTO,
                         MultipartFile file);
 
-<<<<<<< HEAD
-        ResponseEntity<SubmitDetailFilterDTO> viewSubmit(Long id, String keyword, String filterTeam,
-                        String filterAssignee, Long statusValue, Long userId , String classCode);
-=======
         ResponseEntity<SubmitDetailFilterDTO> viewSubmit(Long id, String keyword,
                         String filterAssignee, Long statusValue);
->>>>>>> ac5564862c7e1e8ef170518221ddc433e7a0bcb1
 }

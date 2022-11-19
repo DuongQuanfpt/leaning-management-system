@@ -460,24 +460,27 @@ public class SubmitService implements ISubmitService {
             statusFilter.add(new SubmitWorkStatusEntity(status));
         }
         if (group == null) {
-            SubmitWorkKey key = new SubmitWorkKey();
             SubmitDetailDTO dto = new SubmitDetailDTO();
-            key.setIssueId(currentSubmit.getSubmitWorks().get(0).getWork().getIssueId());
-            key.setSubmitId(currentSubmit.getSubmitWorks().get(0).getSubmit().getSubmitId());
-            dto.setSubmitWorkId(key);
-            dto.setAssignee(currentSubmit.getClassUser().getUser().getAccountName());
-            dto.setFullName(currentSubmit.getClassUser().getUser().getFullName());
-            dto.setMilestone(currentSubmit.getMilestone().getTitle());
-            dto.setRequirement(currentSubmit.getSubmitWorks().get(0).getWork().getTitle());
-            dto.setStatus(currentSubmit.getSubmitWorks().get(0).getStatus());
-            if (!currentSubmit.getSubmitWorks().get(0).getWorkEvals().isEmpty()) {
-                // if (currentSubmit.getSubmitWorks().get(0).getWorkEvals().get(0).getNewWorkEval() != 0) {
-                //     dto.setGrade(currentSubmit.getSubmitWorks().get(0).getWorkEvals().get(0).getNewWorkEval());
-                // } else {
-                //     dto.setGrade(currentSubmit.getSubmitWorks().get(0).getWorkEvals().get(0).getWorkEval());
-                // }
-            } else {
-                dto.setGrade(null);
+            List<SubmitWork> submitWorks = currentSubmit.getSubmitWorks();
+            for (SubmitWork submitWork : submitWorks) {
+                if (!submitWork.getMilestone().equals(milestone)) {
+                    continue;
+                }
+                boolean isAdd = true;
+                if (filterAssignee != null) {
+                    if (!filterAssignee.equals(submitWork.getSubmit().getClassUser().getUser().getAccountName())) {
+                        isAdd = false;
+                    }
+                }
+                if (statusValue != null) {
+                    if (SubmitWorkStatusEnum.fromInt(statusValue.intValue()) != submitWork.getStatus()) {
+                        isAdd = false;
+                    }
+                }
+                if (isAdd) {
+                    dto = toDetail(submitWork);
+                }
+
             }
             list.add(dto);
             assigneeList.add(currentSubmit.getClassUser().getUser().getAccountName());
@@ -506,7 +509,9 @@ public class SubmitService implements ISubmitService {
         SubmitDetailDTO dto = new SubmitDetailDTO();
         SubmitWorkKey key = new SubmitWorkKey();
         dto.setId(submitWork.getSubmit().getSubmitId());
-        dto.setTeam(submitWork.getSubmit().getGroup().getGroupCode());
+        if (submitWork.getSubmit().getGroup() != null) {
+            dto.setTeam(submitWork.getSubmit().getGroup().getGroupCode());
+        }
         key.setIssueId(submitWork.getWork().getIssueId());
         key.setSubmitId(submitWork.getSubmit().getSubmitId());
         dto.setSubmitWorkId(key);
@@ -516,12 +521,6 @@ public class SubmitService implements ISubmitService {
         dto.setRequirement(submitWork.getWork().getTitle());
         dto.setStatus(submitWork.getStatus());
         if (!submitWork.getWorkEvals().isEmpty()) {
-            // if (submitWork.getWorkEvals().get(0).getNewWorkEval() != 0) {
-            // dto.setGrade(submitWork.getWorkEvals().get(0).getNewWorkEval());
-            // } else {
-            // dto.setGrade(submitWork.getWorkEvals().get(0).getWorkEval());
-            // }
-
             for (WorkEval eval : submitWork.getWorkEvals()) {
                 if (submitWork.getMilestone().equals(eval.getMilestone())) {
                     dto.setGrade(eval.getWorkEval());
