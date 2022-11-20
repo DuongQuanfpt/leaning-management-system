@@ -117,20 +117,21 @@ public class WorkEvalService implements IWorkEvalService {
             eval.setSubmitWork(submitWork);
             eval.setComplexity(complexity);
             eval.setQuality(quality);
+            eval.setMilestone(submitWork.getMilestone());
             eval.setWorkEval(requestDTO.getWorkPoint());
             if (requestDTO.getComment() != null) {
                 eval.setComment(requestDTO.getComment());
             }
 
-        } 
+        }
         // else {
-        //     eval = submitWork.getWorkEvals().get(0);
-        //     eval.setNewComplexity(complexity);
-        //     eval.setNewQuality(quality);
-        //     eval.setNewWorkEval(requestDTO.getWorkPoint());
-        //     if (requestDTO.getComment() != null) {
-        //         eval.setNewComment(requestDTO.getComment());
-        //     }
+        // eval = submitWork.getWorkEvals().get(0);
+        // eval.setNewComplexity(complexity);
+        // eval.setNewQuality(quality);
+        // eval.setNewWorkEval(requestDTO.getWorkPoint());
+        // if (requestDTO.getComment() != null) {
+        // eval.setNewComment(requestDTO.getComment());
+        // }
         // }
 
         workEvalRepository.save(eval);
@@ -151,16 +152,23 @@ public class WorkEvalService implements IWorkEvalService {
             throw new CustomException("submit work doesnt exist");
         }
 
-        if(requestDTO.getComment()!= null){
+        if (requestDTO.getComment() != null) {
             submitWork.setRejectReason(requestDTO.getComment());
         }
-        
-        if(submitWork.getStatus() == SubmitWorkStatusEnum.Rejected){
+
+        if (submitWork.getStatus() == SubmitWorkStatusEnum.Rejected) {
             submitWork.setStatus(SubmitWorkStatusEnum.Submitted);
         } else {
+            if (submitWork.getStatus() == SubmitWorkStatusEnum.Evaluated) {
+                workEvalRepository.deleteAll(submitWork.getWorkEvals());
+                submitWork.setWorkEvals(null);
+                Submit submit = submitWork.getSubmit();
+                submit.setStatus(SubmitStatusEnum.Submitted);
+                submitRepository.save(submit);
+            }
             submitWork.setStatus(SubmitWorkStatusEnum.Rejected);
         }
-      
+
         workRepository.save(submitWork);
         return ResponseEntity.ok("rejected");
     }

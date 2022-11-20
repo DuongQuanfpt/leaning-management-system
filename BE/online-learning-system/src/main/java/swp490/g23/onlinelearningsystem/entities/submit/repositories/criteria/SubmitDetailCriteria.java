@@ -1,8 +1,5 @@
 package swp490.g23.onlinelearningsystem.entities.submit.repositories.criteria;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
