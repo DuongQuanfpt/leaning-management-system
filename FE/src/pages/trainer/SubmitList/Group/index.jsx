@@ -161,7 +161,7 @@ const Group = () => {
               ></Button>
             </Tooltip>
           )}
-          {isTrainer && submit.status === 'Submitted' && (
+          {isTrainer && submit.status === 'Evaluated' && (
             <Tooltip title="Evaluation" placement="top">
               <Button
                 shape="circle"

@@ -118,7 +118,7 @@ const Individual = () => {
       dataIndex: 'status',
       width: '10%',
       render: (_, { status }) => (
-        <Tag color={status === 'Pending' ? 'green' : status === 'Submited' ? 'magenta' : 'purple'}> {status}</Tag>
+        <Tag color={status === 'Pending' ? 'green' : status === 'Submitted' ? 'blue' : 'purple'}> {status}</Tag>
       ),
     },
     {
@@ -138,14 +138,14 @@ const Individual = () => {
               ></Button>
             </Tooltip>
           )}
-          {isTrainer && submit.status === 'Submitted' && (
+          {isTrainer && submit.status === 'Evaluated' && (
             <Tooltip title="Evaluation" placement="top">
               <Button
                 shape="circle"
                 type="primary"
                 icon={<FormOutlined />}
                 onClick={() => {
-                  navigateTo(`/assignment-evaluation/${submit.submitId}`)
+                  navigateTo(`/trainee-evaluation/${submit.submitId}`)
                 }}
               ></Button>
             </Tooltip>
