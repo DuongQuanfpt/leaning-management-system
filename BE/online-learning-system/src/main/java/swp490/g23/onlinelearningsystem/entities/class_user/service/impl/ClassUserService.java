@@ -217,6 +217,8 @@ public class ClassUserService implements IClassUserService {
                 if (!userRepository.findByEmail(emailRequest).isPresent()) {
                     if (matcher.find()) {
                         newTrainee.setEmail(emailRequest);
+                        newTrainee.setPassword(encoder.encode(newPass));
+                        newTrainee.setSettings(settings);
                     } else {
                         importResponse.setImportMessage("Email is wrong format");
                         importResponse.setImportStatus("Failed!");
@@ -224,10 +226,16 @@ public class ClassUserService implements IClassUserService {
                         continue;
                     }
                 } else {
-                    importResponse.setImportMessage("Email have already existed!");
-                    importResponse.setImportStatus("Failed!");
-                    importList.add(importResponse);
-                    continue;
+                    if (userRepository.findByEmail(emailRequest).isPresent()
+                            && classUserRepositories.findByClassesAndUser(
+                                    userRepository.findByEmail(emailRequest).get().getUserId(), classCode) != null) {
+
+                    } else {
+                        importResponse.setImportMessage("Email have already existed!");
+                        importResponse.setImportStatus("Failed!");
+                        importList.add(importResponse);
+                        continue;
+                    }
                 }
             } else {
                 importResponse.setImportMessage("Email is empty!");
@@ -246,9 +254,8 @@ public class ClassUserService implements IClassUserService {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            newTrainee.setPassword(encoder.encode(newPass));
-            newTrainee.setSettings(settings);
-
+            // newTrainee.setPassword(encoder.encode(newPass));
+            // newTrainee.setSettings(settings);
             userRepository.save(newTrainee);
             if (classCode != null) {
                 classUser.setClasses(clazz);
@@ -258,11 +265,6 @@ public class ClassUserService implements IClassUserService {
                 // newTrainee.setClassUsers(newList);
             }
 
-            // em.persist(newTrainee);
-            // userRepository.save(newTrainee);
-            // em.persist(classUser);
-            // em.merge(newTrainee);
-            // em.merge(clazz);
             classUserRepositories.save(classUser);
             importSubmit(classUser);
             importResponse.setImportStatus("Successfully!");
