@@ -238,11 +238,6 @@ const NewPost = () => {
                 />
               </div>
               <div className="col-lg-12 mb-3">
-                <Typography.Text strong>Preview</Typography.Text>
-
-                <div className="col-lg-12 mb-3">{parse(postDetail.content)}</div>
-              </div>
-              <div className="col-lg-12 mb-3">
                 <Button type="primary" onClick={handleSave} loading={loading} className="mr-3">
                   Save
                 </Button>

@@ -120,6 +120,7 @@ const Group = () => {
       dataIndex: 'submitUrl',
       width: '10%',
       ellipsis: true,
+      hidden: !roles.includes('trainer'),
       render: (_, { submitUrl }) => (
         <Typography.Link href={submitUrl} target="_blank">
           {submitUrl?.slice(
@@ -161,7 +162,7 @@ const Group = () => {
               ></Button>
             </Tooltip>
           )}
-          {isTrainer && submit.status === 'Evaluated' && (
+          {isTrainer && submit.status === 'Submitted' && (
             <Tooltip title="Evaluation" placement="top">
               <Button
                 shape="circle"
@@ -194,7 +195,7 @@ const Group = () => {
         </Space>
       ),
     },
-  ]
+  ].filter((item) => !item.hidden)
 
   const customLocaleWhenEmpty = {
     emptyText: filter?.milestoneId !== null ? 'No Data' : 'Select Milestone To Load Submit',

@@ -1,37 +1,38 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+
+import { Typography, Space, Skeleton, Image, Card } from 'antd'
+
 import postApi from '~/api/postApi'
-import { Card, Image, Pagination, Space, Typography, Button } from 'antd'
-import { Link, useNavigate } from 'react-router-dom'
 import Header from '~/components/Homepage/Header'
-import MainSlider from '~/components/Homepage/MainSlider'
-import ContactUs from '~/components/Homepage/ContactUs'
+
 import Footer from '~/components/Homepage/Footer'
-import { useSelector } from 'react-redux'
-
-const HomePage = () => {
+const Category = () => {
   let ITEM_PER_PAGE = 10
-
+  const { id } = useParams()
   const navigateTo = useNavigate()
-  const { token } = useSelector((state) => state.auth)
   const [listPost, setListPost] = useState([])
   const [loading, setLoading] = useState(false)
   const [paginate, setPaginate] = useState({
     totalItem: 0,
     currentPage: 1,
   })
+  const [categoryName, setCategoryName] = useState('')
 
   useEffect(() => {
     loadData(paginate.currentPage)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ITEM_PER_PAGE])
+  }, [ITEM_PER_PAGE, id])
 
   const loadData = async (page) => {
     setLoading(true)
+
     const params = {
       isNotice: false,
       topView: 10,
       page: page,
       limit: ITEM_PER_PAGE,
+      categoryId: id,
     }
 
     await postApi
@@ -43,24 +44,37 @@ const HomePage = () => {
           totalItem: response.totalItem,
           currentPage: response.currentPage,
         })
+        return response
       })
-      .then(() => setLoading(false))
+      .then((response) => {
+        const categorySelected = response.categoryFilter.filter((item) => +item.categoryId === +id)
+        if (categorySelected.length === 0) {
+          navigateTo('/404')
+        }
+        setCategoryName(categorySelected[0].categoryName)
+      })
       .catch((error) => {
         console.log(error)
-        setLoading(false)
       })
+      .finally(() => setLoading(false))
   }
 
   return (
-    <>
-      <Header />
-      <div className="page-content bg-white">
-        <MainSlider />
-        <div className="content-block" id="content-area">
-          <div className="body flex-grow-1 px-3 py-3" style={{ backgroundColor: '#ebedef' }}>
+    <div className="d-flex flex-column" style={{ minHeight: '100vh' }}>
+      <Header isPost={true} />
+      <div className="page-content bg-white" style={{ width: '100vw' }}>
+        <div className="body flex-grow-1 px-3 py-3" style={{ backgroundColor: '#ebedef' }}>
+          <Skeleton loading={loading} style={{ marginTop: '90px' }}>
             <div className="col-lg-12 m-b30">
-              <div className="row">
-                <div className="col-lg-9 mt-3">
+              <div className="row w-100" style={{ marginTop: '90px', width: '100vw' }}>
+                <div className="col-lg-9">
+                  <div className="col-lg-12">
+                    <Skeleton loading={loading}>
+                      <Typography.Title level={4}>{`Found ${
+                        listPost.listResult?.length ?? 0
+                      } result with category ${categoryName}`}</Typography.Title>
+                    </Skeleton>
+                  </div>
                   <div className="col-lg-12">
                     {listPost?.listResult?.map((post) => (
                       <Card className="w-100 mb-3" loading={loading}>
@@ -117,27 +131,6 @@ const HomePage = () => {
                       </Card>
                     ))}
                   </div>
-                  <div className="col-lg-12 d-flex justify-content-end ">
-                    {token && (
-                      <Button type="primary" className="mb-3" onClick={() => navigateTo(`/new-post`)}>
-                        Create Post
-                      </Button>
-                    )}
-                  </div>
-                  <div className="col-lg-12 d-flex justify-content-end">
-                    <Pagination
-                      total={paginate?.totalItem}
-                      current={paginate.currentPage}
-                      onChange={(pageNumber) => {
-                        setPaginate((prev) => ({ ...prev, currentPage: pageNumber }))
-                      }}
-                      showSizeChanger
-                      onShowSizeChange={(current, pageSize) => {
-                        ITEM_PER_PAGE = pageSize
-                        loadData(paginate.currentPage)
-                      }}
-                    />
-                  </div>
                 </div>
                 <div className="col-lg-3">
                   <Space className="w-100">
@@ -166,21 +159,20 @@ const HomePage = () => {
                     >
                       {listPost?.topView?.map((topView, index) => (
                         <Space className="d-flex flex-column">
-                          <Link to={`/post/${topView.postId}`}>
-                            <Typography.Text>
-                              {`${index + 1}. `}
-                              <Typography.Text className="hover-text-decoration">
-                                {`${
-                                  topView.postTitle.length > 100
-                                    ? topView.postTitle.substring(0, 100) + ' ...'
-                                    : topView.postTitle
-                                }`}
-                              </Typography.Text>
-                              <Typography.Text type="secondary" className="pl-3">
-                                {topView.viewCount} views
-                              </Typography.Text>
+                          <Typography.Link
+                            onClick={() => navigateTo(`/post/${topView.postId}`)}
+                            style={{ color: 'black' }}
+                          >
+                            {`${index + 1}. `}
+                            <Typography.Text className="hover-text-decoration">
+                              {topView.postTitle.length > 100
+                                ? topView.postTitle.substring(0, 100) + ` ...`
+                                : topView.postTitle}
                             </Typography.Text>
-                          </Link>
+                            <Typography.Text type="secondary" className="pl-3">
+                              {topView.viewCount} views
+                            </Typography.Text>
+                          </Typography.Link>
                         </Space>
                       ))}
                     </Card>
@@ -188,13 +180,12 @@ const HomePage = () => {
                 </div>
               </div>
             </div>
-          </div>
-          <ContactUs />
+          </Skeleton>
         </div>
       </div>
       <Footer />
-    </>
+    </div>
   )
 }
 
-export default HomePage
+export default Category

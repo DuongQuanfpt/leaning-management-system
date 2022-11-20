@@ -14,6 +14,7 @@ import {
   Skeleton,
   Space,
   Table,
+  Tag,
   Typography,
 } from 'antd'
 
@@ -23,10 +24,12 @@ import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
+import { useSelector } from 'react-redux'
 
 const SubmitDetail = () => {
   const { id } = useParams()
   const navigateTo = useNavigate()
+  const { roles } = useSelector((state) => state.profile)
   const [loading, setLoading] = useState(false)
   const [listSubmitDetail, setListSubmitDetail] = useState([])
   const [listFilter, setListFilter] = useState({
@@ -114,11 +117,19 @@ const SubmitDetail = () => {
     { title: 'Group', dataIndex: 'team', width: '6%' },
     { title: 'Requirement', dataIndex: 'requirement', width: '18%' },
     { title: 'Assignee', dataIndex: 'assignee', width: '11%' },
-    { title: 'Status', dataIndex: 'status', width: '11%' },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      width: '11%',
+      render: (_, { status }) => (
+        <Tag color={status === 'Submitted' ? 'blue' : status === 'Evaluated' ? 'purple' : 'red'}> {status}</Tag>
+      ),
+    },
     { title: 'WP', dataIndex: 'grade', width: '6%' },
     {
       title: 'Actions',
       width: '12%',
+      hidden: !roles.includes('trainer'),
       render: (_, submit) => (
         <>
           {submit.id % 2 === 0 ? (
@@ -187,7 +198,7 @@ const SubmitDetail = () => {
         </>
       ),
     },
-  ]
+  ].filter((item) => !item.hidden)
 
   return (
     <div>

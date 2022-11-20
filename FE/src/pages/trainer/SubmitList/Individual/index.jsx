@@ -98,6 +98,7 @@ const Individual = () => {
       dataIndex: 'submitUrl',
       width: '15%',
       ellipsis: true,
+      hidden: !roles.includes('trainer'),
       render: (_, { submitUrl }) => (
         <Typography.Link href={submitUrl} target="_blank">
           {submitUrl?.slice(
@@ -124,6 +125,7 @@ const Individual = () => {
     {
       title: 'Actions',
       dataIndex: '',
+      width: '10%',
       render: (_, submit) => (
         <Space size="middle" align="baseline">
           {username === submit.traineeTitle && (
@@ -162,7 +164,7 @@ const Individual = () => {
         </Space>
       ),
     },
-  ]
+  ].filter((item) => !item.hidden)
 
   const customLocaleWhenEmpty = {
     emptyText: filter?.milestoneId !== null ? 'No Data' : 'Select Milestone To Load Submit',

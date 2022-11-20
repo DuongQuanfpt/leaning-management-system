@@ -11,6 +11,7 @@ const Verify = lazy(() => import('~/pages/common/Verify'))
 const AccessDenied = lazy(() => import('~/pages/common/AccessDenied'))
 const NewPost = lazy(() => import('~/pages/user/NewPost'))
 const Post = lazy(() => import('~/pages/user/Post'))
+const Category = lazy(() => import('~/pages/user/Category'))
 
 const Notice = lazy(() => import('~/pages/user/Notice'))
 
@@ -120,6 +121,7 @@ const commonRoutes = [
   { path: '/404', component: PageNotFound },
   { path: '/access-denied', component: AccessDenied },
   { path: '/post/:id', component: Post },
+  { path: '/category/:id', component: Category },
 ]
 // User routes
 const userRoutes = [
