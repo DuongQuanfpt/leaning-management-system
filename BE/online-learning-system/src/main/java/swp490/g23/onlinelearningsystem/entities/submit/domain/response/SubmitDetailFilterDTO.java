@@ -15,6 +15,7 @@ import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.SubmitWorkStat
 @AllArgsConstructor
 public class SubmitDetailFilterDTO {
     private List<SubmitDetailDTO> listResult = new ArrayList<>();
-    List<SubmitWorkStatusEntity> statusFilter = new ArrayList<>();
-    List<String> assigneeFilter = new ArrayList<>();
+    private List<SubmitWorkStatusEntity> statusFilter = new ArrayList<>();
+    private List<String> assigneeFilter = new ArrayList<>();
+    private Long milestoneId;
 }
