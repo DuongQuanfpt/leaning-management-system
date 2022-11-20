@@ -9,8 +9,6 @@ import { cilAccountLogout, cilUser, cilHome, cilLockLocked, cilCalendar, cilDesc
 import CIcon from '@coreui/icons-react'
 
 // Images
-import logo from '~/assets/images/logo.png'
-import adv from '~/assets/images/adv/adv.jpg'
 import logoWhite from '~/assets/images/logo-white.png'
 import avatar from '~/assets/images/profile/pic1.jpg'
 

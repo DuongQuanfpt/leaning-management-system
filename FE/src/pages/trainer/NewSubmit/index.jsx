@@ -115,8 +115,6 @@ const NewSubmit = () => {
     if (listSubmitFilter.length === 0) {
       return
     }
-    console.log(modalFilter)
-
     const groupParamsSelect = {
       groupIds: [listSubmitFilter.groupId === null ? 0 : listSubmitFilter.groupId],
       statusIds: [],
@@ -273,7 +271,20 @@ const NewSubmit = () => {
   }
 
   const columns = [
-    { title: 'Requirement', dataIndex: 'title', width: '60%' },
+    {
+      title: 'Requirement',
+      dataIndex: 'title',
+      width: '60%',
+      render: (_, requirement) => (
+        <Typography.Text>
+          {requirement.title}
+          {'  '}
+          <Typography.Text type="secondary">
+            {requirement.submitStatus ? `(${requirement.submitStatus})` : ``}
+          </Typography.Text>
+        </Typography.Text>
+      ),
+    },
     {
       title: 'Status',
       dataIndex: 'status',
@@ -307,6 +318,7 @@ const NewSubmit = () => {
             cloneRequirementList[positionChange].assignee = null
             setListSubmitFilter((prev) => ({ ...prev, requirement: cloneRequirementList }))
           }}
+          disabled={listSubmitFilter.status === 'Evaluated'}
         />
       ),
     },
@@ -432,12 +444,14 @@ const NewSubmit = () => {
                     </div>
                     <div className="col-6 d-flex"></div>
                     <div className="col-2 d-flex justify-content-end">
-                      <StyledUpload
-                        {...props}
-                        style={{ display: 'flex !important', flexDirection: 'row-reverse !important' }}
-                      >
-                        <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                      </StyledUpload>
+                      {listSubmitFilter.status !== 'Evaluated' && (
+                        <StyledUpload
+                          {...props}
+                          style={{ display: 'flex !important', flexDirection: 'row-reverse !important' }}
+                        >
+                          <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                        </StyledUpload>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -451,9 +465,11 @@ const NewSubmit = () => {
                       } requirements which you can choose to submit`}</Typography.Text>
                     </div>
                     <div className="col-4 d-flex justify-content-end">
-                      <Button className="px-0" type="link" onClick={() => setOpen(true)}>
-                        Update Requirement
-                      </Button>
+                      {listSubmitFilter.status !== 'Evaluated' && (
+                        <Button className="px-0" type="link" onClick={() => setOpen(true)}>
+                          Update Requirement
+                        </Button>
+                      )}
                       <Modal
                         title="Requirement Update"
                         style={{
@@ -566,6 +582,10 @@ const NewSubmit = () => {
                           setRequirementSelected(selectedRows)
                           setRequirementSelectedKey(selectedRowKeys)
                         },
+                        getCheckboxProps: (record) => ({
+                          disabled: listSubmitFilter.status !== 'Evaluated' ? false : true,
+                        }),
+                        // disabled: listSubmitFilter.status !== 'Evaluated' ? true : false,
                       }}
                     />
                   </div>
@@ -573,9 +593,11 @@ const NewSubmit = () => {
                 <div className="col-lg-12 mt-3">
                   <div className="row ">
                     <div className="col-lg-3 d-flex justify-content-start mb-3">
-                      <Button type="primary" onClick={handleSubmitMilestone} loading={loading}>
-                        Submit Milestone
-                      </Button>
+                      {listSubmitFilter.status !== 'Evaluated' && (
+                        <Button type="primary" onClick={handleSubmitMilestone} loading={loading}>
+                          Submit Milestone
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </div>

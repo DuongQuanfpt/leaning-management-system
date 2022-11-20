@@ -17,9 +17,9 @@ const postApi = {
     return axiosClient.get(url, {})
   },
 
-  editPost: (postId, params) => {
+  editPost: (postId, params, token) => {
     const url = `/api/post-view/${postId}`
-    return axiosClient.put(url, params, header)
+    return axiosClient.put(url, params, { headers: { Authorization: `Bearer ${token}` } })
   },
 
   createPost: (params, token) => {

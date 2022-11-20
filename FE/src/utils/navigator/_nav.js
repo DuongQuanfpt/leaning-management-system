@@ -76,6 +76,11 @@ const _nav = [
       },
       {
         component: CNavItem,
+        name: 'Class Evaluation',
+        to: '/class-criteria-list',
+      },
+      {
+        component: CNavItem,
         name: 'Class Schedule',
         to: '/schedule-list',
       },
@@ -87,7 +92,7 @@ const _nav = [
       {
         component: CNavItem,
         name: 'Class Assignments',
-        to: '/eval-criteria-list',
+        to: '/milestone-list',
       },
       {
         component: CNavItem,
