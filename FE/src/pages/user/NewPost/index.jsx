@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react'
+import { useSelector } from 'react-redux'
 
 import { CKEditor } from '@ckeditor/ckeditor5-react'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
+import parse from 'html-react-parser'
+
 import { Input, Select, Typography, Upload, Button, Modal } from 'antd'
 import { UploadOutlined } from '@ant-design/icons'
 
@@ -13,7 +16,6 @@ import { customConfiguration } from '~/utils/CustomClassicEditor'
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
-import { useSelector } from 'react-redux'
 
 const StyledUpload = styled(Upload)`
   display: flex;
@@ -229,9 +231,9 @@ const NewPost = () => {
               <div className="col-lg-12 mb-3">
                 <Typography.Text strong>Content</Typography.Text>
                 <CKEditor
+                  className="p-3"
                   editor={ClassicEditor}
-                  data={postDetail?.content}
-                  onChange={(e, editor) => setPostDetail((prev) => ({ ...prev, content: editor.getData() }))}
+                  onChange={(e, editor) => setPostDetail((prev) => ({ ...prev, content: editor.getData().trim() }))}
                   config={customConfiguration}
                 />
               </div>

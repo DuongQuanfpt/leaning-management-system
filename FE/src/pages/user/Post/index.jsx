@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import parse from 'html-react-parser'
 
 import { Typography, Button, Space, Skeleton, Image, Card } from 'antd'
@@ -132,7 +132,12 @@ const Post = () => {
                       loading={loading}
                     >
                       {listPost?.categoryFilter?.map((category) => (
-                        <p className="p-0 m-0">{category.categoryName}</p>
+                        <Link to={`/category/${category.categoryId}`}>
+                          <Typography.Text className="p-0 m-0 hover-text-decoration">
+                            {category.categoryName}
+                          </Typography.Text>
+                          <br />
+                        </Link>
                       ))}
                     </Card>
                   </Space>
@@ -145,19 +150,21 @@ const Post = () => {
                     >
                       {listPost?.topView?.map((topView, index) => (
                         <Space className="d-flex flex-column">
-                          <Typography.Link
-                            onClick={() => navigateTo(`/post/${topView.postId}`)}
-                            style={{ color: 'black' }}
-                          >
-                            {`${index + 1}. ${
-                              topView.postTitle.length > 100
-                                ? topView.postTitle.substring(0, 100) + ` ...`
-                                : topView.postTitle
-                            }`}
-                            <Typography.Text type="secondary" className="pl-3">
-                              {topView.viewCount} views
+                          <Link to={`/post/${topView.postId}`}>
+                            <Typography.Text>
+                              {`${index + 1}. `}
+                              <Typography.Text className="hover-text-decoration">
+                                {`${
+                                  topView.postTitle.length > 100
+                                    ? topView.postTitle.substring(0, 100) + ' ...'
+                                    : topView.postTitle
+                                }`}
+                              </Typography.Text>
+                              <Typography.Text type="secondary" className="pl-3">
+                                {topView.viewCount} views
+                              </Typography.Text>
                             </Typography.Text>
-                          </Typography.Link>
+                          </Link>
                         </Space>
                       ))}
                     </Card>

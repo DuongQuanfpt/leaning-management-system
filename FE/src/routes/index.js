@@ -11,6 +11,7 @@ const Verify = lazy(() => import('~/pages/common/Verify'))
 const AccessDenied = lazy(() => import('~/pages/common/AccessDenied'))
 const NewPost = lazy(() => import('~/pages/user/NewPost'))
 const Post = lazy(() => import('~/pages/user/Post'))
+const Category = lazy(() => import('~/pages/user/Category'))
 
 const Notice = lazy(() => import('~/pages/user/Notice'))
 
@@ -101,6 +102,8 @@ const MySchedule = lazy(() => import('~/pages/trainer/MySchedule'))
 const PostEdit = lazy(() => import('~/pages/user/PostEdit'))
 const NewNotice = lazy(() => import('~/pages/trainer/NewNotice'))
 const WorkEvaluation = lazy(() => import('~/pages/trainer/WorkEvaluation'))
+const AssignmentEvaluation = lazy(() => import('~/pages/trainer/AssignmentEvaluation'))
+const TraineeEvaluation = lazy(() => import('~/pages/trainer/TraineeEvaluation'))
 
 //404 pages
 const PageNotFound = lazy(() => import('~/pages/common/PageNotFound'))
@@ -117,8 +120,8 @@ const commonRoutes = [
   { path: '/verify', component: Verify },
   { path: '/404', component: PageNotFound },
   { path: '/access-denied', component: AccessDenied },
-  { path: '/new-post', component: NewPost },
   { path: '/post/:id', component: Post },
+  { path: '/category/:id', component: Category },
 ]
 // User routes
 const userRoutes = [
@@ -126,6 +129,7 @@ const userRoutes = [
   { path: '/profile', component: Profile },
   { path: '/change-password', component: ChangePassword },
   { path: '/notice/:id', component: Notice },
+  { path: '/new-post', component: NewPost },
 ]
 
 // Admin routes
@@ -166,6 +170,8 @@ const trainerRoutes = [
   { path: '/new-group/:id', component: NewGroup },
   { path: '/new-notice', component: NewNotice },
   { path: '/work-evaluation/:id', component: WorkEvaluation },
+  { path: '/assignment-evaluation/:id', component: AssignmentEvaluation },
+  { path: '/trainee-evaluation/:id', component: TraineeEvaluation },
 ]
 
 // Trainee routes
