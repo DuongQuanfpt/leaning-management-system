@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 
 import { CKEditor } from '@ckeditor/ckeditor5-react'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
-import { Input, Select, Typography, Upload, Button, Modal } from 'antd'
+import { Input, Typography, Upload, Button, Modal } from 'antd'
 import { UploadOutlined } from '@ant-design/icons'
 
 import styled from 'styled-components'
@@ -27,6 +27,7 @@ const NewNotice = () => {
     excerpt: '',
     content: '',
   })
+  // eslint-disable-next-line no-unused-vars
   const [listCategory, setListCategory] = useState([])
   const [thumbnail, setThumbnail] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -135,7 +136,7 @@ const NewNotice = () => {
     },
     onChange(info) {
       const { status } = info.file
-      const extensionFile = info?.file?.name?.split('.')?.pop()
+      const extensionFile = info?.file?.name?.split('.')?.pop().toLowerCase()
 
       if (status !== 'uploading') {
         if (info.file.status === 'removed') return

@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
+import swp490.g23.onlinelearningsystem.entities.milestone.repositories.MilestoneRepository;
 import swp490.g23.onlinelearningsystem.entities.subject_setting.domain.SubjectSetting;
 import swp490.g23.onlinelearningsystem.entities.subject_setting.repositories.SubjectSettingRepository;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
@@ -17,6 +19,7 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.work_eval.domain.WorkEval;
 import swp490.g23.onlinelearningsystem.entities.work_eval.domain.request.EvalRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.work_eval.domain.response.EvalResponseDTO;
+import swp490.g23.onlinelearningsystem.entities.work_eval.domain.response.EvalResultDTO;
 import swp490.g23.onlinelearningsystem.entities.work_eval.domain.response.EvalSettingDTO;
 import swp490.g23.onlinelearningsystem.entities.work_eval.repositories.WorkEvalRepository;
 import swp490.g23.onlinelearningsystem.entities.work_eval.service.IWorkEvalService;
@@ -28,6 +31,9 @@ import swp490.g23.onlinelearningsystem.util.enumutil.SubmitWorkStatusEnum;
 public class WorkEvalService implements IWorkEvalService {
     @Autowired
     private SubmitWorkRepository workRepository;
+
+    @Autowired
+    private MilestoneRepository milestoneRepository;
 
     @Autowired
     private SubjectSettingRepository subjectSettingRepository;
@@ -76,13 +82,14 @@ public class WorkEvalService implements IWorkEvalService {
             }
         }
 
+        List<EvalResultDTO> evalResultDTOs = new ArrayList<>();
         if (!submitWork.getWorkEvals().isEmpty()) {
-            WorkEval workEval = submitWork.getWorkEvals().get(0);
-            responseDTO.setCurrentComplexity(toSettingDTO(workEval.getComplexity()));
-            responseDTO.setCurrentComplexity(toSettingDTO(workEval.getQuality()));
-            responseDTO.setWorkPoint(workEval.getWorkEval());
+            for (WorkEval eval : submitWork.getWorkEvals()) {
+                evalResultDTOs.add(toResultDTO(eval));
+            }
         }
 
+        responseDTO.setResult(evalResultDTOs);
         responseDTO.setTraineeName(submitWork.getSubmit().getClassUser().getUser().getAccountName());
         responseDTO.setMilestoneName(submitWork.getSubmit().getMilestone().getTitle());
         responseDTO.setFunctionName(submitWork.getWork().getTitle());
@@ -90,6 +97,17 @@ public class WorkEvalService implements IWorkEvalService {
         responseDTO.setQualityFilter(qualityDtos);
 
         return ResponseEntity.ok(responseDTO);
+    }
+
+    private EvalResultDTO toResultDTO(WorkEval eval) {
+        EvalResultDTO dto = new EvalResultDTO();
+        dto.setMilestoneId(eval.getMilestone().getMilestoneId());
+        dto.setMilestoneName(eval.getMilestone().getTitle());
+        dto.setComplexity(toSettingDTO(eval.getComplexity()));
+        dto.setQuality(toSettingDTO(eval.getQuality()));
+        dto.setWorkPoint(eval.getWorkEval());
+        dto.setComment(eval.getComment());
+        return dto;
     }
 
     private EvalSettingDTO toSettingDTO(SubjectSetting subjectSetting) {
@@ -101,10 +119,20 @@ public class WorkEvalService implements IWorkEvalService {
     }
 
     @Override
-    public ResponseEntity<String> workEval(User user, Long submitId, Long workId, EvalRequestDTO requestDTO) {
+    public ResponseEntity<String> workEval(User user, Long submitId, Long workId, EvalRequestDTO requestDTO,
+            Long milestoneId) {
         SubmitWork submitWork = workRepository.getBySubmitAndWork(submitId, workId);
         if (submitWork == null) {
             throw new CustomException("submit work doesnt exist");
+        }
+
+        Milestone currentMilestone = milestoneRepository.findById(milestoneId)
+                .orElseThrow(() -> new CustomException("complexity doesnt exist"));
+
+        for (WorkEval eval : submitWork.getWorkEvals()) {
+            if (eval.getMilestone().equals(currentMilestone)) {
+                throw new CustomException("work already evaluated in this milestone");
+            }
         }
 
         SubjectSetting complexity = subjectSettingRepository.findById(requestDTO.getComplexityId())
@@ -113,35 +141,28 @@ public class WorkEvalService implements IWorkEvalService {
                 .orElseThrow(() -> new CustomException("quality doesnt exist"));
 
         WorkEval eval = new WorkEval();
-        if (submitWork.getWorkEvals().isEmpty()) {
-            eval.setSubmitWork(submitWork);
-            eval.setComplexity(complexity);
-            eval.setQuality(quality);
-            eval.setMilestone(submitWork.getMilestone());
-            eval.setWorkEval(requestDTO.getWorkPoint());
-            if (requestDTO.getComment() != null) {
-                eval.setComment(requestDTO.getComment());
-            }
-
+        eval.setSubmitWork(submitWork);
+        eval.setComplexity(complexity);
+        eval.setQuality(quality);
+        eval.setMilestone(currentMilestone);
+        eval.setWorkEval(requestDTO.getWorkPoint());
+        if (requestDTO.getComment() != null) {
+            eval.setComment(requestDTO.getComment());
         }
-        // else {
-        // eval = submitWork.getWorkEvals().get(0);
-        // eval.setNewComplexity(complexity);
-        // eval.setNewQuality(quality);
-        // eval.setNewWorkEval(requestDTO.getWorkPoint());
-        // if (requestDTO.getComment() != null) {
-        // eval.setNewComment(requestDTO.getComment());
-        // }
-        // }
 
         workEvalRepository.save(eval);
 
-        submitWork.setStatus(SubmitWorkStatusEnum.Evaluated);
         Submit submit = submitWork.getSubmit();
-        submit.setStatus(SubmitStatusEnum.Evaluated);
+        if (submit.getStatus() != SubmitStatusEnum.Evaluated) {
+            submit.setStatus(SubmitStatusEnum.Evaluated);
+            submitRepository.save(submit);
+        }
 
-        submitRepository.save(submit);
-        workRepository.save(submitWork);
+        if (submitWork.getStatus() != SubmitWorkStatusEnum.Evaluated) {
+            submitWork.setStatus(SubmitWorkStatusEnum.Evaluated);
+            workRepository.save(submitWork);
+        }
+
         return ResponseEntity.ok("evaluated");
     }
 
@@ -156,16 +177,20 @@ public class WorkEvalService implements IWorkEvalService {
             submitWork.setRejectReason(requestDTO.getComment());
         }
 
+        if (submitWork.getStatus() == SubmitWorkStatusEnum.Evaluated) {
+            throw new CustomException("cant reject evaluated work ");
+        }
+
         if (submitWork.getStatus() == SubmitWorkStatusEnum.Rejected) {
             submitWork.setStatus(SubmitWorkStatusEnum.Submitted);
         } else {
-            if (submitWork.getStatus() == SubmitWorkStatusEnum.Evaluated) {
-                workEvalRepository.deleteAll(submitWork.getWorkEvals());
-                submitWork.setWorkEvals(null);
-                Submit submit = submitWork.getSubmit();
-                submit.setStatus(SubmitStatusEnum.Submitted);
-                submitRepository.save(submit);
-            }
+            // if (submitWork.getStatus() == SubmitWorkStatusEnum.Evaluated) {
+            // workEvalRepository.deleteAll(submitWork.getWorkEvals());
+            // submitWork.setWorkEvals(null);
+            // Submit submit = submitWork.getSubmit();
+            // submit.setStatus(SubmitStatusEnum.Submitted);
+            // submitRepository.save(submit);
+            // }
             submitWork.setStatus(SubmitWorkStatusEnum.Rejected);
         }
 

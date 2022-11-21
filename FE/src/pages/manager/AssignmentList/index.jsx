@@ -17,6 +17,7 @@ import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 const AssignmentList = () => {
   const ITEM_PER_PAGE = 10
   const navigateTo = useNavigate()
+  const [loading, setLoading] = useState(false)
 
   const [listAssignment, setListAssignment] = useState([])
   const [totalItem, setTotalItem] = useState(1)
@@ -74,7 +75,7 @@ const AssignmentList = () => {
     if (filter.status.name !== 'Select Status') {
       params.filterStatus = filter.status.value
     }
-
+    setLoading(true)
     await assignmentApi
       .getPage(params)
       .then((response) => {
@@ -86,6 +87,7 @@ const AssignmentList = () => {
       .catch((error) => {
         console.log(error)
       })
+      .finally(() => setLoading(false))
   }
 
   const handleSearch = () => {
@@ -199,6 +201,13 @@ const AssignmentList = () => {
       render: (_, { isOnGoing }) => (isOnGoing === 1 ? 'Yes' : 'No'),
     },
     {
+      title: 'Is Final',
+      dataIndex: 'isFinal',
+      sorter: (a, b) => a.isFinal - b.isFinal,
+      width: '10%',
+      render: (_, { isFinal }) => (isFinal === 1 ? 'Yes' : 'No'),
+    },
+    {
       title: 'Actions',
       dataIndex: 'actions',
       width: '10%',
@@ -251,7 +260,7 @@ const AssignmentList = () => {
                       type="search"
                       id="form1"
                       className="form-control"
-                      placeholder="Searching by Class code or Title..."
+                      placeholder="Searching by Subject or Title..."
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
                     />
@@ -293,9 +302,9 @@ const AssignmentList = () => {
                 </div>
               </div>
               <div className="col-lg-12">
-                <Table bordered dataSource={listAssignment} columns={columns} pagination={false} />
+                <Table bordered dataSource={listAssignment} columns={columns} pagination={false} loading={loading} />
               </div>
-              <div className="col-lg-12 d-flex justify-content-end">
+              <div className="col-lg-12 d-flex justify-content-end mt-3">
                 <Pagination current={currentPage} total={totalItem} onChange={handleChangePage} />;
               </div>
             </div>

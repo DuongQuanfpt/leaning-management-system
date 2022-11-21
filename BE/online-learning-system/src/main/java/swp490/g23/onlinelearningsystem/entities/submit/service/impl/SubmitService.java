@@ -504,6 +504,7 @@ public class SubmitService implements ISubmitService {
         filterDTO.setListResult(list);
         filterDTO.setStatusFilter(statusFilter);
         filterDTO.setAssigneeFilter(assigneeList);
+        filterDTO.setMilestoneId(currentSubmit.getMilestone().getMilestoneId());
         return ResponseEntity.ok(filterDTO);
     }
 
@@ -523,8 +524,19 @@ public class SubmitService implements ISubmitService {
         dto.setRequirement(submitWork.getWork().getTitle());
         dto.setStatus(submitWork.getStatus());
         if (!submitWork.getWorkEvals().isEmpty()) {
+            // for (WorkEval eval : submitWork.getWorkEvals()) {
+            // if (submitWork.getMilestone().equals(eval.getMilestone())) {
+            // dto.setGrade(eval.getWorkEval());
+            // }
+            // }
+            WorkEval latestEval = new WorkEval();
             for (WorkEval eval : submitWork.getWorkEvals()) {
-                if (submitWork.getMilestone().equals(eval.getMilestone())) {
+                if (latestEval.getCreatedDate() == null) {
+                    latestEval = eval;
+                    dto.setGrade(eval.getWorkEval());
+                }
+                if (latestEval.getCreatedDate().before(eval.getCreatedDate())) {
+                    latestEval = eval;
                     dto.setGrade(eval.getWorkEval());
                 }
             }

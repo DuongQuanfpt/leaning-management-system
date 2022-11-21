@@ -34,13 +34,14 @@ public class WorkEvalController {
         return evalService.getWorkEval(user, submitId, workId);
     }
 
-    @PostMapping(value = "/work-eval/{submitId}/{workId}")
+    @PostMapping(value = "/work-eval/{submitId}/{workId}/{milestoneId}")
     public ResponseEntity<String> workEvaluation(@PathVariable("submitId") Long submitId,
             @PathVariable("workId") Long workId,
+            @PathVariable("milestoneId") Long milestoneId,
             @RequestBody EvalRequestDTO requestDTO,
             @AuthenticationPrincipal User user) {
 
-        return evalService.workEval(user, submitId, workId ,requestDTO);
+        return evalService.workEval(user, submitId, workId ,requestDTO , milestoneId);
     }
 
     @PutMapping(value = "/work-eval/{submitId}/{workId}")

@@ -27,6 +27,7 @@ const PostEdit = () => {
   const { id } = useParams()
   const navigateTo = useNavigate()
   const { roles, username } = useSelector((state) => state.profile)
+  const { token } = useSelector((state) => state.auth)
 
   const [postDetail, setPostDetail] = useState({})
   const [listCategory, setListCategory] = useState([])
@@ -147,7 +148,7 @@ const PostEdit = () => {
     console.log(params)
     setLoadingSubmit(true)
     postApi
-      .editPost(id, params)
+      .editPost(id, params, token)
       .then((response) => {
         console.log(response)
         Modal.success({
@@ -174,7 +175,7 @@ const PostEdit = () => {
     },
     onChange(info) {
       const { status } = info.file
-      const extensionFile = info?.file?.name?.split('.')?.pop()
+      const extensionFile = info?.file?.name?.split('.')?.pop().toLowerCase()
 
       if (status !== 'uploading') {
         if (info.file.status === 'removed') return
@@ -235,19 +236,21 @@ const PostEdit = () => {
                 </div>
                 <div className="col-lg-12 mb-3">
                   <div className="row">
-                    <div className="col-lg-6 mb-3">
-                      <Typography.Text strong>Category</Typography.Text>
-                      <Select
-                        className="w-100"
-                        placeholder="Select Category"
-                        value={postDetail.categoryId}
-                        options={listCategory?.map((item) => ({
-                          label: item.categoryName,
-                          value: item.categoryId,
-                        }))}
-                        onChange={(value) => setPostDetail((prev) => ({ ...prev, categoryId: value }))}
-                      />
-                    </div>
+                    {postDetail.categoryId !== null && (
+                      <div className="col-lg-6 mb-3">
+                        <Typography.Text strong>Category</Typography.Text>
+                        <Select
+                          className="w-100"
+                          placeholder="Select Category"
+                          value={postDetail.categoryId}
+                          options={listCategory?.map((item) => ({
+                            label: item.categoryName,
+                            value: item.categoryId,
+                          }))}
+                          onChange={(value) => setPostDetail((prev) => ({ ...prev, categoryId: value }))}
+                        />
+                      </div>
+                    )}
                     <div className="col-lg-6 mb-3">
                       <Typography.Text strong>Thumbnail Image</Typography.Text>
                       <StyledUpload {...props}>

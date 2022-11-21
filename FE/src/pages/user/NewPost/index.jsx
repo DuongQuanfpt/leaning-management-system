@@ -142,7 +142,7 @@ const NewPost = () => {
     },
     onChange(info) {
       const { status } = info.file
-      const extensionFile = info?.file?.name?.split('.')?.pop()
+      const extensionFile = info?.file?.name?.split('.')?.pop().toLowerCase()
 
       if (status !== 'uploading') {
         if (info.file.status === 'removed') return

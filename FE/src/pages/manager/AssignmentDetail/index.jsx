@@ -24,6 +24,7 @@ const AssignmentDetail = () => {
     eval_weight: '',
     isOnGoing: 0,
     isTeamWork: 0,
+    isFinal: 0,
     status: 0,
   })
 
@@ -83,6 +84,7 @@ const AssignmentDetail = () => {
       eval_weight: detail.eval_weight + '%',
       isOnGoing: detail.isOnGoing,
       isTeamWork: detail.isTeamWork,
+      isFinal: detail.isFinal,
       status: detail.status,
     }
 
@@ -181,7 +183,7 @@ const AssignmentDetail = () => {
                         />
                       </div>
                     </div>
-                    <div className="form-group col-4">
+                    <div className="form-group col-3">
                       <label className="col-form-label">Status</label>
                       <div>
                         <Radio.Group
@@ -194,7 +196,7 @@ const AssignmentDetail = () => {
                         </Radio.Group>
                       </div>
                     </div>
-                    <div className="form-group col-4">
+                    <div className="form-group col-3">
                       <label className="col-form-label">Is Ongoing</label>
                       <div>
                         <Radio.Group value={detail.isOnGoing} disabled>
@@ -203,13 +205,26 @@ const AssignmentDetail = () => {
                         </Radio.Group>
                       </div>
                     </div>
-                    <div className="form-group col-4">
+                    <div className="form-group col-3">
                       <label className="col-form-label">Is Teamwork</label>
                       <div>
                         <Radio.Group
                           value={detail.isTeamWork}
                           disabled={!isEditMode}
                           onChange={(e) => setDetail((prev) => ({ ...prev, isTeamWork: e.target.value }))}
+                        >
+                          <Radio value={1}>Yes</Radio>
+                          <Radio value={0}>No</Radio>
+                        </Radio.Group>
+                      </div>
+                    </div>
+                    <div className="form-group col-3">
+                      <label className="col-form-label">Is Final</label>
+                      <div>
+                        <Radio.Group
+                          value={detail.isFinal}
+                          disabled={!isEditMode}
+                          onChange={(e) => setDetail((prev) => ({ ...prev, isFinal: e.target.value }))}
                         >
                           <Radio value={1}>Yes</Radio>
                           <Radio value={0}>No</Radio>
