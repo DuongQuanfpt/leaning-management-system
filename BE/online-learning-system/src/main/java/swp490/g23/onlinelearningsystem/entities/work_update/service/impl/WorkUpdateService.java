@@ -1,5 +1,6 @@
 package swp490.g23.onlinelearningsystem.entities.work_update.service.impl;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.work_eval.domain.WorkEval;
 import swp490.g23.onlinelearningsystem.entities.work_update.domain.WorkUpdate;
 import swp490.g23.onlinelearningsystem.entities.work_update.domain.request.WorkUpdateRequestDTo;
+import swp490.g23.onlinelearningsystem.entities.work_update.domain.response.WorkUpdateMilestoneDTO;
 import swp490.g23.onlinelearningsystem.entities.work_update.domain.response.WorkUpdateResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.work_update.domain.response.WorkUpdateWorkDTO;
 import swp490.g23.onlinelearningsystem.entities.work_update.repositories.WorkUpdateRepository;
@@ -70,7 +72,27 @@ public class WorkUpdateService implements IWorkUpdateService {
         }
         workDTO.setUpdateOfWork(updateDTOs);
 
+        List<WorkUpdateMilestoneDTO> milestoneDTOs = new ArrayList<>();
+        List<Milestone> milestones = new ArrayList<>();
+        if (submitWork.getSubmit().getGroup() != null) {
+            milestones = milestoneRepository.getByGroupInProgress(submitWork.getSubmit().getGroup().getGroupId());
+        } else {
+            milestones = milestoneRepository
+                    .getByNoGroupAndClassCodeInProgress(submitWork.getSubmit().getClassUser().getClasses().getCode());
+        }
+
+        for (Milestone milestone : milestones) {
+            milestoneDTOs.add(toMilestoneDTO(milestone));
+        }
+        workDTO.setMilestoneOfSubmit(milestoneDTOs);
         return ResponseEntity.ok(workDTO);
+    }
+
+    private WorkUpdateMilestoneDTO toMilestoneDTO(Milestone milestone) {
+        WorkUpdateMilestoneDTO dto = new WorkUpdateMilestoneDTO();
+        dto.setMilestoneId(milestone.getMilestoneId());
+        dto.setMilestoneName(milestone.getTitle());
+        return dto;
     }
 
     private WorkUpdateResponseDTO toUpdateDTO(WorkUpdate update) {
@@ -97,7 +119,7 @@ public class WorkUpdateService implements IWorkUpdateService {
         update.setSubmit(submitWork.getSubmit());
         update.setTitle(requestDTo.getTitle());
         update.setDescription(requestDTo.getDescription());
-        update.setUpdateDate(LocalDateTime.parse(requestDTo.getUpdateDate()));
+        update.setUpdateDate(LocalDate.parse(requestDTo.getUpdateDate()));
 
         Milestone milestone = milestoneRepository.findById(requestDTo.getMilestoneId())
                 .orElseThrow(() -> new CustomException("submit doesnt exist"));
@@ -121,7 +143,7 @@ public class WorkUpdateService implements IWorkUpdateService {
         }
 
         if (requestDTo.getUpdateDate() != null) {
-            update.setUpdateDate(LocalDateTime.parse(requestDTo.getUpdateDate()));
+            update.setUpdateDate(LocalDate.parse(requestDTo.getUpdateDate()));
         }
 
         if (requestDTo.getMilestoneId() != null) {

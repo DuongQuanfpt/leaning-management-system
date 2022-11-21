@@ -464,11 +464,35 @@ public class SubmitService implements ISubmitService {
         if (group == null) {
             SubmitDetailDTO dto = new SubmitDetailDTO();
             List<SubmitWork> submitWorks = currentSubmit.getSubmitWorks();
+
+            // if( currentSubmit.getMilestone().getAssignment().isFinal() == false){
+            // // submitWorks = currentSubmit.getSubmitWorks();
+            // currentSubmit.getGroup().getSubmits();
+            // for (Submit submit : currentSubmit.getGroup().getSubmits()) {
+            // submitWorks.addAll(submit.getSubmitWorks());
+            // }
+            // }else {
+            // currentSubmit.getClassUser().getSubmits();
+            // for (Submit submit : currentSubmit.getClassUser().getSubmits()) {
+            // submitWorks.addAll(submit.getSubmitWorks());
+            // }
+            // }
+
             for (SubmitWork submitWork : submitWorks) {
+
                 if (!submitWork.getMilestone().equals(milestone)) {
                     continue;
                 }
                 boolean isAdd = true;
+
+                // if(currentSubmit.getMilestone().getAssignment().isFinal() == true){
+                // if(!submitWork.getMilestone().equals(currentSubmit.getMilestone())){
+                // if(submitWork.getSubmit().getUpdates().isEmpty()){
+                // isAdd = false;
+                // }
+                // }
+                // }
+
                 if (filterAssignee != null) {
                     if (!filterAssignee.equals(submitWork.getSubmit().getClassUser().getUser().getAccountName())) {
                         isAdd = false;
@@ -553,21 +577,28 @@ public class SubmitService implements ISubmitService {
 
         User currentUser = userRepository.findById(user.getUserId()).get();
         // if (!currentUser.equals(currentSubmit.getClassUser().getUser())) {
-        //     throw new CustomException("not owner of this submit");
+        // throw new CustomException("not owner of this submit");
         // }
 
         List<SubmitEvalDTO> submitWorkDTOs = new ArrayList<>();
-        if(!currentSubmit.getSubmitWorks().isEmpty()){
+        if (!currentSubmit.getSubmitWorks().isEmpty()) {
             for (SubmitWork submitWork : currentSubmit.getSubmitWorks()) {
-               if(!submitWork.getWorkEvals().isEmpty()){
-                submitWorkDTOs.add(toSubmitWorkDTO(submitWork));
-               } 
+                if (!submitWork.getWorkEvals().isEmpty()) {
+                    submitWorkDTOs.add(toSubmitWorkDTO(submitWork));
+                }
             }
         }
 
         SubmitTraineeResultDTO resultDTO = new SubmitTraineeResultDTO();
+        resultDTO.setFullName(currentSubmit.getClassUser().getUser().getFullName());
+        resultDTO.setUserName(currentSubmit.getClassUser().getUser().getAccountName());
+        if (currentSubmit.getGroup() != null) {
+            resultDTO.setGroupName(currentSubmit.getGroup().getGroupCode());
+        }
+        resultDTO.setMilestoneName(currentSubmit.getMilestone().getTitle());
+
         resultDTO.setEvaluatedWork(submitWorkDTOs);
-        
+
         return ResponseEntity.ok(resultDTO);
     }
 
@@ -579,11 +610,11 @@ public class SubmitService implements ISubmitService {
         evalDTO.setRequirementName(submitWork.getWork().getTitle());
         WorkEval latestEval = new WorkEval();
         for (WorkEval eval : submitWork.getWorkEvals()) {
-            if(latestEval.getCreatedDate() == null ){
+            if (latestEval.getCreatedDate() == null) {
                 latestEval = eval;
             }
 
-            if(latestEval.getCreatedDate().before(eval.getCreatedDate())){
+            if (latestEval.getCreatedDate().before(eval.getCreatedDate())) {
                 latestEval = eval;
             }
         }

@@ -187,7 +187,7 @@ public class ClassUserService implements IClassUserService {
     public ResponseEntity<List<TraineeImportResponse>> addTrainee(List<TraineeRequestDTO> listRequestDTO,
             String classCode) {
         String newPass = RandomString.make(10);
-        List<ClassUser> newList = new ArrayList<>();
+        // List<ClassUser> newList = new ArrayList<>();
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         List<Setting> settings = Arrays.asList(settingRepositories.findBySettingValue("ROLE_TRAINEE"));
         List<TraineeImportResponse> importList = new ArrayList<>();
@@ -201,35 +201,66 @@ public class ClassUserService implements IClassUserService {
 
             importResponse.setFullName(nameRequest);
             importResponse.setEmail(emailRequest);
-            if (nameRequest != null) {
-                String username = nameRequest.replaceAll("\\s+", "").toLowerCase();
-                newTrainee.setAccountName(authService.accountNameGenerate(username));
-                newTrainee.setFullName(nameRequest);
-            } else {
-                importResponse.setImportMessage("Full name is empty!");
-                importResponse.setImportStatus("Failed!");
-                importList.add(importResponse);
-                continue;
-            }
+            // if (nameRequest != null) {
+            // String username = nameRequest.replaceAll("\\s+", "").toLowerCase();
+            // newTrainee.setAccountName(authService.accountNameGenerate(username));
+            // newTrainee.setFullName(nameRequest);
+            // } else {
+            // importResponse.setImportMessage("Full name is empty!");
+            // importResponse.setImportStatus("Failed!");
+            // importList.add(importResponse);
+            // continue;
+            // }
 
             if (emailRequest != null) {
                 Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailRequest);
                 if (!userRepository.findByEmail(emailRequest).isPresent()) {
+                    if (nameRequest != null) {
+                        String username = nameRequest.replaceAll("\\s+", "").toLowerCase();
+                        newTrainee.setAccountName(authService.accountNameGenerate(username));
+                        newTrainee.setFullName(nameRequest);
+                    } else {
+                        importResponse.setImportMessage("Full name is empty!");
+                        importResponse.setImportStatus("Failed!");
+                        importList.add(importResponse);
+                        continue;
+                    }
                     if (matcher.find()) {
                         newTrainee.setEmail(emailRequest);
                         newTrainee.setPassword(encoder.encode(newPass));
                         newTrainee.setSettings(settings);
+                        newTrainee.setStatus(UserStatus.Inactive);
+                        classUser.setUser(newTrainee);
                     } else {
                         importResponse.setImportMessage("Email is wrong format");
                         importResponse.setImportStatus("Failed!");
                         importList.add(importResponse);
                         continue;
                     }
+                    try {
+                        authService.sendGooglePass(emailRequest, newPass);
+                    } catch (UnsupportedEncodingException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (MessagingException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    userRepository.save(newTrainee);
                 } else {
                     if (userRepository.findByEmail(emailRequest).isPresent()
                             && classUserRepositories.findByClassesAndUser(
-                                    userRepository.findByEmail(emailRequest).get().getUserId(), classCode) != null) {
-
+                                    userRepository.findByEmail(emailRequest).get().getUserId(), classCode) == null) {
+                        if (nameRequest != null) {
+                            if (!nameRequest.equals(userRepository.findByEmail(emailRequest).get().getFullName())) {
+                                importResponse.setImportMessage("This email already used by another user!");
+                                importResponse.setImportStatus("Failed!");
+                                importList.add(importResponse);
+                                continue;
+                            }
+                            classUser.setUser(userRepository.findByEmail(emailRequest).get());
+                        }
+                        classUser.setUser(userRepository.findByEmail(emailRequest).get());
                     } else {
                         importResponse.setImportMessage("Email have already existed!");
                         importResponse.setImportStatus("Failed!");
@@ -244,26 +275,24 @@ public class ClassUserService implements IClassUserService {
                 continue;
             }
 
-            newTrainee.setStatus(UserStatus.Inactive);
-            try {
-                authService.sendGooglePass(emailRequest, newPass);
-            } catch (UnsupportedEncodingException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (MessagingException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            // newTrainee.setStatus(UserStatus.Inactive);
+            // try {
+            // authService.sendGooglePass(emailRequest, newPass);
+            // } catch (UnsupportedEncodingException e) {
+            // // TODO Auto-generated catch block
+            // e.printStackTrace();
+            // } catch (MessagingException e) {
+            // // TODO Auto-generated catch block
+            // e.printStackTrace();
+            // }
             // newTrainee.setPassword(encoder.encode(newPass));
             // newTrainee.setSettings(settings);
-            userRepository.save(newTrainee);
-            if (classCode != null) {
-                classUser.setClasses(clazz);
-                classUser.setUser(newTrainee);
-                classUser.setStatus(TraineeStatus.Inactive);
-                newList.add(classUser);
-                // newTrainee.setClassUsers(newList);
-            }
+            // userRepository.save(newTrainee);
+            classUser.setClasses(clazz);
+            // classUser.setUser(newTrainee);
+            classUser.setStatus(TraineeStatus.Inactive);
+            // newList.add(classUser);
+            // newTrainee.setClassUsers(newList);
 
             classUserRepositories.save(classUser);
             importSubmit(classUser);
