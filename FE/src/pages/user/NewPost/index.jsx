@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux'
 
 import { CKEditor } from '@ckeditor/ckeditor5-react'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
-import parse from 'html-react-parser'
 
 import { Input, Select, Typography, Upload, Button, Modal } from 'antd'
 import { UploadOutlined } from '@ant-design/icons'

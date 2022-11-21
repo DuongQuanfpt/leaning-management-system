@@ -102,8 +102,10 @@ const MySchedule = lazy(() => import('~/pages/trainer/MySchedule'))
 const PostEdit = lazy(() => import('~/pages/user/PostEdit'))
 const NewNotice = lazy(() => import('~/pages/trainer/NewNotice'))
 const WorkEvaluation = lazy(() => import('~/pages/trainer/WorkEvaluation'))
-const AssignmentEvaluation = lazy(() => import('~/pages/trainer/AssignmentEvaluation'))
 const TraineeEvaluation = lazy(() => import('~/pages/trainer/TraineeEvaluation'))
+
+const ClassEvaluation = lazy(() => import('~/pages/trainer/ClassEvaluation'))
+const AssignmentEvaluation = lazy(() => import('~/pages/trainer/AssignmentEvaluation'))
 
 //404 pages
 const PageNotFound = lazy(() => import('~/pages/common/PageNotFound'))
@@ -170,8 +172,6 @@ const trainerRoutes = [
   { path: '/new-group/:id', component: NewGroup },
   { path: '/new-notice', component: NewNotice },
   { path: '/work-evaluation/:id', component: WorkEvaluation },
-  { path: '/assignment-evaluation/:id', component: AssignmentEvaluation },
-  { path: '/trainee-evaluation/:id', component: TraineeEvaluation },
 ]
 
 // Trainee routes
@@ -246,6 +246,12 @@ const submitRoutes = [
 const myScheduleRoutes = [{ path: '/my-schedule', component: MySchedule }]
 
 const postEditRoutes = [{ path: '/post-edit/:id', component: PostEdit }]
+const evaluationRoutes = [
+  { path: '/assignment-evaluation', component: AssignmentEvaluation },
+  { path: '/assignment-evaluation/:id', component: AssignmentEvaluation },
+  { path: '/trainee-evaluation/:id', component: TraineeEvaluation },
+  { path: '/class-evaluation', component: ClassEvaluation },
+]
 
 export {
   commonRoutes,
@@ -268,4 +274,5 @@ export {
   submitRoutes,
   myScheduleRoutes,
   postEditRoutes,
+  evaluationRoutes,
 }

@@ -150,8 +150,8 @@ const Group = () => {
       width: '10%',
       render: (_, submit) => (
         <Space size="middle" align="baseline">
-          {username === submit.traineeTitle && (
-            <Tooltip title="Submit" placement="top">
+          {username === submit.traineeTitle && submit.status !== 'Evaluated' && (
+            <Tooltip title="Submit Milestone" placement="top">
               <Button
                 shape="circle"
                 type="primary"
@@ -162,8 +162,22 @@ const Group = () => {
               ></Button>
             </Tooltip>
           )}
+
+          {username === submit.traineeTitle && submit.status === 'Evaluated' && (
+            <Tooltip title="View Evaluate" placement="top">
+              <Button
+                shape="circle"
+                type="primary"
+                icon={<FormOutlined />}
+                onClick={() => {
+                  navigateTo(`/trainee-evaluation/${submit.submitId}`)
+                }}
+              ></Button>
+            </Tooltip>
+          )}
+
           {isTrainer && submit.status === 'Submitted' && (
-            <Tooltip title="Evaluation" placement="top">
+            <Tooltip title="View Evaluate" placement="top">
               <Button
                 shape="circle"
                 type="primary"
@@ -174,7 +188,7 @@ const Group = () => {
               ></Button>
             </Tooltip>
           )}
-          <Tooltip title="View" placement="top">
+          <Tooltip title="View Detail" placement="top">
             <Button
               shape="circle"
               icon={<EyeOutlined />}
@@ -183,15 +197,6 @@ const Group = () => {
               }}
             ></Button>
           </Tooltip>
-          {/* <Tooltip title="Assignment Evaluation" placement="top">
-            <Button
-              shape="circle"
-              icon={<ForkOutlined />}
-              onClick={() => {
-                navigateTo(`/submit-detail/${submit.submitId}`)
-              }}
-            ></Button>
-          </Tooltip> */}
         </Space>
       ),
     },

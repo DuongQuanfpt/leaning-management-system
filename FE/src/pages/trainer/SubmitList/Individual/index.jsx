@@ -129,7 +129,7 @@ const Individual = () => {
       render: (_, submit) => (
         <Space size="middle" align="baseline">
           {username === submit.traineeTitle && (
-            <Tooltip title="Submit" placement="top">
+            <Tooltip title="Submit Milestone" placement="top">
               <Button
                 shape="circle"
                 type="primary"
@@ -140,8 +140,8 @@ const Individual = () => {
               ></Button>
             </Tooltip>
           )}
-          {isTrainer && submit.status === 'Evaluated' && (
-            <Tooltip title="Evaluation" placement="top">
+          {submit.status === 'Evaluated' && (
+            <Tooltip title="View Evaluate" placement="top">
               <Button
                 shape="circle"
                 type="primary"
@@ -152,7 +152,7 @@ const Individual = () => {
               ></Button>
             </Tooltip>
           )}
-          <Tooltip title="View" placement="top">
+          <Tooltip title="View Detail" placement="top">
             <Button
               shape="circle"
               icon={<EyeOutlined />}
