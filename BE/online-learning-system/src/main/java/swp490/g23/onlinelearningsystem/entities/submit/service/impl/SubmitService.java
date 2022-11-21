@@ -32,10 +32,10 @@ import swp490.g23.onlinelearningsystem.entities.submit.domain.request.SubmitRequ
 import swp490.g23.onlinelearningsystem.entities.submit.domain.request.SubmitRequirementWrapper;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitDetailDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitDetailFilterDTO;
+import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitEvalDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitPaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitTraineeResultDTO;
-import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitEvalDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.SubmitRepository;
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.criteria.SubmitCriteria;
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.criteria.SubmitDetailCriteria;
@@ -47,6 +47,7 @@ import swp490.g23.onlinelearningsystem.entities.submit_work.repositories.SubmitW
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.entities.work_eval.domain.WorkEval;
+import swp490.g23.onlinelearningsystem.entities.work_update.domain.WorkUpdate;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum;
 import swp490.g23.onlinelearningsystem.util.enumutil.SubmitWorkStatusEnum;
@@ -451,6 +452,7 @@ public class SubmitService implements ISubmitService {
         List<SubmitDetailDTO> list = new ArrayList<>();
         List<SubmitWorkStatusEntity> statusFilter = new ArrayList<>();
         List<String> assigneeList = new ArrayList<>();
+        List<String> milestoneList = new ArrayList<>();
         Submit currentSubmit = submitRepository.findById(id)
                 .orElseThrow(() -> new CustomException("submit doesnt exist"));
         String classCode = currentSubmit.getClassUser().getClasses().getCode();
@@ -463,7 +465,6 @@ public class SubmitService implements ISubmitService {
         }
         if (group == null) {
             SubmitDetailDTO dto = new SubmitDetailDTO();
-<<<<<<< HEAD
             List<SubmitWork> submitWorks = new ArrayList<>();
             if (currentSubmit.getMilestone().getAssignment().isFinal() == false) {
                 submitWorks = currentSubmit.getSubmitWorks();
@@ -471,50 +472,17 @@ public class SubmitService implements ISubmitService {
                 currentSubmit.getClassUser().getSubmits();
                 for (Submit submit : currentSubmit.getClassUser().getSubmits()) {
                     submitWorks.addAll(submit.getSubmitWorks());
-=======
-            List<SubmitWork> submitWorks = currentSubmit.getSubmitWorks();
-
-            // if( currentSubmit.getMilestone().getAssignment().isFinal() == false){
-            // // submitWorks = currentSubmit.getSubmitWorks();
-            // currentSubmit.getGroup().getSubmits();
-            // for (Submit submit : currentSubmit.getGroup().getSubmits()) {
-            // submitWorks.addAll(submit.getSubmitWorks());
-            // }
-            // }else {
-            // currentSubmit.getClassUser().getSubmits();
-            // for (Submit submit : currentSubmit.getClassUser().getSubmits()) {
-            // submitWorks.addAll(submit.getSubmitWorks());
-            // }
-            // }
-
-            for (SubmitWork submitWork : submitWorks) {
-
-                if (!submitWork.getMilestone().equals(milestone)) {
-                    continue;
->>>>>>> 0ed14b398dacd2d42cbb862ea3b6afe2ac74d85b
                 }
             }
             for (SubmitWork submitWork : submitWorks) {
                 boolean isAdd = true;
-<<<<<<< HEAD
                 if (currentSubmit.getMilestone().getAssignment().isFinal() == true) {
                     if (!submitWork.getMilestone().equals(currentSubmit.getMilestone())) {
-                        if (submitWork.getSubmit().getU) {
+                        if (submitWork.getSubmit().getUpdates().isEmpty()) {
                             isAdd = false;
                         }
                     }
                 }
-=======
-
-                // if(currentSubmit.getMilestone().getAssignment().isFinal() == true){
-                // if(!submitWork.getMilestone().equals(currentSubmit.getMilestone())){
-                // if(submitWork.getSubmit().getUpdates().isEmpty()){
-                // isAdd = false;
-                // }
-                // }
-                // }
->>>>>>> 0ed14b398dacd2d42cbb862ea3b6afe2ac74d85b
-
                 if (filterAssignee != null) {
                     if (!filterAssignee.equals(submitWork.getSubmit().getClassUser().getUser().getAccountName())) {
                         isAdd = false;
@@ -525,23 +493,73 @@ public class SubmitService implements ISubmitService {
                         isAdd = false;
                     }
                 }
+                if (filterMilestone != null) {
+                    if (!filterMilestone.equals(submitWork.getMilestone().getTitle())) {
+                        isAdd = false;
+                    }
+                }
                 if (isAdd) {
                     dto = toDetail(submitWork);
                     list.add(dto);
+                    milestoneList.add(submitWork.getMilestone().getTitle());
                 }
-
             }
             assigneeList.add(currentSubmit.getClassUser().getUser().getAccountName());
         } else {
-            TypedQuery<SubmitWork> queryResult = submitDetailCriteria.getSubmitWorks(keyword,
-                    filterAssignee, statusValue, classCode, group.getGroupId(), milestone.getMilestoneId());
-            List<SubmitWork> submitList = queryResult.getResultList();
-            for (SubmitWork submitWork : submitList) {
-                if (submitWork.getSubmit().getClassUser() != null) {
-                    SubmitDetailDTO dto = toDetail(submitWork);
-                    list.add(dto);
+            SubmitDetailDTO dto = new SubmitDetailDTO();
+            List<SubmitWork> submitWorks = new ArrayList<>();
+            if (currentSubmit.getMilestone().getAssignment().isFinal() == false) {
+                for (Submit submit : currentSubmit.getGroup().getSubmits()) {
+                    if (submit.getMilestone().equals(currentSubmit.getMilestone())) {
+                        submitWorks.addAll(submit.getSubmitWorks());
+                    }
                 }
-                if (!assigneeList.contains(submitWork.getSubmit().getClassUser().getUser().getAccountName())) {
+            } else {
+                for (Submit submit : currentSubmit.getGroup().getSubmits()) {
+                    submitWorks.addAll(submit.getSubmitWorks());
+                }
+            }
+            for (SubmitWork submitWork : submitWorks) {
+                boolean isAdd = true;
+                if (currentSubmit.getMilestone().getAssignment().isFinal() == true) {
+                    if (!submitWork.getMilestone().equals(currentSubmit.getMilestone())) {
+                        for (WorkUpdate update : submitWork.getSubmit().getUpdates()) {
+                            if (!update.getRequirement().equals(submitWork.getWork())) {
+                                isAdd = false;
+                            } else {
+                                isAdd = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (filterAssignee != null) {
+                    if (!filterAssignee.equals(submitWork.getSubmit().getClassUser().getUser().getAccountName())) {
+                        isAdd = false;
+                    }
+                }
+                if (statusValue != null) {
+                    if (SubmitWorkStatusEnum.fromInt(statusValue.intValue()) != submitWork.getStatus()) {
+                        isAdd = false;
+                    }
+                }
+                if (filterMilestone != null) {
+                    if (!filterMilestone.equals(submitWork.getMilestone().getTitle())) {
+                        isAdd = false;
+                    }
+                }
+                if (isAdd) {
+                    dto = toDetail(submitWork);
+                    for (WorkEval eval : submitWork.getWorkEvals()) {
+                        if (eval.getMilestone().equals(currentSubmit.getMilestone())) {
+                            dto.setFinalEvaluated(false);
+                        } else {
+                            dto.setFinalEvaluated(true);
+                            break;
+                        }
+                    }
+                    list.add(dto);
+                    milestoneList.add(submitWork.getMilestone().getTitle());
                     assigneeList.add(submitWork.getSubmit().getClassUser().getUser().getAccountName());
                 }
             }
@@ -570,11 +588,6 @@ public class SubmitService implements ISubmitService {
         dto.setRequirement(submitWork.getWork().getTitle());
         dto.setStatus(submitWork.getStatus());
         if (!submitWork.getWorkEvals().isEmpty()) {
-            // for (WorkEval eval : submitWork.getWorkEvals()) {
-            // if (submitWork.getMilestone().equals(eval.getMilestone())) {
-            // dto.setGrade(eval.getWorkEval());
-            // }
-            // }
             WorkEval latestEval = new WorkEval();
             for (WorkEval eval : submitWork.getWorkEvals()) {
                 if (latestEval.getCreatedDate() == null) {

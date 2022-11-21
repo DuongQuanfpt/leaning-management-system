@@ -27,6 +27,8 @@ public class SubmitDetailDTO {
 
     private Long grade;
 
+    private boolean isFinalEvaluated;
+
     private SubmitWorkKey submitWorkId;
 
     private SubmitWorkStatusEnum status;
