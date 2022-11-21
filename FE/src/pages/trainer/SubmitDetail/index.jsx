@@ -29,6 +29,7 @@ import evaluationApi from '~/api/evaluationApi'
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
+import e from '~/assets/vendors/imagesloaded/imagesloaded'
 
 const SubmitDetail = () => {
   const { id } = useParams()
@@ -51,6 +52,7 @@ const SubmitDetail = () => {
     workUpdate: false,
     workNewUpdate: false,
     workEditUpdate: false,
+    result: false,
   })
   const [form] = Form.useForm()
   const [listWorkEval, setListWorkEval] = useState({})
@@ -99,9 +101,13 @@ const SubmitDetail = () => {
       })
   }
 
-  const loadFinalEvaluateForm = async (submit) => {
+  const loadFinalEvaluateForm = async (submit, result = false) => {
     setLoading(true)
-    setOpenModal((prev) => ({ ...prev, revaluate: true }))
+    if (result) {
+      setOpenModal((prev) => ({ ...prev, result: true }))
+    } else {
+      setOpenModal((prev) => ({ ...prev, revaluate: true }))
+    }
     setSubmitSelected(submit)
     await submitApi
       .getWorkEval(submit.submitWorkId.submitId, submit.submitWorkId.issueId)
@@ -260,8 +266,7 @@ const SubmitDetail = () => {
             type="link"
             className="px-2"
             onClick={async () => {
-              console.log(submit)
-              setSubmitSelected(submit)
+              loadFinalEvaluateForm(submit, true)
             }}
           >
             View Results
@@ -1195,6 +1200,102 @@ const SubmitDetail = () => {
                           </Col>
                         </Row>
                       </Form>
+                    </Modal>
+
+                    {/* View Results */}
+                    <Modal
+                      open={openModal.result}
+                      maskClosable={false}
+                      width={'85%'}
+                      style={{
+                        left: 30,
+                      }}
+                      title={
+                        <Space className="d-flex flex-column">
+                          <Typography.Title level={4}>{`Result (${submitSelected.milestone})`}</Typography.Title>
+                          <Typography.Text>{`Trainee: ${submitSelected.fullName} (${submitSelected?.assignee}) ${`${
+                            submitSelected?.team ? `, <${submitSelected?.team}>` : ``
+                          }`}`}</Typography.Text>
+                        </Space>
+                      }
+                      okText="Create"
+                      cancelText="Cancel"
+                      onCancel={(e) => {
+                        if (e.currentTarget.id === 'discardButton') {
+                          setOpenModal((prev) => ({ ...prev, result: false }))
+                          setFormEvaluation({})
+                        } else {
+                          setOpenModal((prev) => ({ ...prev, result: false }))
+                          setFormEvaluation({})
+                        }
+                      }}
+                      footer={[
+                        <Button
+                          key="back"
+                          loading={loading}
+                          onClick={() => {
+                            setOpenModal((prev) => ({ ...prev, result: false }))
+                            setFormEvaluation({})
+                          }}
+                        >
+                          Cancel
+                        </Button>,
+                      ]}
+                    >
+                      <Skeleton loading={loading} paragraph={{ rows: 9 }}>
+                        <Row gutter={16}>
+                          <Col className="gutter-row mb-3" span={24}>
+                            <Typography.Text strong>Function</Typography.Text>
+                            <Input value={formEvaluation.function} readOnly />
+                          </Col>
+                        </Row>
+                        <Row gutter={16}>
+                          <Col className="gutter-row mb-3" span={24}>
+                            <Typography.Text strong>Function Description</Typography.Text>
+                            <Input.TextArea value={formEvaluation.functionDescription} readOnly />
+                          </Col>
+                        </Row>
+                        <Row gutter={16}>
+                          <Col className="gutter-row mb-3" span={24}>
+                            <Typography.Text strong>Last Complexity - Quality - Work Point</Typography.Text>
+                            <List
+                              size="small"
+                              bordered
+                              dataSource={formEvaluation.oldResult}
+                              renderItem={(item) => (
+                                <List.Item>{`Milestone: ${item.milestoneName} - Complexity: ${item.complexity.title} (${item.complexity.point}%) - Quality: ${item.quality.title} (${item.quality.point}) - WP: ${item.workPoint}`}</List.Item>
+                              )}
+                            />
+                          </Col>
+                        </Row>
+                        <Row gutter={16}>
+                          <Col className="gutter-row mb-3" span={24}>
+                            <Typography.Text strong>Updates</Typography.Text>
+                            <Typography.Link
+                              strong
+                              className="ml-3"
+                              onClick={async () => {
+                                // loadWorkUpdateForm()
+                                toastMessage('error', 'Chua lam')
+                              }}
+                            >
+                              View Detailed Updates
+                            </Typography.Link>
+                            <List
+                              size="small"
+                              bordered
+                              dataSource={formEvaluation.updatesContent}
+                              renderItem={(item) =>
+                                formEvaluation.updatesContent.length === 0 ? (
+                                  <List.Item>No Updates</List.Item>
+                                ) : (
+                                  <List.Item>{`(${item.updateDate}) - ${item.milestoneName} - ${item.title} - ${item.description}`}</List.Item>
+                                )
+                              }
+                            />
+                          </Col>
+                        </Row>
+                      </Skeleton>
                     </Modal>
                   </div>
                   <div className="col-lg-12 m-b30">
