@@ -1,7 +1,6 @@
 package swp490.g23.onlinelearningsystem.entities.work_update.service.impl;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -153,6 +152,14 @@ public class WorkUpdateService implements IWorkUpdateService {
         }
         updateRepository.save(update);
         return ResponseEntity.ok("update added");
+    }
+
+    @Override
+    public ResponseEntity<String> deleteWorkUpdate(Long updateId, User user) {
+        WorkUpdate update = updateRepository.findById(updateId)
+                .orElseThrow(() -> new CustomException("submit doesnt exist"));
+        updateRepository.delete(update);        
+        return ResponseEntity.ok("update deleted");
     }
 
 }
