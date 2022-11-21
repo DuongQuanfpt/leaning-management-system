@@ -1,6 +1,7 @@
 package swp490.g23.onlinelearningsystem.entities.submit.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -25,6 +26,7 @@ import swp490.g23.onlinelearningsystem.entities.group.domain.Group;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
 import swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.MilestoneEval;
 import swp490.g23.onlinelearningsystem.entities.submit_work.domain.SubmitWork;
+import swp490.g23.onlinelearningsystem.entities.work_update.domain.WorkUpdate;
 import swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum;
 
 @Entity
@@ -71,4 +73,7 @@ public class Submit extends BaseEntity {
 
     @OneToMany(mappedBy = "submit")
     private List<MilestoneEval> milestoneEvals;
+
+    @OneToMany(mappedBy = "submit")
+    private List<WorkUpdate> updates = new ArrayList<>();
 }

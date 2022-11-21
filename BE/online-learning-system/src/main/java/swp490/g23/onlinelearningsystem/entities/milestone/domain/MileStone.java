@@ -1,6 +1,7 @@
 package swp490.g23.onlinelearningsystem.entities.milestone.domain;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -26,6 +27,7 @@ import swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.MilestoneE
 import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
 import swp490.g23.onlinelearningsystem.entities.submit_work.domain.SubmitWork;
 import swp490.g23.onlinelearningsystem.entities.work_eval.domain.WorkEval;
+import swp490.g23.onlinelearningsystem.entities.work_update.domain.WorkUpdate;
 import swp490.g23.onlinelearningsystem.util.enumutil.MilestoneStatusEnum;
 
 @Entity
@@ -81,5 +83,8 @@ public class Milestone extends BaseEntity {
 
     @OneToMany(mappedBy = "milestone")
     private List<MilestoneEval> milestoneEvals;
+
+    @OneToMany(mappedBy = "milestone")
+    private List<WorkUpdate> updates = new ArrayList<>();
 
 }

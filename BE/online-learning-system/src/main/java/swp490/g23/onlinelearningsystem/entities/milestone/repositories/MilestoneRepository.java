@@ -20,11 +20,17 @@ public interface MilestoneRepository extends JpaRepository<Milestone, Long> {
     @Query(value = "SELECT DISTINCT m FROM Milestone m JOIN m.submits as ms WHERE ms.group.groupId = :groupId AND (m.status = swp490.g23.onlinelearningsystem.util.enumutil.MilestoneStatusEnum.In_Progress OR m.status IS NULL)")
     List<Milestone> getByGroupInProgressAndClosed(Long groupId);
 
+    @Query(value = "SELECT DISTINCT m FROM Milestone m JOIN m.submits as ms WHERE ms.group.groupId = :groupId AND m.status = swp490.g23.onlinelearningsystem.util.enumutil.MilestoneStatusEnum.In_Progress")
+    List<Milestone> getByGroupInProgress(Long groupId);
+
     @Query(value = "SELECT m FROM Milestone m WHERE m.classes.code = :classCode ")
     List<Milestone> getByClassCode(String classCode);
 
     @Query(value = "SELECT m FROM Milestone m WHERE m.classes.code = :classCode AND m.status = swp490.g23.onlinelearningsystem.util.enumutil.MilestoneStatusEnum.In_Progress")
     List<Milestone> getByClassCodeInProgress(String classCode);
+
+    @Query(value = "SELECT m FROM Milestone m WHERE m.classes.code = :classCode AND m.assignment.isTeamWork = true AND m.status = swp490.g23.onlinelearningsystem.util.enumutil.MilestoneStatusEnum.In_Progress")
+    List<Milestone> getByNoGroupAndClassCodeInProgress(String classCode);
 
     @Query(value = "SELECT m FROM Milestone m WHERE m.classes.code = :classCode AND (m.status = swp490.g23.onlinelearningsystem.util.enumutil.MilestoneStatusEnum.In_Progress OR m.status IS NULL)")
     List<Milestone> getByClassCodeInProgressAndClosed(String classCode);

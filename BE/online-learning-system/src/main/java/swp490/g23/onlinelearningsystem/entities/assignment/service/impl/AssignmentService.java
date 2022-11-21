@@ -277,7 +277,7 @@ public class AssignmentService implements IAssignmentService {
             responseDTO.setSubjectName(entity.getForSubject().getSubjectCode());
         }
         responseDTO.setIsOnGoing(entity.isOnGoing() ? 1 : 0);
-        responseDTO.setIsOnGoing(entity.isFinal() ? 1 : 0);
+        responseDTO.setIsFinal(entity.isFinal() ? 1 : 0);
         responseDTO.setIsTeamWork(entity.isTeamWork() ? 1 : 0);
         responseDTO.setStatus(entity.getStatus());
 

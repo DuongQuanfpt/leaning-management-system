@@ -34,6 +34,8 @@ import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitDet
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitDetailFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitPaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitResponseDTO;
+import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitTraineeResultDTO;
+import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitEvalDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.SubmitRepository;
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.criteria.SubmitCriteria;
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.criteria.SubmitDetailCriteria;
@@ -461,6 +463,7 @@ public class SubmitService implements ISubmitService {
         }
         if (group == null) {
             SubmitDetailDTO dto = new SubmitDetailDTO();
+<<<<<<< HEAD
             List<SubmitWork> submitWorks = new ArrayList<>();
             if (currentSubmit.getMilestone().getAssignment().isFinal() == false) {
                 submitWorks = currentSubmit.getSubmitWorks();
@@ -468,10 +471,32 @@ public class SubmitService implements ISubmitService {
                 currentSubmit.getClassUser().getSubmits();
                 for (Submit submit : currentSubmit.getClassUser().getSubmits()) {
                     submitWorks.addAll(submit.getSubmitWorks());
+=======
+            List<SubmitWork> submitWorks = currentSubmit.getSubmitWorks();
+
+            // if( currentSubmit.getMilestone().getAssignment().isFinal() == false){
+            // // submitWorks = currentSubmit.getSubmitWorks();
+            // currentSubmit.getGroup().getSubmits();
+            // for (Submit submit : currentSubmit.getGroup().getSubmits()) {
+            // submitWorks.addAll(submit.getSubmitWorks());
+            // }
+            // }else {
+            // currentSubmit.getClassUser().getSubmits();
+            // for (Submit submit : currentSubmit.getClassUser().getSubmits()) {
+            // submitWorks.addAll(submit.getSubmitWorks());
+            // }
+            // }
+
+            for (SubmitWork submitWork : submitWorks) {
+
+                if (!submitWork.getMilestone().equals(milestone)) {
+                    continue;
+>>>>>>> 0ed14b398dacd2d42cbb862ea3b6afe2ac74d85b
                 }
             }
             for (SubmitWork submitWork : submitWorks) {
                 boolean isAdd = true;
+<<<<<<< HEAD
                 if (currentSubmit.getMilestone().getAssignment().isFinal() == true) {
                     if (!submitWork.getMilestone().equals(currentSubmit.getMilestone())) {
                         if (submitWork.getSubmit().getU) {
@@ -479,6 +504,16 @@ public class SubmitService implements ISubmitService {
                         }
                     }
                 }
+=======
+
+                // if(currentSubmit.getMilestone().getAssignment().isFinal() == true){
+                // if(!submitWork.getMilestone().equals(currentSubmit.getMilestone())){
+                // if(submitWork.getSubmit().getUpdates().isEmpty()){
+                // isAdd = false;
+                // }
+                // }
+                // }
+>>>>>>> 0ed14b398dacd2d42cbb862ea3b6afe2ac74d85b
 
                 if (filterAssignee != null) {
                     if (!filterAssignee.equals(submitWork.getSubmit().getClassUser().getUser().getAccountName())) {
@@ -555,5 +590,60 @@ public class SubmitService implements ISubmitService {
             dto.setGrade(null);
         }
         return dto;
+    }
+
+    @Override
+    public ResponseEntity<SubmitTraineeResultDTO> traineeResult(Long submitId, User user) {
+        Submit currentSubmit = submitRepository.findById(submitId)
+                .orElseThrow(() -> new CustomException("submit doesnt exist"));
+
+        User currentUser = userRepository.findById(user.getUserId()).get();
+        // if (!currentUser.equals(currentSubmit.getClassUser().getUser())) {
+        // throw new CustomException("not owner of this submit");
+        // }
+
+        List<SubmitEvalDTO> submitWorkDTOs = new ArrayList<>();
+        if (!currentSubmit.getSubmitWorks().isEmpty()) {
+            for (SubmitWork submitWork : currentSubmit.getSubmitWorks()) {
+                if (!submitWork.getWorkEvals().isEmpty()) {
+                    submitWorkDTOs.add(toSubmitWorkDTO(submitWork));
+                }
+            }
+        }
+
+        SubmitTraineeResultDTO resultDTO = new SubmitTraineeResultDTO();
+        resultDTO.setFullName(currentSubmit.getClassUser().getUser().getFullName());
+        resultDTO.setUserName(currentSubmit.getClassUser().getUser().getAccountName());
+        if (currentSubmit.getGroup() != null) {
+            resultDTO.setGroupName(currentSubmit.getGroup().getGroupCode());
+        }
+        resultDTO.setMilestoneName(currentSubmit.getMilestone().getTitle());
+
+        resultDTO.setEvaluatedWork(submitWorkDTOs);
+
+        return ResponseEntity.ok(resultDTO);
+    }
+
+    private SubmitEvalDTO toSubmitWorkDTO(SubmitWork submitWork) {
+        SubmitEvalDTO evalDTO = new SubmitEvalDTO();
+
+        evalDTO.setSubmitId(submitWork.getSubmit().getSubmitId());
+        evalDTO.setRequirementId(submitWork.getWork().getIssueId());
+        evalDTO.setRequirementName(submitWork.getWork().getTitle());
+        WorkEval latestEval = new WorkEval();
+        for (WorkEval eval : submitWork.getWorkEvals()) {
+            if (latestEval.getCreatedDate() == null) {
+                latestEval = eval;
+            }
+
+            if (latestEval.getCreatedDate().before(eval.getCreatedDate())) {
+                latestEval = eval;
+            }
+        }
+        evalDTO.setComment(latestEval.getComment());
+        evalDTO.setComplexityName(latestEval.getComplexity().getSettingTitle());
+        evalDTO.setQualityname(latestEval.getQuality().getSettingTitle());
+        evalDTO.setCurrentPoint(latestEval.getWorkEval());
+        return evalDTO;
     }
 }
