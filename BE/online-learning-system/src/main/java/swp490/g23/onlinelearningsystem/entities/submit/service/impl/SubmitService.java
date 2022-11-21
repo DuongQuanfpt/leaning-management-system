@@ -444,7 +444,7 @@ public class SubmitService implements ISubmitService {
 
     @Override
     public ResponseEntity<SubmitDetailFilterDTO> viewSubmit(Long id, String keyword,
-            String filterAssignee, Long statusValue) {
+            String filterAssignee, String filterMilestone, Long statusValue) {
 
         List<SubmitDetailDTO> list = new ArrayList<>();
         List<SubmitWorkStatusEntity> statusFilter = new ArrayList<>();
@@ -461,12 +461,25 @@ public class SubmitService implements ISubmitService {
         }
         if (group == null) {
             SubmitDetailDTO dto = new SubmitDetailDTO();
-            List<SubmitWork> submitWorks = currentSubmit.getSubmitWorks();
-            for (SubmitWork submitWork : submitWorks) {
-                if (!submitWork.getMilestone().equals(milestone)) {
-                    continue;
+            List<SubmitWork> submitWorks = new ArrayList<>();
+            if (currentSubmit.getMilestone().getAssignment().isFinal() == false) {
+                submitWorks = currentSubmit.getSubmitWorks();
+            } else {
+                currentSubmit.getClassUser().getSubmits();
+                for (Submit submit : currentSubmit.getClassUser().getSubmits()) {
+                    submitWorks.addAll(submit.getSubmitWorks());
                 }
+            }
+            for (SubmitWork submitWork : submitWorks) {
                 boolean isAdd = true;
+                if (currentSubmit.getMilestone().getAssignment().isFinal() == true) {
+                    if (!submitWork.getMilestone().equals(currentSubmit.getMilestone())) {
+                        if (submitWork.getSubmit().getU) {
+                            isAdd = false;
+                        }
+                    }
+                }
+
                 if (filterAssignee != null) {
                     if (!filterAssignee.equals(submitWork.getSubmit().getClassUser().getUser().getAccountName())) {
                         isAdd = false;

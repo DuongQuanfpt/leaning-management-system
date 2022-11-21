@@ -279,10 +279,10 @@ public class ClassUserService implements IClassUserService {
             // try {
             // authService.sendGooglePass(emailRequest, newPass);
             // } catch (UnsupportedEncodingException e) {
-            // // TODO Auto-generated catch block
+            // TODO Auto-generated catch block
             // e.printStackTrace();
             // } catch (MessagingException e) {
-            // // TODO Auto-generated catch block
+            // TODO Auto-generated catch block
             // e.printStackTrace();
             // }
             // newTrainee.setPassword(encoder.encode(newPass));
