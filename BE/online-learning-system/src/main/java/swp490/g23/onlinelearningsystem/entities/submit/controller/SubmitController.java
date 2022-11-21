@@ -25,6 +25,7 @@ import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.SubmitFilte
 import swp490.g23.onlinelearningsystem.entities.submit.domain.request.SubmitRequirementWrapper;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitDetailFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitPaginateDTO;
+import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitTraineeResultDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.service.impl.SubmitService;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 
@@ -91,7 +92,15 @@ public class SubmitController {
     public ResponseEntity<SubmitDetailFilterDTO> viewDetail(@PathVariable("id") Long id,
             @RequestParam(name = "q", required = false) String keyword,
             @RequestParam(name = "filterAssignee", required = false) String assigneeFilter,
+            @RequestParam(name = "filterMilestone", required = false) String milestoneFilter,
             @RequestParam(name = "filterStatus", required = false) Long statusValue) {
-        return submitService.viewSubmit(id, keyword, assigneeFilter, statusValue);
+        return submitService.viewSubmit(id, keyword, assigneeFilter, milestoneFilter, statusValue);
     }
+
+    @GetMapping(value = "/trainee-result/{submitId}")
+    public ResponseEntity<SubmitTraineeResultDTO> traineeResult(@PathVariable("submitId") Long submitId,
+            @AuthenticationPrincipal User user) {
+        return submitService.traineeResult(submitId, user);
+    }
+
 }

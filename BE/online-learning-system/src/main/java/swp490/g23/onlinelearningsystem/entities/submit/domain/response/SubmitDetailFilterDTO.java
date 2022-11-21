@@ -17,5 +17,6 @@ public class SubmitDetailFilterDTO {
     private List<SubmitDetailDTO> listResult = new ArrayList<>();
     private List<SubmitWorkStatusEntity> statusFilter = new ArrayList<>();
     private List<String> assigneeFilter = new ArrayList<>();
+    private List<String> milestoneFilter = new ArrayList<>();
     private Long milestoneId;
 }

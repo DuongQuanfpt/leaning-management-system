@@ -8,6 +8,6 @@ import swp490.g23.onlinelearningsystem.entities.work_eval.domain.response.EvalRe
 
 public interface IWorkEvalService {
     ResponseEntity<EvalResponseDTO> getWorkEval(User user , Long submitId , Long workId);
-    ResponseEntity<String> workEval(User user , Long submitId , Long workId,EvalRequestDTO requestDTO);
+    ResponseEntity<String> workEval(User user , Long submitId , Long workId,EvalRequestDTO requestDTO , Long milestoneId);
     ResponseEntity<String> workReject(User user , Long submitId , Long workId,EvalRequestDTO requestDTO);
 }

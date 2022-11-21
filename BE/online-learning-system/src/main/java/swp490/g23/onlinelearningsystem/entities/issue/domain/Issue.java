@@ -25,6 +25,7 @@ import swp490.g23.onlinelearningsystem.entities.group.domain.Group;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
 import swp490.g23.onlinelearningsystem.entities.submit_work.domain.SubmitWork;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
+import swp490.g23.onlinelearningsystem.entities.work_update.domain.WorkUpdate;
 
 @Entity
 @Table(name = "issue_tbl")
@@ -86,4 +87,7 @@ public class Issue extends BaseEntity{
 
     @OneToMany(mappedBy = "work")
     private List<SubmitWork> submitWorks;
+
+    @OneToMany(mappedBy = "requirement")
+    private List<WorkUpdate> updates = new ArrayList<>();
 }

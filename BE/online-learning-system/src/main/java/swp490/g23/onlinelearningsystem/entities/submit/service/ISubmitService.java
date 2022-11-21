@@ -8,6 +8,7 @@ import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.SubmitFilte
 import swp490.g23.onlinelearningsystem.entities.submit.domain.request.SubmitRequirementWrapper;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitDetailFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitPaginateDTO;
+import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitTraineeResultDTO;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 
 public interface ISubmitService {
@@ -23,5 +24,8 @@ public interface ISubmitService {
                         MultipartFile file);
 
         ResponseEntity<SubmitDetailFilterDTO> viewSubmit(Long id, String keyword,
-                        String filterAssignee, Long statusValue);
+                        String filterAssignee, String filterMilestone, Long statusValue);
+
+        ResponseEntity<SubmitTraineeResultDTO> traineeResult(Long submitId, User user);
+
 }
