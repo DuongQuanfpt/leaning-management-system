@@ -567,13 +567,12 @@ public class SubmitService implements ISubmitService {
                     }
                 }
                 if (keyword != null) {
-                    if (!submitWork.getWork().getTitle().contains(keyword)) {
+                    if (!submitWork.getWork().getTitle().toLowerCase().contains(keyword.toLowerCase())) {
                         isAdd = false;
                     }
                 }
                 if (isAdd) {
                     dto = toDetail(submitWork);
-
                     if (submitWork.getSubmit().getMilestone().equals(currentSubmit.getMilestone())) {
                         dto.setFinalEvaluated(false);
                     } else {
