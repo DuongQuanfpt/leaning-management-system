@@ -764,6 +764,9 @@ public class GroupService implements IGroupService {
 
                 for (Submit submit : entity.getSubmits()) {
                  
+                    // if(submit.getClassUser() == null){
+                    //     continue;
+                    // }
                     if (submit.getClassUser() != null && submit.getMilestone().getMilestoneId() == milestoneId) {
 
                         GroupMemberResponseDTO groupResponseDTO = new GroupMemberResponseDTO();
