@@ -500,6 +500,21 @@ public class SubmitService implements ISubmitService {
                 }
                 if (isAdd) {
                     dto = toDetail(submitWork);
+
+                    if (submitWork.getSubmit().getMilestone().equals(currentSubmit.getMilestone())) {
+                        dto.setFinalEvaluated(false);
+                    } else {
+                        for (WorkEval eval : submitWork.getWorkEvals()) {
+                            if (eval.getMilestone().equals(currentSubmit.getMilestone())) {
+                                dto.setFinalEvaluated(false);
+                                break;
+                            } else {
+                                dto.setFinalEvaluated(true);
+
+                            }
+                        }
+                    }
+
                     list.add(dto);
                     milestoneList.add(submitWork.getMilestone().getTitle());
                 }
@@ -550,14 +565,21 @@ public class SubmitService implements ISubmitService {
                 }
                 if (isAdd) {
                     dto = toDetail(submitWork);
-                    for (WorkEval eval : submitWork.getWorkEvals()) {
-                        if (eval.getMilestone().equals(currentSubmit.getMilestone())) {
-                            dto.setFinalEvaluated(false);
-                        } else {
-                            dto.setFinalEvaluated(true);
-                            break;
+
+                    if (submitWork.getSubmit().getMilestone().equals(currentSubmit.getMilestone())) {
+                        dto.setFinalEvaluated(false);
+                    } else {
+                        for (WorkEval eval : submitWork.getWorkEvals()) {
+                            if (eval.getMilestone().equals(currentSubmit.getMilestone())) {
+                                dto.setFinalEvaluated(false);
+                                break;
+                            } else {
+                                dto.setFinalEvaluated(true);
+
+                            }
                         }
                     }
+
                     list.add(dto);
                     milestoneList.add(submitWork.getMilestone().getTitle());
                     assigneeList.add(submitWork.getSubmit().getClassUser().getUser().getAccountName());
@@ -568,6 +590,7 @@ public class SubmitService implements ISubmitService {
         filterDTO.setListResult(list);
         filterDTO.setStatusFilter(statusFilter);
         filterDTO.setAssigneeFilter(assigneeList);
+        filterDTO.setMilestoneFilter(milestoneList);
         filterDTO.setMilestoneId(currentSubmit.getMilestone().getMilestoneId());
         return ResponseEntity.ok(filterDTO);
     }

@@ -166,6 +166,17 @@ public class EvalCriteriaService implements IEvalCriteriaService {
         } else {
             evalCriteria.setTeamEval(false);
         }
+        if (dto.getIsWorkEval() == 1) {
+            for (EvalCriteria eval : evalCriteria.getAssignment().getEvalCriteriaList()) {
+                if (eval.isWorkEval() == true) {
+                    throw new CustomException("Assignment of this eval already got eval is work eval");
+                }
+            }
+            evalCriteria.setWorkEval(true);
+        } else {
+            evalCriteria.setWorkEval(false);
+        }
+
         evalCriteriaRepositories.save(evalCriteria);
         return ResponseEntity.ok("Criteria updated successfully");
     }
@@ -196,6 +207,20 @@ public class EvalCriteriaService implements IEvalCriteriaService {
         if (dto.getAssignmentId() != null) {
             Assignment assignment = assignmentRepository.findById(dto.getAssignmentId()).get();
             evalCriteria.setAssignment(assignment);
+            if (dto.getIsWorkEval() == 1) {
+                for (EvalCriteria eval : evalCriteria.getAssignment().getEvalCriteriaList()) {
+                    if (eval.isWorkEval() == true) {
+                        throw new CustomException("Assignment of this eval already got eval is work eval");
+                    }
+                }
+                evalCriteria.setWorkEval(true);
+            } else {
+                evalCriteria.setWorkEval(false);
+            }
+        }
+        if (dto.getMilestoneId() != null) {
+            Milestone milestone = milestoneRepository.findById(dto.getMilestoneId()).get();
+            evalCriteria.setMilestone(milestone);
         }
         evalCriteriaRepositories.save(evalCriteria);
         return ResponseEntity.ok("Add Criteria successfully");
@@ -337,6 +362,16 @@ public class EvalCriteriaService implements IEvalCriteriaService {
         } else {
             evalCriteria.setTeamEval(false);
         }
+        if (dto.getIsWorkEval() == 1) {
+            for (EvalCriteria eval : evalCriteria.getAssignment().getEvalCriteriaList()) {
+                if (eval.isWorkEval() == true) {
+                    throw new CustomException("Assignment of this eval already got eval is work eval");
+                }
+            }
+            evalCriteria.setWorkEval(true);
+        } else {
+            evalCriteria.setWorkEval(false);
+        }
         evalCriteriaRepositories.save(evalCriteria);
         return ResponseEntity.ok("Criteria updated successfully");
     }
@@ -367,6 +402,16 @@ public class EvalCriteriaService implements IEvalCriteriaService {
         if (dto.getAssignmentId() != null) {
             Assignment assignment = assignmentRepository.findById(dto.getAssignmentId()).get();
             evalCriteria.setAssignment(assignment);
+            if (dto.getIsWorkEval() == 1) {
+                for (EvalCriteria eval : evalCriteria.getAssignment().getEvalCriteriaList()) {
+                    if (eval.isWorkEval() == true) {
+                        throw new CustomException("Assignment of this eval already got eval is work eval");
+                    }
+                }
+                evalCriteria.setWorkEval(true);
+            } else {
+                evalCriteria.setWorkEval(false);
+            }
         }
         if (dto.getMilestoneId() != null) {
             Milestone milestone = milestoneRepository.findById(dto.getMilestoneId()).get();
@@ -403,6 +448,7 @@ public class EvalCriteriaService implements IEvalCriteriaService {
         }
         responseDTO.setStatus(entity.getStatus());
         responseDTO.setIsTeamEval(entity.isTeamEval() ? 1 : 0);
+        responseDTO.setIsWorkEval(entity.isWorkEval() ? 1 : 0);
 
         return responseDTO;
     }

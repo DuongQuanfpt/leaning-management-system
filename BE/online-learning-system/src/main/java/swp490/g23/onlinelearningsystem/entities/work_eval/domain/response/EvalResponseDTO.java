@@ -26,11 +26,7 @@ public class EvalResponseDTO {
 
     List<EvalSettingDTO> qualityFilter;
 
-    // Long workPoint;
-
-    // EvalSettingDTO currentComplexity;
-
-    // EvalSettingDTO currentQuality;
+    List<EvalUpdateDTO> updates;
 
     List<EvalResultDTO> result;
 
