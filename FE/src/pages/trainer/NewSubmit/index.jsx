@@ -508,7 +508,14 @@ const NewSubmit = () => {
                               <Input.Search
                                 placeholder="Input text to search requirement title"
                                 value={search}
-                                onChange={(e) => setSearch(() => e.target.value)}
+                                allowClear
+                                onChange={(e) => {
+                                  if (e.target.value) {
+                                    setSearch(() => e.target.value)
+                                  } else {
+                                    setSearch(() => undefined)
+                                  }
+                                }}
                                 onSearch={() => setModalFilter((prev) => ({ ...prev, search: search }))}
                               />
                             </div>

@@ -84,7 +84,14 @@ const AdminHeader = () => {
                 size="large"
                 placeholder="Enter text search for the notice"
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => {
+                  if (e.target.value) {
+                    setSearch(() => e.target.value)
+                  } else {
+                    setSearch(() => undefined)
+                  }
+                }}
+                allowClear
               />
             </CNavItem>
           )}
