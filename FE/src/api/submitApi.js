@@ -44,8 +44,8 @@ const submitApi = {
     return axiosClient.get(url, header)
   },
 
-  submitWorkEval: (submitId, workId, params) => {
-    const url = `api/work-eval/${submitId}/${workId}`
+  submitWorkEval: (submitId, workId, milestoneId, params) => {
+    const url = `api/work-eval/${submitId}/${workId}/${milestoneId}`
     return axiosClient.post(url, params, header)
   },
 

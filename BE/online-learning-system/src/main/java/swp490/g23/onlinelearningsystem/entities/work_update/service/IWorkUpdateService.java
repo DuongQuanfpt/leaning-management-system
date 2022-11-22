@@ -10,4 +10,5 @@ public interface IWorkUpdateService {
     ResponseEntity<WorkUpdateWorkDTO> getWorkUpdate(Long submitId, Long workId, User user);
     ResponseEntity<String> addWorkUpdate(Long submitId, Long workId, User user , WorkUpdateRequestDTo requestDTo);
     ResponseEntity<String> editWorkUpdate(Long updateId, User user , WorkUpdateRequestDTo requestDTo);
+    ResponseEntity<String> deleteWorkUpdate(Long updateId, User user);
 }

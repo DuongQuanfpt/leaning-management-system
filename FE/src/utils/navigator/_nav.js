@@ -128,7 +128,7 @@ const _nav = [
       },
       {
         component: CNavItem,
-        name: 'Work Submits (TBA)',
+        name: 'Work Submits (?)',
         to: '/',
       },
       {
@@ -138,13 +138,13 @@ const _nav = [
       },
       {
         component: CNavItem,
-        name: 'Class Evaluations (TBA)',
-        to: '/',
+        name: 'Class Evaluations',
+        to: '/class-evaluation',
       },
       {
         component: CNavItem,
-        name: 'Assignment Evaluations (TBA)',
-        to: '/',
+        name: 'Assignment Evaluations',
+        to: '/assignment-evaluation',
       },
     ],
   },

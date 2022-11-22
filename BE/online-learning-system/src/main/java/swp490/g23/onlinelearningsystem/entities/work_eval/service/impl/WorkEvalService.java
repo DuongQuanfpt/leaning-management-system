@@ -21,8 +21,11 @@ import swp490.g23.onlinelearningsystem.entities.work_eval.domain.request.EvalReq
 import swp490.g23.onlinelearningsystem.entities.work_eval.domain.response.EvalResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.work_eval.domain.response.EvalResultDTO;
 import swp490.g23.onlinelearningsystem.entities.work_eval.domain.response.EvalSettingDTO;
+import swp490.g23.onlinelearningsystem.entities.work_eval.domain.response.EvalUpdateDTO;
 import swp490.g23.onlinelearningsystem.entities.work_eval.repositories.WorkEvalRepository;
 import swp490.g23.onlinelearningsystem.entities.work_eval.service.IWorkEvalService;
+import swp490.g23.onlinelearningsystem.entities.work_update.domain.WorkUpdate;
+import swp490.g23.onlinelearningsystem.entities.work_update.repositories.WorkUpdateRepository;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum;
 import swp490.g23.onlinelearningsystem.util.enumutil.SubmitWorkStatusEnum;
@@ -43,6 +46,9 @@ public class WorkEvalService implements IWorkEvalService {
 
     @Autowired
     private WorkEvalRepository workEvalRepository;
+
+    @Autowired
+    private WorkUpdateRepository updateRepository;
 
     @Override
     public ResponseEntity<EvalResponseDTO> getWorkEval(User user, Long submitId, Long workId) {
@@ -89,6 +95,14 @@ public class WorkEvalService implements IWorkEvalService {
             }
         }
 
+        List<EvalUpdateDTO> evalUpdateDTOs = new ArrayList<>();
+        List<WorkUpdate> updates = updateRepository.getUpdateOfSubmitAndRequirement(submitWork.getSubmit(),
+                submitWork.getWork());
+        for (WorkUpdate update : updates) {
+            evalUpdateDTOs.add(toUpdateDTO(update));
+        }        
+
+        responseDTO.setUpdates(evalUpdateDTOs);
         responseDTO.setResult(evalResultDTOs);
         responseDTO.setTraineeName(submitWork.getSubmit().getClassUser().getUser().getAccountName());
         responseDTO.setMilestoneName(submitWork.getSubmit().getMilestone().getTitle());
@@ -97,6 +111,17 @@ public class WorkEvalService implements IWorkEvalService {
         responseDTO.setQualityFilter(qualityDtos);
 
         return ResponseEntity.ok(responseDTO);
+    }
+
+    private EvalUpdateDTO toUpdateDTO(WorkUpdate update) {
+        EvalUpdateDTO dto = new EvalUpdateDTO();
+        dto.setId(update.getWorkUpdateId());
+        dto.setTitle(update.getTitle());
+        dto.setDescription(update.getDescription());
+        dto.setMilestoneId(update.getMilestone().getMilestoneId());
+        dto.setMilestoneName(update.getMilestone().getTitle());
+        dto.setUpdateDate(update.getUpdateDate().toString());
+        return dto;
     }
 
     private EvalResultDTO toResultDTO(WorkEval eval) {

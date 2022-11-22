@@ -21,6 +21,7 @@ import {
   submitRoutes,
   myScheduleRoutes,
   postEditRoutes,
+  evaluationRoutes,
 } from '~/routes'
 import RequireAuth from '~/utils/RequireAuth'
 
@@ -142,6 +143,10 @@ const User = () => {
               return <Route key={index} path={route.path} element={<Page />} />
             })}
             {postEditRoutes.map((route, index) => {
+              const Page = route.component
+              return <Route key={index} path={route.path} element={<Page />} />
+            })}
+            {evaluationRoutes.map((route, index) => {
               const Page = route.component
               return <Route key={index} path={route.path} element={<Page />} />
             })}

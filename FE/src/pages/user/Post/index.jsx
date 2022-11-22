@@ -34,7 +34,7 @@ const Post = () => {
   useEffect(() => {
     loadData(paginate.currentPage)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ITEM_PER_PAGE])
+  }, [ITEM_PER_PAGE, id])
 
   const loadData = async (page) => {
     setLoading(true)
