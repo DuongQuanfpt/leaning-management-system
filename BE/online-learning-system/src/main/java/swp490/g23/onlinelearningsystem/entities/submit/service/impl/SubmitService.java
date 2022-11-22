@@ -590,6 +590,7 @@ public class SubmitService implements ISubmitService {
         filterDTO.setListResult(list);
         filterDTO.setStatusFilter(statusFilter);
         filterDTO.setAssigneeFilter(assigneeList);
+        filterDTO.setMilestoneFilter(milestoneList);
         filterDTO.setMilestoneId(currentSubmit.getMilestone().getMilestoneId());
         return ResponseEntity.ok(filterDTO);
     }
