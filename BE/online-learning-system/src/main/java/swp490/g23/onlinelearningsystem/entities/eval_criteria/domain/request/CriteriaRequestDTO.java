@@ -17,6 +17,8 @@ public class CriteriaRequestDTO {
 
     private int isTeamEval;
 
+    private int isWorkEval;
+
     private String evalWeight;
 
     private String expectedWork;

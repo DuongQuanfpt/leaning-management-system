@@ -18,6 +18,8 @@ public class CriteriaResponseDTO {
 
     private int isTeamEval;
 
+    private int isWorkEval;
+
     private String evalWeight;
 
     private String expectedWork;
