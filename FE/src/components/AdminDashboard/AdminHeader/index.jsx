@@ -2,8 +2,9 @@
 import React, { useState, memo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
+import { useDebounce } from '~/hooks/useDebounce'
 import { setCurrentClass } from '~/redux/ProfileSlice/profileSlice'
-import { setSidebarShow } from '~/redux/SidebarSlice/sidebarSlice'
+import { setSidebarShow, setSearchQueryDashboard } from '~/redux/SidebarSlice/sidebarSlice'
 
 import { DownOutlined } from '@ant-design/icons'
 import { Dropdown, Input, Menu, Space } from 'antd'
@@ -15,6 +16,7 @@ import { cilMenu } from '@coreui/icons'
 import AdminHeaderDropdown from './AdminHeaderDropdown'
 import { logo } from 'src/assets/brand/logo'
 import logoWhite from '~/assets/images/logo.png'
+import { useEffect } from 'react'
 
 const AdminHeader = () => {
   const location = useLocation()
@@ -42,6 +44,13 @@ const AdminHeader = () => {
   const currentClass = useSelector((state) => state.profile.currentClass)
   const [search, setSearch] = useState('')
 
+  const debouncedSearch = useDebounce(search, 1000)
+
+  useEffect(() => {
+    dispatch(setSearchQueryDashboard(debouncedSearch))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedSearch])
+
   const handleChangeClass = (key) => {
     console.log(listClassAssigned[key])
     dispatch(setCurrentClass(listClassAssigned[key]))
@@ -57,8 +66,6 @@ const AdminHeader = () => {
       }))}
     />
   )
-
-  console.log()
 
   return (
     <CHeader position="sticky" className="mb-4">

@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 const initialState = {
   sidebarShow: true,
   sidebarUnfoldable: true,
+  searchQueryDashboard: undefined,
 }
 
 const sidebarSlice = createSlice({
@@ -15,8 +16,11 @@ const sidebarSlice = createSlice({
     setSidebarUnfoldable(state, action) {
       state.sidebarUnfoldable = action.payload
     },
+    setSearchQueryDashboard(state, action) {
+      state.searchQueryDashboard = action.payload
+    },
   },
 })
 
-export const { setSidebarShow, setSidebarUnfoldable } = sidebarSlice.actions
+export const { setSidebarShow, setSidebarUnfoldable, setSearchQueryDashboard } = sidebarSlice.actions
 export default sidebarSlice.reducer

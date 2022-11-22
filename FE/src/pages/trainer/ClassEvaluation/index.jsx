@@ -15,6 +15,7 @@ import {
   Popconfirm,
   InputNumber,
   Input,
+  Divider,
 } from 'antd'
 
 import evaluationApi from '~/api/evaluationApi'
@@ -24,7 +25,7 @@ import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 
 const originData = []
-for (let i = 0; i < 10; i++) {
+for (let i = 0; i < 23; i++) {
   originData.push({
     key: i.toString(),
     name: `Edrward ${i}`,
@@ -113,13 +114,13 @@ const ClassEvaluation = () => {
       title: 'name',
       dataIndex: 'name',
       width: '25%',
-      editable: true,
+      editable: false,
     },
     {
       title: 'age',
       dataIndex: 'age',
       width: '15%',
-      editable: true,
+      editable: false,
     },
     {
       title: 'address',
@@ -170,6 +171,39 @@ const ClassEvaluation = () => {
     }
   })
 
+  const options = [
+    {
+      label: 'Light',
+      value: 'light',
+      render: (_, item) => `${item} 1`,
+    },
+    {
+      label: 'Bamboo',
+      value: 'bamboo',
+      render: (_, item) => `${item} 1`,
+    },
+  ]
+  const onChange = (value) => {
+    console.log(value)
+  }
+  const dropdownRender = (menus) => (
+    <div>
+      {menus}
+      <Divider
+        style={{
+          margin: 0,
+        }}
+      />
+      <div
+        style={{
+          padding: 8,
+        }}
+      >
+        The footer is not very short.
+      </div>
+    </div>
+  )
+
   return (
     <div>
       <AdminSidebar />
@@ -179,7 +213,7 @@ const ClassEvaluation = () => {
           <div className="col-lg-12 m-b30">
             <div className="row">
               <div className="col-lg-12 m-b30">
-                <div className="col-lg-12">
+                <div className="col-lg-12 p-0 m-0">
                   <Breadcrumb>
                     <Breadcrumb.Item>
                       <Link to="/dashboard">Dashboard</Link>
@@ -200,7 +234,17 @@ const ClassEvaluation = () => {
                       <Select.Option key={6}>6</Select.Option>
                     </Select>
                   </div>
-                  <div className="col-lg-3"></div>
+                  <div className="col-lg-3">
+                    <Cascader
+                      style={{
+                        width: '100%',
+                      }}
+                      options={options}
+                      onChange={onChange}
+                      multiple
+                      maxTagCount="responsive"
+                    />{' '}
+                  </div>
                   <div className="col-lg-6 d-flex justify-content-end">
                     <Button type="primary" className="ml-1">
                       Export Marks

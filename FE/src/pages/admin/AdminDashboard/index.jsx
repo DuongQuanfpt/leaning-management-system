@@ -12,6 +12,7 @@ const AdminDashboard = () => {
   let ITEM_PER_PAGE = 10
   const navigateTo = useNavigate()
   const { roles } = useSelector((state) => state.profile)
+  const searchQueryDashboard = useSelector((state) => state.sidebar.searchQueryDashboard)
   const [listPost, setListPost] = useState([])
   const [loading, setLoading] = useState(false)
   const [paginate, setPaginate] = useState({
@@ -20,15 +21,18 @@ const AdminDashboard = () => {
   })
 
   useEffect(() => {
-    loadData(paginate.currentPage)
+    loadData(paginate.currentPage, searchQueryDashboard)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ITEM_PER_PAGE])
+  }, [ITEM_PER_PAGE, searchQueryDashboard])
 
-  const loadData = async () => {
+  const loadData = async (page, q = undefined) => {
     setLoading(true)
     const params = {
       isNotice: true,
       topView: 5,
+      page: page,
+      limit: ITEM_PER_PAGE,
+      q: q,
     }
     await postApi
       .getListPost(params)
