@@ -208,6 +208,7 @@ public class WorkEvalService implements IWorkEvalService {
 
         if (submitWork.getStatus() == SubmitWorkStatusEnum.Rejected) {
             submitWork.setStatus(SubmitWorkStatusEnum.Submitted);
+            submitWork.setRejectReason(null);
         } else {
             // if (submitWork.getStatus() == SubmitWorkStatusEnum.Evaluated) {
             // workEvalRepository.deleteAll(submitWork.getWorkEvals());

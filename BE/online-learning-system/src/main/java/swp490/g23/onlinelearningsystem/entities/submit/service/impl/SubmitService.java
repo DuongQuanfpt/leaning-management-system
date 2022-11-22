@@ -609,6 +609,11 @@ public class SubmitService implements ISubmitService {
         dto.setMilestone(submitWork.getMilestone().getTitle());
         dto.setRequirement(submitWork.getWork().getTitle());
         dto.setStatus(submitWork.getStatus());
+        
+        if(submitWork.getRejectReason() != null) {
+            dto.setRejectReason(submitWork.getRejectReason());
+        }
+       
         if (!submitWork.getWorkEvals().isEmpty()) {
             WorkEval latestEval = new WorkEval();
             for (WorkEval eval : submitWork.getWorkEvals()) {
