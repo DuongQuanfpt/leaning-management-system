@@ -15,19 +15,19 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 @CrossOrigin
 @RequestMapping(Setting.API_PREFIX)
 public class MilestoneEvalController {
-    // @GetMapping(value = "/milestone")
-    // public ResponseEntity<?> displayMilestone(
-    //         @RequestParam(name = "page", required = false) String currentPage,
-    //         @RequestParam(name = "limit", required = false) String requestLimit,
-    //         @RequestParam(name = "q", required = false) String keyword,
-    //         @RequestParam(name = "groupId", required = false) Long groupId,
-    //         @RequestParam(name = "filterAssignment", required = false) String assFilter,
-    //         @RequestParam(name = "filterStatus", required = false) String statusFilter,
-    //         @AuthenticationPrincipal User user) {
+    @GetMapping(value = "/milestone-eval")
+    public ResponseEntity<?> displayMilestoneEval(
+            @RequestParam(name = "page", required = false) String currentPage,
+            @RequestParam(name = "limit", required = false) String requestLimit,
+            @RequestParam(name = "q", required = false) String keyword,
+            @RequestParam(name = "groupId", required = false) Long groupId,
+            @RequestParam(name = "filterAssignment", required = false) String assFilter,
+            @RequestParam(name = "filterStatus", required = false) String statusFilter,
+            @AuthenticationPrincipal User user) {
 
-    //     int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
-    //     int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
-    //     // return milestoneService.displayMilestone(keyword, limit, page, classFilter, assFilter, statusFilter, user);
-    //     return null;
-    // }
+        int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
+        int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
+        // return milestoneService.displayMilestone(keyword, limit, page, classFilter, assFilter, statusFilter, user);
+        return null;
+    }
 }
