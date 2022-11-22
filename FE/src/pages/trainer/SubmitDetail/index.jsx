@@ -29,7 +29,6 @@ import evaluationApi from '~/api/evaluationApi'
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
-import e from '~/assets/vendors/imagesloaded/imagesloaded'
 
 const SubmitDetail = () => {
   const { id } = useParams()
@@ -41,6 +40,7 @@ const SubmitDetail = () => {
     assigneeFilter: [],
     statusFilter: [],
     teamFilter: [],
+    milestoneFilter: [],
   })
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState({})
@@ -68,7 +68,8 @@ const SubmitDetail = () => {
   const loadData = async (filter) => {
     const params = {
       id: id,
-      filterTeam: filter.group,
+      // filterTeam: filter.group,
+      filterMilestone: filter.milestone,
       filterAssignee: filter.assginee,
       filterStatus: filter.status,
       q: filter.search,
@@ -168,6 +169,13 @@ const SubmitDetail = () => {
     })
   }
 
+  const showCommentRejected = (submit) => {
+    Modal.warning({
+      title: 'Reject Reason',
+      content: submit.rejectReason,
+    })
+  }
+
   const columns = [
     { title: 'Milestone', dataIndex: 'milestone', width: '18%' },
     { title: 'Group', dataIndex: 'team', width: '6%' },
@@ -187,7 +195,7 @@ const SubmitDetail = () => {
       width: '12%',
       render: (_, submit) => (
         <>
-          {submit.status === 'Submitted' && submit.finalEvaluated === false && (
+          {roles.includes('trainer') && submit.status === 'Submitted' && submit.finalEvaluated === false && (
             //  Evaluate
             <Button
               type="link"
@@ -221,7 +229,7 @@ const SubmitDetail = () => {
               Evaluate
             </Button>
           )}
-          {submit.status === 'Evaluated' && submit.finalEvaluated === true && (
+          {roles.includes('trainer') && submit.status === 'Evaluated' && submit.finalEvaluated === true && (
             // Final Evaluate
             <Button
               type="link"
@@ -233,7 +241,7 @@ const SubmitDetail = () => {
               Final Evaluate
             </Button>
           )}
-          {submit.status === 'Submitted' && (
+          {roles.includes('trainer') && submit.status === 'Submitted' && (
             // Reject
             <Button
               type="link"
@@ -248,29 +256,45 @@ const SubmitDetail = () => {
             </Button>
           )}
           {submit.status === 'Rejected' && (
-            // Unreject
-            <Button
-              type="link"
-              danger
-              className="px-2 mr-2"
-              onClick={() => {
-                confirmUnreject(submit)
-              }}
-            >
-              Unreject
-            </Button>
+            <>
+              {/* // Unreject */}
+              {roles.includes('trainer') && (
+                <Button
+                  type="link"
+                  danger
+                  className="px-2 mr-2"
+                  onClick={() => {
+                    confirmUnreject(submit)
+                  }}
+                >
+                  Unreject
+                </Button>
+              )}
+              {/* // View Reject Reasons*/}
+              <Button
+                type="link"
+                className="px-2 mr-2"
+                onClick={() => {
+                  showCommentRejected(submit)
+                }}
+              >
+                View Reject Reasons
+              </Button>
+            </>
           )}
 
           {/* View Results  */}
-          <Button
-            type="link"
-            className="px-2"
-            onClick={async () => {
-              loadFinalEvaluateForm(submit, true)
-            }}
-          >
-            View Results
-          </Button>
+          {submit.status === 'Evaluated' && (
+            <Button
+              type="link"
+              className="px-2"
+              onClick={async () => {
+                loadFinalEvaluateForm(submit, true)
+              }}
+            >
+              View Results
+            </Button>
+          )}
         </>
       ),
     },
@@ -284,6 +308,7 @@ const SubmitDetail = () => {
     {
       title: 'Actions',
       width: '15%',
+      hidden: !roles.includes('trainer'),
       render: (_, workUpdate) => (
         <>
           <Button
@@ -305,7 +330,7 @@ const SubmitDetail = () => {
         </>
       ),
     },
-  ]
+  ].filter((item) => !item.hidden)
 
   const confirmDeleteWork = (work) => {
     Modal.confirm({
@@ -358,17 +383,17 @@ const SubmitDetail = () => {
                       <div className="col-3 my-3">
                         <Select
                           className="w-100"
-                          options={listFilter?.teamFilter?.map((item) => ({
-                            label: item,
-                            value: item,
+                          options={listFilter?.milestoneFilter?.map((item) => ({
+                            label: item.milestoneName,
+                            value: item.milestoneId,
                           }))}
-                          placeholder={'Select Group'}
-                          value={filter.group}
+                          placeholder={'Select Milestone'}
+                          value={filter.milestone}
                           onChange={(value) => {
-                            setFilter((prev) => ({ ...prev, group: value }))
+                            setFilter((prev) => ({ ...prev, milestone: value }))
                           }}
                           allowClear
-                          onClear={() => setFilter((prev) => ({ ...prev, group: undefined }))}
+                          onClear={() => setFilter((prev) => ({ ...prev, milestone: undefined }))}
                         />
                       </div>
                       <div className="col-3 my-3">
@@ -406,7 +431,7 @@ const SubmitDetail = () => {
                       <div className="col-3 my-3">
                         <Input.Search
                           className="w-100"
-                          placeholder={'Select Milestone'}
+                          placeholder={'Input Requirement'}
                           allowClear
                           onChange={(e) => setSearch(() => e.target.value)}
                           onSearch={(value) => setFilter((prev) => ({ ...prev, search: search }))}
@@ -429,6 +454,7 @@ const SubmitDetail = () => {
 
                     {/* Evaluate */}
                     <Modal
+                      zIndex={10}
                       open={openModal.evaluate}
                       maskClosable={false}
                       width={'85%'}
@@ -634,6 +660,7 @@ const SubmitDetail = () => {
 
                     {/* Final Evaluate */}
                     <Modal
+                      zIndex={10}
                       open={openModal.revaluate}
                       maskClosable={false}
                       width={'85%'}
@@ -731,7 +758,9 @@ const SubmitDetail = () => {
                               bordered
                               dataSource={formEvaluation.oldResult}
                               renderItem={(item) => (
-                                <List.Item>{`Milestone: ${item.milestoneName} - Complexity: ${item.complexity.title} (${item.complexity.point}%) - Quality: ${item.quality.title} (${item.quality.point}) - WP: ${item.workPoint}`}</List.Item>
+                                <List.Item>
+                                  {`${item.milestoneName} - ${item.complexity.title} (${item.complexity.point}%) - ${item.quality.title} (${item.quality.point}) - WP: ${item.workPoint} - ${item.comment}`}{' '}
+                                </List.Item>
                               )}
                             />
                           </Col>
@@ -827,6 +856,7 @@ const SubmitDetail = () => {
 
                     {/* Reject */}
                     <Modal
+                      zIndex={10}
                       open={openModal.reject}
                       maskClosable={false}
                       title={
@@ -892,6 +922,7 @@ const SubmitDetail = () => {
 
                     {/* Modal Work Updates */}
                     <Modal
+                      zIndex={20}
                       title="Work Updates"
                       open={openModal.workUpdate}
                       onCancel={() => setOpenModal((prev) => ({ ...prev, workUpdate: false }))}
@@ -902,7 +933,12 @@ const SubmitDetail = () => {
                           key="back"
                           onClick={() => {
                             setOpenModal((prev) => ({ ...prev, workUpdate: false }))
-                            loadFinalEvaluateForm(submitSelected)
+                            if (openModal.revaluate) {
+                              loadFinalEvaluateForm(submitSelected)
+                            }
+                            if (openModal.result) {
+                              loadFinalEvaluateForm(submitSelected, true)
+                            }
                           }}
                         >
                           Cancel
@@ -918,12 +954,14 @@ const SubmitDetail = () => {
                             <Typography.Text strong>Updating History</Typography.Text>
                           </div>
                           <div className="col-lg-6 d-flex justify-content-end m-0 p-0">
-                            <Button
-                              type="link"
-                              onClick={() => setOpenModal((prev) => ({ ...prev, workNewUpdate: true }))}
-                            >
-                              New Update
-                            </Button>
+                            {roles.includes('trainer') && (
+                              <Button
+                                type="link"
+                                onClick={() => setOpenModal((prev) => ({ ...prev, workNewUpdate: true }))}
+                              >
+                                New Update
+                              </Button>
+                            )}
                           </div>
                         </div>
                         <Table
@@ -937,6 +975,7 @@ const SubmitDetail = () => {
 
                     {/* Modal Add */}
                     <Modal
+                      zIndex={30}
                       title="Updating Information"
                       open={openModal.workNewUpdate}
                       onCancel={() => setOpenModal((prev) => ({ ...prev, workNewUpdate: false }))}
@@ -1074,6 +1113,7 @@ const SubmitDetail = () => {
 
                     {/* Modal Edit */}
                     <Modal
+                      zIndex={30}
                       title="Updating Information"
                       open={openModal.workEditUpdate}
                       width={'60%'}
@@ -1204,6 +1244,7 @@ const SubmitDetail = () => {
 
                     {/* View Results */}
                     <Modal
+                      zIndex={10}
                       open={openModal.result}
                       maskClosable={false}
                       width={'85%'}
@@ -1263,7 +1304,9 @@ const SubmitDetail = () => {
                               bordered
                               dataSource={formEvaluation.oldResult}
                               renderItem={(item) => (
-                                <List.Item>{`Milestone: ${item.milestoneName} - Complexity: ${item.complexity.title} (${item.complexity.point}%) - Quality: ${item.quality.title} (${item.quality.point}) - WP: ${item.workPoint}`}</List.Item>
+                                <List.Item>
+                                  {`${item.milestoneName} - ${item.complexity.title} (${item.complexity.point}%) - ${item.quality.title} (${item.quality.point}) - WP: ${item.workPoint} - ${item.comment}`}{' '}
+                                </List.Item>
                               )}
                             />
                           </Col>
@@ -1275,8 +1318,7 @@ const SubmitDetail = () => {
                               strong
                               className="ml-3"
                               onClick={async () => {
-                                // loadWorkUpdateForm()
-                                toastMessage('error', 'Chua lam')
+                                loadWorkUpdateForm()
                               }}
                             >
                               View Detailed Updates
