@@ -208,8 +208,8 @@ public class MilestoneEvalService implements IMilestoneEvalService {
                 }
                 dto.setWorkPoint(workPoint);
 
-                Double expectedWork = Double.parseDouble(workCriteria.getExpectedWork());
-                Double workGrade = workPoint / expectedWork * 10.0;
+                double expectedWork = workCriteria.getExpectedWork();
+                double workGrade = workPoint / expectedWork * 10.0;
                 dto.setWorkGrade(Math.round(workGrade * 100.0) / 100.0);
 
             }
