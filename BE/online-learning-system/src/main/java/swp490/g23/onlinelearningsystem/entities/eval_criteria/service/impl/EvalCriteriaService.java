@@ -21,6 +21,7 @@ import swp490.g23.onlinelearningsystem.entities.eval_criteria.domain.filter.Crit
 import swp490.g23.onlinelearningsystem.entities.eval_criteria.domain.request.CriteriaRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.eval_criteria.domain.response.CriteriaPaginateResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.eval_criteria.domain.response.CriteriaResponseDTO;
+import swp490.g23.onlinelearningsystem.entities.eval_criteria.domain.response.MilestoneType;
 import swp490.g23.onlinelearningsystem.entities.eval_criteria.repositories.EvalCriteriaRepositories;
 import swp490.g23.onlinelearningsystem.entities.eval_criteria.repositories.criteria.ClassCriteriaRepositories;
 import swp490.g23.onlinelearningsystem.entities.eval_criteria.repositories.criteria.CriteriaRepositories;
@@ -272,7 +273,7 @@ public class EvalCriteriaService implements IEvalCriteriaService {
         List<CriteriaResponseDTO> list = new ArrayList<>();
         List<StatusEntity> filterStatus = new ArrayList<>();
         List<String> filterClass = new ArrayList<>();
-        List<String> filterMilestone = new ArrayList<>();
+        List<MilestoneType> filterMilestone = new ArrayList<>();
         List<EvalCriteria> criteriaList = queryResult.getResultList();
 
         for (Status status : new ArrayList<Status>(EnumSet.allOf(Status.class))) {
@@ -280,11 +281,20 @@ public class EvalCriteriaService implements IEvalCriteriaService {
         }
 
         for (EvalCriteria evalCriteria : criteriaList) {
+            MilestoneType milestoneType = new MilestoneType(evalCriteria.getMilestone().getMilestoneId(),
+                    evalCriteria.getMilestone().getTitle());
+            boolean canAdd = true;
             if (!filterClass.contains(evalCriteria.getMilestone().getClasses().getCode())) {
                 filterClass.add(evalCriteria.getMilestone().getClasses().getCode());
             }
-            if (!filterMilestone.contains(evalCriteria.getMilestone().getTitle())) {
-                filterMilestone.add(evalCriteria.getMilestone().getTitle());
+            for (MilestoneType type : filterMilestone) {
+                if (type.getMilestoneId() == evalCriteria.getMilestone().getMilestoneId()) {
+                    canAdd = false;
+                    break;
+                }
+            }
+            if (canAdd) {
+                filterMilestone.add(milestoneType);
             }
         }
 
@@ -446,8 +456,8 @@ public class EvalCriteriaService implements IEvalCriteriaService {
             responseDTO.setSubjectName(entity.getAssignment().getForSubject().getSubjectCode());
         }
         if (entity.getMilestone() != null) {
-            responseDTO.setMilestone(entity.getMilestone().getTitle());
-            responseDTO.setMilestoneId(entity.getMilestone().getMilestoneId());
+            responseDTO.setMilestone(
+                    new MilestoneType(entity.getMilestone().getMilestoneId(), entity.getMilestone().getTitle()));
             responseDTO.setClassCode(entity.getMilestone().getClasses().getCode());
         }
         responseDTO.setStatus(entity.getStatus());

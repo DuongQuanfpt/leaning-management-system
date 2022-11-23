@@ -450,7 +450,6 @@ public class SubmitService implements ISubmitService {
         List<SubmitWorkStatusEntity> statusFilter = new ArrayList<>();
         List<String> assigneeList = new ArrayList<>();
         List<MilestoneFilterType> milestoneList = new ArrayList<>();
-        MilestoneFilterType milestone = new MilestoneFilterType();
         Submit currentSubmit = submitRepository.findById(id)
                 .orElseThrow(() -> new CustomException("submit doesnt exist"));
         Group group = currentSubmit.getGroup();
@@ -471,7 +470,10 @@ public class SubmitService implements ISubmitService {
                 }
             }
             for (SubmitWork submitWork : submitWorks) {
+                MilestoneFilterType milestone = new MilestoneFilterType(submitWork.getMilestone().getMilestoneId(),
+                        submitWork.getMilestone().getTitle());
                 boolean isAdd = true;
+                boolean canAdd = true;
                 if (currentSubmit.getMilestone().getAssignment().isFinal() == true) {
                     if (!submitWork.getMilestone().equals(currentSubmit.getMilestone())) {
                         if (submitWork.getSubmit().getUpdates().isEmpty()) {
@@ -515,10 +517,17 @@ public class SubmitService implements ISubmitService {
                         }
                     }
                     list.add(dto);
-                    milestone.setMilestoneId(submitWork.getMilestone().getMilestoneId());
-                    milestone.setMilestoneTitle(submitWork.getMilestone().getTitle());
-                    if (!milestoneList.contains(milestone)) {
+                    for (MilestoneFilterType type : milestoneList) {
+                        if (type.getMilestoneId() == submitWork.getMilestone().getMilestoneId()) {
+                            canAdd = false;
+                            break;
+                        }
+                    }
+                    if (canAdd) {
                         milestoneList.add(milestone);
+                    }
+                    if (!assigneeList.contains(submitWork.getSubmit().getClassUser().getUser().getAccountName())) {
+                        assigneeList.add(submitWork.getSubmit().getClassUser().getUser().getAccountName());
                     }
                 }
             }
@@ -538,7 +547,10 @@ public class SubmitService implements ISubmitService {
                 }
             }
             for (SubmitWork submitWork : submitWorks) {
+                MilestoneFilterType milestone = new MilestoneFilterType(submitWork.getMilestone().getMilestoneId(),
+                        submitWork.getMilestone().getTitle());
                 boolean isAdd = true;
+                boolean canAdd = true;
                 if (currentSubmit.getMilestone().getAssignment().isFinal() == true) {
                     if (!submitWork.getMilestone().equals(currentSubmit.getMilestone())) {
                         for (WorkUpdate update : submitWork.getSubmit().getUpdates()) {
@@ -587,9 +599,13 @@ public class SubmitService implements ISubmitService {
                         }
                     }
                     list.add(dto);
-                    milestone.setMilestoneId(submitWork.getMilestone().getMilestoneId());
-                    milestone.setMilestoneTitle(submitWork.getMilestone().getTitle());
-                    if (!milestoneList.contains(milestone)) {
+                    for (MilestoneFilterType type : milestoneList) {
+                        if (type.getMilestoneId() == submitWork.getMilestone().getMilestoneId()) {
+                            canAdd = false;
+                            break;
+                        }
+                    }
+                    if (canAdd) {
                         milestoneList.add(milestone);
                     }
                     if (!assigneeList.contains(submitWork.getSubmit().getClassUser().getUser().getAccountName())) {
