@@ -492,7 +492,7 @@ public class SubmitService implements ISubmitService {
                     }
                 }
                 if (filterMilestone != null) {
-                    if (!filterMilestone.equals(submitWork.getMilestone().getTitle())) {
+                    if (Long.parseLong(filterMilestone) != (submitWork.getMilestone().getMilestoneId())) {
                         isAdd = false;
                     }
                 }
@@ -517,14 +517,16 @@ public class SubmitService implements ISubmitService {
                         }
                     }
                     list.add(dto);
-                    for (MilestoneFilterType type : milestoneList) {
-                        if (type.getMilestoneId() == submitWork.getMilestone().getMilestoneId()) {
-                            canAdd = false;
-                            break;
+                    if (submitWork.getMilestone() != null) {
+                        for (MilestoneFilterType type : milestoneList) {
+                            if (type.getMilestoneId() == submitWork.getMilestone().getMilestoneId()) {
+                                canAdd = false;
+                                break;
+                            }
                         }
-                    }
-                    if (canAdd) {
-                        milestoneList.add(milestone);
+                        if (canAdd) {
+                            milestoneList.add(milestone);
+                        }
                     }
                     if (!assigneeList.contains(submitWork.getSubmit().getClassUser().getUser().getAccountName())) {
                         assigneeList.add(submitWork.getSubmit().getClassUser().getUser().getAccountName());
@@ -574,7 +576,7 @@ public class SubmitService implements ISubmitService {
                     }
                 }
                 if (filterMilestone != null) {
-                    if (!filterMilestone.equals(submitWork.getMilestone().getTitle())) {
+                    if (Long.parseLong(filterMilestone) != (submitWork.getMilestone().getMilestoneId())) {
                         isAdd = false;
                     }
                 }
@@ -599,14 +601,16 @@ public class SubmitService implements ISubmitService {
                         }
                     }
                     list.add(dto);
-                    for (MilestoneFilterType type : milestoneList) {
-                        if (type.getMilestoneId() == submitWork.getMilestone().getMilestoneId()) {
-                            canAdd = false;
-                            break;
+                    if (submitWork.getMilestone() != null) {
+                        for (MilestoneFilterType type : milestoneList) {
+                            if (type.getMilestoneId() == submitWork.getMilestone().getMilestoneId()) {
+                                canAdd = false;
+                                break;
+                            }
                         }
-                    }
-                    if (canAdd) {
-                        milestoneList.add(milestone);
+                        if (canAdd) {
+                            milestoneList.add(milestone);
+                        }
                     }
                     if (!assigneeList.contains(submitWork.getSubmit().getClassUser().getUser().getAccountName())) {
                         assigneeList.add(submitWork.getSubmit().getClassUser().getUser().getAccountName());
