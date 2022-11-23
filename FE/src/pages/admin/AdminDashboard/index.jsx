@@ -62,7 +62,7 @@ const AdminDashboard = () => {
                 <div className="col-lg-12">
                   <Space>
                     <Typography.Title level={4} className="mb-3">
-                      {searchQueryDashboard === undefined
+                      {!searchQueryDashboard
                         ? `Notice Board`
                         : `Found ${listPost?.listResult?.length} results with keyword '${searchQueryDashboard}'`}
                     </Typography.Title>
