@@ -1,4 +1,4 @@
-package swp490.g23.onlinelearningsystem.entities.submit.domain.response;
+package swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SubmitCriteriaDTO {
-    private String sth;
+public class MilestoneEvalGroupFilter {
+    Long groupId;
+    String groupName;
 }

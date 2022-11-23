@@ -90,4 +90,64 @@ public class SubmitCriteria {
         SubmitQuery result = new SubmitQuery(typedQuery, countQuery);
         return result;
     }
+
+    public SubmitQuery getTraineeOfMilestone(String keyword , Long milestoneId,
+            Long groupId, User user) {
+
+        List<Setting> settings = user.getSettings();
+        List<String> roles = new ArrayList<>();
+        for (Setting setting : settings) {
+            roles.add(setting.getSettingValue());
+        }
+        StringBuilder query = new StringBuilder(
+                "SELECT s FROM Submit s WHERE s.milestone.milestoneId = '" + milestoneId + "'");
+
+        // if (isGroup == true) {
+        // query.append(" AND s.milestone.assignment.isTeamWork = true and m.isLeader =
+        // 1 ");
+        // } else {
+        // query.append(" AND s.milestone.assignment.isTeamWork = false");
+        // }
+
+        // if (keyword != null) {
+        // query.append(" AND s.classUser.user.accountName LIKE '%" + keyword + "%' ");
+        // }
+
+        // if (milestoneId != null && milestoneId != 0) {
+        // query.append(" AND s.milestone.milestoneId = '" + milestoneId + "'");
+        // }
+
+        // if (groupId != null) {
+        // query.append(" AND s.group.groupId = '" + groupId + "'");
+        // }
+
+        // if (statusValue != null) {
+        // SubmitStatusEnum status = SubmitStatusEnum.fromInt(statusValue.intValue());
+        // if (status == SubmitStatusEnum.Evaluated) {
+        // query.append(
+        // " AND s.status =
+        // swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum.Evaluated ");
+        // }
+
+        // if (status == SubmitStatusEnum.Submitted) {
+        // query.append(
+        // " AND s.status =
+        // swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum.Submitted ");
+        // }
+
+        // if (status == SubmitStatusEnum.Pending) {
+        // query.append(" AND s.status IS NULL");
+        // }
+
+        // }
+
+        query.append("  ORDER BY s.group , s.classUser");
+
+        StringBuilder queryCount = new StringBuilder(query.toString().replaceAll("SELECT s", "SELECT COUNT(*)"));
+        TypedQuery<Long> countQuery = em.createQuery(queryCount.toString(), Long.class);
+        TypedQuery<Submit> typedQuery = em.createQuery(query.toString(), Submit.class);
+        System.out.println(query.toString());
+        SubmitQuery result = new SubmitQuery(typedQuery, countQuery);
+        return result;
+    }
 }

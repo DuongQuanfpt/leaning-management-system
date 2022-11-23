@@ -10,16 +10,16 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EvalResultDTO {
-    Long workPoint;
+    private Long workPoint;
 
-    EvalSettingDTO Complexity;
+    private EvalSettingDTO Complexity;
 
-    EvalSettingDTO Quality;
+    private EvalSettingDTO Quality;
 
-    String comment;
+    private String comment;
 
-    String milestoneName;
+    private String milestoneName;
 
-    Long milestoneId;
+    private Long milestoneId;
 
 }

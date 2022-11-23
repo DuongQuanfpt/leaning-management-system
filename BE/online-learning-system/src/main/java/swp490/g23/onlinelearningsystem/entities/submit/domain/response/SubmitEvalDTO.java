@@ -11,18 +11,18 @@ import lombok.Setter;
 @AllArgsConstructor
 public class SubmitEvalDTO {
 
-    Long submitId;
+    private Long submitId;
 
-    Long requirementId;
+    private Long requirementId;
 
-    String requirementName;
+    private String requirementName;
 
-    String complexityName;
+    private String complexityName;
 
-    String qualityname;
+    private String qualityname;
 
-    Long currentPoint;
+    private Long currentPoint;
 
-    String comment;
+    private String comment;
 
 }

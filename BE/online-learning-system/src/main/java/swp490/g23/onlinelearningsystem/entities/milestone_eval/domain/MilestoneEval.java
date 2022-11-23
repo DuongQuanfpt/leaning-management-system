@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import swp490.g23.onlinelearningsystem.entities.BaseEntity;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.ClassUser;
 import swp490.g23.onlinelearningsystem.entities.eval_detail.domain.EvalDetail;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
@@ -26,7 +27,7 @@ import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MilestoneEval {
+public class MilestoneEval extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +35,7 @@ public class MilestoneEval {
 
     private Long bonus;
 
-    private Long grade;
+    private Double grade;
 
     private String comment;
 

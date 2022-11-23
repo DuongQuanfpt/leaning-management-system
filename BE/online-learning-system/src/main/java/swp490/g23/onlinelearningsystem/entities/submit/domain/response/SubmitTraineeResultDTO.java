@@ -12,10 +12,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SubmitTraineeResultDTO {
-    String fullName;
-    String userName;
-    String milestoneName;
-    String groupName;
-    List<SubmitEvalDTO> evaluatedWork;
+    private String fullName;
+    private String userName;
+    private String milestoneName;
+    private String groupName;
+    private List<SubmitEvalDTO> evaluatedWork;
     
 }

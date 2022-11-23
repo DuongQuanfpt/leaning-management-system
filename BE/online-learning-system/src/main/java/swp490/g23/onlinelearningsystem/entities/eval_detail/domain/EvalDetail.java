@@ -25,9 +25,9 @@ public class EvalDetail extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long evalDetailId;
 
-    private Integer totalLoc;
+    private Long totalLoc;
 
-    private Long grade;
+    private Double grade;
 
     private String comment;
 
