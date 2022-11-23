@@ -153,7 +153,8 @@ public class EvalCriteriaService implements IEvalCriteriaService {
             evalCriteria.setDescription(dto.getDescription());
         }
         if (dto.getEvalWeight() != null) {
-            evalCriteria.setEvalWeight(Double.parseDouble(dto.getEvalWeight()));
+            String s = dto.getEvalWeight().substring(0, dto.getEvalWeight().length() - 1);
+            evalCriteria.setEvalWeight(Double.parseDouble(s));
         }
         if (dto.getExpectedWork() != null) {
             evalCriteria.setExpectedWork(dto.getExpectedWork());
@@ -191,7 +192,8 @@ public class EvalCriteriaService implements IEvalCriteriaService {
             evalCriteria.setDescription(dto.getDescription());
         }
         if (dto.getEvalWeight() != null) {
-            evalCriteria.setEvalWeight(Double.parseDouble(dto.getEvalWeight()));
+            String s = dto.getEvalWeight().substring(0, dto.getEvalWeight().length() - 1);
+            evalCriteria.setEvalWeight(Double.parseDouble(s));
         }
         if (dto.getExpectedWork() != null) {
             evalCriteria.setExpectedWork(dto.getExpectedWork());
@@ -349,7 +351,8 @@ public class EvalCriteriaService implements IEvalCriteriaService {
             evalCriteria.setDescription(dto.getDescription());
         }
         if (dto.getEvalWeight() != null) {
-            evalCriteria.setEvalWeight(Double.parseDouble(dto.getEvalWeight()));
+            String s = dto.getEvalWeight().substring(0, dto.getEvalWeight().length() - 1);
+            evalCriteria.setEvalWeight(Double.parseDouble(s));
         }
         if (dto.getExpectedWork() != null) {
             evalCriteria.setExpectedWork(dto.getExpectedWork());
@@ -386,7 +389,8 @@ public class EvalCriteriaService implements IEvalCriteriaService {
             evalCriteria.setDescription(dto.getDescription());
         }
         if (dto.getEvalWeight() != null) {
-            evalCriteria.setEvalWeight(Double.parseDouble(dto.getEvalWeight()));
+            String s = dto.getEvalWeight().substring(0, dto.getEvalWeight().length() - 1);
+            evalCriteria.setEvalWeight(Double.parseDouble(s));
         }
         if (dto.getExpectedWork() != null) {
             evalCriteria.setExpectedWork(dto.getExpectedWork());
@@ -431,7 +435,7 @@ public class EvalCriteriaService implements IEvalCriteriaService {
         if (entity.getDescription() != null) {
             responseDTO.setDescription(entity.getDescription());
         }
-        responseDTO.setEvalWeight(Double.toString(entity.getEvalWeight()));
+        responseDTO.setEvalWeight(entity.getEvalWeight());
         if (entity.getExpectedWork() != null) {
             responseDTO.setExpectedWork(entity.getExpectedWork());
         }
