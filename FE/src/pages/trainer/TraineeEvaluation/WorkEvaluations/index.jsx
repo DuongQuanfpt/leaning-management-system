@@ -160,6 +160,9 @@ const WorkEvaluations = () => {
               open={openModal.workUpdate}
               width={'85%'}
               style={{ left: '30px' }}
+              onCancel={() => {
+                setOpenModal((prev) => ({ ...prev, workUpdate: false }))
+              }}
               footer={[
                 <Button
                   key="back"
@@ -200,6 +203,10 @@ const WorkEvaluations = () => {
               open={openModal.workNewUpdate}
               width={'60%'}
               style={{ left: '30px' }}
+              onCancel={() => {
+                setOpenModal((prev) => ({ ...prev, workNewUpdate: false }))
+                form.resetFields()
+              }}
               footer={[
                 <Button
                   key="back"
@@ -340,6 +347,10 @@ const WorkEvaluations = () => {
               open={openModal.workEditUpdate}
               width={'60%'}
               style={{ left: '30px' }}
+              onCancel={() => {
+                form.resetFields()
+                setOpenModal((prev) => ({ ...prev, workEditUpdate: false }))
+              }}
               footer={[
                 <Button
                   key="back"

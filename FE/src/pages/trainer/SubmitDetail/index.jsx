@@ -72,7 +72,9 @@ const SubmitDetail = () => {
       filterMilestone: filter.milestone,
       filterAssignee: filter.assginee,
       filterStatus: filter.status,
-      q: filter.search,
+    }
+    if (filter.search) {
+      params.q = filter.search
     }
     setLoading(true)
     await submitApi
@@ -308,7 +310,7 @@ const SubmitDetail = () => {
     {
       title: 'Actions',
       width: '15%',
-      hidden: !roles.includes('trainer'),
+      hidden: !roles.includes('trainee'),
       render: (_, workUpdate) => (
         <>
           <Button
@@ -433,12 +435,14 @@ const SubmitDetail = () => {
                           className="w-100"
                           placeholder={'Input Requirement'}
                           allowClear
-                          onChange={(e) => setSearch(() => e.target.value)}
-                          onSearch={(value) => setFilter((prev) => ({ ...prev, search: search }))}
-                          onClear={() => {
-                            setFilter((prev) => ({ ...prev, search: '' }))
-                            setSearch('')
+                          onChange={(e) => {
+                            if (e.target.value) {
+                              setSearch(() => e.target.value)
+                            } else {
+                              setFilter((prev) => ({ ...prev, search: undefined }))
+                            }
                           }}
+                          onSearch={(value) => setFilter((prev) => ({ ...prev, search: search }))}
                         />
                       </div>
                     </div>
@@ -925,7 +929,15 @@ const SubmitDetail = () => {
                       zIndex={20}
                       title="Work Updates"
                       open={openModal.workUpdate}
-                      onCancel={() => setOpenModal((prev) => ({ ...prev, workUpdate: false }))}
+                      onCancel={() => {
+                        setOpenModal((prev) => ({ ...prev, workUpdate: false }))
+                        if (openModal.revaluate) {
+                          loadFinalEvaluateForm(submitSelected)
+                        }
+                        if (openModal.result) {
+                          loadFinalEvaluateForm(submitSelected, true)
+                        }
+                      }}
                       width={'80%'}
                       style={{ left: '30px' }}
                       footer={[
@@ -954,7 +966,7 @@ const SubmitDetail = () => {
                             <Typography.Text strong>Updating History</Typography.Text>
                           </div>
                           <div className="col-lg-6 d-flex justify-content-end m-0 p-0">
-                            {roles.includes('trainer') && (
+                            {roles.includes('trainee') && (
                               <Button
                                 type="link"
                                 onClick={() => setOpenModal((prev) => ({ ...prev, workNewUpdate: true }))}
@@ -978,7 +990,10 @@ const SubmitDetail = () => {
                       zIndex={30}
                       title="Updating Information"
                       open={openModal.workNewUpdate}
-                      onCancel={() => setOpenModal((prev) => ({ ...prev, workNewUpdate: false }))}
+                      onCancel={() => {
+                        setOpenModal((prev) => ({ ...prev, workNewUpdate: false }))
+                        form.resetFields()
+                      }}
                       width={'60%'}
                       style={{ left: '30px' }}
                       footer={[
@@ -1117,7 +1132,10 @@ const SubmitDetail = () => {
                       title="Updating Information"
                       open={openModal.workEditUpdate}
                       width={'60%'}
-                      onCancel={() => setOpenModal((prev) => ({ ...prev, workEditUpdate: false }))}
+                      onCancel={() => {
+                        form.resetFields()
+                        setOpenModal((prev) => ({ ...prev, workEditUpdate: false }))
+                      }}
                       style={{ left: '30px' }}
                       footer={[
                         <Button
