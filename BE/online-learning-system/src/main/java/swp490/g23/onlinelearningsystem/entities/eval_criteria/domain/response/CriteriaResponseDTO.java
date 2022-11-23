@@ -20,9 +20,9 @@ public class CriteriaResponseDTO {
 
     private int isWorkEval;
 
-    private String evalWeight;
+    private Double evalWeight;
 
-    private String expectedWork;
+    private Long expectedWork;
 
     private String description;
 

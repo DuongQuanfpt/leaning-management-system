@@ -27,7 +27,7 @@ public class EvalDetail extends BaseEntity {
 
     private Long totalLoc;
 
-    private double grade;
+    private Double grade;
 
     private String comment;
 
