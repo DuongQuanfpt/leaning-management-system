@@ -21,5 +21,5 @@ public class CriteriaPaginateResponseDTO {
     private List<StatusEntity> statusFilter;
     private List<String> assignmentFilter;
     private List<String> classFilter;
-    private List<String> milestoneFilter;
+    private List<MilestoneType> milestoneFilter;
 }

@@ -52,7 +52,7 @@ public class ClassCriteriaRepositories {
         }
 
         if (filterMilestone != null) {
-            query.append(" AND e.milestone.title = '" + filterMilestone + "' AND e.milestone IS NOT NULL");
+            query.append(" AND e.milestone.milestoneId = '" + filterMilestone + "' AND e.milestone IS NOT NULL");
         }
 
         if (filterClass != null) {

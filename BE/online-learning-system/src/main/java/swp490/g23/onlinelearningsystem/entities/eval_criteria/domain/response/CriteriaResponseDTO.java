@@ -32,9 +32,7 @@ public class CriteriaResponseDTO {
 
     private String subjectName;
 
-    private String milestone;
-
-    private Long milestoneId;
+    private MilestoneType milestone;
 
     private String classCode;
 }
