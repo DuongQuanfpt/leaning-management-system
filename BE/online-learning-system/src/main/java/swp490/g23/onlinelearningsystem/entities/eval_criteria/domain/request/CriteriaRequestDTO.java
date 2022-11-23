@@ -21,7 +21,7 @@ public class CriteriaRequestDTO {
 
     private String evalWeight;
 
-    private String expectedWork;
+    private Long expectedWork;
 
     private String description;
 

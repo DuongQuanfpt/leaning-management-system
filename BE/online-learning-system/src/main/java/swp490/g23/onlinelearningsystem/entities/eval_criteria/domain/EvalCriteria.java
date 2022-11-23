@@ -39,9 +39,9 @@ public class EvalCriteria extends BaseEntity {
     private boolean isWorkEval;
 
     @Column(name = "eval_weight", nullable = false)
-    private double evalWeight;
+    private Double evalWeight;
 
-    private String expectedWork;
+    private Long expectedWork;
 
     private String description;
 

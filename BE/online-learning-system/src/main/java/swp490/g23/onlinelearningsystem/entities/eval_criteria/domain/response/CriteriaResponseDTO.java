@@ -20,9 +20,9 @@ public class CriteriaResponseDTO {
 
     private int isWorkEval;
 
-    private String evalWeight;
+    private Double evalWeight;
 
-    private String expectedWork;
+    private Long expectedWork;
 
     private String description;
 
@@ -32,9 +32,7 @@ public class CriteriaResponseDTO {
 
     private String subjectName;
 
-    private String milestone;
-
-    private Long milestoneId;
+    private MilestoneType milestone;
 
     private String classCode;
 }
