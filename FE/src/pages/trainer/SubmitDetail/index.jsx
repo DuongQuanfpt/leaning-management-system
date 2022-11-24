@@ -386,12 +386,12 @@ const SubmitDetail = () => {
                         <Select
                           className="w-100"
                           options={listFilter?.milestoneFilter?.map((item) => ({
-                            label: item.milestoneName,
+                            label: item.milestoneTitle,
                             value: item.milestoneId,
                           }))}
                           placeholder={'Select Milestone'}
                           value={filter.milestone}
-                          onChange={(value) => {
+                          onChange={(value, option) => {
                             setFilter((prev) => ({ ...prev, milestone: value }))
                           }}
                           allowClear
