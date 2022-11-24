@@ -11,7 +11,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MilestoneEvalCriteriaFilter {
-    Long criteriaId;
-    String criteriaTitle;
+    private Long criteriaId;
+    private String criteriaTitle;
+    private Double weight;
     
 }

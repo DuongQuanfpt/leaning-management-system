@@ -1,5 +1,4 @@
-package swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.response;
-
+package swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,11 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MilestoneEvalCriteriaDTO {
+public class EvalCriteriaRequest {
     private Long criteriaId;
-    private String criteriaTitle;
-    private String comment;
-    private Double weight;
     private Double grade;
-    
+    private String comment;
 }

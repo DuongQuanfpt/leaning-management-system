@@ -6,12 +6,16 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.request.MilestoneEvalRequestWrapper;
 import swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.response.MilestoneEvalFilter;
 import swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.response.MilestoneEvalPaginateDTO;
+import swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.response.TraineeEvalDTO;
 import swp490.g23.onlinelearningsystem.entities.milestone_eval.service.impl.MilestoneEvalService;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
@@ -39,8 +43,22 @@ public class MilestoneEvalController {
     }
 
     @GetMapping(value = "/milestone-eval-filter/{classCode}")
-    public ResponseEntity<MilestoneEvalFilter> milestoneDetail(@PathVariable("classCode") String classCode) {
+    public ResponseEntity<MilestoneEvalFilter> milestoneEvalFilter(@PathVariable("classCode") String classCode) {
 
         return milestoneEvalService.getMilestoneEvalFilter(classCode);
     }
+
+    @GetMapping(value = "/trainee-result/{submitId}")
+    public ResponseEntity<TraineeEvalDTO> traineeEval(@PathVariable("submitId") Long submitId,
+            @AuthenticationPrincipal User user) {
+        return milestoneEvalService.traineeEval(submitId, user);
+    }
+
+    @PostMapping(value = "/milestone-eval/{milestoneId}")
+    public ResponseEntity<String> milestoneEval(@PathVariable("milestoneId") Long milestoneId,
+            @RequestBody MilestoneEvalRequestWrapper evalRequestWrapper) {
+
+        return milestoneEvalService.milestoneEval(milestoneId, evalRequestWrapper);
+    }
+
 }

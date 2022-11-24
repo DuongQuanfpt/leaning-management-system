@@ -10,6 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MilestoneEvalGroupFilter {
-    Long groupId;
-    String groupName;
+    private Long groupId;
+    private String groupName;
 }

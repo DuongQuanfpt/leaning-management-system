@@ -1,6 +1,8 @@
 package swp490.g23.onlinelearningsystem.entities.milestone_eval.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.persistence.TypedQuery;
@@ -12,11 +14,17 @@ import org.springframework.stereotype.Service;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.classes.repositories.ClassRepositories;
 import swp490.g23.onlinelearningsystem.entities.eval_criteria.domain.EvalCriteria;
+import swp490.g23.onlinelearningsystem.entities.eval_criteria.repositories.EvalCriteriaRepositories;
 import swp490.g23.onlinelearningsystem.entities.eval_detail.domain.EvalDetail;
+import swp490.g23.onlinelearningsystem.entities.eval_detail.repositories.EvalDetailRepositories;
 import swp490.g23.onlinelearningsystem.entities.group.domain.Group;
 import swp490.g23.onlinelearningsystem.entities.group.repositories.GroupRepository;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
 import swp490.g23.onlinelearningsystem.entities.milestone.repositories.MilestoneRepository;
+import swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.MilestoneEval;
+import swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.request.MilestoneEvalRequestDTO;
+import swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.request.MilestoneEvalRequestWrapper;
+import swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.request.EvalCriteriaRequest;
 import swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.response.MilestoneDTO;
 import swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.response.MilestoneEvalCriteriaDTO;
 import swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.response.MilestoneEvalCriteriaFilter;
@@ -24,8 +32,13 @@ import swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.response.M
 import swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.response.MilestoneEvalGroupFilter;
 import swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.response.MilestoneEvalPaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.response.MilestoneEvalResponseDTO;
+import swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.response.MilestoneEvalWorkDTO;
+import swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.response.MilestoneeEvalCriteriaKey;
+import swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.response.TraineeEvalDTO;
+import swp490.g23.onlinelearningsystem.entities.milestone_eval.repositories.MilestoneEvalRepository;
 import swp490.g23.onlinelearningsystem.entities.milestone_eval.service.IMilestoneEvalService;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
+import swp490.g23.onlinelearningsystem.entities.submit.repositories.SubmitRepository;
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.criteria.SubmitCriteria;
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.criteria_entity.SubmitQuery;
 import swp490.g23.onlinelearningsystem.entities.submit_work.domain.SubmitWork;
@@ -43,10 +56,22 @@ public class MilestoneEvalService implements IMilestoneEvalService {
     private ClassRepositories classRepositories;
 
     @Autowired
+    private SubmitRepository submitRepository;
+
+    @Autowired
     private MilestoneRepository milestoneRepository;
 
     @Autowired
+    private MilestoneEvalRepository milestoneEvalRepository;
+
+    @Autowired
     private GroupRepository groupRepository;
+
+    @Autowired
+    private EvalCriteriaRepositories criteriaRepositories;
+
+    @Autowired
+    private EvalDetailRepositories evalDetailRepositories;
 
     @Autowired
     private UserRepository userRepository;
@@ -66,7 +91,6 @@ public class MilestoneEvalService implements IMilestoneEvalService {
             if (milestone.getStatus() == MilestoneStatusEnum.In_Progress) {
                 milestoneDTOs.add(toMilestoneDTO(milestone));
             }
-
         }
 
         MilestoneEvalFilter milestoneEvalFilter = new MilestoneEvalFilter();
@@ -80,6 +104,23 @@ public class MilestoneEvalService implements IMilestoneEvalService {
         dto.setMilestoneName(milestone.getTitle());
         dto.setTeamWork(milestone.getAssignment().isTeamWork());
 
+        List<MilestoneEvalCriteriaFilter> criteriaFilters = new ArrayList<>();
+        for (EvalCriteria criteria : milestone.getCriteriaList()) {
+            if (criteria.getStatus() == Status.Active) {
+                if (!criteria.isWorkEval()) {
+                    criteriaFilters.add(toCriteriaFilter(criteria));
+                }
+            }
+        }
+        dto.setCriteriaFilter(criteriaFilters);
+
+        List<Group> groupOfMilestone = groupRepository.findGroupByMilestone(milestone.getMilestoneId());
+        List<MilestoneEvalGroupFilter> groupFilter = new ArrayList<>();
+        for (Group group : groupOfMilestone) {
+            groupFilter.add(toGroupFilter(group));
+        }
+        dto.setGroupFilter(groupFilter);
+
         return dto;
     }
 
@@ -87,9 +128,6 @@ public class MilestoneEvalService implements IMilestoneEvalService {
     public ResponseEntity<MilestoneEvalPaginateDTO> getMilestoneEvalForm(int page, int limit, String keyword,
             Long milestoneId, Long groupId, User user) {
         User currentUser = userRepository.findById(user.getUserId()).get();
-
-        Milestone milestone = milestoneRepository.findById(milestoneId)
-                .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
 
         SubmitQuery result = submitCriteria.getTraineeOfMilestone(keyword, milestoneId, groupId, currentUser);
         TypedQuery<Submit> queryResult = result.getResultQuery();
@@ -106,34 +144,26 @@ public class MilestoneEvalService implements IMilestoneEvalService {
         }
 
         List<MilestoneEvalResponseDTO> submitList = new ArrayList<>();
-        for (Submit submit : queryResult.getResultList()) {
+        List<Submit> listResult = queryResult.getResultList();
+        for (Submit submit : listResult) {
             submitList.add(toDTO(submit));
         }
 
-        List<MilestoneEvalCriteriaFilter> criteriaFilters = new ArrayList<>();
-        for (EvalCriteria criteria : milestone.getCriteriaList()) {
-            if (criteria.getStatus() == Status.Active) {
-                if (!criteria.isWorkEval()) {
-                    criteriaFilters.add(toCriteriaFilter(criteria));
-                } else {
+        MilestoneEvalPaginateDTO paginateDTO = new MilestoneEvalPaginateDTO();
 
-                }
+        Milestone milestone = listResult.get(0).getMilestone();
+        paginateDTO.setWorkEval(false);
+        for (EvalCriteria criteria : milestone.getCriteriaList()) {
+            if (criteria.isWorkEval() == true && criteria.getStatus() == Status.Active) {
+                paginateDTO.setWorkEval(true);
+                break;
             }
         }
 
-        List<Group> groupOfMilestone = groupRepository.findGroupByMilestone(milestoneId);
-        List<MilestoneEvalGroupFilter> groupFilter = new ArrayList<>();
-        for (Group group : groupOfMilestone) {
-            groupFilter.add(toGroupFilter(group));
-        }
-
-        MilestoneEvalPaginateDTO paginateDTO = new MilestoneEvalPaginateDTO();
         paginateDTO.setPage(page);
         paginateDTO.setListResult(submitList);
         paginateDTO.setTotalItem(totalItem);
         paginateDTO.setTotalPage(totalPage);
-        paginateDTO.setCriteriaFilter(criteriaFilters);
-        paginateDTO.setGroupFilter(groupFilter);
 
         return ResponseEntity.ok(paginateDTO);
 
@@ -150,6 +180,7 @@ public class MilestoneEvalService implements IMilestoneEvalService {
         MilestoneEvalCriteriaFilter dto = new MilestoneEvalCriteriaFilter();
         dto.setCriteriaId(criteria.getCriteriaId());
         dto.setCriteriaTitle(criteria.getCriteriaName());
+        dto.setWeight(criteria.getEvalWeight());
         return dto;
     }
 
@@ -158,9 +189,15 @@ public class MilestoneEvalService implements IMilestoneEvalService {
         dto.setSubmitId(submit.getSubmitId());
 
         if (submit.getGroup() != null) {
+            dto.setGroupId(submit.getGroup().getGroupId());
             dto.setGroupName(submit.getGroup().getGroupCode());
         } else {
             dto.setGroupName("No Group");
+        }
+
+        if (!submit.getMilestoneEvals().isEmpty()) {
+            dto.setBonusGrade(submit.getMilestoneEvals().get(0).getBonus());
+            dto.setMilestoneGrade(submit.getMilestoneEvals().get(0).getGrade());
         }
 
         List<MilestoneEvalCriteriaDTO> criteriaDTOs = new ArrayList<>();
@@ -169,14 +206,15 @@ public class MilestoneEvalService implements IMilestoneEvalService {
             if (criteria.getStatus() == Status.Active) {
                 if (criteria.isWorkEval()) {
                     workCriteria = criteria;
-
                 } else {
                     MilestoneEvalCriteriaDTO criteriaDTO = new MilestoneEvalCriteriaDTO();
                     criteriaDTO.setCriteriaId(criteria.getCriteriaId());
                     criteriaDTO.setCriteriaTitle(criteria.getCriteriaName());
+                    criteriaDTO.setWeight(criteria.getEvalWeight());
                     for (EvalDetail evalDetail : criteria.getEvalDetails()) {
                         if (evalDetail.getMilestoneEval().getSubmit().equals(submit)) {
                             criteriaDTO.setGrade(evalDetail.getGrade());
+                            criteriaDTO.setComment(evalDetail.getComment());
                         }
                     }
                     criteriaDTOs.add(criteriaDTO);
@@ -211,7 +249,8 @@ public class MilestoneEvalService implements IMilestoneEvalService {
                 double expectedWork = workCriteria.getExpectedWork();
                 double workGrade = workPoint / expectedWork * 10.0;
                 dto.setWorkGrade(Math.round(workGrade * 100.0) / 100.0);
-
+                dto.setWorkWeight(workCriteria.getEvalWeight());
+                dto.setWorkCriteriaId(workCriteria.getCriteriaId());
             }
 
         } else {
@@ -220,6 +259,189 @@ public class MilestoneEvalService implements IMilestoneEvalService {
         }
 
         return dto;
+    }
+
+    @Override
+    public ResponseEntity<String> milestoneEval(Long milestoneId, MilestoneEvalRequestWrapper requestWrapper) {
+        Milestone milestone = milestoneRepository.findById(milestoneId)
+                .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
+
+        HashMap<Long, MilestoneEval> milestoneEvals = new HashMap<Long, MilestoneEval>();
+        HashMap<MilestoneeEvalCriteriaKey, EvalDetail> milestoneCriteriaDetails = new HashMap<MilestoneeEvalCriteriaKey, EvalDetail>();
+        for (MilestoneEval milestoneEval : milestone.getMilestoneEvals()) {
+            milestoneEvals.put(milestoneEval.getSubmit().getSubmitId(), milestoneEval);
+            for (EvalDetail detail : milestoneEval.getEvalDetails()) {
+                MilestoneeEvalCriteriaKey key = new MilestoneeEvalCriteriaKey();
+                key.setSubmitId(detail.getMilestoneEval().getSubmit().getSubmitId());
+                key.setCriteriaId(detail.getEvalCriteria().getCriteriaId());
+                milestoneCriteriaDetails.put(key, detail);
+            }
+        }
+
+        List<MilestoneEval> newMilestoneEvals = new ArrayList<>();
+        List<EvalDetail> newEvalDetails = new ArrayList<>();
+        for (MilestoneEvalRequestDTO requestDTO : requestWrapper.getEvalList()) {
+
+            MilestoneEval milestoneEval = new MilestoneEval();
+
+            if (milestoneEvals.containsKey(requestDTO.getSubmitId())) {
+                milestoneEval = milestoneEvals.get(requestDTO.getSubmitId());
+            } else {
+                Submit submit = submitRepository.findById(requestDTO.getSubmitId())
+                        .orElseThrow(() -> new CustomException("Submit doesnt exist"));
+                milestoneEval.setMilestone(milestone);
+                milestoneEval.setSubmit(submit);
+                milestoneEval.setClassUser(submit.getClassUser());
+            }
+
+            milestoneEval.setComment(requestDTO.getComment());
+            milestoneEval.setBonus(requestDTO.getBonus());
+            milestoneEval.setGrade(requestDTO.getGrade());
+
+            List<EvalCriteriaRequest> requestList = requestDTO.getCriteria();
+            if (requestDTO.getWorkCriteriaId() != null) {
+                EvalCriteriaRequest workCriteria = new EvalCriteriaRequest();
+                workCriteria.setCriteriaId(requestDTO.getWorkCriteriaId());
+                workCriteria.setGrade(requestDTO.getWorkGrade());
+                requestList.add(workCriteria);
+            }
+
+            for (EvalCriteriaRequest criteriaRequest : requestDTO.getCriteria()) {
+                EvalDetail detail = new EvalDetail();
+
+                MilestoneeEvalCriteriaKey key = new MilestoneeEvalCriteriaKey(requestDTO.getSubmitId(),
+                        criteriaRequest.getCriteriaId());
+                if (milestoneCriteriaDetails.containsKey(key)) {
+                    detail = milestoneCriteriaDetails.get(key);
+                } else {
+                    EvalCriteria criteria = criteriaRepositories.findById(criteriaRequest.getCriteriaId())
+                            .orElseThrow(() -> new CustomException("criteria doesnt exist"));
+                    detail.setEvalCriteria(criteria);
+                    detail.setMilestoneEval(milestoneEval);
+                }
+
+                if (detail.getEvalCriteria().isWorkEval()) {
+                    detail.setTotalLoc(requestDTO.getWorkPoint());
+                }
+                detail.setComment(criteriaRequest.getComment());
+                detail.setGrade(criteriaRequest.getGrade());
+
+                newEvalDetails.add(detail);
+            }
+
+            newMilestoneEvals.add(milestoneEval);
+        }
+
+        milestoneEvalRepository.saveAll(newMilestoneEvals);
+        evalDetailRepositories.saveAll(newEvalDetails);
+        return ResponseEntity.ok("milestone evaluated");
+    }
+
+    @Override
+    public ResponseEntity<TraineeEvalDTO> traineeEval(Long submitId, User user) {
+        Submit currentSubmit = submitRepository.findById(submitId)
+                .orElseThrow(() -> new CustomException("submit doesnt exist"));
+
+        User currentUser = userRepository.findById(user.getUserId()).get();
+        // if (!currentUser.equals(currentSubmit.getClassUser().getUser())) {
+        // throw new CustomException("not owner of this submit");
+        // }
+        Long workCriteriaId = null;
+        Long workCount = (long) 0;
+        Double workWeight = null;
+        Long workPoint = (long) 0;
+        Double workGrade = null;
+
+        Double bonusGrade = null;
+        Double milestoneGrade = null;
+
+        List<MilestoneEvalWorkDTO> submitWorkDTOs = new ArrayList<>();
+        if (!currentSubmit.getSubmitWorks().isEmpty()) {
+            for (SubmitWork submitWork : currentSubmit.getSubmitWorks()) {
+                if (!submitWork.getWorkEvals().isEmpty()) {
+                    MilestoneEvalWorkDTO evalWorkDTO = toWorkEvalDTO(submitWork);
+                    workCount++;
+                    workPoint += evalWorkDTO.getCurrentPoint();
+                    submitWorkDTOs.add(evalWorkDTO);
+                }
+            }
+        }
+
+        for (EvalCriteria criteria : currentSubmit.getMilestone().getCriteriaList()) {
+            if (criteria.getStatus() == Status.Active) {
+                if (criteria.isWorkEval()) {
+                    workCriteriaId = criteria.getCriteriaId();
+                    workWeight = criteria.getEvalWeight();
+
+                    double expectedWork = criteria.getExpectedWork();
+                    workGrade = workPoint / expectedWork * 10.0;
+                    workGrade = Math.round(workGrade * 100.0) / 100.0;
+                }
+            }
+        }
+
+        List<MilestoneEvalCriteriaDTO> evaluatedCriteria = new ArrayList<>();
+        if (!currentSubmit.getMilestoneEvals().isEmpty()) {
+            MilestoneEval milestoneEval = currentSubmit.getMilestoneEvals().get(0);
+            bonusGrade = milestoneEval.getBonus();
+            milestoneGrade = milestoneEval.getGrade();
+            for (EvalDetail detail : milestoneEval.getEvalDetails()) {
+                if (!detail.getEvalCriteria().isWorkEval()) {
+                    evaluatedCriteria.add(toEvaluatedCriteriaDTO(detail));
+                }
+            }
+        }
+
+        TraineeEvalDTO resultDTO = new TraineeEvalDTO();
+        resultDTO.setFullName(currentSubmit.getClassUser().getUser().getFullName());
+        resultDTO.setUserName(currentSubmit.getClassUser().getUser().getAccountName());
+        if (currentSubmit.getGroup() != null) {
+            resultDTO.setGroupName(currentSubmit.getGroup().getGroupCode());
+        }
+        resultDTO.setMilestoneName(currentSubmit.getMilestone().getTitle());
+        resultDTO.setWorkCriteriaId(workCriteriaId);
+        resultDTO.setWorkWeight(workWeight);
+        resultDTO.setWorkCount(workCount);
+        resultDTO.setWorkGrade(workGrade);
+        resultDTO.setBonusGrade(bonusGrade);
+        resultDTO.setMilestoneGrade(milestoneGrade);;
+        resultDTO.setEvaluatedWork(submitWorkDTOs);
+        resultDTO.setEvaluatedCriteria(evaluatedCriteria);
+
+        return ResponseEntity.ok(resultDTO);
+    }
+
+    private MilestoneEvalCriteriaDTO toEvaluatedCriteriaDTO(EvalDetail detail) {
+        MilestoneEvalCriteriaDTO dto = new MilestoneEvalCriteriaDTO();
+        dto.setCriteriaId(detail.getEvalCriteria().getCriteriaId());
+        dto.setCriteriaTitle(detail.getEvalCriteria().getCriteriaName());
+        dto.setWeight(detail.getEvalCriteria().getEvalWeight());
+        dto.setComment(detail.getComment());
+        dto.setGrade(detail.getGrade());
+        return dto;
+    }
+
+    private MilestoneEvalWorkDTO toWorkEvalDTO(SubmitWork submitWork) {
+        MilestoneEvalWorkDTO evalDTO = new MilestoneEvalWorkDTO();
+
+        evalDTO.setSubmitId(submitWork.getSubmit().getSubmitId());
+        evalDTO.setRequirementId(submitWork.getWork().getIssueId());
+        evalDTO.setRequirementName(submitWork.getWork().getTitle());
+        WorkEval latestEval = new WorkEval();
+        for (WorkEval eval : submitWork.getWorkEvals()) {
+            if (latestEval.getCreatedDate() == null) {
+                latestEval = eval;
+            }
+
+            if (latestEval.getCreatedDate().before(eval.getCreatedDate())) {
+                latestEval = eval;
+            }
+        }
+        evalDTO.setComment(latestEval.getComment());
+        evalDTO.setComplexityName(latestEval.getComplexity().getSettingTitle());
+        evalDTO.setQualityname(latestEval.getQuality().getSettingTitle());
+        evalDTO.setCurrentPoint(latestEval.getWorkEval());
+        return evalDTO;
     }
 
 }

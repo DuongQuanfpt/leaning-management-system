@@ -1,5 +1,7 @@
 package swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.response;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +12,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MilestoneDTO {
-    String milestoneName;
-    Long milestoneId;
-    boolean isTeamWork;
+    private String milestoneName;
+    private Long milestoneId;
+    private boolean isTeamWork;
+    private List<MilestoneEvalCriteriaFilter> criteriaFilter;
+    private List<MilestoneEvalGroupFilter> groupFilter;
 }

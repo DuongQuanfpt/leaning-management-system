@@ -33,7 +33,7 @@ public class MilestoneEval extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long milestoneEvalId;
 
-    private Long bonus;
+    private Double bonus;
 
     private Double grade;
 

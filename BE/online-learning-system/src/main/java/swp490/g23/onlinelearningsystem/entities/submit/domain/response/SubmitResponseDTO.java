@@ -16,6 +16,8 @@ public class SubmitResponseDTO {
 
     private String assignmentTitle;
 
+    private Long milestoneId;
+
     private String milestoneTitle;
 
     private SubmitFilterGroupDTO group;

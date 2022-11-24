@@ -1,6 +1,5 @@
 package swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.response;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -16,7 +15,6 @@ public class MilestoneEvalPaginateDTO {
     private int page;
     private int totalPage;
     private long totalItem;
+    private boolean isWorkEval;
     private List<MilestoneEvalResponseDTO> listResult;
-    private List<MilestoneEvalCriteriaFilter> criteriaFilter;
-    private List<MilestoneEvalGroupFilter> groupFilter;
 }
