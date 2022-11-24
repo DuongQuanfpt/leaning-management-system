@@ -25,6 +25,8 @@ public class SubmitDetailDTO {
 
     private String team;
 
+    private String rejectReason;
+
     private Long grade;
 
     private boolean isFinalEvaluated;

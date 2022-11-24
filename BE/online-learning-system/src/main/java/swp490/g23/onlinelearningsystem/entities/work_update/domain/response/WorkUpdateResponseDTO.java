@@ -12,15 +12,15 @@ import lombok.Setter;
 
 public class WorkUpdateResponseDTO {
 
-    Long id;
+    private Long id;
 
-    String title;
+    private String title;
 
-    String description;
+    private String description;
 
-    String updateDate;
+    private String updateDate;
 
-    Long milestoneId;
+    private Long milestoneId;
 
-    String milestoneName;
+    private String milestoneName;
 }

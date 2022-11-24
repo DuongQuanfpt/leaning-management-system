@@ -64,8 +64,10 @@ public class WorkUpdateService implements IWorkUpdateService {
         workDTO.setComments(latestEval.getComment());
 
         List<WorkUpdateResponseDTO> updateDTOs = new ArrayList<>();
+        List<WorkUpdate> updates = updateRepository.getUpdateOfSubmitAndRequirement(submitWork.getSubmit(),
+                submitWork.getWork());
         if (!submitWork.getSubmit().getUpdates().isEmpty()) {
-            for (WorkUpdate update : submitWork.getSubmit().getUpdates()) {
+            for (WorkUpdate update : updates) {
                 updateDTOs.add(toUpdateDTO(update));
             }
         }
@@ -158,7 +160,7 @@ public class WorkUpdateService implements IWorkUpdateService {
     public ResponseEntity<String> deleteWorkUpdate(Long updateId, User user) {
         WorkUpdate update = updateRepository.findById(updateId)
                 .orElseThrow(() -> new CustomException("submit doesnt exist"));
-        updateRepository.delete(update);        
+        updateRepository.delete(update);
         return ResponseEntity.ok("update deleted");
     }
 

@@ -10,16 +10,16 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EvalUpdateDTO {
- 
-    Long id;
 
-    String title;
+    private Long id;
 
-    String description;
+    private String title;
 
-    String updateDate;
+    private String description;
 
-    Long milestoneId;
+    private String updateDate;
 
-    String milestoneName;
+    private Long milestoneId;
+
+    private String milestoneName;
 }

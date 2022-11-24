@@ -11,18 +11,19 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MilestoneEvalResponseDTO {
-    private Long submitId;
-    private String userName;
+public class TraineeEvalDTO {
     private String fullName;
-    private Long groupId;
+    private String userName;
+    private String milestoneName;
     private String groupName;
+
     private Long workCriteriaId;
+    private Long workCount;
     private Double workWeight;
-    private Long workPoint;
     private Double workGrade;
-    private Double milestoneGrade;
     private Double bonusGrade;
-    private String comment;
-    private List<MilestoneEvalCriteriaDTO> criteriaPoints;
+    private Double milestoneGrade;
+
+    private List<MilestoneEvalWorkDTO> evaluatedWork;
+    private List<MilestoneEvalCriteriaDTO> evaluatedCriteria;
 }

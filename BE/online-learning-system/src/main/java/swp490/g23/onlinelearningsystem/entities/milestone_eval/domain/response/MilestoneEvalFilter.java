@@ -1,4 +1,4 @@
-package swp490.g23.onlinelearningsystem.entities.submit.domain.response;
+package swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.response;
 
 import java.util.List;
 
@@ -11,8 +11,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SubmitGroupDTO {
-    private Long groupId;
-    private  String groupCode;
-    private List<String> members;
+public class MilestoneEvalFilter {
+    private List<MilestoneDTO> milestones;
 }

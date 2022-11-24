@@ -212,7 +212,7 @@ const ClassEvalCriteriaAdd = () => {
                                       title: item.milestone,
                                       milestoneId: item.milestoneId,
                                     },
-                                    evalWeight: Number(item.evalWeight.slice(0, -1)),
+                                    evalWeight: Number(item.evalWeight),
                                     status: item.status === 'Active' ? 1 : 0,
                                   }))
                                 }}
@@ -260,7 +260,7 @@ const ClassEvalCriteriaAdd = () => {
                       </div>
                     </div>
 
-                    <div className="form-group col-6">
+                    <div className="form-group col-4">
                       <label className="col-form-label">Eval Criteria Name</label>
                       <div>
                         <input
@@ -271,7 +271,7 @@ const ClassEvalCriteriaAdd = () => {
                         />
                       </div>
                     </div>
-                    <div className="form-group col-6">
+                    <div className="form-group col-4">
                       <label className="col-form-label">Evaluation Weight (%)</label>
                       <div>
                         <input
@@ -282,7 +282,26 @@ const ClassEvalCriteriaAdd = () => {
                         />
                       </div>
                     </div>
-                    <div className="form-group col-6">
+                    <div className="form-group col-4">
+                      <label className="col-form-label">Expected Work</label>
+                      <div>
+                        <input
+                          className="form-control"
+                          type="number"
+                          value={detail.expectedWork}
+                          onChange={(e) => setDetail((prev) => ({ ...prev, expectedWork: e.target.value }))}
+                        />
+                        {/* <textarea
+                          name="message"
+                          rows="4"
+                          className="form-control"
+                          required
+                          value={detail.expectedWork}
+                          onChange={(e) => setDetail((prev) => ({ ...prev, expectedWork: e.target.value }))}
+                        ></textarea> */}
+                      </div>
+                    </div>
+                    <div className="form-group col-4">
                       <label className="col-form-label">Status</label>
                       <div>
                         <Radio.Group
@@ -294,7 +313,7 @@ const ClassEvalCriteriaAdd = () => {
                         </Radio.Group>
                       </div>
                     </div>
-                    <div className="form-group col-6">
+                    <div className="form-group col-4">
                       <label className="col-form-label">Is Team Eval</label>
                       <div>
                         <Radio.Group
@@ -304,19 +323,6 @@ const ClassEvalCriteriaAdd = () => {
                           <Radio value={1}>Yes</Radio>
                           <Radio value={0}>No</Radio>
                         </Radio.Group>
-                      </div>
-                    </div>
-                    <div className="form-group col-12">
-                      <label className="col-form-label">Expected Work</label>
-                      <div>
-                        <textarea
-                          name="message"
-                          rows="4"
-                          className="form-control"
-                          required
-                          value={detail.expectedWork}
-                          onChange={(e) => setDetail((prev) => ({ ...prev, expectedWork: e.target.value }))}
-                        ></textarea>
                       </div>
                     </div>
                     <div className="form-group col-12">

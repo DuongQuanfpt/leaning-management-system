@@ -294,7 +294,7 @@ const EvalCriteriaList = () => {
               <div className="col-lg-12">
                 <Table bordered dataSource={listEval} columns={columns} pagination={false} />
               </div>
-              <div className="col-lg-12 d-flex justify-content-end">
+              <div className="col-lg-12 d-flex justify-content-end mt-3">
                 <Pagination current={currentPage} total={totalItem} onChange={handleChangePage} />;
               </div>
             </div>
