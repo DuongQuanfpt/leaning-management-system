@@ -126,6 +126,29 @@ const RequirementList = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, ITEM_PER_PAGE])
 
+  useEffect(() => {
+    console.log(filter)
+    if (filter?.milestoneId) {
+      issueApi
+        .getListFilter(currentClass, { milestoneId: filter?.milestoneId })
+        .then((response) => {
+          console.log(response)
+          setListFilter({
+            ...response,
+            asigneeFilter: ['None', ...response.asigneeFilter],
+            groupFilter: [{ groupId: 0, groupName: 'None' }, ...response.groupFilter],
+            requirement: [{ id: 0, title: 'General Requirement' }, ...response.requirement],
+            statusFilter: [{ title: 'Open', id: 1 }, ...response.statusFilter, { title: 'Close', id: 0 }],
+          })
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter?.milestoneId])
+
   const loadData = async (page, filter, q = '') => {
     setLoading(true)
     const params = {
