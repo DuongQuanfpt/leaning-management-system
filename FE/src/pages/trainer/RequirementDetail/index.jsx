@@ -317,7 +317,7 @@ const RequirementDetail = () => {
                       isError={error === 'You have successfully change requirement detail' ? false : true}
                     />
                     {listGroupAssigned.includes(defaultDetail?.group?.groupId) ||
-                      (roles.includes('trainer') && (
+                      (roles.includes('trainer') && !detail.evaluated && (
                         <div className="d-flex">
                           {isEditMode ? (
                             <>

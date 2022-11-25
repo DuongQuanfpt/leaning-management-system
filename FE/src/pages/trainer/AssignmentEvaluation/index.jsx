@@ -55,6 +55,8 @@ const AssignementEvaluation = () => {
   const [loading, setLoading] = useState(false)
   const [listFilter, setListFilter] = useState({
     milestone: [],
+    group: [],
+    criteria: [],
   })
   const [filter, setFilter] = useState({})
 
@@ -184,6 +186,22 @@ const AssignementEvaluation = () => {
       console.log('Validate Failed:', errInfo)
     }
   }
+  const criteriaColumns = listFilter.criteria?.map((item, index) => ({
+    title: item.criteriaTitle,
+    dataIndex: 'criteriaPoints',
+    editable: false,
+    width: 100,
+    render: (_, { criteriaPoints }) => criteriaPoints[index]?.grade,
+  }))
+
+  // listFilter.criteria?.map((item, index) => ({
+  //   title: item.criteriaTitle,
+  //   dataIndex: 'criteriaPoints',
+  //   editable: false,
+  //   width: 100,
+  //   render: (_, { criteriaPoints }) => criteriaPoints[index]?.grade,
+  // })),
+
   const columns = [
     {
       title: 'Student',
@@ -234,38 +252,10 @@ const AssignementEvaluation = () => {
       editable: true,
       fixed: 'left',
     },
-
-    {
-      title: () => {
-        return (
-          <Space>
-            {listFilter?.criteria?.map((item) => {
-              return (
-                <Space className="d-flex flex-column">
-                  <Typography.Text strong>{item.criteriaTitle}</Typography.Text>
-                </Space>
-              )
-            })}
-          </Space>
-        )
-      },
-      width: 80,
-      editable: true,
-      render: (_, { criteriaPoints }) => (
-        <Space className="w-100">
-          {console.log(criteriaPoints)}
-          {criteriaPoints.map((item, index) => (
-            <Space>
-              <Space> {item.grade}</Space>
-              <Space> {index}</Space>
-            </Space>
-          ))}
-        </Space>
-      ),
-    },
     {
       title: 'Actions',
       width: 90,
+      editable: false,
       render: (_, record) => {
         const editable = isEditing(record)
         return editable ? (
@@ -290,48 +280,9 @@ const AssignementEvaluation = () => {
       },
       fixed: 'right',
     },
-  ].filter((item) => !item.hidden)
-  console.log(data)
-  const criteriaColumns = listFilter?.criteria?.map((item, index) => ({
-    title: item.criteriaTitle,
-    dataIndex: 'criteriaPoints',
-    render: (_, { criteriaPoints }) => console.log(index),
-    // render: (_, { criteriaPoints }) => (
-    //   <Space>
-    //     {criteriaPoints.grade} - {criteriaPoints.weight}
-    //   </Space>
-    // ),
-  }))
-  // {
-  //   title: () => {
-  //     return (
-  //       <Space>
-  //         {listFilter?.criteria?.map((item) => {
-  //           return (
-  //             <Space className="d-flex flex-column">
-  //               <Typography.Text strong>{item.criteriaTitle}</Typography.Text>
-  //             </Space>
-  //           )
-  //         })}
-  //       </Space>
-  //     )
-  //   },
-  //   width: 80,
-  //   editable: true,
-  //   render: (_, { criteriaPoints }) => (
-  //     <Space className="w-100">
-  //       {console.log(criteriaPoints)}
-  //       {criteriaPoints.map((item, index) => (
-  //         <Space>
-  //           <Space> {item.grade}</Space>
-  //           <Space> {index}</Space>
-  //         </Space>
-  //       ))}
-  //     </Space>
-  //   ),
-  // },
+  ]
 
-  const mergedColumns = columns.map((col) => {
+  const mergedColumns = [...columns].map((col) => {
     if (!col.editable) {
       return col
     }

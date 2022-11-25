@@ -127,7 +127,6 @@ const RequirementList = () => {
   }, [filter, ITEM_PER_PAGE])
 
   useEffect(() => {
-    console.log(filter)
     if (filter?.milestoneId) {
       issueApi
         .getListFilter(currentClass, { milestoneId: filter?.milestoneId })
@@ -165,6 +164,7 @@ const RequirementList = () => {
     await issueApi
       .getIssue(currentClass, params)
       .then((response) => {
+        console.log(response)
         setListIssue(response.issueList.map((item, index) => ({ ...item, key: index })))
         setCurrentPage(page)
         setTotalItem(response.totalItem)
@@ -589,8 +589,14 @@ const RequirementList = () => {
                               setSelectedRow(selected)
                             },
                             getCheckboxProps: (record) => {
+                              console.log(record)
                               return {
-                                disabled: isTrainer ? false : !listGroupLeader.includes(record?.group?.groupId),
+                                disabled:
+                                  record.evaluated === true
+                                    ? true
+                                    : isTrainer
+                                    ? false
+                                    : !listGroupLeader.includes(record?.group?.groupId),
                               }
                             },
                           }
