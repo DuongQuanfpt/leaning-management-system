@@ -10,6 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SubmitRequirementRequestDTO {
-    String assigneeName;
-    Long requirementId;
+    private String assigneeName;
+    private Long requirementId;
 }

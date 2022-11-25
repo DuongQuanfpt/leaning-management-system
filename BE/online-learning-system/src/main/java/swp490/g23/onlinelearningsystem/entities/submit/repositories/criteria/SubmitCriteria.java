@@ -90,4 +90,34 @@ public class SubmitCriteria {
         SubmitQuery result = new SubmitQuery(typedQuery, countQuery);
         return result;
     }
+
+    public SubmitQuery getTraineeOfMilestone(String keyword, Long milestoneId,
+            Long groupId, User user) {
+
+        List<Setting> settings = user.getSettings();
+        List<String> roles = new ArrayList<>();
+        for (Setting setting : settings) {
+            roles.add(setting.getSettingValue());
+        }
+        StringBuilder query = new StringBuilder(
+                "SELECT s FROM Submit s WHERE s.milestone.milestoneId = '" + milestoneId + "'");
+
+        if (groupId != null) {
+            query.append(" AND s.group.groupId = '" + groupId + "'");
+        }
+
+        if (keyword != null) {
+            query.append(" AND (s.classUser.user.accountName LIKE '%" + keyword
+                    + "%' OR s.classUser.user.fullName LIKE '%" + keyword + "%')");
+        }
+
+        query.append("  ORDER BY s.group , s.classUser");
+
+        StringBuilder queryCount = new StringBuilder(query.toString().replaceAll("SELECT s", "SELECT COUNT(*)"));
+        TypedQuery<Long> countQuery = em.createQuery(queryCount.toString(), Long.class);
+        TypedQuery<Submit> typedQuery = em.createQuery(query.toString(), Submit.class);
+        System.out.println(query.toString());
+        SubmitQuery result = new SubmitQuery(typedQuery, countQuery);
+        return result;
+    }
 }

@@ -9,28 +9,29 @@ import swp490.g23.onlinelearningsystem.entities.eval_criteria.domain.response.Cr
 
 public interface IEvalCriteriaService {
 
-    ResponseEntity<CriteriaPaginateResponseDTO> getCriteria(int limit, int page, String keyword, String statusFilter,
-            String assignmentFilter);
+        ResponseEntity<CriteriaPaginateResponseDTO> getCriteria(int limit, int page, String keyword,
+                        String statusFilter,
+                        String assignmentFilter);
 
-    ResponseEntity<String> updateStatus(Long criteriaId);
+        ResponseEntity<String> updateStatus(Long criteriaId);
 
-    ResponseEntity<CriteriaResponseDTO> viewCriteria(Long criteriaId);
+        ResponseEntity<CriteriaResponseDTO> viewCriteria(Long criteriaId);
 
-    ResponseEntity<String> updateCriteria(Long criteriaId, CriteriaRequestDTO dto);
+        ResponseEntity<String> updateCriteria(Long criteriaId, CriteriaRequestDTO dto);
 
-    ResponseEntity<String> addCriteria(CriteriaRequestDTO dto);
+        ResponseEntity<String> addCriteria(CriteriaRequestDTO dto);
 
-    ResponseEntity<CriteriaFilterDTO> getFilter();
+        ResponseEntity<CriteriaFilterDTO> getFilter();
 
-    ResponseEntity<CriteriaPaginateResponseDTO> getClassCriteria(int limit, int page, String keyword,
-            String statusFilter,
-            String classFilter, String milestoneFilter, Long userId);
+        ResponseEntity<CriteriaPaginateResponseDTO> getClassCriteria(int limit, int page, String keyword,
+                        String statusFilter,
+                        String classFilter, String milestoneFilter, Long userId);
 
-    ResponseEntity<String> updateClassCriteriaStatus(Long criteriaId);
+        ResponseEntity<String> updateClassCriteriaStatus(Long criteriaId);
 
-    ResponseEntity<CriteriaResponseDTO> viewClassCriteria(Long criteriaId);
+        ResponseEntity<CriteriaResponseDTO> viewClassCriteria(Long criteriaId);
 
-    ResponseEntity<String> updateClassCriteria(Long criteriaId, CriteriaRequestDTO dto);
+        ResponseEntity<String> updateClassCriteria(Long criteriaId, CriteriaRequestDTO dto);
 
-    ResponseEntity<String> addClassCriteria(CriteriaRequestDTO dto);
+        ResponseEntity<String> addClassCriteria(CriteriaRequestDTO dto);
 }

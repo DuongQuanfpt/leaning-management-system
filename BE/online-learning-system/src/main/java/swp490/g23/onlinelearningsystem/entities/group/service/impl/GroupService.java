@@ -649,7 +649,7 @@ public class GroupService implements IGroupService {
 
         List<GroupClassMemberDTO> classMemberDTOs = new ArrayList<>();
         for (ClassUser classUser : classes.getClassUsers()) {
-                classMemberDTOs.add(toClassMemberDTO(classUser));
+            classMemberDTOs.add(toClassMemberDTO(classUser));
         }
 
         classDTO.setClassSize(classMemberDTOs.size());
@@ -671,7 +671,7 @@ public class GroupService implements IGroupService {
         List<MilestoneResponseDTO> dtos = new ArrayList<>();
 
         for (Milestone m : milestoneCanReuses) {
-            if(m.getStatus() != MilestoneStatusEnum.Open){
+            if (m.getStatus() != MilestoneStatusEnum.Open) {
                 dtos.add(milestoneService.toDTO(m));
             }
         }
@@ -763,28 +763,32 @@ public class GroupService implements IGroupService {
             if (!entity.getSubmits().isEmpty()) {
 
                 for (Submit submit : entity.getSubmits()) {
-                 
-                    if (submit.getClassUser() != null && submit.getMilestone().getMilestoneId() == milestoneId) {
 
-                        GroupMemberResponseDTO groupResponseDTO = new GroupMemberResponseDTO();
-                        for (GroupMember member : entity.getGroupMembers()) {
-                            if (member.getMember().getAccountName()
-                                    .equals(submit.getClassUser().getUser().getAccountName())) {
-                                groupResponseDTO = memberService.toDTO(member);
-                            }
+                    if (submit.getClassUser() == null) {
+                        continue;
+                    }
 
+                    if (submit.getMilestone().getMilestoneId() == milestoneId) {
+                        continue;
+                    }
+
+                    GroupMemberResponseDTO groupResponseDTO = new GroupMemberResponseDTO();
+                    for (GroupMember member : entity.getGroupMembers()) {
+                        if (member.getMember().getAccountName()
+                                .equals(submit.getClassUser().getUser().getAccountName())) {
+                            groupResponseDTO = memberService.toDTO(member);
                         }
 
-                        if (filterActive == null) {
+                    }
+
+                    if (filterActive == null) {
+                        groupResponseDTO.setMemberInfo(classUserService.toTraineeDTO(submit.getClassUser()));
+                        memberResponseDTOs.add(groupResponseDTO);
+                    } else {
+                        if (groupResponseDTO.getIsActive().toString().equals(filterActive)) {
                             groupResponseDTO.setMemberInfo(classUserService.toTraineeDTO(submit.getClassUser()));
                             memberResponseDTOs.add(groupResponseDTO);
-                        } else {
-                            if (groupResponseDTO.getIsActive().toString().equals(filterActive)) {
-                                groupResponseDTO.setMemberInfo(classUserService.toTraineeDTO(submit.getClassUser()));
-                                memberResponseDTOs.add(groupResponseDTO);
-                            }
                         }
-
                     }
                 }
 

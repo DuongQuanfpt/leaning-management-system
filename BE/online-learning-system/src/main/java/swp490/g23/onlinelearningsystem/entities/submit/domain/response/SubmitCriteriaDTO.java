@@ -10,5 +10,5 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SubmitCriteriaDTO {
-    String sth;
+    private String sth;
 }

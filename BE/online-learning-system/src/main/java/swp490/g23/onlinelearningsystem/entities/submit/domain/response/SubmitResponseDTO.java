@@ -12,13 +12,15 @@ import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.SubmitFilte
 @AllArgsConstructor
 public class SubmitResponseDTO {
 
-    Long submitId;
+    private Long submitId;
 
-    String assignmentTitle;
+    private String assignmentTitle;
 
-    String milestoneTitle;
+    private Long milestoneId;
 
-    SubmitFilterGroupDTO group;
+    private String milestoneTitle;
+
+    private SubmitFilterGroupDTO group;
 
     String traineeTitle;
 

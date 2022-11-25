@@ -12,17 +12,17 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WorkUpdateWorkDTO {
-    Long workId;
+    private Long workId;
 
-    String workTitle;
+    private String workTitle;
 
-    String comments;
+    private String comments;
 
-    Long milestoneId;
+    private Long milestoneId;
 
-    String milestoneName;
+    private String milestoneName;
 
-    List<WorkUpdateResponseDTO> updateOfWork;
+    private List<WorkUpdateResponseDTO> updateOfWork;
 
-    List<WorkUpdateMilestoneDTO> milestoneOfSubmit;
+    private List<WorkUpdateMilestoneDTO> milestoneOfSubmit;
 }

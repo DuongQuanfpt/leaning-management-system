@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EvalSettingDTO {
-    String title;
-    Long point;
-    Long id;
+    private String title;
+    private Long point;
+    private Long id;
 }

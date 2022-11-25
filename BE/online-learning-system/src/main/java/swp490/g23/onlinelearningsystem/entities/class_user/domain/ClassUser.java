@@ -19,6 +19,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.attendance.domain.Attendance;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
+import swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.MilestoneEval;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.util.enumutil.TraineeStatus;
@@ -44,13 +45,13 @@ public class ClassUser {
     private LocalDate dropoutDate;
 
     @Column
-    private String ongoingEval;
+    private Double ongoingEval;
 
     @Column
-    private String finalEval;
+    private Double finalEval;
 
     @Column
-    private String topicEval;
+    private Double topicEval;
 
     @ManyToOne
     @MapsId("userId")
@@ -67,4 +68,7 @@ public class ClassUser {
 
     @OneToMany(mappedBy = "classUser")
     private List<Attendance> attendances;
+
+    @OneToMany(mappedBy = "classUser")
+    private List<MilestoneEval> milestoneEvals;
 }

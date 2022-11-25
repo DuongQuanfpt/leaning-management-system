@@ -10,12 +10,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EvalRequestDTO {
-    Long complexityId;
+    private Long complexityId;
     
-    Long qualityId;
+    private Long qualityId;
 
-    Long workPoint;
+    private Long workPoint;
 
-    String comment;
+    private String comment;
 
 }

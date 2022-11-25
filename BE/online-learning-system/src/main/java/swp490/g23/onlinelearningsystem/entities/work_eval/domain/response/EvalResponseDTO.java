@@ -12,23 +12,22 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EvalResponseDTO {
-    String traineeName;
-    
-    String groupName;
+    private String traineeName;
 
-    String milestoneName;
+    private String groupName;
 
-    String functionName;
+    private String milestoneName;
 
-    String functionDescription;
+    private String functionName;
 
-    List<EvalSettingDTO> complexityFilter;
+    private String functionDescription;
 
-    List<EvalSettingDTO> qualityFilter;
+    private List<EvalSettingDTO> complexityFilter;
 
-    List<EvalUpdateDTO> updates;
+    private List<EvalSettingDTO> qualityFilter;
 
-    List<EvalResultDTO> result;
+    private List<EvalUpdateDTO> updates;
 
+    private List<EvalResultDTO> result;
 
 }

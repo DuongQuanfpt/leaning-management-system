@@ -33,10 +33,8 @@ import swp490.g23.onlinelearningsystem.entities.submit.domain.request.SubmitRequ
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.MilestoneFilterType;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitDetailDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitDetailFilterDTO;
-import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitEvalDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitPaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitResponseDTO;
-import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitTraineeResultDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.SubmitRepository;
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.criteria.SubmitCriteria;
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.criteria_entity.SubmitQuery;
@@ -115,6 +113,7 @@ public class SubmitService implements ISubmitService {
         SubmitResponseDTO dto = new SubmitResponseDTO();
         dto.setSubmitId(submit.getSubmitId());
         dto.setAssignmentTitle(submit.getMilestone().getAssignment().getTitle());
+        dto.setMilestoneId(submit.getMilestone().getMilestoneId());
         dto.setMilestoneTitle(submit.getMilestone().getTitle());
 
         if (submit.getGroup() != null) {
@@ -642,6 +641,11 @@ public class SubmitService implements ISubmitService {
         dto.setMilestone(submitWork.getMilestone().getTitle());
         dto.setRequirement(submitWork.getWork().getTitle());
         dto.setStatus(submitWork.getStatus());
+        
+        if(submitWork.getRejectReason() != null) {
+            dto.setRejectReason(submitWork.getRejectReason());
+        }
+       
         if (!submitWork.getWorkEvals().isEmpty()) {
             WorkEval latestEval = new WorkEval();
             for (WorkEval eval : submitWork.getWorkEvals()) {
@@ -658,60 +662,5 @@ public class SubmitService implements ISubmitService {
             dto.setGrade(null);
         }
         return dto;
-    }
-
-    @Override
-    public ResponseEntity<SubmitTraineeResultDTO> traineeResult(Long submitId, User user) {
-        Submit currentSubmit = submitRepository.findById(submitId)
-                .orElseThrow(() -> new CustomException("submit doesnt exist"));
-
-        User currentUser = userRepository.findById(user.getUserId()).get();
-        // if (!currentUser.equals(currentSubmit.getClassUser().getUser())) {
-        // throw new CustomException("not owner of this submit");
-        // }
-
-        List<SubmitEvalDTO> submitWorkDTOs = new ArrayList<>();
-        if (!currentSubmit.getSubmitWorks().isEmpty()) {
-            for (SubmitWork submitWork : currentSubmit.getSubmitWorks()) {
-                if (!submitWork.getWorkEvals().isEmpty()) {
-                    submitWorkDTOs.add(toSubmitWorkDTO(submitWork));
-                }
-            }
-        }
-
-        SubmitTraineeResultDTO resultDTO = new SubmitTraineeResultDTO();
-        resultDTO.setFullName(currentSubmit.getClassUser().getUser().getFullName());
-        resultDTO.setUserName(currentSubmit.getClassUser().getUser().getAccountName());
-        if (currentSubmit.getGroup() != null) {
-            resultDTO.setGroupName(currentSubmit.getGroup().getGroupCode());
-        }
-        resultDTO.setMilestoneName(currentSubmit.getMilestone().getTitle());
-
-        resultDTO.setEvaluatedWork(submitWorkDTOs);
-
-        return ResponseEntity.ok(resultDTO);
-    }
-
-    private SubmitEvalDTO toSubmitWorkDTO(SubmitWork submitWork) {
-        SubmitEvalDTO evalDTO = new SubmitEvalDTO();
-
-        evalDTO.setSubmitId(submitWork.getSubmit().getSubmitId());
-        evalDTO.setRequirementId(submitWork.getWork().getIssueId());
-        evalDTO.setRequirementName(submitWork.getWork().getTitle());
-        WorkEval latestEval = new WorkEval();
-        for (WorkEval eval : submitWork.getWorkEvals()) {
-            if (latestEval.getCreatedDate() == null) {
-                latestEval = eval;
-            }
-
-            if (latestEval.getCreatedDate().before(eval.getCreatedDate())) {
-                latestEval = eval;
-            }
-        }
-        evalDTO.setComment(latestEval.getComment());
-        evalDTO.setComplexityName(latestEval.getComplexity().getSettingTitle());
-        evalDTO.setQualityname(latestEval.getQuality().getSettingTitle());
-        evalDTO.setCurrentPoint(latestEval.getWorkEval());
-        return evalDTO;
     }
 }

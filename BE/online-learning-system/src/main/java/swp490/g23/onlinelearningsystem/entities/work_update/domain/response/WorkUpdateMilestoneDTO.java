@@ -11,6 +11,6 @@ import lombok.Setter;
 @AllArgsConstructor
 
 public class WorkUpdateMilestoneDTO {
-    String milestoneName;
-    Long milestoneId;
+    private String milestoneName;
+    private Long milestoneId;
 }

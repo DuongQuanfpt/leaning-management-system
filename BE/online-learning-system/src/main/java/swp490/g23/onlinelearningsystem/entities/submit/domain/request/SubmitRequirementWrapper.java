@@ -12,5 +12,5 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SubmitRequirementWrapper {
-    List<SubmitRequirementRequestDTO> requirements;
+    private List<SubmitRequirementRequestDTO> requirements;
 }
