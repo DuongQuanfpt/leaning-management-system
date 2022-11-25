@@ -22,9 +22,9 @@ const ClassEvalCriteriaDetail = () => {
     assignment: {
       title: '',
     },
-    expectedWork: '',
+    expectedWork: 0,
     description: '',
-    evalWeight: '',
+    evalWeight: 0,
     isTeamEval: 0,
     status: 0,
     milestone: '',
@@ -65,7 +65,7 @@ const ClassEvalCriteriaDetail = () => {
       setError('Eval criteria name must not empty')
       return
     }
-    if (detail.evalWeight === '') {
+    if (!detail.evalWeight) {
       setError('Evaluation weight must not empty')
       return
     }
@@ -73,8 +73,12 @@ const ClassEvalCriteriaDetail = () => {
       setError('Evaluation weight must between 0 and 100')
       return
     }
-    if (detail.expectedWork.trim() === '') {
+    if (!detail.expectedWork) {
       setError('Expected Work must not empty')
+      return
+    }
+    if (detail.expectedWork < 0) {
+      setError('Expected Work must be positive')
       return
     }
     if (detail.description.trim() === '') {

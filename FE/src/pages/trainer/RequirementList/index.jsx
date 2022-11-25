@@ -403,25 +403,30 @@ const RequirementList = () => {
     {
       width: '25%',
       align: 'end',
-      title: () => (
-        <Space>
-          <Button type="secondary" shape="square" onClick={() => navigateTo('/requirement-add')} title={'Issue'}>
-            New Requirement
-          </Button>
+      title: () =>
+        // eslint-disable-next-line no-mixed-operators
+        listGroupLeader.length !== 0 ||
+        (roles.includes('trainer') && (
+          <>
+            <Space>
+              <Button type="secondary" shape="square" onClick={() => navigateTo('/requirement-add')} title={'Issue'}>
+                New Requirement
+              </Button>
 
-          <Button
-            type="primary"
-            shape="square"
-            disabled={isEditMode}
-            onClick={() => {
-              setSelectedRow([])
-              setIsEditMode(true)
-            }}
-          >
-            Edit Requirements
-          </Button>
-        </Space>
-      ),
+              <Button
+                type="primary"
+                shape="square"
+                disabled={isEditMode}
+                onClick={() => {
+                  setSelectedRow([])
+                  setIsEditMode(true)
+                }}
+              >
+                Edit Requirements
+              </Button>
+            </Space>
+          </>
+        )),
       render: (_, issue) => (
         <Space className="d-flex flex-column">
           <Space className="d-flex flex-row ">
@@ -625,6 +630,9 @@ const RequirementList = () => {
                       params.updateToApply.deadline = 'none'
                     }
                     if (baseEditBatch.status) {
+                      params.updateToApply.statusId = baseEditBatch.status
+                    }
+                    if (baseEditBatch.status === 0) {
                       params.updateToApply.statusId = baseEditBatch.status
                     }
 

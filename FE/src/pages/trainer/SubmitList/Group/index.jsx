@@ -150,7 +150,7 @@ const Group = () => {
       width: '10%',
       render: (_, submit) => (
         <Space size="middle" align="baseline">
-          {username === submit.traineeTitle && submit.status !== 'Evaluated' && (
+          {!isTrainer && username === submit.traineeTitle && submit.status !== 'Evaluated' && (
             <Tooltip title="Submit Milestone" placement="top">
               <Button
                 shape="circle"
@@ -163,27 +163,14 @@ const Group = () => {
             </Tooltip>
           )}
 
-          {username === submit.traineeTitle && submit.status === 'Evaluated' && (
+          {submit.status === 'Evaluated' && (
             <Tooltip title="View Evaluate" placement="top">
               <Button
                 shape="circle"
                 type="primary"
                 icon={<FormOutlined />}
                 onClick={() => {
-                  navigateTo(`/trainee-evaluation/${submit.submitId}`)
-                }}
-              ></Button>
-            </Tooltip>
-          )}
-
-          {isTrainer && submit.status === 'Submitted' && (
-            <Tooltip title="View Evaluate" placement="top">
-              <Button
-                shape="circle"
-                type="primary"
-                icon={<FormOutlined />}
-                onClick={() => {
-                  navigateTo(`/assignment-evaluation/${submit.submitId}`)
+                  navigateTo(`/assignment-evaluation/${submit.milestoneId}/${submit.group.groupId}`)
                 }}
               ></Button>
             </Tooltip>

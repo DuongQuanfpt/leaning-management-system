@@ -248,7 +248,7 @@ const myScheduleRoutes = [{ path: '/my-schedule', component: MySchedule }]
 const postEditRoutes = [{ path: '/post-edit/:id', component: PostEdit }]
 const evaluationRoutes = [
   { path: '/assignment-evaluation', component: AssignmentEvaluation },
-  { path: '/assignment-evaluation/:id', component: AssignmentEvaluation },
+  { path: '/assignment-evaluation/:milestoneId/:groupId', component: AssignmentEvaluation },
   { path: '/trainee-evaluation/:id', component: TraineeEvaluation },
   { path: '/class-evaluation', component: ClassEvaluation },
 ]

@@ -5,11 +5,8 @@ import {
   Breadcrumb,
   Button,
   Select,
-  Skeleton,
   Typography,
   Cascader,
-  Tooltip,
-  Alert,
   Table,
   Form,
   Popconfirm,
@@ -74,6 +71,7 @@ const ClassEvaluation = () => {
   const [data, setData] = useState(originData)
   const [editingKey, setEditingKey] = useState('')
   const isEditing = (record) => record.key === editingKey
+
   const edit = (record) => {
     form.setFieldsValue({
       name: '',
