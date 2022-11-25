@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
@@ -7,14 +7,15 @@ import {
   Button,
   Select,
   Typography,
-  Cascader,
   Table,
   Form,
   Popconfirm,
   InputNumber,
   Input,
-  Divider,
   Space,
+  message,
+  Popover,
+  Modal,
 } from 'antd'
 
 import evaluationApi from '~/api/evaluationApi'
@@ -22,6 +23,7 @@ import evaluationApi from '~/api/evaluationApi'
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
+import { CloseOutlined, EditOutlined, EllipsisOutlined, SaveOutlined } from '@ant-design/icons'
 
 const EditableCell = ({ editing, dataIndex, title, inputType, record, index, children, ...restProps }) => {
   const inputNode = inputType === 'number' ? <InputNumber /> : <Input />
@@ -36,7 +38,7 @@ const EditableCell = ({ editing, dataIndex, title, inputType, record, index, chi
           rules={[
             {
               required: true,
-              message: `Please Input ${title}!`,
+              message: `Field must not empty!`,
             },
           ]}
         >
@@ -58,15 +60,49 @@ const AssignementEvaluation = () => {
     group: [],
     criteria: [],
   })
-  const [filter, setFilter] = useState({})
+  const [filter, setFilter] = useState({
+    search: null,
+  })
+  const [columnTable, setColumnsTable] = useState([])
 
   const [form] = Form.useForm()
   const [data, setData] = useState([])
   const [editingKey, setEditingKey] = useState('')
+  const [evalSelected, setEvalSelected] = useState({})
+  const [open, setOpen] = useState(false)
   const isEditing = (record) => record.key === editingKey
 
   useEffect(() => {
     setLoading(true)
+    setFilter((prev) => ({ ...prev, search: null }))
+    loadFilter()
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentClass])
+
+  useEffect(() => {
+    setData([])
+    const milestoneSelect = listFilter?.milestone?.filter((item) => item.milestoneId === filter?.milestone?.value)
+    const listGroup = milestoneSelect[0]?.groupFilter
+    const listCriteria = milestoneSelect[0]?.criteriaFilter
+    setListFilter((prev) => ({ ...prev, group: listGroup }))
+    setListFilter((prev) => ({ ...prev, criteria: listCriteria }))
+    setFilter((prev) => ({ ...prev, group: null, criteria: null }))
+    console.log(milestoneSelect)
+    if (milestoneSelect[0]?.teamWork === false) {
+      loadData(false)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter?.milestone?.value])
+
+  useEffect(() => {
+    if (filter?.group?.value) {
+      loadData()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter?.group?.value])
+
+  const loadFilter = async () => {
     evaluationApi
       .getAssignmentEvalFilter(currentClass)
       .then((response) => {
@@ -111,33 +147,17 @@ const AssignementEvaluation = () => {
       })
       .catch((error) => console.log(error))
       .finally(() => setLoading(false))
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentClass])
-
-  useEffect(() => {
-    const milestoneSelect = listFilter?.milestone?.filter((item) => item.milestoneId === filter?.milestone?.value)
-    const listGroup = milestoneSelect[0]?.groupFilter
-    const listCriteria = milestoneSelect[0]?.criteriaFilter
-    setListFilter((prev) => ({ ...prev, group: listGroup }))
-    setListFilter((prev) => ({ ...prev, criteria: listCriteria }))
-    setFilter((prev) => ({ ...prev, group: null, criteria: null }))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter?.milestone?.value])
-
-  useEffect(() => {
-    if (filter?.group?.value) {
-      loadData()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter?.group?.value])
-
-  const loadData = async () => {
+  }
+  const loadData = async (teamwork = true) => {
     setLoading(true)
-    const params = {
-      groupId: filter?.group?.value,
-      milestoneId: filter?.milestone?.value,
+    let params = {}
+    if (teamwork === false) {
+      params.milestoneId = filter?.milestone?.value
+    } else {
+      params.milestoneId = filter?.milestone?.value
+      params.groupId = filter?.group?.value
     }
+
     evaluationApi
       .getAssignmentEvalList(filter?.milestone?.value, params)
       .then((response) => {
@@ -149,13 +169,20 @@ const AssignementEvaluation = () => {
       })
       .finally(() => setLoading(false))
   }
+  const toastMessage = (type, mes) => {
+    message[type]({
+      content: mes,
+      style: {
+        transform: `translate(0, 8vh)`,
+      },
+    })
+  }
 
   //Edit row on table
   const edit = (record) => {
+    console.log(record)
     form.setFieldsValue({
-      name: '',
-      age: '',
-      address: '',
+      bonusGrade: 0,
       ...record,
     })
     setEditingKey(record.key)
@@ -164,125 +191,225 @@ const AssignementEvaluation = () => {
     setEditingKey('')
   }
   const save = async (key) => {
+    //Get data row edit
+    const rowUpdated = data[key]
     try {
       const row = await form.validateFields()
-      const newData = [...data]
-      const index = newData.findIndex((item) => key === item.key)
-      if (index > -1) {
-        const item = newData[index]
-        newData.splice(index, 1, {
-          ...item,
-          ...row,
-        })
-        setData(newData)
-        setEditingKey('')
-      } else {
-        newData.push(row)
-        setData(newData)
-        setEditingKey('')
+      //Get data form
+      console.log(row)
+
+      if (row.bonusGrade > 2 || row.bonusGrade < -2) {
+        toastMessage('error', 'Bonus / Penalty must between -2 and 2')
+        return
       }
-      console.log(data)
+      if (row.bonusGrade > 2 || row.bonusGrade < -2) {
+        toastMessage('error', 'Bonus / Penalty must between -2 and 2')
+        return
+      }
+      rowUpdated.bonusGrade = row.bonusGrade
+      rowUpdated.comment = row.comment
+      delete row.bonusGrade
+      delete row.comment
+      rowUpdated.criteriaPoints = rowUpdated.criteriaPoints.map((item, index) => ({
+        ...item,
+        grade: row[Object.keys(row)[index]],
+      }))
+      console.log(rowUpdated)
+
+      for (let key in row) {
+        if (row.hasOwnProperty(key)) {
+          if (isNaN(row[key])) {
+            toastMessage('error', 'Criteria Evaluation Mark must be a number')
+            return
+          }
+          if (Number(row[key]) < 0 || Number(row[key]) > 10) {
+            toastMessage('error', 'Criteria Evaluation Mark must between 0 and 10')
+            return
+          }
+        }
+      }
+
+      const params = {
+        evalList: [
+          {
+            submitId: rowUpdated.submitId,
+            comment: rowUpdated.comment,
+            bonus: rowUpdated.bonusGrade,
+            grade:
+              rowUpdated.criteriaPoints.reduce((a, b) => a + (b.weight * +b.grade) / 100, 0) +
+              (rowUpdated.workGrade * rowUpdated.workWeight) / 100 +
+              rowUpdated.bonusGrade,
+            workGrade: rowUpdated.workGrade,
+            workPoint: rowUpdated.workPoint,
+            workCriteriaId: rowUpdated.workCriteriaId,
+            criteria: rowUpdated.criteriaPoints.map((item) => ({
+              criteriaId: item.criteriaId,
+              grade: item.grade,
+              comment: item.comment,
+            })),
+          },
+        ],
+      }
+
+      console.log(params)
+
+      await evaluationApi
+        .editAssignment(filter?.milestone?.value, params)
+        .then((response) => {
+          console.log(response)
+          toastMessage('success', 'Edit Evaluation successfully!')
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+        .finally(() => loadData())
+
+      console.log(params)
+
+      //Disable Edit Mode
+      setEditingKey('')
     } catch (errInfo) {
       console.log('Validate Failed:', errInfo)
     }
   }
-  const criteriaColumns = listFilter.criteria?.map((item, index) => ({
-    title: item.criteriaTitle,
-    dataIndex: 'criteriaPoints',
-    editable: false,
-    width: 100,
-    render: (_, { criteriaPoints }) => criteriaPoints[index]?.grade,
-  }))
-
-  // listFilter.criteria?.map((item, index) => ({
-  //   title: item.criteriaTitle,
-  //   dataIndex: 'criteriaPoints',
-  //   editable: false,
-  //   width: 100,
-  //   render: (_, { criteriaPoints }) => criteriaPoints[index]?.grade,
-  // })),
-
   const columns = [
     {
-      title: 'Student',
-      dataIndex: 'userName',
+      title: 'Comments',
+      dataIndex: 'comment',
+      key: Math.random(),
       width: 100,
-      editable: false,
+      editable: true,
       fixed: 'left',
     },
     {
-      title: 'Full Name',
-      dataIndex: 'fullName',
-      width: 100,
-      editable: false,
+      title: 'Bonus/ Penalty',
+      dataIndex: 'bonusGrade',
+      key: Math.random(),
+      width: 80,
+      editable: true,
       fixed: 'left',
     },
     {
-      title: 'Mark',
+      title: 'WP',
+      dataIndex: 'workPoint',
+      key: Math.random(),
       width: 50,
-      dataIndex: 'workWeight',
       editable: false,
       fixed: 'left',
     },
     {
       title: 'WG',
       dataIndex: 'workGrade',
+      key: Math.random(),
       width: 50,
       editable: false,
       fixed: 'left',
     },
     {
-      title: 'WP',
-      dataIndex: 'workPoint',
+      title: 'Mark',
       width: 50,
+      dataIndex: 'milestoneGrade',
+      key: Math.random(),
       editable: false,
       fixed: 'left',
     },
     {
-      title: 'Bonus/ Penalty',
-      dataIndex: 'bonusGrade',
-      width: 80,
-      editable: true,
-      fixed: 'left',
-    },
-    {
-      title: 'Comments',
-      dataIndex: 'comment',
+      title: 'Full Name',
+      dataIndex: 'fullName',
+      key: Math.random(),
       width: 100,
-      editable: true,
+      editable: false,
       fixed: 'left',
     },
+    {
+      title: 'Student',
+      dataIndex: 'userName',
+      key: Math.random(),
+      width: 100,
+      editable: false,
+      fixed: 'left',
+    },
+  ]
+  const columnsAction = [
     {
       title: 'Actions',
-      width: 90,
+      width: 60,
       editable: false,
       render: (_, record) => {
         const editable = isEditing(record)
         return editable ? (
           <span>
-            <Typography.Link
+            <Button
               onClick={() => save(record.key)}
+              type="primary"
               style={{
                 marginRight: 8,
               }}
-            >
-              Save
-            </Typography.Link>
-            <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-              <Typography.Link type="danger">Cancel</Typography.Link>
+              size="medium"
+              icon={<SaveOutlined />}
+            ></Button>
+            <Popconfirm title="Are you sure want to discard?" onConfirm={cancel}>
+              <Button type="danger" size="medium" icon={<CloseOutlined />}></Button>
             </Popconfirm>
           </span>
         ) : (
-          <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
-            Edit
-          </Typography.Link>
+          <Button
+            disabled={editingKey !== ''}
+            onClick={() => edit(record)}
+            icon={<EditOutlined />}
+            size="medium"
+            type="secondary"
+          ></Button>
         )
       },
       fixed: 'right',
     },
   ]
+  const criteriaColumns = listFilter?.criteria
+    ?.map((item, index) => ({
+      title: (_) => (
+        <Space className="d-flex flex-column-reverse align-items-center justify-content-center align-content-center">
+          <Typography.Text>
+            {`${item.criteriaTitle} (${item.weight}%)`}
+            {data.length > 0 && (
+              <Popover
+                className="ml-2"
+                content={
+                  <Space className="d-flex flex-column w-100">
+                    <Button
+                      type="primary"
+                      className="w-100"
+                      onClick={() => {
+                        setOpen(true)
+                      }}
+                    >
+                      Import Evaluations
+                    </Button>
+                    <Button type="primary" danger className="w-100" onClick={() => setEvalSelected(item)}>
+                      Clear Evaluations
+                    </Button>
+                  </Space>
+                }
+                trigger="hover"
+              >
+                <Button size="small" icon={<EllipsisOutlined />}></Button>
+              </Popover>
+            )}
+          </Typography.Text>
+        </Space>
+      ),
+      dataIndex: item.criteriaId,
+      key: Math.random(),
+      editable: true,
+      width: 100,
+      render: (_, { criteriaPoints }) => criteriaPoints[index]?.grade,
+    }))
+    .reverse()
+    .concat(columns)
+    .reverse()
+    .concat(columnsAction)
 
-  const mergedColumns = [...columns].map((col) => {
+  const mergedColumns = criteriaColumns?.map((col) => {
     if (!col.editable) {
       return col
     }
@@ -290,13 +417,21 @@ const AssignementEvaluation = () => {
       ...col,
       onCell: (record) => ({
         record,
-        inputType: col.dataIndex === 'age' ? 'number' : 'text',
+        inputType: col.dataIndex === 'bonusGrade' ? 'number' : 'text',
         dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),
       }),
     }
   })
+
+  const handleCopyGroupEval = async () => {
+    console.log(data)
+    if (data[0]?.userName !== 'Group') {
+      toastMessage('error', "Can't Copy Group Evaluaion because this milestone is working individually")
+      return
+    }
+  }
 
   return (
     <div>
@@ -343,37 +478,29 @@ const AssignementEvaluation = () => {
                       onChange={(value, options) => setFilter((prev) => ({ ...prev, group: options }))}
                     />
                   </div>
-                  <div className="col-lg-2">
-                    <Cascader
-                      style={{
-                        width: '100%',
+                  <div className="col-lg-3">
+                    <Input.Search
+                      className="w-100"
+                      placeholder="Input exactly student want to edit"
+                      onChange={(e) => setFilter((prev) => ({ ...prev, search: e.target.value }))}
+                      value={filter?.search}
+                      onSearch={(value) => {
+                        const result = data.filter((item) => item.userName === value)
+                        if (result.length === 0) {
+                          toastMessage('error', 'No student matched!')
+                        } else {
+                          toastMessage('success', `Found ${value}`)
+                          edit(result[0])
+                        }
                       }}
-                      disabled={!filter.milestone}
-                      placeholder="Select Criteria"
-                      options={listFilter?.criteria?.map((item) => ({
-                        label: item.criteriaTitle,
-                        value: item.criteriaId,
-                      }))}
-                      onChange={(value, values) => {
-                        setFilter((prev) => ({ ...prev, criteria: values }))
-                        console.log(values)
-                      }}
-                      multiple
-                      maxTagCount="responsive"
                     />
                   </div>
-                  <div className="col-lg-6 d-flex justify-content-end">
-                    <Button type="primary" className="ml-1">
+                  <div className="col-lg-5 d-flex justify-content-end">
+                    <Button type="secondary" className="ml-2" disabled={data.length === 0}>
                       Export Marks
                     </Button>
-                    <Button type="primary" className="ml-1">
-                      Edit Marks
-                    </Button>
-                    <Button type="primary" className="ml-1">
-                      Save Changes
-                    </Button>
-                    <Button type="primary" className="ml-1">
-                      Reverse Changes
+                    <Button type="primary" className="ml-2" onClick={handleCopyGroupEval} disabled={data.length === 0}>
+                      Copy Group Evaluation
                     </Button>
                   </div>
                 </div>
@@ -389,10 +516,11 @@ const AssignementEvaluation = () => {
                     }}
                     bordered
                     dataSource={data}
-                    columns={criteriaColumns}
+                    columns={mergedColumns}
                     rowClassName="editable-row"
                     pagination={{
                       onChange: cancel,
+                      pageSize: 999,
                     }}
                     scroll={{
                       x: '100%',
@@ -400,6 +528,21 @@ const AssignementEvaluation = () => {
                   />
                 </Form>
               </div>
+
+              <Modal
+                title="Import Evaluations"
+                width={'55%'}
+                style={{ left: '30px' }}
+                open={open}
+                onOk={() => {
+                  console.log('ok modal')
+                }}
+                onCancel={() => setOpen(false)}
+              >
+                <Space>
+                  <Typography.Text>Import upload here</Typography.Text>
+                </Space>
+              </Modal>
             </div>
           </div>
         </div>
