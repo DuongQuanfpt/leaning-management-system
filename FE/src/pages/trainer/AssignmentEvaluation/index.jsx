@@ -94,6 +94,8 @@ const AssignementEvaluation = () => {
 
   useEffect(() => {
     setData([])
+    setEditingKey('')
+    setCopyMode(false)
     const milestoneSelect = listFilter?.milestone?.filter((item) => item.milestoneId === filter?.milestone?.value)
     const listGroup = milestoneSelect[0]?.groupFilter
     const listCriteria = milestoneSelect[0]?.criteriaFilter
