@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 import React, { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
@@ -589,18 +590,91 @@ const AssignementEvaluation = () => {
     }
   }
 
-  const handleReadFile = () => {
+  const handleImportEval = async () => {
+    console.log(evalSelected)
     console.log(listImported)
-    listImported.forEach((item) => {
+    console.log(data)
+    //Check length of data is modified
+    if (listImported.length === 0) {
+      toastMessage('error', 'File uploaded must not empty, follow the template please')
+      return
+    }
+    //Check Eval mark is number and must between 0 and 10
+    listImported.every((item) => {
       if (isNaN(item.Evaluation)) {
-        toastMessage('error', 'Evaluation Mark must a number')
-        return
+        return toastMessage('error', 'Evaluation Mark must a number')
       }
       if (item.Evaluation < 0 || item.Evaluation > 10) {
-        toastMessage('error', 'Evaluation Mark must between 0 and 10')
+        return toastMessage('error', 'Evaluation Mark must between 0 and 10')
+      }
+    })
+    //Check length data is modified
+    if (data.length !== listImported.length) {
+      toastMessage('error', 'Number of student is modified, follow the template please')
+      return
+    }
+    //Check username and fullname data is modified
+    data.every((item, index) => {
+      if (item.userName !== listImported[index].UserName) {
+        toastMessage('error', 'Username of student is modified, follow the template please')
+        return
+      }
+      if (item.fullName !== listImported[index].FullName) {
+        toastMessage('error', 'FullName of student is modified, follow the template please')
         return
       }
     })
+
+    const newData = [...data]
+
+    newData.forEach((item, index) => {
+      item.criteriaPoints.forEach((item2) => {
+        if (item2.criteriaId === evalSelected.criteriaId) {
+          item2.grade = listImported[index].Evaluation
+          item2.comment = listImported[index].Comment
+        }
+      })
+    })
+
+    console.log(newData)
+
+    const params = {
+      evalList: newData.map((item) => ({
+        submitId: item.submitId,
+        comment: item.comment,
+        bonus: item.bonusGrade,
+        grade: (
+          item.criteriaPoints.reduce((a, b) => a + (b.weight * +b.grade) / 100, 0) +
+          (item.workGrade * item.workWeight) / 100 +
+          item.bonusGrade
+        ).toFixed(2),
+        workGrade: item.workGrade,
+        workPoint: item.workPoint,
+        workCriteriaId: item.workCriteriaId,
+        criteria: item.criteriaPoints.map((item) => ({
+          criteriaId: item.criteriaId,
+          grade: item.grade,
+          comment: item.comment,
+        })),
+      })),
+    }
+
+    await evaluationApi
+      .editAssignment(filter?.milestone?.value, params)
+      .then((response) => {
+        console.log(response)
+        toastMessage('success', 'Import Evaluation successfully!')
+      })
+      .catch((error) => {
+        console.log(error)
+        toastMessage('error', 'Import Evaluation failed, try again later')
+      })
+      .finally(() => {
+        setCopyMode(false)
+        setRowSelected([])
+        loadData()
+        setOpen((prev) => ({ ...prev, import: false }))
+      })
   }
 
   const props = {
@@ -646,6 +720,9 @@ const AssignementEvaluation = () => {
           setListImported(data)
         })
       }
+    },
+    onRemove(e) {
+      setListImported([])
     },
   }
 
@@ -823,8 +900,7 @@ const AssignementEvaluation = () => {
                 style={{ left: '30px' }}
                 open={open.import}
                 onOk={async () => {
-                  console.log(evalSelected)
-                  handleReadFile()
+                  handleImportEval()
                 }}
                 onCancel={() => setOpen((prev) => ({ ...prev, import: false }))}
               >
