@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import { utils, writeFileXLSX, read } from 'xlsx'
 
 import {
   Breadcrumb,
@@ -16,6 +17,7 @@ import {
   message,
   Popover,
   Modal,
+  Upload,
 } from 'antd'
 
 import evaluationApi from '~/api/evaluationApi'
@@ -23,7 +25,7 @@ import evaluationApi from '~/api/evaluationApi'
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
-import { CloseOutlined, EditOutlined, EllipsisOutlined, SaveOutlined } from '@ant-design/icons'
+import { CloseOutlined, EditOutlined, EllipsisOutlined, InboxOutlined, SaveOutlined } from '@ant-design/icons'
 
 const EditableCell = ({ editing, dataIndex, title, inputType, record, index, children, ...restProps }) => {
   const inputNode = inputType === 'number' ? <InputNumber /> : <Input />
@@ -69,7 +71,17 @@ const AssignementEvaluation = () => {
   const [data, setData] = useState([])
   const [editingKey, setEditingKey] = useState('')
   const [evalSelected, setEvalSelected] = useState({})
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState({
+    import: false,
+    comment: false,
+  })
+  const [copyMode, setCopyMode] = useState(false)
+  const [rowSelected, setRowSelected] = useState([])
+  const [listImported, setListImported] = useState([])
+  const [currentComment, setCurrentComment] = useState({
+    assignmentEval: {},
+    criteria: {},
+  })
   const isEditing = (record) => record.key === editingKey
 
   useEffect(() => {
@@ -214,7 +226,6 @@ const AssignementEvaluation = () => {
         ...item,
         grade: row[Object.keys(row)[index]],
       }))
-      console.log(rowUpdated)
 
       for (let key in row) {
         if (row.hasOwnProperty(key)) {
@@ -229,16 +240,18 @@ const AssignementEvaluation = () => {
         }
       }
 
+      const finalGrade =
+        rowUpdated.criteriaPoints.reduce((a, b) => a + (b.weight * +b.grade) / 100, 0) +
+        (rowUpdated?.workGrade * rowUpdated?.workWeight) / 100 +
+        (rowUpdated.bonusGrade ?? 0)
+
       const params = {
         evalList: [
           {
             submitId: rowUpdated.submitId,
             comment: rowUpdated.comment,
             bonus: rowUpdated.bonusGrade,
-            grade:
-              rowUpdated.criteriaPoints.reduce((a, b) => a + (b.weight * +b.grade) / 100, 0) +
-              (rowUpdated.workGrade * rowUpdated.workWeight) / 100 +
-              rowUpdated.bonusGrade,
+            grade: finalGrade.toFixed(2),
             workGrade: rowUpdated.workGrade,
             workPoint: rowUpdated.workPoint,
             workCriteriaId: rowUpdated.workCriteriaId,
@@ -251,8 +264,6 @@ const AssignementEvaluation = () => {
         ],
       }
 
-      console.log(params)
-
       await evaluationApi
         .editAssignment(filter?.milestone?.value, params)
         .then((response) => {
@@ -263,8 +274,6 @@ const AssignementEvaluation = () => {
           console.log(error)
         })
         .finally(() => loadData())
-
-      console.log(params)
 
       //Disable Edit Mode
       setEditingKey('')
@@ -354,7 +363,7 @@ const AssignementEvaluation = () => {
           </span>
         ) : (
           <Button
-            disabled={editingKey !== ''}
+            disabled={editingKey !== '' || copyMode}
             onClick={() => edit(record)}
             icon={<EditOutlined />}
             size="medium"
@@ -380,17 +389,27 @@ const AssignementEvaluation = () => {
                       type="primary"
                       className="w-100"
                       onClick={() => {
-                        setOpen(true)
+                        setEvalSelected(item)
+                        setOpen((prev) => ({ ...prev, import: true }))
                       }}
                     >
                       Import Evaluations
                     </Button>
-                    <Button type="primary" danger className="w-100" onClick={() => setEvalSelected(item)}>
-                      Clear Evaluations
-                    </Button>
+                    <Popconfirm
+                      title="Are you sure want to clear evaluations?"
+                      onConfirm={() => {
+                        setEvalSelected(item)
+                        handleClearEvaluation(item)
+                      }}
+                      okText="Confirm"
+                    >
+                      <Button type="primary" danger className="w-100">
+                        Clear Evaluations
+                      </Button>
+                    </Popconfirm>
                   </Space>
                 }
-                trigger="hover"
+                trigger="click"
               >
                 <Button size="small" icon={<EllipsisOutlined />}></Button>
               </Popover>
@@ -402,7 +421,22 @@ const AssignementEvaluation = () => {
       key: Math.random(),
       editable: true,
       width: 100,
-      render: (_, { criteriaPoints }) => criteriaPoints[index]?.grade,
+      render: (_, assignmentEval) => (
+        <Typography.Text>
+          <Typography.Text className="mr-2">{assignmentEval.criteriaPoints[index]?.grade}</Typography.Text>
+          <Button
+            icon={<EllipsisOutlined />}
+            size="small"
+            onClick={() => {
+              setOpen((prev) => ({ ...prev, comment: true }))
+              setCurrentComment({
+                assignmentEval: assignmentEval,
+                criteria: assignmentEval.criteriaPoints[index],
+              })
+            }}
+          ></Button>
+        </Typography.Text>
+      ),
     }))
     .reverse()
     .concat(columns)
@@ -420,17 +454,190 @@ const AssignementEvaluation = () => {
         inputType: col.dataIndex === 'bonusGrade' ? 'number' : 'text',
         dataIndex: col.dataIndex,
         title: col.title,
-        editing: isEditing(record),
+        editing: col.dataIndex === 'bonusGrade' && record.userName === 'Group' ? false : isEditing(record),
       }),
     }
   })
 
   const handleCopyGroupEval = async () => {
+    console.log(rowSelected)
     console.log(data)
-    if (data[0]?.userName !== 'Group') {
-      toastMessage('error', "Can't Copy Group Evaluaion because this milestone is working individually")
-      return
+    const groupData = data[0]
+
+    rowSelected.forEach((item) => {
+      item.criteriaPoints.forEach((item2, index) => {
+        item2.grade = groupData.criteriaPoints[index].grade
+      })
+    })
+
+    console.log(rowSelected)
+    const params = {
+      evalList: rowSelected.map((item) => ({
+        submitId: item.submitId,
+        comment: item.comment,
+        bonus: item.bonusGrade,
+        grade: (
+          item.criteriaPoints.reduce((a, b) => a + (b.weight * +b.grade) / 100, 0) +
+          (item.workGrade * item.workWeight) / 100 +
+          item.bonusGrade
+        ).toFixed(2),
+
+        workGrade: item.workGrade,
+        workPoint: item.workPoint,
+        workCriteriaId: item.workCriteriaId,
+        criteria: item.criteriaPoints.map((item) => ({
+          criteriaId: item.criteriaId,
+          grade: item.grade,
+          comment: item.comment,
+        })),
+      })),
     }
+
+    await evaluationApi
+      .editAssignment(filter?.milestone?.value, params)
+      .then((response) => {
+        console.log(response)
+        toastMessage('success', 'Clear Evaluation successfully!')
+      })
+      .catch((error) => {
+        console.log(error)
+        toastMessage('error', 'Clear Evaluation failed, try again later')
+      })
+      .finally(() => {
+        setCopyMode(false)
+        setRowSelected([])
+        loadData()
+      })
+  }
+
+  const handleClearEvaluation = async (evaluation) => {
+    console.log(evaluation)
+    console.log(data)
+    const newData = [...data]
+
+    newData.forEach((item) => {
+      item.criteriaPoints.forEach((item2) => {
+        if (item2.criteriaId === evaluation.criteriaId) {
+          item2.grade = null
+        }
+      })
+    })
+    const params = {
+      evalList: newData.map((item) => ({
+        submitId: item.submitId,
+        comment: item.comment,
+        bonus: item.bonusGrade,
+        grade: (
+          item.criteriaPoints.reduce((a, b) => a + (b.weight * +b.grade) / 100, 0) +
+          (item.workGrade * item.workWeight) / 100 +
+          item.bonusGrade
+        ).toFixed(2),
+
+        workGrade: item.workGrade,
+        workPoint: item.workPoint,
+        workCriteriaId: item.workCriteriaId,
+        criteria: item.criteriaPoints.map((item) => ({
+          criteriaId: item.criteriaId,
+          grade: item.grade,
+          comment: item.comment,
+        })),
+      })),
+    }
+    await evaluationApi
+      .editAssignment(filter?.milestone?.value, params)
+      .then((response) => {
+        console.log(response)
+        toastMessage('success', 'Clear Evaluation successfully!')
+      })
+      .catch((error) => {
+        console.log(error)
+        toastMessage('error', 'Clear Evaluation failed, try again later')
+      })
+      .finally(() => {
+        loadData()
+      })
+  }
+
+  const handleImportEval = async () => {}
+
+  const handleDownloadtemplateFile = () => {
+    console.log(data)
+    console.log(evalSelected)
+    return
+
+    const listExport = [
+      ...data.map((evaluation) => ({
+        'Group Name': '',
+        Email: evaluation.email,
+        Fullname: evaluation.fullName,
+        Username: evaluation.username,
+        'Is Leader': '',
+      })),
+    ]
+
+    try {
+      const listExport = []
+      const ws = utils.json_to_sheet(listExport)
+      const wb = utils.book_new()
+      utils.sheet_add_aoa(ws, [['Fullname', 'Email']], { origin: 'A1' })
+      var wscols = [{ wch: 20 }, { wch: 20 }]
+      ws['!cols'] = wscols
+      utils.book_append_sheet(wb, ws, 'Data')
+      writeFileXLSX(wb, 'TraineeImportTemplate.xlsx')
+      toastMessage('success', 'Download Template Successfully')
+    } catch {
+      toastMessage('error', 'Download Template Failed, try again later')
+    }
+  }
+
+  const handleReadFile = () => {}
+
+  const props = {
+    name: 'file',
+    accept: '.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel',
+    multiple: false,
+    maxCount: 1,
+    beforeUpload: () => {
+      return false
+    },
+    onChange(info) {
+      if (info.file.status !== 'uploading') {
+        //Handle read file and verify here
+        const extensionFile = info.file.name.split('.').pop().toLowerCase()
+        const extensionsValid = ['xlsx', 'xls', 'csv']
+        if (info.file.status === 'removed') return
+        if (!extensionsValid.includes(extensionFile)) {
+          toastMessage('error', 'File type is invalid (support .xlsx, .xls and .csv only)')
+          return
+        }
+
+        const readFile = new Promise((resolve, reject) => {
+          const fileReader = new FileReader()
+          fileReader.readAsArrayBuffer(info.file)
+
+          fileReader.onload = (e) => {
+            const bufferArray = e.target.result
+            const wb = read(bufferArray, { type: 'buffer' })
+            const ws_name = wb.SheetNames[0]
+            const ws = wb.Sheets[ws_name]
+            const data = utils.sheet_to_json(ws)
+            resolve(data)
+          }
+
+          fileReader.onerror = (error) => {
+            reject(error)
+            setListImported([])
+            toastMessage('Error', 'Read file failed, try again later')
+          }
+        })
+
+        readFile.then((data) => {
+          console.log(data)
+          setListImported(data)
+          handleReadFile()
+        })
+      }
+    },
   }
 
   return (
@@ -496,12 +703,55 @@ const AssignementEvaluation = () => {
                     />
                   </div>
                   <div className="col-lg-5 d-flex justify-content-end">
-                    <Button type="secondary" className="ml-2" disabled={data.length === 0}>
-                      Export Marks
-                    </Button>
-                    <Button type="primary" className="ml-2" onClick={handleCopyGroupEval} disabled={data.length === 0}>
-                      Copy Group Evaluation
-                    </Button>
+                    {copyMode ? (
+                      <>
+                        <Button
+                          type="secondary"
+                          className="ml-2"
+                          onClick={() => {
+                            setRowSelected([])
+                            setCopyMode(false)
+                          }}
+                        >
+                          Cancel
+                        </Button>
+                        <Popconfirm
+                          title="Are you sure want to copy group evaluation?"
+                          onConfirm={handleCopyGroupEval}
+                          okText="Confirm"
+                          placement="left"
+                          disabled={rowSelected.length === 0}
+                        >
+                          <Button type="primary" className="ml-2" disabled={rowSelected.length === 0}>
+                            Save
+                          </Button>
+                        </Popconfirm>
+                      </>
+                    ) : (
+                      <>
+                        {/* <Button type="secondary" className="ml-2" disabled={data.length === 0}>
+                          Export Marks
+                        </Button> */}
+                        <Button
+                          type="primary"
+                          className="ml-2"
+                          onClick={() => {
+                            if (data[0]?.userName !== 'Group') {
+                              toastMessage(
+                                'error',
+                                "Can't Copy Group Evaluaion because this milestone is working individually",
+                              )
+                              return
+                            }
+                            setCopyMode(true)
+                            setEditingKey('')
+                          }}
+                          disabled={data.length === 0 || editingKey !== ''}
+                        >
+                          Copy Group Evaluation
+                        </Button>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -514,7 +764,6 @@ const AssignementEvaluation = () => {
                         cell: EditableCell,
                       },
                     }}
-                    bordered
                     dataSource={data}
                     columns={mergedColumns}
                     rowClassName="editable-row"
@@ -525,22 +774,123 @@ const AssignementEvaluation = () => {
                     scroll={{
                       x: '100%',
                     }}
+                    rowSelection={
+                      copyMode && {
+                        type: 'checkbox',
+                        onChange: (selectedRowKeys, selectedRows) => {
+                          setRowSelected(selectedRows)
+                        },
+                        getCheckboxProps: (record) => ({
+                          disabled: record.userName === 'Group',
+                        }),
+                      }
+                    }
                   />
                 </Form>
               </div>
 
+              {/* Modal Import */}
               <Modal
                 title="Import Evaluations"
                 width={'55%'}
                 style={{ left: '30px' }}
-                open={open}
-                onOk={() => {
-                  console.log('ok modal')
+                open={open.import}
+                onOk={async () => {
+                  console.log(evalSelected)
+                  // handleImportEval()
                 }}
-                onCancel={() => setOpen(false)}
+                onCancel={() => setOpen((prev) => ({ ...prev, import: false }))}
               >
-                <Space>
-                  <Typography.Text>Import upload here</Typography.Text>
+                <Space className="d-flex flex-column w-100">
+                  <Typography.Text
+                    strong
+                    className="mb-2"
+                  >{`Import Evaluations of the <${evalSelected.criteriaTitle}> (${evalSelected.weight}%)`}</Typography.Text>
+                  <Button type="link" onClick={handleDownloadtemplateFile} className="m-0 p-0 mb-2">
+                    Download Import Template File
+                  </Button>
+                  <Upload.Dragger {...props} className="w-100">
+                    <p className="ant-upload-drag-icon">
+                      <InboxOutlined />
+                    </p>
+                    <p className="ant-upload-text">Click or drag file to this area to upload</p>
+                    <p className="ant-upload-hint">
+                      Support for a single upload. Strictly prohibit from uploading company data or other band files
+                    </p>
+                  </Upload.Dragger>
+                </Space>
+              </Modal>
+              {/* Modal Comment */}
+              <Modal
+                title="Comments"
+                width={'55%'}
+                style={{ left: '30px' }}
+                open={open.comment}
+                okText="Save"
+                onOk={async () => {
+                  console.log(currentComment)
+                  const finalGrade =
+                    currentComment.assignmentEval.criteriaPoints.reduce((a, b) => a + (b.weight * +b.grade) / 100, 0) +
+                    (currentComment.assignmentEval.workGrade * currentComment.assignmentEval.workWeight) / 100 +
+                    currentComment.assignmentEval.bonusGrade
+                  const params = {
+                    evalList: [
+                      {
+                        submitId: currentComment.assignmentEval.submitId,
+                        comment: currentComment.assignmentEval.comment,
+                        bonus: currentComment.assignmentEval.bonusGrade,
+                        grade: finalGrade.toFixed(2),
+                        workGrade: currentComment.assignmentEval.workGrade,
+                        workPoint: currentComment.assignmentEval.workPoint,
+                        workCriteriaId: currentComment.assignmentEval.workCriteriaId,
+                        criteria: [
+                          {
+                            criteriaId: currentComment.criteria.criteriaId,
+                            grade: currentComment.criteria.grade,
+                            comment: currentComment.criteria.comment,
+                          },
+                        ],
+                      },
+                    ],
+                  }
+
+                  console.log(params)
+                  await evaluationApi
+                    .editAssignment(filter?.milestone?.value, params)
+                    .then((response) => {
+                      console.log(response)
+                      toastMessage('success', 'Edit Comment Evaluation successfully!')
+                    })
+                    .catch((error) => {
+                      console.log(error)
+                      toastMessage('error', 'Edit Comment Evaluation failed, try again later!')
+                    })
+                    .finally(() => {
+                      setOpen((prev) => ({ ...prev, comment: false }))
+                      loadData()
+                    })
+                }}
+                onCancel={() => setOpen((prev) => ({ ...prev, comment: false }))}
+              >
+                <Space className="d-flex flex-column">
+                  <Typography.Text
+                    strong
+                  >{`Student: ${currentComment.assignmentEval.userName} (${currentComment.assignmentEval.fullName})`}</Typography.Text>
+                  <Typography.Text strong>{`${currentComment.criteria.criteriaTitle} (${
+                    currentComment.criteria.weight
+                  }%): ${currentComment.criteria.grade ?? 0}`}</Typography.Text>
+                  <Typography.Text className="mt-3" strong>
+                    Comment
+                  </Typography.Text>
+                  <Input.TextArea
+                    value={currentComment.criteria.comment}
+                    onChange={(e) =>
+                      setCurrentComment((prev) => ({
+                        ...prev,
+                        criteria: { ...prev.criteria, comment: e.target.value },
+                      }))
+                    }
+                  />
                 </Space>
               </Modal>
             </div>
