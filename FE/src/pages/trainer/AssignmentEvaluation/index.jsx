@@ -65,7 +65,6 @@ const AssignementEvaluation = () => {
   const [filter, setFilter] = useState({
     search: null,
   })
-  const [columnTable, setColumnsTable] = useState([])
 
   const [form] = Form.useForm()
   const [data, setData] = useState([])
@@ -82,6 +81,7 @@ const AssignementEvaluation = () => {
     assignmentEval: {},
     criteria: {},
   })
+  const [listCriteriaSelectCopy, setListCriteriaSelectCopy] = useState([])
   const isEditing = (record) => record.key === editingKey
 
   useEffect(() => {
@@ -462,17 +462,25 @@ const AssignementEvaluation = () => {
   })
 
   const handleCopyGroupEval = async () => {
+    if (listCriteriaSelectCopy.length === 0) {
+      toastMessage('error', 'You must choose at least one evaluation')
+      return
+    }
     console.log(rowSelected)
-    console.log(data)
     const groupData = data[0]
+
+    console.log(listCriteriaSelectCopy)
 
     rowSelected.forEach((item) => {
       item.criteriaPoints.forEach((item2, index) => {
-        item2.grade = groupData.criteriaPoints[index].grade
+        if (listCriteriaSelectCopy.includes(item2.criteriaId)) {
+          item2.grade = groupData.criteriaPoints[index].grade
+        }
       })
     })
 
     console.log(rowSelected)
+
     const params = {
       evalList: rowSelected.map((item) => ({
         submitId: item.submitId,
@@ -513,8 +521,6 @@ const AssignementEvaluation = () => {
   }
 
   const handleClearEvaluation = async (evaluation) => {
-    console.log(evaluation)
-    console.log(data)
     const newData = [...data]
 
     newData.forEach((item) => {
@@ -559,8 +565,6 @@ const AssignementEvaluation = () => {
         loadData()
       })
   }
-
-  const handleImportEval = async () => {}
 
   const handleDownloadtemplateFile = () => {
     console.log(data)
@@ -718,7 +722,31 @@ const AssignementEvaluation = () => {
                           Cancel
                         </Button>
                         <Popconfirm
-                          title="Are you sure want to copy group evaluation?"
+                          title={() => (
+                            <Space className="d-flex flex-column">
+                              <Typography.Text>Select evaluation want to copy</Typography.Text>
+                              <Button
+                                onClick={() => {
+                                  console.log(listFilter?.criteria)
+                                }}
+                              >
+                                Click
+                              </Button>
+                              <Select
+                                mode="multiple"
+                                className="w-100 mb-3"
+                                placeholder="Select Evaluation"
+                                options={listFilter?.criteria?.map((item) => ({
+                                  label: item.criteriaTitle,
+                                  value: item.criteriaId,
+                                }))}
+                                onChange={(value, options) => {
+                                  setListCriteriaSelectCopy(value)
+                                }}
+                              />
+                              <Typography.Text strong>Are you sure want to copy group evaluation?</Typography.Text>
+                            </Space>
+                          )}
                           onConfirm={handleCopyGroupEval}
                           okText="Confirm"
                           placement="left"
