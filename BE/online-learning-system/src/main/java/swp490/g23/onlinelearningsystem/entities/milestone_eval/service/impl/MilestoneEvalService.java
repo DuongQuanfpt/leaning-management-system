@@ -198,6 +198,7 @@ public class MilestoneEvalService implements IMilestoneEvalService {
         if (!submit.getMilestoneEvals().isEmpty()) {
             dto.setBonusGrade(submit.getMilestoneEvals().get(0).getBonus());
             dto.setMilestoneGrade(submit.getMilestoneEvals().get(0).getGrade());
+            dto.setComment(submit.getMilestoneEvals().get(0).getComment());
         }
 
         List<MilestoneEvalCriteriaDTO> criteriaDTOs = new ArrayList<>();
@@ -354,6 +355,7 @@ public class MilestoneEvalService implements IMilestoneEvalService {
 
         Double bonusGrade = null;
         Double milestoneGrade = null;
+        String milestoneComment = null;
 
         List<MilestoneEvalWorkDTO> submitWorkDTOs = new ArrayList<>();
         if (!currentSubmit.getSubmitWorks().isEmpty()) {
@@ -385,6 +387,7 @@ public class MilestoneEvalService implements IMilestoneEvalService {
             MilestoneEval milestoneEval = currentSubmit.getMilestoneEvals().get(0);
             bonusGrade = milestoneEval.getBonus();
             milestoneGrade = milestoneEval.getGrade();
+            milestoneComment = milestoneEval.getComment();
             for (EvalDetail detail : milestoneEval.getEvalDetails()) {
                 if (!detail.getEvalCriteria().isWorkEval()) {
                     evaluatedCriteria.add(toEvaluatedCriteriaDTO(detail));
@@ -404,7 +407,8 @@ public class MilestoneEvalService implements IMilestoneEvalService {
         resultDTO.setWorkCount(workCount);
         resultDTO.setWorkGrade(workGrade);
         resultDTO.setBonusGrade(bonusGrade);
-        resultDTO.setMilestoneGrade(milestoneGrade);;
+        resultDTO.setMilestoneGrade(milestoneGrade);
+        resultDTO.setMilestoneComment(milestoneComment);
         resultDTO.setEvaluatedWork(submitWorkDTOs);
         resultDTO.setEvaluatedCriteria(evaluatedCriteria);
 
@@ -442,6 +446,33 @@ public class MilestoneEvalService implements IMilestoneEvalService {
         evalDTO.setQualityname(latestEval.getQuality().getSettingTitle());
         evalDTO.setCurrentPoint(latestEval.getWorkEval());
         return evalDTO;
+    }
+
+    @Override
+    public ResponseEntity<String> milestoneEvalClear(Long milestoneId, Long criteriaId) {
+        Milestone milestone = milestoneRepository.findById(milestoneId)
+                .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
+
+        List<EvalDetail> newDetails = new ArrayList<>();
+       
+        for (MilestoneEval milestoneEval : milestone.getMilestoneEvals()) {
+            for (EvalDetail detail : milestoneEval.getEvalDetails()) {
+                if(detail.getEvalCriteria().getCriteriaId() == criteriaId){
+                    detail.setGrade(null);
+                    newDetails.add(detail);
+                }
+            }
+        }
+
+        evalDetailRepositories.saveAll(newDetails);
+        milestoneGradeEvaluate(milestone);
+
+        return ResponseEntity.ok("criteria evaluation cleared");
+    }
+
+    private void milestoneGradeEvaluate(Milestone milestone) {
+        List<MilestoneEval> newMilestoneEval = new ArrayList<>();
+        
     }
 
 }

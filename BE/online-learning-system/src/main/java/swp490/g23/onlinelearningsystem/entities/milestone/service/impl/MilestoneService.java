@@ -2,6 +2,9 @@ package swp490.g23.onlinelearningsystem.entities.milestone.service.impl;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -26,6 +29,7 @@ import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.filter.MilestoneFilter;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.filter.MilestoneFilterClass;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.request.MilestoneRequestDTO;
+import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestoneEvalDTO;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestoneGroupDTO;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestoneMemberDTO;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestoneNoGroupDTO;
@@ -35,6 +39,7 @@ import swp490.g23.onlinelearningsystem.entities.milestone.repositories.Milestone
 import swp490.g23.onlinelearningsystem.entities.milestone.repositories.criteria.MilestoneCriteria;
 import swp490.g23.onlinelearningsystem.entities.milestone.repositories.criteria_entity.MilestoneQuery;
 import swp490.g23.onlinelearningsystem.entities.milestone.service.IMilestoneService;
+import swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.MilestoneEval;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.SubmitRepository;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
@@ -170,10 +175,10 @@ public class MilestoneService implements IMilestoneService {
 
         List<AssignmentResponseDTO> assFilter = new ArrayList<>();
         for (Assignment assignment : assignments) {
-            if(assignment.getMilestones().isEmpty()){
+            if (assignment.getMilestones().isEmpty()) {
                 assFilter.add(assignmentService.toDTO(assignment));
             }
-           
+
         }
 
         filter.setStatusFilter(statusFilter);
@@ -234,11 +239,11 @@ public class MilestoneService implements IMilestoneService {
 
         List<Submit> submits = new ArrayList<>();
         for (ClassUser user : classes.getClassUsers()) {
-                Submit submit = new Submit();
-                submit.setClassUser(user);
-                submit.setMilestone(milestone);
-                submit.setStatus(SubmitStatusEnum.Pending);
-                submits.add(submit);     
+            Submit submit = new Submit();
+            submit.setClassUser(user);
+            submit.setMilestone(milestone);
+            submit.setStatus(SubmitStatusEnum.Pending);
+            submits.add(submit);
         }
 
         milestoneRepository.save(milestone);
@@ -281,7 +286,7 @@ public class MilestoneService implements IMilestoneService {
             assignmentRepository.save(assignmentOfMilestone);
 
         } else {
-           throw new CustomException("Milestone is alredy in progress , or have been close");
+            throw new CustomException("Milestone is alredy in progress , or have been close");
         }
 
         milestoneRepository.save(milestone);
@@ -297,7 +302,7 @@ public class MilestoneService implements IMilestoneService {
             milestone.setStatus(MilestoneStatusEnum.Closed);
 
         } else {
-           throw new CustomException("Milestone is not in progress , cant close");
+            throw new CustomException("Milestone is not in progress , cant close");
         }
 
         milestoneRepository.save(milestone);
@@ -334,10 +339,11 @@ public class MilestoneService implements IMilestoneService {
             responseDTO.setTitle(entity.getTitle());
         }
 
+        List<Submit> submits = entity.getSubmits();
         List<MilestoneGroupDTO> groupResponseDTOs = new ArrayList<>();
         List<MilestoneNoGroupDTO> noGroupDTOs = new ArrayList<>();
         List<Group> groupOfMilestone = new ArrayList<>();
-        List<Submit> submits = entity.getSubmits();
+        List<MilestoneEvalDTO> evalDTOs = new ArrayList<>();
 
         if (!submits.isEmpty()) {
             for (Submit submit : submits) {
@@ -349,6 +355,8 @@ public class MilestoneService implements IMilestoneService {
                 if (!groupOfMilestone.contains(submit.getGroup())) {
                     groupOfMilestone.add(submit.getGroup());
                 }
+
+                evalDTOs.add(toEvalDTO(submit));
             }
         }
 
@@ -361,10 +369,31 @@ public class MilestoneService implements IMilestoneService {
 
         responseDTO.setNoGroup(noGroupDTOs);
         responseDTO.setGroups(groupResponseDTOs);
+        responseDTO.setEvaluation(evalDTOs);
         return responseDTO;
     }
 
-    public MilestoneNoGroupDTO toNoGroupDTO(User user){
+    private MilestoneEvalDTO toEvalDTO(Submit submit) {
+        MilestoneEvalDTO dto = new MilestoneEvalDTO();
+        dto.setSubmitId(submit.getSubmitId());
+        if (submit.getClassUser() != null) {
+            dto.setUserName(submit.getClassUser().getUser().getAccountName());
+            dto.setFullName(submit.getClassUser().getUser().getFullName());
+        } else {
+            dto.setUserName("Group");
+            dto.setFullName(submit.getGroup().getGroupCode());
+        }
+
+        dto.setGroupId(submit.getGroup().getGroupId());
+        if (!submit.getMilestoneEvals().isEmpty()) {
+            dto.setBonusGrade(submit.getMilestoneEvals().get(0).getBonus());
+            dto.setComment(submit.getMilestoneEvals().get(0).getComment());
+            dto.setGrade(submit.getMilestoneEvals().get(0).getGrade());
+        }
+        return dto;
+    }
+
+    public MilestoneNoGroupDTO toNoGroupDTO(User user) {
         MilestoneNoGroupDTO dto = new MilestoneNoGroupDTO();
 
         if (user.getAccountName() != null) {

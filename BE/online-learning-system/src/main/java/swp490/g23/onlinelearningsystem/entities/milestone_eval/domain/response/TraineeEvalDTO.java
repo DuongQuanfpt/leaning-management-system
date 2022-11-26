@@ -23,6 +23,7 @@ public class TraineeEvalDTO {
     private Double workGrade;
     private Double bonusGrade;
     private Double milestoneGrade;
+    private String milestoneComment;
 
     private List<MilestoneEvalWorkDTO> evaluatedWork;
     private List<MilestoneEvalCriteriaDTO> evaluatedCriteria;

@@ -13,5 +13,6 @@ public interface IMilestoneEvalService {
             Long groupId, User user);
     ResponseEntity<MilestoneEvalFilter> getMilestoneEvalFilter(String classCode);
     ResponseEntity<String> milestoneEval(Long milestoneId , MilestoneEvalRequestWrapper requestWrapper);
+    ResponseEntity<String> milestoneEvalClear(Long milestoneId, Long criteriaId);
     ResponseEntity<TraineeEvalDTO> traineeEval(Long submitId, User user);
 }

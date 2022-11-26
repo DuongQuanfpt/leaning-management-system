@@ -15,7 +15,7 @@ public interface IIssueService {
     ResponseEntity<IssueListDTO> getIssueList(int page, int limit, String keyword, String classCode, boolean isIssue,
             Long filterMilestoneId, IssueFilterRequestDTO filterRequestDTO);
 
-    ResponseEntity<IssueFilter> issueListFilter(String classCode , User user);
+    ResponseEntity<IssueFilter> issueListFilter(String classCode , User user , Long milestoneId);
 
     ResponseEntity<IssueFilter> issueAddFilter(String classCode, User user);
 
