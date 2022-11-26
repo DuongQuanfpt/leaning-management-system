@@ -128,7 +128,7 @@ const Individual = () => {
       width: '10%',
       render: (_, submit) => (
         <Space size="middle" align="baseline">
-          {username === submit.traineeTitle && (
+          {!isTrainer && username === submit.traineeTitle && (
             <Tooltip title="Submit Milestone" placement="top">
               <Button
                 shape="circle"

@@ -15,7 +15,7 @@ import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 import { useSelector } from 'react-redux'
 
 const RequirementDetail = () => {
-  const { currentClass, ofGroup } = useSelector((state) => state.profile)
+  const { currentClass, ofGroup, roles } = useSelector((state) => state.profile)
   const { id } = useParams()
 
   const [defaultDetail, setDefaultDetail] = useState({})
@@ -80,7 +80,7 @@ const RequirementDetail = () => {
           .filter((group) => group.groupId === response.group.groupId)
           .shift()
 
-        groupModified.memberId.unshift('Unassigned')
+        groupModified?.memberId?.unshift('Unassigned')
 
         setDefaultDetail({
           ...response,
@@ -103,21 +103,21 @@ const RequirementDetail = () => {
     }
 
     const changedDetail = {
-      title: detail.title,
+      title: detail.title.trim(),
       statusId: detail.status.id,
-      description: detail.description,
+      description: detail.description.trim(),
       milestoneId: detail.milestone.milestoneId,
-      groupId: detail.group.groupId,
-      asigneeName: detail.asignee.username,
+    }
+    if (detail.group.groupName !== 'Select Group') {
+      changedDetail.groupId = detail.group.groupId
     }
 
-    const params = {
-      issueToUpdate: [id],
-      updateToApply: changedDetail,
+    if (detail.asignee.username !== 'Select Assignee') {
+      changedDetail.asigneeName = detail.asignee.username
     }
 
     await issueApi
-      .changeBatch(params)
+      .changeIssueDetail(id, changedDetail)
       .then(() => {
         setError('You have successfully change requirement detail')
         setIsEditMode(false)
@@ -316,24 +316,25 @@ const RequirementDetail = () => {
                       errorMsg={error}
                       isError={error === 'You have successfully change requirement detail' ? false : true}
                     />
-                    {listGroupAssigned.includes(defaultDetail?.group?.groupId) && (
-                      <div className="d-flex">
-                        {isEditMode ? (
-                          <>
-                            <CButton size="md" className="mr-3" color="warning" onClick={modalConfirm}>
-                              Save
+                    {listGroupAssigned.includes(defaultDetail?.group?.groupId) ||
+                      (roles.includes('trainer') && !detail.evaluated && (
+                        <div className="d-flex">
+                          {isEditMode ? (
+                            <>
+                              <CButton size="md" className="mr-3" color="warning" onClick={modalConfirm}>
+                                Save
+                              </CButton>
+                              <CButton size="md" className="mr-3" color="warning" onClick={handleCancel}>
+                                Cancel
+                              </CButton>
+                            </>
+                          ) : (
+                            <CButton size="md" className="mr-3" color="warning" onClick={handleEdit}>
+                              Edit
                             </CButton>
-                            <CButton size="md" className="mr-3" color="warning" onClick={handleCancel}>
-                              Cancel
-                            </CButton>
-                          </>
-                        ) : (
-                          <CButton size="md" className="mr-3" color="warning" onClick={handleEdit}>
-                            Edit
-                          </CButton>
-                        )}
-                      </div>
-                    )}
+                          )}
+                        </div>
+                      ))}
                   </div>
                 </div>
               </div>

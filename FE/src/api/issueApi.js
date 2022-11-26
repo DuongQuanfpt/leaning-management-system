@@ -22,9 +22,9 @@ const contactUsApi = {
     return axiosClient.put(url, params, header)
   },
 
-  getListFilter: (classCode) => {
+  getListFilter: (classCode, params) => {
     const url = `/api/issue-list-filter/${classCode}`
-    return axiosClient.get(url, header)
+    return axiosClient.get(url, { ...header, params })
   },
 
   getAddFilter: (classCode) => {

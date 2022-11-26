@@ -31,6 +31,21 @@ const evaluationApi = {
     const url = `/api/work-update/${updateId}`
     return axiosClient.delete(url, { ...header })
   },
+
+  getAssignmentEvalList: (milestoneId, params) => {
+    const url = `api/milestone-eval/${milestoneId}`
+    return axiosClient.get(url, { ...header, params })
+  },
+
+  getAssignmentEvalFilter: (classCode) => {
+    const url = `api/milestone-eval-filter/${classCode}`
+    return axiosClient.get(url, header)
+  },
+
+  editAssignment: (milestoneId, params) => {
+    const url = `api/milestone-eval/${milestoneId}`
+    return axiosClient.post(url, params, header)
+  },
 }
 
 export default evaluationApi

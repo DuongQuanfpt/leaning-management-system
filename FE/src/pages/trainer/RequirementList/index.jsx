@@ -126,6 +126,28 @@ const RequirementList = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, ITEM_PER_PAGE])
 
+  useEffect(() => {
+    if (filter?.milestoneId) {
+      issueApi
+        .getListFilter(currentClass, { milestoneId: filter?.milestoneId })
+        .then((response) => {
+          console.log(response)
+          setListFilter({
+            ...response,
+            asigneeFilter: ['None', ...response.asigneeFilter],
+            groupFilter: [{ groupId: 0, groupName: 'None' }, ...response.groupFilter],
+            requirement: [{ id: 0, title: 'General Requirement' }, ...response.requirement],
+            statusFilter: [{ title: 'Open', id: 1 }, ...response.statusFilter, { title: 'Close', id: 0 }],
+          })
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter?.milestoneId])
+
   const loadData = async (page, filter, q = '') => {
     setLoading(true)
     const params = {
@@ -142,6 +164,7 @@ const RequirementList = () => {
     await issueApi
       .getIssue(currentClass, params)
       .then((response) => {
+        console.log(response)
         setListIssue(response.issueList.map((item, index) => ({ ...item, key: index })))
         setCurrentPage(page)
         setTotalItem(response.totalItem)
@@ -403,25 +426,30 @@ const RequirementList = () => {
     {
       width: '25%',
       align: 'end',
-      title: () => (
-        <Space>
-          <Button type="secondary" shape="square" onClick={() => navigateTo('/requirement-add')} title={'Issue'}>
-            New Requirement
-          </Button>
+      title: () =>
+        // eslint-disable-next-line no-mixed-operators
+        listGroupLeader.length !== 0 ||
+        (roles.includes('trainer') && (
+          <>
+            <Space>
+              <Button type="secondary" shape="square" onClick={() => navigateTo('/requirement-add')} title={'Issue'}>
+                New Requirement
+              </Button>
 
-          <Button
-            type="primary"
-            shape="square"
-            disabled={isEditMode}
-            onClick={() => {
-              setSelectedRow([])
-              setIsEditMode(true)
-            }}
-          >
-            Edit Requirements
-          </Button>
-        </Space>
-      ),
+              <Button
+                type="primary"
+                shape="square"
+                disabled={isEditMode}
+                onClick={() => {
+                  setSelectedRow([])
+                  setIsEditMode(true)
+                }}
+              >
+                Edit Requirements
+              </Button>
+            </Space>
+          </>
+        )),
       render: (_, issue) => (
         <Space className="d-flex flex-column">
           <Space className="d-flex flex-row ">
@@ -561,8 +589,14 @@ const RequirementList = () => {
                               setSelectedRow(selected)
                             },
                             getCheckboxProps: (record) => {
+                              console.log(record)
                               return {
-                                disabled: isTrainer ? false : !listGroupLeader.includes(record?.group?.groupId),
+                                disabled:
+                                  record.evaluated === true
+                                    ? true
+                                    : isTrainer
+                                    ? false
+                                    : !listGroupLeader.includes(record?.group?.groupId),
                               }
                             },
                           }
@@ -625,6 +659,9 @@ const RequirementList = () => {
                       params.updateToApply.deadline = 'none'
                     }
                     if (baseEditBatch.status) {
+                      params.updateToApply.statusId = baseEditBatch.status
+                    }
+                    if (baseEditBatch.status === 0) {
                       params.updateToApply.statusId = baseEditBatch.status
                     }
 
