@@ -33,12 +33,13 @@ public class EvalCriteriaController {
             @RequestParam(name = "limit", required = false) String requestLimit,
             @RequestParam(name = "q", required = false) String keyword,
             @RequestParam(name = "filterStatus", required = false) String statusFilter,
-            @RequestParam(name = "filterAssignment", required = false) String assignmentFilter) {
+            @RequestParam(name = "filterAssignment", required = false) String assignmentFilter,
+            @RequestParam(name = "classCode", required = true) String classCode) {
 
         int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
         int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
 
-        return criteriaService.getCriteria(limit, page, keyword, statusFilter, assignmentFilter);
+        return criteriaService.getCriteria(limit, page, keyword, statusFilter, assignmentFilter, classCode);
     }
 
     @GetMapping(value = "/criteria-detail/{id}")
@@ -62,8 +63,9 @@ public class EvalCriteriaController {
     }
 
     @GetMapping(value = "/criteria-filter")
-    public ResponseEntity<CriteriaFilterDTO> getCriteriaFilter() {
+    public ResponseEntity<CriteriaFilterDTO> getCriteriaFilter(
+            @RequestParam(name = "classCode", required = true) String classCode) {
 
-        return criteriaService.getFilter();
+        return criteriaService.getFilter(classCode);
     }
 }

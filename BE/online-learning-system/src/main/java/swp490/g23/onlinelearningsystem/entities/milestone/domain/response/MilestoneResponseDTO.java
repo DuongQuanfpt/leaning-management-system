@@ -35,4 +35,6 @@ public class MilestoneResponseDTO {
     private List<MilestoneGroupDTO> groups;
 
     private List<MilestoneNoGroupDTO>noGroup;
+
+    private List<MilestoneEvalDTO> evaluation;
 }

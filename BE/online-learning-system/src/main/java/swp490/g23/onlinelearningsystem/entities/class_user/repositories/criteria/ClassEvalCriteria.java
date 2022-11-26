@@ -47,7 +47,7 @@ public class ClassEvalCriteria {
         }
 
         if (filterAssignment != null) {
-            query.append(" AND m.milestoneId = '" + filterAssignment + "'");
+            query.append(" AND m.milestone.milestoneId = '" + filterAssignment + "'");
         }
 
         query.append(" ORDER BY s.fullName ASC");

@@ -11,6 +11,9 @@ public interface IssueRepository extends JpaRepository<Issue, Long> {
     @Query(value = "SELECT i FROM Issue i WHERE i.classes.code = :classCode AND i.type IS NULL")
     List<Issue> getRequirementOfClass(String classCode) ;
 
+    @Query(value = "SELECT i FROM Issue i WHERE i.milestone.milestoneId = :milestoneId AND i.type IS NULL")
+    List<Issue> getRequirementOfMilestone(Long milestoneId) ;
+
     @Query(value = "SELECT i FROM Issue i WHERE i.classes.code = :classCode AND i.type IS NULL AND i.title = :title")
     List<Issue> getRequirementByTitleOfClass(String classCode , String title) ;
 

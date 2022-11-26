@@ -42,4 +42,7 @@ public class IssueResponseDTO {
     String modifiedDate;
 
     boolean submitted;
+
+    boolean evaluated;
+
 }

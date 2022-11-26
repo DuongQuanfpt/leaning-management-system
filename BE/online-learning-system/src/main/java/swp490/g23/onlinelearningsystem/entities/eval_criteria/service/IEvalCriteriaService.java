@@ -11,7 +11,7 @@ public interface IEvalCriteriaService {
 
         ResponseEntity<CriteriaPaginateResponseDTO> getCriteria(int limit, int page, String keyword,
                         String statusFilter,
-                        String assignmentFilter);
+                        String assignmentFilter, String classCode);
 
         ResponseEntity<String> updateStatus(Long criteriaId);
 
@@ -21,7 +21,7 @@ public interface IEvalCriteriaService {
 
         ResponseEntity<String> addCriteria(CriteriaRequestDTO dto);
 
-        ResponseEntity<CriteriaFilterDTO> getFilter();
+        ResponseEntity<CriteriaFilterDTO> getFilter(String classCode);
 
         ResponseEntity<CriteriaPaginateResponseDTO> getClassCriteria(int limit, int page, String keyword,
                         String statusFilter,

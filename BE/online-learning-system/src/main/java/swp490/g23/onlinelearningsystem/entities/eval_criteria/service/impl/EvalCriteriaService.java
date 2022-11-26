@@ -69,9 +69,10 @@ public class EvalCriteriaService implements IEvalCriteriaService {
 
     @Override
     public ResponseEntity<CriteriaPaginateResponseDTO> getCriteria(int limit, int page, String keyword,
-            String statusFilter, String assignmentFilter) {
+            String statusFilter, String assignmentFilter, String classCode) {
 
-        CriteriaQuery result = criteriaRepositories.searchFilterCriteria(keyword, statusFilter, assignmentFilter);
+        CriteriaQuery result = criteriaRepositories.searchFilterCriteria(keyword, statusFilter, assignmentFilter,
+                classCode);
 
         TypedQuery<EvalCriteria> queryResult = result.getResultQuery();
         TypedQuery<Long> countQuery = result.getCountQuery();
@@ -218,6 +219,11 @@ public class EvalCriteriaService implements IEvalCriteriaService {
         if (dto.getAssignmentId() != null) {
             Assignment assignment = assignmentRepository.findById(dto.getAssignmentId()).get();
             evalCriteria.setAssignment(assignment);
+
+            if (!assignment.getMilestones().isEmpty()) {
+                evalCriteria.setMilestone(assignment.getMilestones().get(0));
+            }
+
             if (dto.getIsWorkEval() == 1) {
                 for (EvalCriteria eval : evalCriteria.getAssignment().getEvalCriteriaList()) {
                     if (eval.isWorkEval() == true) {
@@ -238,31 +244,22 @@ public class EvalCriteriaService implements IEvalCriteriaService {
     }
 
     @Override
-    public ResponseEntity<CriteriaFilterDTO> getFilter() {
+    public ResponseEntity<CriteriaFilterDTO> getFilter(String classCode) {
         List<StatusEntity> statuses = new ArrayList<>();
         List<AssignmentResponseDTO> filterAssignment = new ArrayList<>();
         List<MilestoneResponseDTO> filterMilestone = new ArrayList<>();
-        List<String> filterClass = new ArrayList<>();
-        List<Assignment> assignments = assignmentRepository.findAssigmentWithActiveSubject();
-        List<Milestone> milestones = milestoneRepository.findByActiveClass();
-        List<Classes> classes = classRepositories.findClassesActive();
+        List<Milestone> milestones = milestoneRepository.getByClassCode(classCode);
 
         for (Status status : new ArrayList<Status>(EnumSet.allOf(Status.class))) {
             statuses.add(new StatusEntity(status));
         }
-        for (Assignment assignment : assignments) {
-            filterAssignment.add(assignmentService.toDTO(assignment));
-        }
         for (Milestone milestone : milestones) {
             filterMilestone.add(milestoneService.toDTO(milestone));
-        }
-        for (Classes clazz : classes) {
-            filterClass.add(clazz.getCode());
+            filterAssignment.add(assignmentService.toDTO(milestone.getAssignment()));
         }
         CriteriaFilterDTO filterDTO = new CriteriaFilterDTO();
         filterDTO.setStatusFilter(statuses);
         filterDTO.setAssignmentFilter(filterAssignment);
-        filterDTO.setClassFilter(filterClass);
         filterDTO.setMilestoneFilter(filterMilestone);
 
         return ResponseEntity.ok(filterDTO);
@@ -424,6 +421,11 @@ public class EvalCriteriaService implements IEvalCriteriaService {
         if (dto.getAssignmentId() != null) {
             Assignment assignment = assignmentRepository.findById(dto.getAssignmentId()).get();
             evalCriteria.setAssignment(assignment);
+
+            if (!assignment.getMilestones().isEmpty()) {
+                evalCriteria.setMilestone(assignment.getMilestones().get(0));
+            }
+
             if (dto.getIsWorkEval() == 1) {
                 for (EvalCriteria eval : evalCriteria.getAssignment().getEvalCriteriaList()) {
                     if (eval.isWorkEval() == true) {

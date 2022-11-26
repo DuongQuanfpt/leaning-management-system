@@ -1,5 +1,7 @@
 package swp490.g23.onlinelearningsystem.entities.class_user.domain.response;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,11 +19,13 @@ public class ClassEvalResponseDTO {
 
     private String fullName;
 
-    private Long gpa;
+    private Double gpa;
 
-    private Long ongoing;
+    private Double ongoing;
 
-    private Long finalEval;
+    private Double finalEval;
 
     private String comment;
+
+    private List<AssignmentGradeDTO> assignmentGrade;
 }
