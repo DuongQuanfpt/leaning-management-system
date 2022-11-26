@@ -44,7 +44,7 @@ const ClassEvalCriteriaList = () => {
 
   useEffect(() => {
     classEvalCriteriaApi
-      .getFilter()
+      .getFilter({ classCode: currentClass })
       .then((response) => {
         setListFilter((prev) => ({
           ...prev,
@@ -56,7 +56,7 @@ const ClassEvalCriteriaList = () => {
       })
 
     classEvalCriteriaApi
-      .getPage({ filterClass: currentClass, page: 1, limit: 1 })
+      .getPage({ classCode: currentClass, page: 1, limit: 1 })
       .then((response) => {
         setListFilter((prev) => ({ ...prev, milestoneFilter: response.milestoneFilter }))
       })
@@ -234,9 +234,10 @@ const ClassEvalCriteriaList = () => {
   ]
 
   const modalConfirm = (subject) => {
+    console.log(subject)
     Modal.confirm({
       title: `Are you want to ${subject.classSettingId === 'Active' ? 'deactivate' : 'reactivate'} "${
-        subject.milestone
+        subject.milestone.milestoneTitle
       }" - "${subject.criteriaName}" ?`,
       icon: <ExclamationCircleOutlined />,
       okText: 'OK',

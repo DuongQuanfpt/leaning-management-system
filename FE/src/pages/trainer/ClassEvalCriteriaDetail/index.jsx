@@ -169,7 +169,7 @@ const ClassEvalCriteriaDetail = () => {
                     <div className="form-group col-6">
                       <div>
                         <label className="col-form-label">Milestone</label>
-                        <input className="form-control" type="text" value={detail.milestone} disabled />
+                        <input className="form-control" type="text" value={detail.milestone.milestoneTitle} disabled />
                       </div>
                     </div>
                     <div className="form-group col-6">

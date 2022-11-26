@@ -61,6 +61,7 @@ const MilestoneList = () => {
   const [listMilestone, setListMilestone] = useState([])
   const [totalItem, setTotalItem] = useState(1)
   const [currentPage, setCurrentPage] = useState(1)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     milestoneApi.getPage().then((response) => {
@@ -78,6 +79,7 @@ const MilestoneList = () => {
   }, [filter, currentClass])
 
   const loadData = async (page, filter, q = '') => {
+    setLoading(true)
     const params = {
       limit: ITEM_PER_PAGE,
       page: currentPage,
@@ -105,6 +107,7 @@ const MilestoneList = () => {
       .catch((error) => {
         console.log(error)
       })
+      .finally(() => setLoading(false))
   }
 
   const handleSearch = () => {
@@ -151,7 +154,6 @@ const MilestoneList = () => {
       icon: <ExclamationCircleOutlined />,
       okText: 'Confirm',
       cancelText: 'Cancel',
-      okType: 'danger',
       async onOk() {
         await milestoneApi
           .changeToInProgress(allGroup.milestoneId)
@@ -257,7 +259,6 @@ const MilestoneList = () => {
       icon: <ExclamationCircleOutlined />,
       okText: 'Confirm',
       cancelText: 'Cancel',
-      okType: 'danger',
       async onOk() {
         await milestoneApi
           .changeToClosed(allGroup.milestoneId)
@@ -283,7 +284,8 @@ const MilestoneList = () => {
       width: 900,
       content: (
         <div className="pt-3 m-0 site-card-wrapper">
-          <Space className="pt-3 d-flex flex-row aligns-item-start">
+          <Space className=" d-flex flex-column aligns-item-start">
+            <Table dataSource={allGroup.evaluation} columns={columnsGrade} pagination={{ pageSize: 5 }} />
             <Typography.Title
               level={5}
               className="d-flex"
@@ -301,9 +303,10 @@ const MilestoneList = () => {
               type="link"
               onClick={() => {
                 console.log('move to milestone evaluation page')
+                navigateTo('/assignment-evaluation')
               }}
             >
-              Click here to assign milestone evaluation page
+              Click here to assign Assignment Evaluation page
             </Button>
           </Space>
         </div>
@@ -402,6 +405,34 @@ const MilestoneList = () => {
     },
   ]
 
+  const columnsGrade = [
+    {
+      title: 'Username',
+      dataIndex: 'userName',
+      width: '20%',
+    },
+    {
+      title: 'Fullname',
+      dataIndex: 'fullName',
+      width: '20%',
+    },
+    {
+      title: 'Bonus Grade',
+      dataIndex: 'bonusGrade',
+      width: '12.5%',
+    },
+    {
+      title: 'Grade',
+      dataIndex: 'grade',
+      width: '12.5%',
+    },
+    {
+      title: 'Comment',
+      dataIndex: 'comment',
+      width: '35%',
+    },
+  ]
+
   return (
     <div>
       <AdminSidebar />
@@ -456,7 +487,7 @@ const MilestoneList = () => {
                 </div>
               </div>
               <div className="col-lg-12">
-                <Table bordered dataSource={listMilestone} columns={columns} pagination={false} />
+                <Table bordered dataSource={listMilestone} columns={columns} pagination={false} loading={loading} />
               </div>
               <div className="col-lg-12 d-flex justify-content-end mt-3">
                 <Pagination current={currentPage} total={totalItem} onChange={handleChangePage} />;

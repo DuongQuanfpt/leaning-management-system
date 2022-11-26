@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { utils, writeFileXLSX, read } from 'xlsx'
@@ -567,36 +567,41 @@ const AssignementEvaluation = () => {
   }
 
   const handleDownloadtemplateFile = () => {
-    console.log(data)
-    console.log(evalSelected)
-    return
-
-    const listExport = [
-      ...data.map((evaluation) => ({
-        'Group Name': '',
-        Email: evaluation.email,
-        Fullname: evaluation.fullName,
-        Username: evaluation.username,
-        'Is Leader': '',
-      })),
-    ]
-
     try {
-      const listExport = []
+      const listExport = [
+        ...data.map((evaluation) => ({
+          UserName: evaluation.userName,
+          FullName: evaluation.fullName,
+          Evaluation: evaluation.criteriaPoints.filter((item) => item.criteriaId === evalSelected.criteriaId)[0]?.grade,
+          Comment: evaluation.criteriaPoints.filter((item) => item.criteriaId === evalSelected.criteriaId)[0]?.comment,
+        })),
+      ]
       const ws = utils.json_to_sheet(listExport)
       const wb = utils.book_new()
-      utils.sheet_add_aoa(ws, [['Fullname', 'Email']], { origin: 'A1' })
-      var wscols = [{ wch: 20 }, { wch: 20 }]
+      utils.sheet_add_aoa(ws, [['UserName', 'FullName', 'Evaluation', 'Comment']], { origin: 'A1' })
+      var wscols = [{ wch: 20 }, { wch: 20 }, { wch: 20 }, { wch: 20 }]
       ws['!cols'] = wscols
       utils.book_append_sheet(wb, ws, 'Data')
-      writeFileXLSX(wb, 'TraineeImportTemplate.xlsx')
+      writeFileXLSX(wb, 'EvaluationData.xlsx')
       toastMessage('success', 'Download Template Successfully')
     } catch {
       toastMessage('error', 'Download Template Failed, try again later')
     }
   }
 
-  const handleReadFile = () => {}
+  const handleReadFile = () => {
+    console.log(listImported)
+    listImported.forEach((item) => {
+      if (isNaN(item.Evaluation)) {
+        toastMessage('error', 'Evaluation Mark must a number')
+        return
+      }
+      if (item.Evaluation < 0 || item.Evaluation > 10) {
+        toastMessage('error', 'Evaluation Mark must between 0 and 10')
+        return
+      }
+    })
+  }
 
   const props = {
     name: 'file',
@@ -638,9 +643,7 @@ const AssignementEvaluation = () => {
         })
 
         readFile.then((data) => {
-          console.log(data)
           setListImported(data)
-          handleReadFile()
         })
       }
     },
@@ -821,7 +824,7 @@ const AssignementEvaluation = () => {
                 open={open.import}
                 onOk={async () => {
                   console.log(evalSelected)
-                  // handleImportEval()
+                  handleReadFile()
                 }}
                 onCancel={() => setOpen((prev) => ({ ...prev, import: false }))}
               >

@@ -12,8 +12,10 @@ import ErrorMsg from '~/components/Common/ErrorMsg'
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
+import { useSelector } from 'react-redux'
 
 const ClassEvalCriteriaAdd = () => {
+  const { currentClass } = useSelector((state) => state.profile)
   const [detail, setDetail] = useState({
     milestone: 'Select Milestone',
     criteriaName: '',
@@ -55,12 +57,15 @@ const ClassEvalCriteriaAdd = () => {
       status: 0,
     })
     setError('')
-  }, [mode])
+    loadData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode, currentClass])
 
   const loadData = async () => {
     await classEvalCriteriaApi
-      .getPage()
+      .getPage({ filterClass: currentClass })
       .then((response) => {
+        console.log(response)
         setListEval(response.listResult)
       })
       .catch((error) => {
@@ -68,7 +73,7 @@ const ClassEvalCriteriaAdd = () => {
       })
 
     await classEvalCriteriaApi
-      .getFilter()
+      .getFilter({ classCode: currentClass })
       .then((response) => {
         setListFilter((prev) => ({
           ...prev,
@@ -206,22 +211,24 @@ const ClassEvalCriteriaAdd = () => {
                             {listEval?.map((item) => (
                               <CDropdownItem
                                 onClick={() => {
+                                  console.log(item)
                                   setCurrentClone(
-                                    `${item.subjectName} - ${item.milestone} - ${item.assignment.title} - ${item.criteriaName}`,
+                                    `${item.subjectName} - ${item.milestone.milestoneTitle} - ${item.assignment.title} - ${item.criteriaName}`,
                                   )
                                   setDetail((prev) => ({
                                     ...prev,
                                     ...item,
                                     milestone: {
-                                      title: item.milestone,
-                                      milestoneId: item.milestoneId,
+                                      title: item.milestone.milestoneTitle,
+                                      milestoneId: item.milestone.milestoneId,
                                     },
                                     evalWeight: Number(item.evalWeight),
                                     status: item.status === 'Active' ? 1 : 0,
                                   }))
                                 }}
                               >
-                                {item.subjectName} - {item.milestone} - {item.assignment.title} - {item.criteriaName}
+                                {item.subjectName} - {item.milestone.milestoneTitle} - {item.assignment.title} -{' '}
+                                {item.criteriaName}
                               </CDropdownItem>
                             ))}
                           </CDropdownMenu>
@@ -237,6 +244,7 @@ const ClassEvalCriteriaAdd = () => {
                             {listFilter?.milestoneFilter?.map((milestone) => (
                               <CDropdownItem
                                 onClick={() => {
+                                  console.log(detail)
                                   setDetail((prev) => ({
                                     ...prev,
                                     milestone: milestone,

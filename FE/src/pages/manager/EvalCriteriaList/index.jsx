@@ -13,8 +13,10 @@ import evalCriteriaApi from '~/api/evalCriteriaApi'
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
+import { useSelector } from 'react-redux'
 
 const EvalCriteriaList = () => {
+  const { currentClass } = useSelector((state) => state.profile)
   const ITEM_PER_PAGE = 10
   const navigateTo = useNavigate()
 
@@ -35,12 +37,14 @@ const EvalCriteriaList = () => {
       value: '',
     },
   })
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     evalCriteriaApi
       .getPage({
         limit: ITEM_PER_PAGE,
         page: 1,
+        classCode: currentClass,
       })
       .then((response) => {
         console.log(response)
@@ -53,17 +57,19 @@ const EvalCriteriaList = () => {
       .catch((error) => {
         console.log(error)
       })
-  }, [])
+  }, [currentClass])
 
   useEffect(() => {
     loadData(1, filter)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter])
+  }, [filter, currentClass])
 
   const loadData = async (page, filter, q = '') => {
+    setLoading(true)
     const params = {
       limit: ITEM_PER_PAGE,
       page: page,
+      classCode: currentClass,
     }
     if (q !== '') {
       params.q = q.trim()
@@ -86,6 +92,7 @@ const EvalCriteriaList = () => {
       .catch((error) => {
         console.log(error)
       })
+      .finally(() => setLoading(false))
   }
 
   const handleSearch = () => {
@@ -121,6 +128,7 @@ const EvalCriteriaList = () => {
   }
 
   const handleActive = async (id) => {
+    setLoading(true)
     await evalCriteriaApi
       .changeActive(id)
       .then((response) => {
@@ -129,6 +137,7 @@ const EvalCriteriaList = () => {
       .catch((error) => {
         console.log(error)
       })
+      .finally(() => setLoading(true))
   }
 
   const modalConfirm = (subject) => {
@@ -292,7 +301,7 @@ const EvalCriteriaList = () => {
                 </div>
               </div>
               <div className="col-lg-12">
-                <Table bordered dataSource={listEval} columns={columns} pagination={false} />
+                <Table bordered dataSource={listEval} columns={columns} pagination={false} loading={loading} />
               </div>
               <div className="col-lg-12 d-flex justify-content-end mt-3">
                 <Pagination current={currentPage} total={totalItem} onChange={handleChangePage} />;
