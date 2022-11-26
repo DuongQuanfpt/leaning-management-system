@@ -35,6 +35,8 @@ public class IssueDetailDTO {
 
     IssueViewDTO requirement;
 
+    boolean evaluated;
+
     List<IssueViewDTO> linkedIssues;
 
 }

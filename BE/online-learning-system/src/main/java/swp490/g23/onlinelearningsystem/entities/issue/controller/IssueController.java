@@ -56,16 +56,17 @@ public class IssueController {
 			byte[] result = Base64.getDecoder().decode(filterJson);
 			String decodedFilter = new String(result);
 			filterRequestDTO = new ObjectMapper().readValue(decodedFilter, IssueFilterRequestDTO.class);
-			System.out.println( "DECODED FILTER : " + filterRequestDTO.getGroupIds().toString());
+			
 		}
 		return issueService.getIssueList(page, limit, keyword, classCode, isIssue, filterMilestoneId, filterRequestDTO);
 	}
 
 	@GetMapping(value = "/issue-list-filter/{classCode}")
 	public ResponseEntity<IssueFilter> getIssueFilter(@PathVariable("classCode") String classCode,
+		@RequestParam(name = "milestoneId", required = false) Long milestoneId,
 		@AuthenticationPrincipal User user) {
 
-		return issueService.issueListFilter(classCode , user);
+		return issueService.issueListFilter(classCode , user , milestoneId);
 	}
 
 	@GetMapping(value = "/issue-add-filter/{classCode}")

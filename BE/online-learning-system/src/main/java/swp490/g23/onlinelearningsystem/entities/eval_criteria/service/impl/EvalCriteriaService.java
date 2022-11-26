@@ -210,6 +210,11 @@ public class EvalCriteriaService implements IEvalCriteriaService {
         if (dto.getAssignmentId() != null) {
             Assignment assignment = assignmentRepository.findById(dto.getAssignmentId()).get();
             evalCriteria.setAssignment(assignment);
+
+            if (!assignment.getMilestones().isEmpty()) {
+                evalCriteria.setMilestone(assignment.getMilestones().get(0));
+            }
+
             if (dto.getIsWorkEval() == 1) {
                 for (EvalCriteria eval : evalCriteria.getAssignment().getEvalCriteriaList()) {
                     if (eval.isWorkEval() == true) {
@@ -416,6 +421,11 @@ public class EvalCriteriaService implements IEvalCriteriaService {
         if (dto.getAssignmentId() != null) {
             Assignment assignment = assignmentRepository.findById(dto.getAssignmentId()).get();
             evalCriteria.setAssignment(assignment);
+
+            if (!assignment.getMilestones().isEmpty()) {
+                evalCriteria.setMilestone(assignment.getMilestones().get(0));
+            }
+
             if (dto.getIsWorkEval() == 1) {
                 for (EvalCriteria eval : evalCriteria.getAssignment().getEvalCriteriaList()) {
                     if (eval.isWorkEval() == true) {

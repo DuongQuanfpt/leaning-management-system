@@ -232,6 +232,7 @@ public class IssueService implements IIssueService {
 
     public IssueResponseDTO toDto(Issue issue) {
         IssueResponseDTO dto = new IssueResponseDTO();
+        Issue requirement = null;
         dto.setIssueId(issue.getIssueId());
         dto.setTitle(issue.getTitle());
         dto.setClassCode(issue.getClasses().getCode());
@@ -243,10 +244,12 @@ public class IssueService implements IIssueService {
 
         if (issue.getType() != null) {
             dto.setType(issue.getType().getSettingTitle());
-        }
-
-        if (issue.getRequirement() != null) {
-            dto.setRequirement(issue.getRequirement().getTitle());
+            if (issue.getRequirement() != null) {
+                dto.setRequirement(issue.getRequirement().getTitle());
+                requirement = issue.getRequirement();
+            } 
+        } else {
+            requirement = issue;
         }
 
         if (issue.getDescription() != null) {
@@ -307,6 +310,24 @@ public class IssueService implements IIssueService {
             dto.setStatusId((long) 0);
         }
 
+        if (requirement != null) {
+            if (!requirement.getSubmitWorks().isEmpty()) {
+                for (SubmitWork work : requirement.getSubmitWorks()) {
+                    if (!work.getWorkEvals().isEmpty()) {
+                        dto.setEvaluated(true);
+                        break;
+                    } else {
+                        dto.setEvaluated(false);
+                    }
+                }
+            } else {
+                dto.setEvaluated(false);
+            }
+
+        } else {
+            dto.setEvaluated(false);
+        }
+
         return dto;
     }
 
@@ -326,7 +347,7 @@ public class IssueService implements IIssueService {
     }
 
     @Override
-    public ResponseEntity<IssueFilter> issueListFilter(String classCode, User userAuthor) {
+    public ResponseEntity<IssueFilter> issueListFilter(String classCode, User userAuthor, Long milestoneId) {
         IssueFilter filter = new IssueFilter();
 
         User author = userRepository.findById(userAuthor.getUserId())
@@ -349,7 +370,12 @@ public class IssueService implements IIssueService {
             asigneeFilter.add(user.getAccountName());
         }
 
-        List<Group> groups = groupRepository.getGroupOfIssueByClass(classCode);
+        // List<Group> groups = groupRepository.getGroupOfIssueByClass(classCode);
+        List<Group> groups = new ArrayList<>();
+        if (milestoneId != null) {
+            groups = groupRepository.findGroupByMilestone(milestoneId);
+        }
+
         List<IssueGroupFilterDTO> groupDTOs = new ArrayList<>();
         for (Group group : groups) {
             groupDTOs.add(toGroupFilterDto(group));
@@ -376,7 +402,7 @@ public class IssueService implements IIssueService {
         }
 
         List<IssueFilterValue> requirementFilter = new ArrayList<>();
-        List<Issue> requirementOfClass = issueRepository.getRequirementOfClass(classCode);
+        List<Issue> requirementOfClass = issueRepository.getRequirementOfMilestone(milestoneId);
         for (Issue issue : requirementOfClass) {
             requirementFilter.add(new IssueFilterValue(issue.getTitle(), issue.getIssueId()));
         }
@@ -529,16 +555,20 @@ public class IssueService implements IIssueService {
 
     public IssueDetailDTO toIssueDetail(Issue issue, List<Group> groupOfAuthor) {
         IssueDetailDTO detailDTO = new IssueDetailDTO();
+        Issue requirement = null;
         detailDTO.setIssueId(issue.getIssueId());
         detailDTO.setTitle(issue.getTitle());
         detailDTO.setClassCode(issue.getClasses().getCode());
 
         if (issue.getType() != null) {
             detailDTO.setType(toSettingDTO(issue.getType()));
+        } else {
+            requirement = issue;
         }
 
         if (issue.getRequirement() != null) {
             detailDTO.setRequirement(toIssueViewDTO(issue.getRequirement()));
+            requirement = issue.getRequirement();
         } else {
             IssueViewDTO dto = new IssueViewDTO();
             dto.setId((long) 0);
@@ -572,12 +602,6 @@ public class IssueService implements IIssueService {
         }
 
         if (issue.getMilestone() != null) {
-            // IssueMilestoneDTO milestoneViewDTO = new IssueMilestoneDTO();
-            // milestoneViewDTO.setMilestoneId(issue.getMilestone().getMilestoneId());
-            // milestoneViewDTO.setTeamwork(issue.getMilestone().getAssignment().isTeamWork());
-            // milestoneViewDTO.setDeadline(issue.getMilestone().getToDate().toString());
-            // milestoneViewDTO.setTitle(issue.getMilestone().getTitle());
-
             detailDTO.setMilestone(toMilestoneFilterDto(issue.getMilestone(), groupOfAuthor));
         }
 
@@ -598,6 +622,24 @@ public class IssueService implements IIssueService {
                 list.add(toIssueViewDTO(issueOfRequirement));
             }
             detailDTO.setLinkedIssues(list);
+        }
+
+        if (requirement != null) {
+            if (!requirement.getSubmitWorks().isEmpty()) {
+                for (SubmitWork work : requirement.getSubmitWorks()) {
+                    if (!work.getWorkEvals().isEmpty()) {
+                        detailDTO.setEvaluated(true);
+                        break;
+                    } else {
+                        detailDTO.setEvaluated(false);
+                    }
+                }
+            } else {
+                detailDTO.setEvaluated(false);
+            }
+
+        } else {
+            detailDTO.setEvaluated(false);
         }
         return detailDTO;
     }
@@ -722,6 +764,8 @@ public class IssueService implements IIssueService {
                 issue.setGroup(group);
             }
 
+        } else {
+            issue.setGroup(null);
         }
 
         if (requestDTO.getAsigneeName() != null) {
@@ -731,6 +775,8 @@ public class IssueService implements IIssueService {
                 User aisgnee = userRepository.findByAccountName(requestDTO.getAsigneeName());
                 issue.setAsignee(aisgnee);
             }
+        } else {
+            issue.setAsignee(null);
         }
 
         if (requestDTO.getDescription() != null) {
@@ -771,13 +817,6 @@ public class IssueService implements IIssueService {
 
             }
 
-        } else {
-            issue.setAsignee(null);
-            issue.setGroup(null);
-            issue.setMilestone(null);
-            issue.setType(null);
-            issue.setStatus(null);
-            issue.setRequirement(null);
         }
 
         issueRepository.save(issue);
@@ -843,6 +882,26 @@ public class IssueService implements IIssueService {
                     issueRepository.saveAll(unlinkedIssue);
                 }
 
+                if (changes.getGroupId() != null) {
+                    if (changes.getGroupId() == 0) {
+                        issue.setGroup(null);
+                    } else if (group != null) {
+                        issue.setGroup(group);
+                    }
+                } else {
+                    issue.setGroup(null);
+                }
+
+                if (changes.getAsigneeName() != null) {
+                    if (changes.getAsigneeName().equalsIgnoreCase("Unassigned")) {
+                        issue.setAsignee(null);
+                    } else if (assignee != null) {
+                        issue.setAsignee(assignee);
+                    }
+                } else {
+                    issue.setAsignee(null);
+                }
+
             }
 
             if (changes.getRequirementId() != null) {
@@ -871,22 +930,6 @@ public class IssueService implements IIssueService {
                     }
                 }
 
-            }
-
-            if (changes.getGroupId() != null) {
-                if (changes.getGroupId() == 0) {
-                    issue.setGroup(null);
-                } else if (group != null) {
-                    issue.setGroup(group);
-                }
-            }
-
-            if (changes.getAsigneeName() != null) {
-                if (changes.getAsigneeName().equalsIgnoreCase("Unassigned")) {
-                    issue.setAsignee(null);
-                } else if (assignee != null) {
-                    issue.setAsignee(assignee);
-                }
             }
 
             if (changes.getDeadline() != null) {
