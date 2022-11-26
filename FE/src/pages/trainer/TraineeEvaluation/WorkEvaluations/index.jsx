@@ -4,9 +4,11 @@ import { useNavigate, useParams } from 'react-router-dom'
 import evaluationApi from '~/api/evaluationApi'
 import moment from 'moment'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
+import { useSelector } from 'react-redux'
 
 const WorkEvaluations = () => {
   const { id } = useParams()
+  const { roles } = useSelector((state) => state.profile)
   const navigateTo = useNavigate()
   const [listWorkEval, setListWorkEval] = useState([])
   const [loading, setLoading] = useState(false)
@@ -18,6 +20,7 @@ const WorkEvaluations = () => {
   const [workUpdateForm, setWorkUpdateForm] = useState({})
   const [workSelected, setWorkSelected] = useState({})
   const [form] = Form.useForm()
+  const [isTrainer, setIsTrainer] = useState(false)
 
   const toastMessage = (type, mes) => {
     message[type]({
@@ -29,6 +32,7 @@ const WorkEvaluations = () => {
   }
 
   useEffect(() => {
+    setIsTrainer(roles.includes('trainer'))
     loadData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -89,6 +93,7 @@ const WorkEvaluations = () => {
     {
       title: 'Actions',
       width: '15%',
+      hidden: isTrainer,
       render: (_, workUpdate) => (
         <>
           <Button
@@ -110,7 +115,7 @@ const WorkEvaluations = () => {
         </>
       ),
     },
-  ]
+  ].filter((item) => !item.hidden)
 
   const confirmDeleteWork = (work) => {
     Modal.confirm({
@@ -183,9 +188,11 @@ const WorkEvaluations = () => {
                     <Typography.Text strong>Updating History</Typography.Text>
                   </div>
                   <div className="col-lg-6 d-flex justify-content-end m-0 p-0">
-                    <Button type="link" onClick={() => setOpenModal((prev) => ({ ...prev, workNewUpdate: true }))}>
-                      New Update
-                    </Button>
+                    {!isTrainer && (
+                      <Button type="link" onClick={() => setOpenModal((prev) => ({ ...prev, workNewUpdate: true }))}>
+                        New Update
+                      </Button>
+                    )}
                   </div>
                 </div>
                 <Table

@@ -79,6 +79,7 @@ public class EvalCriteriaService implements IEvalCriteriaService {
         List<CriteriaResponseDTO> list = new ArrayList<>();
         List<StatusEntity> statusfilter = new ArrayList<>();
         List<String> filterAssignment = new ArrayList<>();
+        List<String> classList = new ArrayList<>();
         List<EvalCriteria> criteriaList = queryResult.getResultList();
 
         for (Status status : new ArrayList<Status>(EnumSet.allOf(Status.class))) {
@@ -86,6 +87,12 @@ public class EvalCriteriaService implements IEvalCriteriaService {
         }
 
         for (EvalCriteria evalCriteria : criteriaList) {
+            // if (evalCriteria.getMilestone() != null) {
+            // if
+            // (!filterClass.contains(evalCriteria.getMilestone().getClasses().getCode())) {
+            // classList.add(evalCriteria.getMilestone().getClasses().getCode());
+            // }
+            // }
             if (!filterAssignment.contains(evalCriteria.getAssignment().getTitle())) {
                 filterAssignment.add(evalCriteria.getAssignment().getTitle());
             }
@@ -112,6 +119,7 @@ public class EvalCriteriaService implements IEvalCriteriaService {
         dto.setListResult(list);
         dto.setTotalPage(totalPage);
         dto.setStatusFilter(statusfilter);
+        dto.setClassFilter(classList);
         dto.setAssignmentFilter(filterAssignment);
 
         return ResponseEntity.ok(dto);

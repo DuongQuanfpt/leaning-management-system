@@ -44,7 +44,7 @@ public class ScheduleCriteria {
         }
         if (keyword != null) {
             query.append(
-                    " AND (s.classSetting.settingTitle LIKE '%" + keyword + "%')");
+                    " AND (s.topic LIKE '%" + keyword + "%')");
         }
 
         if (statusValue != null) {

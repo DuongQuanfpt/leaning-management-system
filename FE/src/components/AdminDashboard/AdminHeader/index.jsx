@@ -20,23 +20,24 @@ import { useEffect } from 'react'
 
 const AdminHeader = () => {
   const location = useLocation()
-  const showDropdownClassPathname = [
-    '/trainee-list',
-    '/trainee-import',
-    '/class-setting-list',
-    '/class-criteria-list',
-    '/milestone-list',
-    '/group-list',
-    '/schedule-list',
-    '/schedule-add',
-    '/issue-list',
-    '/issue-add',
-    '/requirement-list',
-    '/requirement-add',
-    '/attendance-report',
-    '/class-attendance',
-    '/submit-list',
-  ]
+  // const showDropdownClassPathname = [
+  //   '/trainee-list',
+  //   '/trainee-import',
+  //   '/class-setting-list',
+  //   '/class-criteria-list',
+  //   '/milestone-list',
+  //   '/group-list',
+  //   '/schedule-list',
+  //   '/schedule-add',
+  //   '/issue-list',
+  //   '/issue-add',
+  //   '/requirement-list',
+  //   '/requirement-add',
+  //   '/attendance-report',
+  //   '/class-attendance',
+  //   '/submit-list',
+  //   '/assignment-evaluation',
+  // ]
 
   const dispatch = useDispatch()
   const sidebarShow = useSelector((state) => state.sidebar.sidebarShow)
@@ -104,18 +105,18 @@ const AdminHeader = () => {
           )}
         </CHeaderNav>
 
-        {showDropdownClassPathname.includes(location.pathname) && (
-          <CHeaderNav>
-            <Dropdown overlay={menu}>
-              <a onClick={(e) => e.preventDefault()}>
-                <Space>
-                  {currentClass}
-                  <DownOutlined />
-                </Space>
-              </a>
-            </Dropdown>
-          </CHeaderNav>
-        )}
+        {/* {showDropdownClassPathname.includes(location.pathname) && ( */}
+        <CHeaderNav>
+          <Dropdown overlay={menu}>
+            <a onClick={(e) => e.preventDefault()}>
+              <Space>
+                {currentClass}
+                <DownOutlined />
+              </Space>
+            </a>
+          </Dropdown>
+        </CHeaderNav>
+        {/* // )} */}
         <CHeaderNav className="ms-3">
           <AdminHeaderDropdown />
         </CHeaderNav>

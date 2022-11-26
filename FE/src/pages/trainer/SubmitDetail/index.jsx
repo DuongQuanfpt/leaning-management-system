@@ -160,10 +160,12 @@ const SubmitDetail = () => {
             comment: null,
           })
           .then(() => {
+            toastMessage('success', 'Unreject Successfully!')
             loadData(filter)
           })
           .catch((error) => {
             console.log(error)
+            toastMessage('error', 'Unreject failed, try again later!')
             loadData(filter)
           })
       },
@@ -866,7 +868,7 @@ const SubmitDetail = () => {
                       title={
                         <Space className="d-flex flex-column">
                           <Typography.Title level={4}>{`Reject ${submitSelected.milestone}`}</Typography.Title>
-                          <Typography.Text>{`Trainee: usernamehere (${submitSelected?.assignee}), <${submitSelected?.team}>`}</Typography.Text>
+                          <Typography.Text>{`Trainee: ${submitSelected?.assignee} (${submitSelected?.fullName}), <${submitSelected?.team}>`}</Typography.Text>
                         </Space>
                       }
                       okText="Confirm"
@@ -887,9 +889,11 @@ const SubmitDetail = () => {
                               )
                               .then((response) => {
                                 console.log(response)
+                                toastMessage('success', 'Reject Successfully!')
                               })
                               .catch((error) => {
                                 console.log(error)
+                                toastMessage('error', 'Reject failed, try again later!')
                               })
                               .finally(() => {
                                 setOpenModal((prev) => ({ ...prev, reject: false }))

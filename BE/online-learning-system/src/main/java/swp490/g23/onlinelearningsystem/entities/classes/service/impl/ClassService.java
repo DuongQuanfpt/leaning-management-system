@@ -231,7 +231,8 @@ public class ClassService implements IClassService {
         Setting roleTrainer = settingRepositories.findBySettingValue("ROLE_TRAINER");
         Setting roleSupporter = settingRepositories.findBySettingValue("ROLE_SUPPORTER");
         List<ClassStatusEntity> statuses = new ArrayList<>();
-        List<User> users = userRepository.findTrainerAndSupporter();
+        List<User> userTrainers = userRepository.findTrainer();
+        List<User> userSupporters = userRepository.findSupport();
         List<Subject> subjects = subjecRepository.findSubjectActive();
         List<Classes> classes = classRepositories.findAll();
 
@@ -239,10 +240,12 @@ public class ClassService implements IClassService {
             subjectFilter.add(subject.getSubjectCode());
         }
 
-        for (User user : users) {
+        for (User user : userTrainers) {
             if (user.getSettings().contains(roleTrainer)) {
                 listTrainer.add(user.getAccountName());
             }
+        }
+        for (User user : userSupporters) {
             if (user.getSettings().contains(roleSupporter)) {
                 listSupporter.add(user.getAccountName());
             }
@@ -278,7 +281,8 @@ public class ClassService implements IClassService {
     @Override
     public ResponseEntity<String> addClass(ClassRequestDTO requestDTO) {
         Classes clazz = new Classes();
-        List<User> list = userRepository.findTrainerAndSupporter();
+        List<User> listTrainer = userRepository.findTrainer();
+        List<User> listSupport = userRepository.findSupport();
 
         // clazz.setCode((requestDTO.getCode()));
 
@@ -303,10 +307,12 @@ public class ClassService implements IClassService {
         }
 
         if (requestDTO.getTrainer() != null && requestDTO.getSupporter() != null) {
-            for (User user : list) {
+            for (User user : listTrainer) {
                 if (user.getAccountName().equals(requestDTO.getTrainer())) {
                     clazz.setUserTrainer(user);
                 }
+            }
+            for (User user : listSupport) {
                 if (user.getAccountName().equals(requestDTO.getSupporter())) {
                     clazz.setUserSupporter(user);
                 }

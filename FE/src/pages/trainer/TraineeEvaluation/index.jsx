@@ -28,7 +28,6 @@ const TraineeEvaluation = () => {
     await evaluationApi
       .getTraineeEvaluation(id)
       .then((response) => {
-        console.log(response)
         setTraineeEval(response)
       })
       .catch((error) => {

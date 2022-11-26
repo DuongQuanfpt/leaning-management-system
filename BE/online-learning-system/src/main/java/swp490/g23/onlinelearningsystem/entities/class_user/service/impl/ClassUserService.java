@@ -22,10 +22,12 @@ import swp490.g23.onlinelearningsystem.entities.auth.service.impl.AuthService;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.ClassUser;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.filter.TraineeFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.request.TraineeRequestDTO;
+import swp490.g23.onlinelearningsystem.entities.class_user.domain.response.ClassEvalResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.response.TraineeImportResponse;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.response.TraineeResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.response.TraineeResponsePaginateDTP;
 import swp490.g23.onlinelearningsystem.entities.class_user.repositories.ClassUserRepositories;
+import swp490.g23.onlinelearningsystem.entities.class_user.repositories.criteria.ClassEvalCriteria;
 import swp490.g23.onlinelearningsystem.entities.class_user.repositories.criteria.UserTraineeCriteria;
 import swp490.g23.onlinelearningsystem.entities.class_user.service.IClassUserService;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
@@ -71,6 +73,9 @@ public class ClassUserService implements IClassUserService {
 
     @Autowired
     AuthService authService;
+
+    @Autowired
+    private ClassEvalCriteria classEvalCriteria;
 
     public static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
             Pattern.CASE_INSENSITIVE);
@@ -388,6 +393,17 @@ public class ClassUserService implements IClassUserService {
         responseDTO.setClasses(entity.getClasses().getCode());
 
         return responseDTO;
+    }
+
+    @Override
+    public ResponseEntity<List<ClassEvalResponseDTO>> classEvalList(String keyword, String filterAssignment,
+            User user, String classCode) {
+
+        TypedQuery<ClassUser> queryResult = classEvalCriteria.displayTrainee(keyword,
+                filterAssignment, user, classCode);
+
+        List<ClassUser> classUsers = queryResult.getResultList();
+        return null;
     }
 
 }
