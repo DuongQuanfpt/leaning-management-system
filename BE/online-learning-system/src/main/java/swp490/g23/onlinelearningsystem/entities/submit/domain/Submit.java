@@ -35,7 +35,7 @@ import swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Submit extends BaseEntity implements Comparable<Submit>{
+public class Submit extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -77,9 +77,4 @@ public class Submit extends BaseEntity implements Comparable<Submit>{
     @OneToMany(mappedBy = "submit")
     private List<WorkUpdate> updates = new ArrayList<>();
 
-    @Override
-    public int compareTo(Submit arg0) {
-        // TODO Auto-generated method stub
-        return 0;
-    }
 }
