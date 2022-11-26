@@ -345,6 +345,10 @@ public class MilestoneService implements IMilestoneService {
         List<Group> groupOfMilestone = new ArrayList<>();
         List<MilestoneEvalDTO> evalDTOs = new ArrayList<>();
 
+        Collections.sort(reportList, Comparator.comparing(Report::getReportKey)
+            .thenComparing(Report::getStudentNumber)
+            .thenComparing(Report::getSchool));
+
         if (!submits.isEmpty()) {
             for (Submit submit : submits) {
                 if (submit.getGroup() == null) {
