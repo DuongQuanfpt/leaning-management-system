@@ -53,6 +53,9 @@ public class ClassUser {
     @Column
     private Double topicEval;
 
+    @Column
+    private String comment;
+
     @ManyToOne
     @MapsId("userId")
     @JoinColumn(name = "user_Id")
