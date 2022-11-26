@@ -725,13 +725,6 @@ const AssignementEvaluation = () => {
                           title={() => (
                             <Space className="d-flex flex-column">
                               <Typography.Text>Select evaluation want to copy</Typography.Text>
-                              <Button
-                                onClick={() => {
-                                  console.log(listFilter?.criteria)
-                                }}
-                              >
-                                Click
-                              </Button>
                               <Select
                                 mode="multiple"
                                 className="w-100 mb-3"
@@ -775,6 +768,7 @@ const AssignementEvaluation = () => {
                             }
                             setCopyMode(true)
                             setEditingKey('')
+                            setListCriteriaSelectCopy([])
                           }}
                           disabled={data.length === 0 || editingKey !== ''}
                         >
