@@ -68,8 +68,9 @@ public class ClassEvalCriteriaController {
     }
 
     @GetMapping(value = "/class-criteria-filter")
-    public ResponseEntity<CriteriaFilterDTO> getCriteriaFilter() {
+    public ResponseEntity<CriteriaFilterDTO> getCriteriaFilter(
+            @RequestParam(name = "classCode", required = true) String classCode) {
 
-        return criteriaService.getFilter();
+        return criteriaService.getFilter(classCode);
     }
 }

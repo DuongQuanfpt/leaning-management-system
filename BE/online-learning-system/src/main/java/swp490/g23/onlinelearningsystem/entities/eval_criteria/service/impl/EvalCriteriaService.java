@@ -69,7 +69,7 @@ public class EvalCriteriaService implements IEvalCriteriaService {
 
     @Override
     public ResponseEntity<CriteriaPaginateResponseDTO> getCriteria(int limit, int page, String keyword,
-            String statusFilter, String assignmentFilter) {
+            String statusFilter, String assignmentFilter, String classCode) {
 
         CriteriaQuery result = criteriaRepositories.searchFilterCriteria(keyword, statusFilter, assignmentFilter);
 
@@ -243,31 +243,22 @@ public class EvalCriteriaService implements IEvalCriteriaService {
     }
 
     @Override
-    public ResponseEntity<CriteriaFilterDTO> getFilter() {
+    public ResponseEntity<CriteriaFilterDTO> getFilter(String classCode) {
         List<StatusEntity> statuses = new ArrayList<>();
         List<AssignmentResponseDTO> filterAssignment = new ArrayList<>();
         List<MilestoneResponseDTO> filterMilestone = new ArrayList<>();
-        List<String> filterClass = new ArrayList<>();
-        List<Assignment> assignments = assignmentRepository.findAssigmentWithActiveSubject();
-        List<Milestone> milestones = milestoneRepository.findByActiveClass();
-        List<Classes> classes = classRepositories.findClassesActive();
+        List<Milestone> milestones = milestoneRepository.getByClassCode(classCode);
 
         for (Status status : new ArrayList<Status>(EnumSet.allOf(Status.class))) {
             statuses.add(new StatusEntity(status));
         }
-        for (Assignment assignment : assignments) {
-            filterAssignment.add(assignmentService.toDTO(assignment));
-        }
         for (Milestone milestone : milestones) {
             filterMilestone.add(milestoneService.toDTO(milestone));
-        }
-        for (Classes clazz : classes) {
-            filterClass.add(clazz.getCode());
+            filterAssignment.add(assignmentService.toDTO(milestone.getAssignment()));
         }
         CriteriaFilterDTO filterDTO = new CriteriaFilterDTO();
         filterDTO.setStatusFilter(statuses);
         filterDTO.setAssignmentFilter(filterAssignment);
-        filterDTO.setClassFilter(filterClass);
         filterDTO.setMilestoneFilter(filterMilestone);
 
         return ResponseEntity.ok(filterDTO);
