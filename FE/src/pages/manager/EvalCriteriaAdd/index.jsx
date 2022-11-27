@@ -134,8 +134,6 @@ const EvalCriteriaAdd = () => {
       assignmentId: detail?.assignment?.assignment?.assId,
       milestoneId: detail?.assignment?.milestoneId,
     }
-    console.log(params)
-    return
     await evalCriteriaApi
       .addCriteria(params)
       .then((response) => {
