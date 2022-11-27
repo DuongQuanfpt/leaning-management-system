@@ -14,9 +14,10 @@ import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 
+let ITEM_PER_PAGE = 10
 const SubjectSettingList = () => {
-  const ITEM_PER_PAGE = 10
   const navigateTo = useNavigate()
+  const [loading, setLoading] = useState(false)
 
   const [totalItem, setTotalItem] = useState(1)
   const [currentPage, setCurrentPage] = useState(1)
@@ -57,10 +58,11 @@ const SubjectSettingList = () => {
       .catch((error) => {
         console.log(error)
       })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
-    loadData(1, filter)
+    loadData(currentPage, filter, search)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter])
 
@@ -81,14 +83,15 @@ const SubjectSettingList = () => {
     if (filter?.status?.value !== '') {
       params.filterStatus = filter?.status?.value
     }
+    setLoading(true)
     await subjectSettingListApi
       .getPage(params)
       .then((response) => {
-        setCurrentPage(page)
         setTotalItem(response.totalItem)
         setListSubjectSetting(response.listResult)
       })
       .catch((error) => console.log(error))
+      .finally(() => setLoading(false))
   }
 
   const handleSearch = () => {
@@ -107,10 +110,11 @@ const SubjectSettingList = () => {
 
   const handleChangePage = (pageNumber) => {
     setCurrentPage(pageNumber)
-    loadData(pageNumber, filter)
+    loadData(pageNumber, filter, search)
   }
 
   const handleReload = () => {
+    ITEM_PER_PAGE = 10
     setSearch('')
     setFilter({
       subject: 'Select Subject',
@@ -123,6 +127,7 @@ const SubjectSettingList = () => {
         value: '',
       },
     })
+    setCurrentPage(1)
   }
 
   const handleAdd = () => {
@@ -130,12 +135,14 @@ const SubjectSettingList = () => {
   }
 
   const handleActive = async (subject) => {
+    setLoading(true)
     await subjectSettingListApi
       .changeStatus(subject.subjectSettingId)
       .then((response) => {
         loadData(currentPage, filter)
       })
       .catch((error) => console.log(error))
+      .finally(() => setLoading(false))
   }
 
   const modalConfirm = (subject) => {
@@ -292,10 +299,18 @@ const SubjectSettingList = () => {
             </div>
           </div>
           <div className="col-lg-12">
-            <Table bordered dataSource={listSubjectSetting} columns={columns} pagination={false} />
+            <Table bordered dataSource={listSubjectSetting} columns={columns} pagination={false} loading={loading} />
           </div>
-          <div className="col-lg-12 d-flex justify-content-end">
-            <Pagination current={currentPage} total={totalItem} onChange={handleChangePage} />;
+          <div className="col-lg-12 d-flex justify-content-end mt-3">
+            <Pagination
+              current={currentPage}
+              total={totalItem}
+              onChange={handleChangePage}
+              showSizeChanger
+              onShowSizeChange={(current, pageSize) => {
+                ITEM_PER_PAGE = pageSize
+              }}
+            />
           </div>
         </div>
         <AdminFooter />

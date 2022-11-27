@@ -1,21 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
-import {
-  Breadcrumb,
-  Button,
-  Select,
-  Typography,
-  Cascader,
-  Table,
-  Form,
-  Popconfirm,
-  InputNumber,
-  Input,
-  Divider,
-} from 'antd'
+import { Breadcrumb, Button, Select, Typography, Cascader, Table, Form, Popconfirm, InputNumber, Input } from 'antd'
 
-import evaluationApi from '~/api/evaluationApi'
+// import evaluationApi from '~/api/evaluationApi'
 
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
@@ -57,8 +45,8 @@ const EditableCell = ({ editing, dataIndex, title, inputType, record, index, chi
 }
 
 const ClassEvaluation = () => {
-  const { id } = useParams()
-  const [loading, setLoading] = useState(false)
+  // const { id } = useParams()
+  // const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     loadData()
@@ -142,7 +130,7 @@ const ClassEvaluation = () => {
               Save
             </Typography.Link>
             <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-              <a>Cancel</a>
+              Cancel
             </Popconfirm>
           </span>
         ) : (
@@ -184,23 +172,23 @@ const ClassEvaluation = () => {
   const onChange = (value) => {
     console.log(value)
   }
-  const dropdownRender = (menus) => (
-    <div>
-      {menus}
-      <Divider
-        style={{
-          margin: 0,
-        }}
-      />
-      <div
-        style={{
-          padding: 8,
-        }}
-      >
-        The footer is not very short.
-      </div>
-    </div>
-  )
+  // const dropdownRender = (menus) => (
+  //   <div>
+  //     {menus}
+  //     <Divider
+  //       style={{
+  //         margin: 0,
+  //       }}
+  //     />
+  //     <div
+  //       style={{
+  //         padding: 8,
+  //       }}
+  //     >
+  //       The footer is not very short.
+  //     </div>
+  //   </div>
+  // )
 
   return (
     <div>

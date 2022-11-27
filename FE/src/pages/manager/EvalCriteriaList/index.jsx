@@ -207,6 +207,13 @@ const EvalCriteriaList = () => {
       render: (_, { isTeamEval }) => (isTeamEval === 1 ? 'Yes' : 'No'),
     },
     {
+      title: 'Is Workeval',
+      dataIndex: 'isWorkEval',
+      sorter: (a, b) => a.isWorkEval - b.isWorkEval,
+      width: '10%',
+      render: (_, { isWorkEval }) => (isWorkEval === 1 ? 'Yes' : 'No'),
+    },
+    {
       title: 'Actions',
       dataIndex: 'actions',
       width: '10%',

@@ -14,9 +14,8 @@ import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 
+let ITEM_PER_PAGE = 10
 const AdminSettingList = () => {
-  const ITEM_PER_PAGE = 10
-
   const navigateTo = useNavigate()
 
   const [listSetting, setListSetting] = useState([])
@@ -34,6 +33,7 @@ const AdminSettingList = () => {
     filterType: '',
     filterStatus: '',
   })
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     settingListApi.getFilter().then((response) => {
@@ -45,7 +45,8 @@ const AdminSettingList = () => {
   }, [])
 
   useEffect(() => {
-    loadData(1, filter)
+    loadData(currentPage, filter, search)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter])
 
   const loadData = async (page, filter, q = '') => {
@@ -62,11 +63,16 @@ const AdminSettingList = () => {
     if (filter.filterStatus !== '') {
       params.filterStatus = filter.filterStatus
     }
-    await settingListApi.getPage(params).then((response) => {
-      setCurrentPage(page)
-      setTotalItem(response.totalItem)
-      setListSetting(response.listResult)
-    })
+    setLoading(true)
+    await settingListApi
+      .getPage(params)
+      .then((response) => {
+        setCurrentPage(page)
+        setTotalItem(response.totalItem)
+        setListSetting(response.listResult)
+      })
+      .catch((error) => console.log(error))
+      .finally(() => setLoading(false))
   }
 
   const handleActive = async (id) => {
@@ -93,6 +99,8 @@ const AdminSettingList = () => {
     setFilter({ q: '', filterType: '', filterStatus: '' })
     setType('All Type')
     setStatus('All Status')
+    setSearch('')
+    ITEM_PER_PAGE = 10
   }
 
   const handleAdd = () => {
@@ -101,7 +109,7 @@ const AdminSettingList = () => {
 
   const handleChangePage = (pageNumber) => {
     setCurrentPage(pageNumber)
-    loadData(pageNumber, filter)
+    loadData(pageNumber, filter, search)
   }
 
   const columns = [
@@ -206,7 +214,13 @@ const AdminSettingList = () => {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
-                <CButton color="primary" type="submit" className="text-light ml-10" onClick={handleSearch}>
+                <CButton
+                  color="primary"
+                  type="submit"
+                  className="text-light ml-10"
+                  onClick={handleSearch}
+                  value={search}
+                >
                   <CIcon icon={cilSearch} />
                 </CButton>
               </div>
@@ -241,10 +255,18 @@ const AdminSettingList = () => {
             </div>
           </div>
           <div className="col-lg-12">
-            <Table bordered dataSource={listSetting} columns={columns} pagination={false} />
+            <Table bordered dataSource={listSetting} columns={columns} pagination={false} loading={loading} />
           </div>
-          <div className="col-lg-12 d-flex justify-content-end">
-            <Pagination current={currentPage} total={totalItem} onChange={handleChangePage} />;
+          <div className="col-lg-12 d-flex justify-content-end mt-3">
+            <Pagination
+              current={currentPage}
+              total={totalItem}
+              onChange={handleChangePage}
+              showSizeChanger
+              onShowSizeChange={(current, pageSize) => {
+                ITEM_PER_PAGE = pageSize
+              }}
+            />
           </div>
         </div>
         <AdminFooter />

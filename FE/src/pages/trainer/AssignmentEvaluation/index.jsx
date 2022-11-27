@@ -19,6 +19,7 @@ import {
   Popover,
   Modal,
   Upload,
+  Tooltip,
 } from 'antd'
 
 import evaluationApi from '~/api/evaluationApi'
@@ -289,15 +290,19 @@ const AssignementEvaluation = () => {
       title: 'Comments',
       dataIndex: 'comment',
       key: Math.random(),
-      width: 100,
+      width: 150,
       editable: true,
       fixed: 'left',
     },
     {
-      title: 'Bonus/ Penalty',
+      title: () => (
+        <Tooltip title="Bonus / Penalty">
+          <Typography.Text>B/P</Typography.Text>
+        </Tooltip>
+      ),
       dataIndex: 'bonusGrade',
       key: Math.random(),
-      width: 80,
+      width: 35,
       editable: true,
       fixed: 'left',
     },
@@ -305,7 +310,7 @@ const AssignementEvaluation = () => {
       title: 'WP',
       dataIndex: 'workPoint',
       key: Math.random(),
-      width: 50,
+      width: 35,
       editable: false,
       fixed: 'left',
     },
@@ -313,13 +318,17 @@ const AssignementEvaluation = () => {
       title: 'WG',
       dataIndex: 'workGrade',
       key: Math.random(),
-      width: 50,
+      width: 35,
       editable: false,
       fixed: 'left',
     },
     {
-      title: 'Mark',
-      width: 50,
+      title: () => (
+        <Tooltip title="Mark">
+          <Typography.Text>M</Typography.Text>
+        </Tooltip>
+      ),
+      width: 35,
       dataIndex: 'milestoneGrade',
       key: Math.random(),
       editable: false,
@@ -382,7 +391,9 @@ const AssignementEvaluation = () => {
       title: (_) => (
         <Space className="d-flex flex-column-reverse align-items-center justify-content-center align-content-center">
           <Typography.Text>
-            {`${item.criteriaTitle} (${item.weight}%)`}
+            <Tooltip title={`${item.criteriaTitle} (${item.weight}%)`}>
+              <Typography.Text>{`Criteria ${index + 1}`}</Typography.Text>
+            </Tooltip>
             {data.length > 0 && (
               <Popover
                 className="ml-2"
@@ -636,8 +647,6 @@ const AssignementEvaluation = () => {
       })
     })
 
-    console.log(newData)
-
     const params = {
       evalList: newData.map((item) => ({
         submitId: item.submitId,
@@ -859,6 +868,7 @@ const AssignementEvaluation = () => {
                   </div>
                 </div>
               </div>
+              {/* Table */}
               <div className="col-lg-12 m-b30 ">
                 <Form form={form} component={false}>
                   <Table

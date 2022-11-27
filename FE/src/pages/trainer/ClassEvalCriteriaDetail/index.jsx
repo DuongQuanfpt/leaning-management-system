@@ -26,6 +26,7 @@ const ClassEvalCriteriaDetail = () => {
     description: '',
     evalWeight: 0,
     isTeamEval: 0,
+    isWorkEval: 0,
     status: 0,
     milestone: '',
   })
@@ -91,6 +92,7 @@ const ClassEvalCriteriaDetail = () => {
       evalWeight: detail.evalWeight + '%',
       expectedWork: detail.expectedWork,
       isTeamEval: detail.isTeamEval,
+      isWorkEval: detail.isWorkEval,
       status: detail.status,
       description: detail.description,
     }
@@ -102,6 +104,10 @@ const ClassEvalCriteriaDetail = () => {
         setIsEditMode(false)
       })
       .catch((error) => {
+        if (error.response.data.message === 'Assignment of this eval already got eval is work eval') {
+          setError('One assignment only have one evaluation is work evaluated')
+          return
+        }
         setError('Something went wrong, please try again')
       })
   }
@@ -188,7 +194,7 @@ const ClassEvalCriteriaDetail = () => {
                         />
                       </div>
                     </div>
-                    <div className="form-group col-3">
+                    <div className="form-group col-6">
                       <label className="col-form-label">Evaluation Weight (%)</label>
                       <div>
                         <input
@@ -200,7 +206,7 @@ const ClassEvalCriteriaDetail = () => {
                         />
                       </div>
                     </div>
-                    <div className="form-group col-3">
+                    <div className="form-group col-6">
                       <label className="col-form-label">Expected Work</label>
                       <div>
                         <input
@@ -221,7 +227,7 @@ const ClassEvalCriteriaDetail = () => {
                         ></textarea> */}
                       </div>
                     </div>
-                    <div className="form-group col-3">
+                    <div className="form-group col-4">
                       <label className="col-form-label">Status</label>
                       <div>
                         <Radio.Group
@@ -234,13 +240,26 @@ const ClassEvalCriteriaDetail = () => {
                         </Radio.Group>
                       </div>
                     </div>
-                    <div className="form-group col-3">
+                    <div className="form-group col-4">
                       <label className="col-form-label">Is Team Eval</label>
                       <div>
                         <Radio.Group
                           value={detail.isTeamEval}
                           disabled={!isEditMode}
                           onChange={(e) => setDetail((prev) => ({ ...prev, isTeamEval: e.target.value }))}
+                        >
+                          <Radio value={1}>Yes</Radio>
+                          <Radio value={0}>No</Radio>
+                        </Radio.Group>
+                      </div>
+                    </div>
+                    <div className="form-group col-4">
+                      <label className="col-form-label">Is Work Eval</label>
+                      <div>
+                        <Radio.Group
+                          value={detail.isWorkEval}
+                          disabled={!isEditMode}
+                          onChange={(e) => setDetail((prev) => ({ ...prev, isWorkEval: e.target.value }))}
                         >
                           <Radio value={1}>Yes</Radio>
                           <Radio value={0}>No</Radio>

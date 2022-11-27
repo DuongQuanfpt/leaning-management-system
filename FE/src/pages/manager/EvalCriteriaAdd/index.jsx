@@ -22,6 +22,7 @@ const EvalCriteriaAdd = () => {
     description: '',
     evalWeight: 0,
     isTeamEval: 0,
+    isWorkEval: 0,
     status: 0,
   })
   const [listFilter, setListFilter] = useState({
@@ -42,6 +43,7 @@ const EvalCriteriaAdd = () => {
       description: '',
       evalWeight: 0,
       isTeamEval: 0,
+      isWorkEval: 0,
       status: 0,
     })
     setCurrentClone('Subject - Assignment - Eval Criteria')
@@ -62,6 +64,7 @@ const EvalCriteriaAdd = () => {
       description: '',
       evalWeight: '',
       isTeamEval: 0,
+      isWorkEval: 0,
       status: 0,
     })
     setError('')
@@ -129,17 +132,23 @@ const EvalCriteriaAdd = () => {
       evalWeight: detail.evalWeight + '%',
       expectedWork: detail.expectedWork,
       isTeamEval: detail.isTeamEval,
+      isWorkEval: detail.isWorkEval,
       status: detail.status,
       description: detail.description,
       assignmentId: detail?.assignment?.assignment?.assId,
       milestoneId: detail?.assignment?.milestoneId,
     }
+
     await evalCriteriaApi
       .addCriteria(params)
       .then((response) => {
         setError('You have successfully add new eval criteria detail')
       })
       .catch((error) => {
+        if (error.response.data.message === 'Assignment of this eval already got eval is work eval') {
+          setError('One assignment only have one evaluation is work evaluated')
+          return
+        }
         setError('Something went wrong, please try again')
       })
   }
@@ -311,6 +320,18 @@ const EvalCriteriaAdd = () => {
                           <Radio.Group
                             value={detail.isTeamEval}
                             onChange={(e) => setDetail((prev) => ({ ...prev, isTeamEval: e.target.value }))}
+                          >
+                            <Radio value={1}>Yes</Radio>
+                            <Radio value={0}>No</Radio>
+                          </Radio.Group>
+                        </div>
+                      </div>
+                      <div className="form-group col-4">
+                        <label className="col-form-label">Is Work Eval</label>
+                        <div>
+                          <Radio.Group
+                            value={detail.isWorkEval}
+                            onChange={(e) => setDetail((prev) => ({ ...prev, isWorkEval: e.target.value }))}
                           >
                             <Radio value={1}>Yes</Radio>
                             <Radio value={0}>No</Radio>
