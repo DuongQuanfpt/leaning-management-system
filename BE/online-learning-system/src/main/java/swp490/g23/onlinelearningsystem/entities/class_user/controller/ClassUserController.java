@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.filter.TraineeFilterDTO;
+import swp490.g23.onlinelearningsystem.entities.class_user.domain.request.ClassEvalRequestDTO;
+import swp490.g23.onlinelearningsystem.entities.class_user.domain.request.ClassEvalWrapper;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.request.TraineeRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.request.TraineeWrapper;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.response.ClassEvalPaginateDTO;
@@ -94,12 +96,21 @@ public class ClassUserController {
 			@RequestParam(name = "page", required = false) String currentPage,
 			@RequestParam(name = "limit", required = false) String requestLimit,
 			@RequestParam(name = "q", required = false) String keyword,
-			@RequestParam(name = "classCode", required = false) String classFilter,
+			@RequestParam(name = "classCode", required = true) String classFilter,
 			@RequestParam(name = "filterAssignment", required = false) String assignmentFilter,
 			@AuthenticationPrincipal User user) {
 
 		int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
 		int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
-		return classUserService.classEvalList(limit, page, keyword, assignmentFilter, user, classFilter);
+		return classUserService.classEvalList(limit, page, keyword, assignmentFilter, user.getUserId(), classFilter);
+	}
+
+	@PutMapping(value = "/class-evaluate/update-eval")
+	public ResponseEntity<String> updateEval(
+			@RequestParam(name = "classCode", required = true) String classCode,
+			@RequestBody ClassEvalWrapper wrapper) {
+
+		List<ClassEvalRequestDTO> list = wrapper.getDto();
+		return classUserService.uodateEval(list, classCode);
 	}
 }

@@ -27,30 +27,31 @@ public class ClassEvalCriteria {
             roles.add(setting.getSettingValue());
         }
         StringBuilder query = new StringBuilder(
-                "SELECT u FROM ClassUser u JOIN u.classes as c JOIN c.userTrainer as t JOIN c.user as s JOIN u.milestoneEvals as m WHERE c.code = '"
+                "SELECT u FROM ClassUser u WHERE u.classes.code = '"
                         + classCode + "'");
 
         if (roles.contains("ROLE_TRAINER") && roles.contains("ROLE_ TRAINEE")) {
-            query.append(" AND t.accountName = '" + user.getAccountName() + "' OR s.accountName = '"
-                    + user.getAccountName() + "'");
+            query.append(
+                    " AND u.classes.userTrainer.accountName = '" + user.getAccountName() + "' OR u.user.accountName = '"
+                            + user.getAccountName() + "'");
         } else {
             if (roles.contains("ROLE_TRAINER")) {
-                query.append(" AND t.accountName = '" + user.getAccountName() + "'");
+                query.append(" AND u.classes.userTrainer.accountName = '" + user.getAccountName() + "'");
             }
             if (roles.contains("ROLE_TRAINEE")) {
-                query.append(" AND s.accountName = '" + user.getAccountName() + "'");
+                query.append(" AND u.user.accountName = '" + user.getAccountName() + "'");
             }
         }
 
         if (keyword != null) {
-            query.append(" AND (s.accountName LIKE '%" + keyword + "%')");
+            query.append(" AND (u.user.accountName LIKE '%" + keyword + "%')");
         }
 
         if (filterAssignment != null) {
             query.append(" AND m.milestone.milestoneId = '" + filterAssignment + "'");
         }
 
-        query.append(" ORDER BY s.fullName ASC");
+        query.append(" ORDER BY u.user.fullName ASC");
         TypedQuery<ClassUser> typedQuery = em.createQuery(query.toString(), ClassUser.class);
         System.out.println(query.toString());
         return typedQuery;
