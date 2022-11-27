@@ -14,9 +14,8 @@ import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 
 import userListApi from '~/api/userListApi'
 
+let ITEM_PER_PAGE = 10
 const AdminUserList = () => {
-  let ITEM_PER_PAGE = 10
-
   const navigateTo = useNavigate()
 
   const [listUser, setListUser] = useState([])
@@ -44,7 +43,7 @@ const AdminUserList = () => {
   }, [])
 
   useEffect(() => {
-    loadData(1, filter)
+    loadData(currentPage, filter)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter])
 
@@ -102,6 +101,7 @@ const AdminUserList = () => {
     setRole('All Roles')
     setStatus('All Status')
     setFilter({ q: '', filterRole: '', filterStatus: '' })
+    ITEM_PER_PAGE = 10
   }
 
   const handleAdd = () => {
@@ -110,7 +110,7 @@ const AdminUserList = () => {
 
   const handleChangePage = (pageNumber) => {
     setCurrentPage(pageNumber)
-    loadData(pageNumber, filter)
+    loadData(pageNumber, filter, search)
   }
 
   const modalConfirm = (user) => {

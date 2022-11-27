@@ -16,7 +16,7 @@ import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 
 const ClassList = () => {
-  const ITEM_PER_PAGE = 10
+  let ITEM_PER_PAGE = 10
   const navigateTo = useNavigate()
   const { roles, currentClass } = useSelector((state) => state.profile)
 
@@ -50,6 +50,7 @@ const ClassList = () => {
     isSupporter: false,
     isTrainer: false,
   })
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     classListApi.getFilter().then((response) => {
@@ -76,7 +77,7 @@ const ClassList = () => {
   }, [])
 
   useEffect(() => {
-    loadData(1, filter)
+    loadData(currentPage, filter)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, currentClass])
 
@@ -104,20 +105,27 @@ const ClassList = () => {
     if (filter.filterStatus !== '') {
       params.filterStatus = filter.filterStatus
     }
-    await classListApi.getPage(params).then((response) => {
-      setCurrentPage(page)
-      setTotalItem(response.totalItem)
-      setListClass(response.listResult)
-    })
+    setLoading(true)
+    await classListApi
+      .getPage(params)
+      .then((response) => {
+        setCurrentPage(page)
+        setTotalItem(response.totalItem)
+        setListClass(response.listResult)
+      })
+      .catch((error) => console.log(error))
+      .finally(() => setLoading(false))
   }
 
   const handleActive = async (id) => {
+    setLoading(true)
     await classListApi
       .changeActive(id)
       .then((response) => {
         loadData(currentPage, filter)
       })
       .catch((error) => console.log(error))
+      .finally(() => setLoading(false))
   }
 
   const handleFilterTerm = (term) => {
@@ -159,6 +167,7 @@ const ClassList = () => {
     setSupporter('All Supporter')
     setStatus('All Status')
     setSearch('')
+    ITEM_PER_PAGE = 10
   }
 
   const handleAdd = () => {
@@ -357,10 +366,19 @@ const ClassList = () => {
             </div>
           </div>
           <div className="col-lg-12">
-            <Table bordered dataSource={listClass} columns={columns} pagination={false} />
+            <Table bordered dataSource={listClass} columns={columns} pagination={false} loading={loading} />
           </div>
-          <div className="col-lg-12 d-flex justify-content-end">
-            <Pagination current={currentPage} total={totalItem} onChange={handleChangePage} />;
+          <div className="col-lg-12 d-flex justify-content-end mt-3">
+            <Pagination
+              current={currentPage}
+              total={totalItem}
+              onChange={handleChangePage}
+              showSizeChanger
+              onShowSizeChange={(current, pageSize) => {
+                ITEM_PER_PAGE = pageSize
+              }}
+            />
+            ;
           </div>
         </div>
         <AdminFooter />

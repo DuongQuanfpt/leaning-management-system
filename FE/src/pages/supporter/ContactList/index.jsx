@@ -13,9 +13,8 @@ import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 import webContactApi from '~/api/webContactApi'
 
+let ITEM_PER_PAGE = 10
 const ContactList = () => {
-  const ITEM_PER_PAGE = 10
-
   const navigateTo = useNavigate()
 
   const [listContact, setListContact] = useState([])
@@ -36,10 +35,11 @@ const ContactList = () => {
     filterCategory: '',
     filterStatus: '',
   })
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     webContactApi
-      .getPage(1)
+      .getPage({ page: 1 })
       .then((response) => {
         setListSupporter(response.suppFilter)
         setListCategory(response.contactFilter)
@@ -50,10 +50,12 @@ const ContactList = () => {
   }, [])
 
   useEffect(() => {
-    loadData(1, filter)
+    loadData(currentPage, filter, search)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter])
 
   const loadData = async (page, filter, q = '') => {
+    setLoading(true)
     const params = {
       page: page,
       limit: ITEM_PER_PAGE,
@@ -77,9 +79,10 @@ const ContactList = () => {
       .then((response) => {
         console.log(response)
         setListContact(response.listResult)
-        setTotalItem(response.totalPage)
+        setTotalItem(response.totalItem)
       })
       .catch((error) => console.log(error))
+      .finally(() => setLoading(false))
   }
 
   const handleSearch = () => {
@@ -104,9 +107,11 @@ const ContactList = () => {
     setCategory('All Category')
     setStatus('All Status')
     setFilter({ q: '', filterType: '', filterStatus: '' })
+    ITEM_PER_PAGE = 10
   }
   const handleChangePage = (pageNumber) => {
-    loadData(pageNumber, filter)
+    setCurrentPage(pageNumber)
+    loadData(pageNumber, filter, search)
   }
 
   const columns = [
@@ -236,10 +241,18 @@ const ContactList = () => {
             </div>
           </div>
           <div className="col-lg-12">
-            <Table bordered dataSource={listContact} columns={columns} pagination={false} />
+            <Table bordered dataSource={listContact} columns={columns} pagination={false} loading={loading} />
           </div>
-          <div className="col-lg-12 d-flex justify-content-end">
-            <Pagination defaultCurrent={currentPage} total={totalItem} onChange={handleChangePage} />;
+          <div className="col-lg-12 d-flex justify-content-end mt-3">
+            <Pagination
+              defaultCurrent={currentPage}
+              total={totalItem}
+              onChange={handleChangePage}
+              showSizeChanger
+              onShowSizeChange={(current, pageSize) => {
+                ITEM_PER_PAGE = pageSize
+              }}
+            />
           </div>
         </div>
         <AdminFooter />

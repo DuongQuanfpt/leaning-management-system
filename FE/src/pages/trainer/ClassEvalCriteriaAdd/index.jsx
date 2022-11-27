@@ -12,8 +12,10 @@ import ErrorMsg from '~/components/Common/ErrorMsg'
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
+import { useSelector } from 'react-redux'
 
 const ClassEvalCriteriaAdd = () => {
+  const { currentClass } = useSelector((state) => state.profile)
   const [detail, setDetail] = useState({
     milestone: 'Select Milestone',
     criteriaName: '',
@@ -22,6 +24,7 @@ const ClassEvalCriteriaAdd = () => {
     description: '',
     evalWeight: 0,
     isTeamEval: 0,
+    isWorkEval: 0,
     status: 0,
   })
   const [listFilter, setListFilter] = useState({
@@ -36,6 +39,7 @@ const ClassEvalCriteriaAdd = () => {
 
   useEffect(() => {
     loadData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -52,15 +56,19 @@ const ClassEvalCriteriaAdd = () => {
       description: '',
       evalWeight: '',
       isTeamEval: 0,
+      isWorkEval: 0,
       status: 0,
     })
     setError('')
-  }, [mode])
+    loadData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode, currentClass])
 
   const loadData = async () => {
     await classEvalCriteriaApi
-      .getPage()
+      .getPage({ filterClass: currentClass })
       .then((response) => {
+        console.log(response)
         setListEval(response.listResult)
       })
       .catch((error) => {
@@ -68,7 +76,7 @@ const ClassEvalCriteriaAdd = () => {
       })
 
     await classEvalCriteriaApi
-      .getFilter()
+      .getFilter({ classCode: currentClass })
       .then((response) => {
         setListFilter((prev) => ({
           ...prev,
@@ -123,6 +131,7 @@ const ClassEvalCriteriaAdd = () => {
       evalWeight: detail.evalWeight + '%',
       expectedWork: detail.expectedWork,
       isTeamEval: detail.isTeamEval,
+      isWorkEval: detail.isWorkEval,
       status: detail.status,
       description: detail.description,
     }
@@ -132,7 +141,11 @@ const ClassEvalCriteriaAdd = () => {
       .then(() => {
         setError('You have successfully add new eval criteria detail')
       })
-      .catch(() => {
+      .catch((error) => {
+        if (error.response.data.message === 'Assignment of this eval already got eval is work eval') {
+          setError('One assignment only have one evaluation is work evaluated')
+          return
+        }
         setError('Something went wrong, please try again')
       })
   }
@@ -206,22 +219,24 @@ const ClassEvalCriteriaAdd = () => {
                             {listEval?.map((item) => (
                               <CDropdownItem
                                 onClick={() => {
+                                  console.log(item)
                                   setCurrentClone(
-                                    `${item.subjectName} - ${item.milestone} - ${item.assignment.title} - ${item.criteriaName}`,
+                                    `${item.subjectName} - ${item.milestone.milestoneTitle} - ${item.assignment.title} - ${item.criteriaName}`,
                                   )
                                   setDetail((prev) => ({
                                     ...prev,
                                     ...item,
                                     milestone: {
-                                      title: item.milestone,
-                                      milestoneId: item.milestoneId,
+                                      title: item.milestone.milestoneTitle,
+                                      milestoneId: item.milestone.milestoneId,
                                     },
                                     evalWeight: Number(item.evalWeight),
                                     status: item.status === 'Active' ? 1 : 0,
                                   }))
                                 }}
                               >
-                                {item.subjectName} - {item.milestone} - {item.assignment.title} - {item.criteriaName}
+                                {item.subjectName} - {item.milestone.milestoneTitle} - {item.assignment.title} -{' '}
+                                {item.criteriaName}
                               </CDropdownItem>
                             ))}
                           </CDropdownMenu>
@@ -237,6 +252,7 @@ const ClassEvalCriteriaAdd = () => {
                             {listFilter?.milestoneFilter?.map((milestone) => (
                               <CDropdownItem
                                 onClick={() => {
+                                  console.log(detail)
                                   setDetail((prev) => ({
                                     ...prev,
                                     milestone: milestone,
@@ -252,7 +268,7 @@ const ClassEvalCriteriaAdd = () => {
                       </div>
                     </div>
 
-                    <div className="form-group col-12">
+                    <div className="form-group col-6">
                       <label className="col-form-label">Assignment</label>
                       <div>
                         <input
@@ -264,7 +280,7 @@ const ClassEvalCriteriaAdd = () => {
                       </div>
                     </div>
 
-                    <div className="form-group col-4">
+                    <div className="form-group col-6">
                       <label className="col-form-label">Eval Criteria Name</label>
                       <div>
                         <input
@@ -275,7 +291,7 @@ const ClassEvalCriteriaAdd = () => {
                         />
                       </div>
                     </div>
-                    <div className="form-group col-4">
+                    <div className="form-group col-6">
                       <label className="col-form-label">Evaluation Weight (%)</label>
                       <div>
                         <input
@@ -286,7 +302,7 @@ const ClassEvalCriteriaAdd = () => {
                         />
                       </div>
                     </div>
-                    <div className="form-group col-4">
+                    <div className="form-group col-6">
                       <label className="col-form-label">Expected Work</label>
                       <div>
                         <input
@@ -323,6 +339,18 @@ const ClassEvalCriteriaAdd = () => {
                         <Radio.Group
                           value={detail.isTeamEval}
                           onChange={(e) => setDetail((prev) => ({ ...prev, isTeamEval: e.target.value }))}
+                        >
+                          <Radio value={1}>Yes</Radio>
+                          <Radio value={0}>No</Radio>
+                        </Radio.Group>
+                      </div>
+                    </div>
+                    <div className="form-group col-4">
+                      <label className="col-form-label">Is Work Eval</label>
+                      <div>
+                        <Radio.Group
+                          value={detail.isWorkEval}
+                          onChange={(e) => setDetail((prev) => ({ ...prev, isWorkEval: e.target.value }))}
                         >
                           <Radio value={1}>Yes</Radio>
                           <Radio value={0}>No</Radio>

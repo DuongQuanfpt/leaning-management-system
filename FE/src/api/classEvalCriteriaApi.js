@@ -27,9 +27,9 @@ const classEvalCriteriaApi = {
     return axiosClient.put(url, params, header)
   },
 
-  getFilter: () => {
+  getFilter: (params) => {
     const url = `/api/class-criteria-filter`
-    return axiosClient.get(url, header)
+    return axiosClient.get(url, { ...header, params })
   },
 
   addClassCriteria: (params) => {

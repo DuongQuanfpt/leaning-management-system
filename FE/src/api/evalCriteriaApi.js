@@ -32,6 +32,11 @@ const evalCriteriaApi = {
     return axiosClient.get(url, header)
   },
 
+  getFilterWithClass: (params) => {
+    const url = `/api/criteria-filter`
+    return axiosClient.get(url, { ...header, params })
+  },
+
   addCriteria: (params) => {
     const url = `/api/criteria-add`
     return axiosClient.post(url, params, header)

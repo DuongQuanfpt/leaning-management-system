@@ -1,10 +1,10 @@
 import axiosClient from './axiosClient'
 
-const currentAccessToken = JSON.parse(JSON.parse(localStorage.getItem('persist:LMS')).auth).token
+// const currentAccessToken = JSON.parse(JSON.parse(localStorage.getItem('persist:LMS')).auth).token
 
-const header = {
-  headers: { Authorization: `Bearer ${currentAccessToken}` },
-}
+// const header = {
+//   headers: { Authorization: `Bearer ${currentAccessToken}` },
+// }
 
 const postApi = {
   getListPost: (params) => {

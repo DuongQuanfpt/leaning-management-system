@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react'
+/* eslint-disable array-callback-return */
+import React, { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { utils, writeFileXLSX, read } from 'xlsx'
@@ -18,6 +19,7 @@ import {
   Popover,
   Modal,
   Upload,
+  Tooltip,
 } from 'antd'
 
 import evaluationApi from '~/api/evaluationApi'
@@ -288,15 +290,19 @@ const AssignementEvaluation = () => {
       title: 'Comments',
       dataIndex: 'comment',
       key: Math.random(),
-      width: 100,
+      width: 150,
       editable: true,
       fixed: 'left',
     },
     {
-      title: 'Bonus/ Penalty',
+      title: () => (
+        <Tooltip title="Bonus / Penalty">
+          <Typography.Text>B/P</Typography.Text>
+        </Tooltip>
+      ),
       dataIndex: 'bonusGrade',
       key: Math.random(),
-      width: 80,
+      width: 35,
       editable: true,
       fixed: 'left',
     },
@@ -304,7 +310,7 @@ const AssignementEvaluation = () => {
       title: 'WP',
       dataIndex: 'workPoint',
       key: Math.random(),
-      width: 50,
+      width: 35,
       editable: false,
       fixed: 'left',
     },
@@ -312,13 +318,17 @@ const AssignementEvaluation = () => {
       title: 'WG',
       dataIndex: 'workGrade',
       key: Math.random(),
-      width: 50,
+      width: 35,
       editable: false,
       fixed: 'left',
     },
     {
-      title: 'Mark',
-      width: 50,
+      title: () => (
+        <Tooltip title="Mark">
+          <Typography.Text>M</Typography.Text>
+        </Tooltip>
+      ),
+      width: 35,
       dataIndex: 'milestoneGrade',
       key: Math.random(),
       editable: false,
@@ -381,7 +391,9 @@ const AssignementEvaluation = () => {
       title: (_) => (
         <Space className="d-flex flex-column-reverse align-items-center justify-content-center align-content-center">
           <Typography.Text>
-            {`${item.criteriaTitle} (${item.weight}%)`}
+            <Tooltip title={`${item.criteriaTitle} (${item.weight}%)`}>
+              <Typography.Text>{`Criteria ${index + 1}`}</Typography.Text>
+            </Tooltip>
             {data.length > 0 && (
               <Popover
                 className="ml-2"
@@ -567,36 +579,112 @@ const AssignementEvaluation = () => {
   }
 
   const handleDownloadtemplateFile = () => {
-    console.log(data)
-    console.log(evalSelected)
-    return
-
-    const listExport = [
-      ...data.map((evaluation) => ({
-        'Group Name': '',
-        Email: evaluation.email,
-        Fullname: evaluation.fullName,
-        Username: evaluation.username,
-        'Is Leader': '',
-      })),
-    ]
-
     try {
-      const listExport = []
+      const listExport = [
+        ...data.map((evaluation) => ({
+          UserName: evaluation.userName,
+          FullName: evaluation.fullName,
+          Evaluation: evaluation.criteriaPoints.filter((item) => item.criteriaId === evalSelected.criteriaId)[0]?.grade,
+          Comment: evaluation.criteriaPoints.filter((item) => item.criteriaId === evalSelected.criteriaId)[0]?.comment,
+        })),
+      ]
       const ws = utils.json_to_sheet(listExport)
       const wb = utils.book_new()
-      utils.sheet_add_aoa(ws, [['Fullname', 'Email']], { origin: 'A1' })
-      var wscols = [{ wch: 20 }, { wch: 20 }]
+      utils.sheet_add_aoa(ws, [['UserName', 'FullName', 'Evaluation', 'Comment']], { origin: 'A1' })
+      var wscols = [{ wch: 20 }, { wch: 20 }, { wch: 20 }, { wch: 20 }]
       ws['!cols'] = wscols
       utils.book_append_sheet(wb, ws, 'Data')
-      writeFileXLSX(wb, 'TraineeImportTemplate.xlsx')
+      writeFileXLSX(wb, 'EvaluationData.xlsx')
       toastMessage('success', 'Download Template Successfully')
     } catch {
       toastMessage('error', 'Download Template Failed, try again later')
     }
   }
 
-  const handleReadFile = () => {}
+  const handleImportEval = async () => {
+    console.log(evalSelected)
+    console.log(listImported)
+    console.log(data)
+    //Check length of data is modified
+    if (listImported.length === 0) {
+      toastMessage('error', 'File uploaded must not empty, follow the template please')
+      return
+    }
+    //Check Eval mark is number and must between 0 and 10
+    listImported.every((item) => {
+      if (isNaN(item.Evaluation)) {
+        return toastMessage('error', 'Evaluation Mark must a number')
+      }
+      if (item.Evaluation < 0 || item.Evaluation > 10) {
+        return toastMessage('error', 'Evaluation Mark must between 0 and 10')
+      }
+    })
+    //Check length data is modified
+    if (data.length !== listImported.length) {
+      toastMessage('error', 'Number of student is modified, follow the template please')
+      return
+    }
+    //Check username and fullname data is modified
+    data.every((item, index) => {
+      if (item.userName !== listImported[index].UserName) {
+        toastMessage('error', 'Username of student is modified, follow the template please')
+        return
+      }
+      if (item.fullName !== listImported[index].FullName) {
+        toastMessage('error', 'FullName of student is modified, follow the template please')
+        return
+      }
+    })
+
+    const newData = [...data]
+
+    newData.forEach((item, index) => {
+      item.criteriaPoints.forEach((item2) => {
+        if (item2.criteriaId === evalSelected.criteriaId) {
+          item2.grade = listImported[index].Evaluation
+          item2.comment = listImported[index].Comment
+        }
+      })
+    })
+
+    const params = {
+      evalList: newData.map((item) => ({
+        submitId: item.submitId,
+        comment: item.comment,
+        bonus: item.bonusGrade,
+        grade: (
+          item.criteriaPoints.reduce((a, b) => a + (b.weight * +b.grade) / 100, 0) +
+          (item.workGrade * item.workWeight) / 100 +
+          item.bonusGrade
+        ).toFixed(2),
+        workGrade: item.workGrade,
+        workPoint: item.workPoint,
+        workCriteriaId: item.workCriteriaId,
+        criteria: item.criteriaPoints.map((item) => ({
+          criteriaId: item.criteriaId,
+          grade: item.grade,
+          comment: item.comment,
+        })),
+      })),
+    }
+
+    await evaluationApi
+      .editAssignment(filter?.milestone?.value, params)
+      .then((response) => {
+        console.log(response)
+        toastMessage('success', 'Import Evaluation successfully!')
+      })
+      .catch((error) => {
+        console.log(error)
+        toastMessage('error', 'Import Evaluation failed, try again later')
+      })
+      .finally(() => {
+        setCopyMode(false)
+        setRowSelected([])
+        loadData()
+        setOpen((prev) => ({ ...prev, import: false }))
+      })
+  }
 
   const props = {
     name: 'file',
@@ -638,11 +726,12 @@ const AssignementEvaluation = () => {
         })
 
         readFile.then((data) => {
-          console.log(data)
           setListImported(data)
-          handleReadFile()
         })
       }
+    },
+    onRemove(e) {
+      setListImported([])
     },
   }
 
@@ -779,6 +868,7 @@ const AssignementEvaluation = () => {
                   </div>
                 </div>
               </div>
+              {/* Table */}
               <div className="col-lg-12 m-b30 ">
                 <Form form={form} component={false}>
                   <Table
@@ -820,8 +910,7 @@ const AssignementEvaluation = () => {
                 style={{ left: '30px' }}
                 open={open.import}
                 onOk={async () => {
-                  console.log(evalSelected)
-                  // handleImportEval()
+                  handleImportEval()
                 }}
                 onCancel={() => setOpen((prev) => ({ ...prev, import: false }))}
               >
