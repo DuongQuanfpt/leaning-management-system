@@ -153,6 +153,13 @@ public class MilestoneEvalService implements IMilestoneEvalService {
 
         Milestone milestone = listResult.get(0).getMilestone();
         paginateDTO.setWorkEval(false);
+
+        if(milestone.getStatus() == MilestoneStatusEnum.Closed){
+            paginateDTO.setEditable(false);
+        } else {
+            paginateDTO.setEditable(true);
+        }
+
         for (EvalCriteria criteria : milestone.getCriteriaList()) {
             if (criteria.isWorkEval() == true && criteria.getStatus() == Status.Active) {
                 paginateDTO.setWorkEval(true);
