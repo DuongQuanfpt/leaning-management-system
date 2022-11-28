@@ -20,7 +20,7 @@ import swp490.g23.onlinelearningsystem.entities.BaseEntity;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
 import swp490.g23.onlinelearningsystem.entities.work_eval.domain.WorkEval;
-import swp490.g23.onlinelearningsystem.util.enumutil.Status;
+import swp490.g23.onlinelearningsystem.enums.Status;
 
 @Entity
 @Table(name = "subject_setting")

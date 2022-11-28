@@ -16,7 +16,7 @@ import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.BaseEntity;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
-import swp490.g23.onlinelearningsystem.util.enumutil.Status;
+import swp490.g23.onlinelearningsystem.enums.Status;
 
 @Entity
 @Table(name = "post_tbl")

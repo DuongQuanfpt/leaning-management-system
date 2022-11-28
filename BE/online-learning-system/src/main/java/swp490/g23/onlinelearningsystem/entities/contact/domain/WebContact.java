@@ -16,7 +16,7 @@ import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.BaseEntity;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
-import swp490.g23.onlinelearningsystem.util.enumutil.ContactStatus;
+import swp490.g23.onlinelearningsystem.enums.ContactStatus;
 
 @Entity
 @Table(name = "web_contact")

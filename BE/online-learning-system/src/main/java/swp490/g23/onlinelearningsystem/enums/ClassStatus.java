@@ -1,4 +1,4 @@
-package swp490.g23.onlinelearningsystem.util.enumutil;
+package swp490.g23.onlinelearningsystem.enums;
 
 import java.util.Arrays;
 import java.util.Optional;

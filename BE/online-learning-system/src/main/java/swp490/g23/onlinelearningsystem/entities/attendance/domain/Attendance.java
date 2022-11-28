@@ -17,7 +17,7 @@ import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.BaseEntity;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.ClassUser;
 import swp490.g23.onlinelearningsystem.entities.schedule.domain.Schedule;
-import swp490.g23.onlinelearningsystem.util.enumutil.AttendanceStatus;
+import swp490.g23.onlinelearningsystem.enums.AttendanceStatus;
 
 @Entity
 @Getter

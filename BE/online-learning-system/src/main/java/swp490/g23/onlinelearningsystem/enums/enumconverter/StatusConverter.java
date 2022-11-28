@@ -1,11 +1,11 @@
-package swp490.g23.onlinelearningsystem.util.enumutil.enumconverter;
+package swp490.g23.onlinelearningsystem.enums.enumconverter;
 
 import java.util.stream.Stream;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-import swp490.g23.onlinelearningsystem.util.enumutil.Status;
+import swp490.g23.onlinelearningsystem.enums.Status;
 
 @Converter(autoApply = true)
 public class StatusConverter implements AttributeConverter<Status,String> {

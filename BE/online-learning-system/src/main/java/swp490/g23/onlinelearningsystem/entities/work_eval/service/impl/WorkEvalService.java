@@ -30,9 +30,9 @@ import swp490.g23.onlinelearningsystem.entities.work_eval.repositories.WorkEvalR
 import swp490.g23.onlinelearningsystem.entities.work_eval.service.IWorkEvalService;
 import swp490.g23.onlinelearningsystem.entities.work_update.domain.WorkUpdate;
 import swp490.g23.onlinelearningsystem.entities.work_update.repositories.WorkUpdateRepository;
+import swp490.g23.onlinelearningsystem.enums.SubmitStatusEnum;
+import swp490.g23.onlinelearningsystem.enums.SubmitWorkStatusEnum;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
-import swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum;
-import swp490.g23.onlinelearningsystem.util.enumutil.SubmitWorkStatusEnum;
 
 @Service
 public class WorkEvalService implements IWorkEvalService {

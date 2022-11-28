@@ -45,9 +45,9 @@ import swp490.g23.onlinelearningsystem.entities.submit_work.domain.SubmitWork;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.entities.work_eval.domain.WorkEval;
+import swp490.g23.onlinelearningsystem.enums.MilestoneStatusEnum;
+import swp490.g23.onlinelearningsystem.enums.Status;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
-import swp490.g23.onlinelearningsystem.util.enumutil.MilestoneStatusEnum;
-import swp490.g23.onlinelearningsystem.util.enumutil.Status;
 
 @Service
 public class MilestoneEvalService implements IMilestoneEvalService {

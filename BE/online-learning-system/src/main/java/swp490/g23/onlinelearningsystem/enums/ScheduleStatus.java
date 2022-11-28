@@ -1,4 +1,4 @@
-package swp490.g23.onlinelearningsystem.util.enumutil;
+package swp490.g23.onlinelearningsystem.enums;
 
 public enum ScheduleStatus {
     Inactive(false), Active(true), Attendance_taken(null);

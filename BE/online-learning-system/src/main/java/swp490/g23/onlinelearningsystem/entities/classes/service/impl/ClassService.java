@@ -25,9 +25,9 @@ import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
 import swp490.g23.onlinelearningsystem.entities.subject.repositories.SubjecRepository;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
+import swp490.g23.onlinelearningsystem.enums.ClassStatus;
+import swp490.g23.onlinelearningsystem.enums.enumentities.ClassStatusEntity;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
-import swp490.g23.onlinelearningsystem.util.enumutil.ClassStatus;
-import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.ClassStatusEntity;
 
 @Service
 public class ClassService implements IClassService {

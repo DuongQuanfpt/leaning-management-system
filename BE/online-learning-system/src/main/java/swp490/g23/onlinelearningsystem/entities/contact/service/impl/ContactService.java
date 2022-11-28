@@ -23,9 +23,9 @@ import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
+import swp490.g23.onlinelearningsystem.enums.ContactStatus;
+import swp490.g23.onlinelearningsystem.enums.enumentities.ContactStatusEntity;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
-import swp490.g23.onlinelearningsystem.util.enumutil.ContactStatus;
-import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.ContactStatusEntity;
 
 @Service
 public class ContactService implements IContactService {

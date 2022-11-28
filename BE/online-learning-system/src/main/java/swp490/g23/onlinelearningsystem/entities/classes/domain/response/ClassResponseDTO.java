@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import swp490.g23.onlinelearningsystem.util.enumutil.ClassStatus;
+import swp490.g23.onlinelearningsystem.enums.ClassStatus;
 
 @Getter
 @Setter

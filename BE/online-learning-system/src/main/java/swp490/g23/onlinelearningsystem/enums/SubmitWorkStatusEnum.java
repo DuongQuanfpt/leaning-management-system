@@ -1,4 +1,4 @@
-package swp490.g23.onlinelearningsystem.util.enumutil;
+package swp490.g23.onlinelearningsystem.enums;
 
 public enum SubmitWorkStatusEnum {
     Rejected(false), Evaluated(true), Submitted(null);

@@ -42,14 +42,14 @@ import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.SubmitRepository;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
+import swp490.g23.onlinelearningsystem.enums.MemberStatusEnum;
+import swp490.g23.onlinelearningsystem.enums.MilestoneStatusEnum;
+import swp490.g23.onlinelearningsystem.enums.Status;
+import swp490.g23.onlinelearningsystem.enums.SubmitStatusEnum;
+import swp490.g23.onlinelearningsystem.enums.TraineeStatus;
+import swp490.g23.onlinelearningsystem.enums.enumentities.MemberStatusEntity;
+import swp490.g23.onlinelearningsystem.enums.enumentities.StatusEntity;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
-import swp490.g23.onlinelearningsystem.util.enumutil.MemberStatusEnum;
-import swp490.g23.onlinelearningsystem.util.enumutil.MilestoneStatusEnum;
-import swp490.g23.onlinelearningsystem.util.enumutil.Status;
-import swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum;
-import swp490.g23.onlinelearningsystem.util.enumutil.TraineeStatus;
-import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.MemberStatusEntity;
-import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
 
 @Service
 public class GroupService implements IGroupService {

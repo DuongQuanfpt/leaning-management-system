@@ -21,7 +21,7 @@ import swp490.g23.onlinelearningsystem.entities.attendance.domain.Attendance;
 import swp490.g23.onlinelearningsystem.entities.class_setting.domain.ClassSetting;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
-import swp490.g23.onlinelearningsystem.util.enumutil.ScheduleStatus;
+import swp490.g23.onlinelearningsystem.enums.ScheduleStatus;
 
 @Entity
 @Getter

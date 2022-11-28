@@ -1,4 +1,4 @@
-package swp490.g23.onlinelearningsystem.util.enumutil;
+package swp490.g23.onlinelearningsystem.enums;
 
 public enum MilestoneStatusEnum {
     Open(false), In_Progress(true), Closed(null);

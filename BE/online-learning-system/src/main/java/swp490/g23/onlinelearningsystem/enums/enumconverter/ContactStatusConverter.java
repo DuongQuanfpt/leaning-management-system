@@ -1,4 +1,4 @@
-package swp490.g23.onlinelearningsystem.util.enumutil.enumconverter;
+package swp490.g23.onlinelearningsystem.enums.enumconverter;
 
 import java.util.stream.Stream;
 
@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-import swp490.g23.onlinelearningsystem.util.enumutil.ContactStatus;
+import swp490.g23.onlinelearningsystem.enums.ContactStatus;
 
 @Converter(autoApply = true)
 public class ContactStatusConverter implements AttributeConverter<ContactStatus,String>{

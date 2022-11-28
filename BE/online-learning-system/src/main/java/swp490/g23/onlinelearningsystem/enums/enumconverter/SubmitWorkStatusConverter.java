@@ -1,9 +1,9 @@
-package swp490.g23.onlinelearningsystem.util.enumutil.enumconverter;
+package swp490.g23.onlinelearningsystem.enums.enumconverter;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-import swp490.g23.onlinelearningsystem.util.enumutil.SubmitWorkStatusEnum;
+import swp490.g23.onlinelearningsystem.enums.SubmitWorkStatusEnum;
 
 @Converter(autoApply = true)
 public class SubmitWorkStatusConverter implements AttributeConverter<SubmitWorkStatusEnum, Boolean>{

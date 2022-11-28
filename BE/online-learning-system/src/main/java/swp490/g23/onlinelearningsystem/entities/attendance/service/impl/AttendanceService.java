@@ -35,9 +35,9 @@ import swp490.g23.onlinelearningsystem.entities.schedule.domain.Schedule;
 import swp490.g23.onlinelearningsystem.entities.schedule.repositories.ScheduleRepositories;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
+import swp490.g23.onlinelearningsystem.enums.AttendanceStatus;
+import swp490.g23.onlinelearningsystem.enums.ScheduleStatus;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
-import swp490.g23.onlinelearningsystem.util.enumutil.AttendanceStatus;
-import swp490.g23.onlinelearningsystem.util.enumutil.ScheduleStatus;
 
 @Service
 @Configuration

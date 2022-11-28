@@ -1,9 +1,9 @@
-package swp490.g23.onlinelearningsystem.util.enumutil.enumconverter;
+package swp490.g23.onlinelearningsystem.enums.enumconverter;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-import swp490.g23.onlinelearningsystem.util.enumutil.MilestoneStatusEnum;
+import swp490.g23.onlinelearningsystem.enums.MilestoneStatusEnum;
 
 @Converter(autoApply = true)
 public class MilestoneStatusConverter implements AttributeConverter<MilestoneStatusEnum,Boolean> {

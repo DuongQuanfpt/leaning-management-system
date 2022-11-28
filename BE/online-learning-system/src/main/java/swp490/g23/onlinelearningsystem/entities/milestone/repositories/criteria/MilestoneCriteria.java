@@ -13,7 +13,7 @@ import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
 import swp490.g23.onlinelearningsystem.entities.milestone.repositories.criteria_entity.MilestoneQuery;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
-import swp490.g23.onlinelearningsystem.util.enumutil.MilestoneStatusEnum;
+import swp490.g23.onlinelearningsystem.enums.MilestoneStatusEnum;
 
 @Repository
 @RequiredArgsConstructor
@@ -47,9 +47,9 @@ public class MilestoneCriteria {
             } else {
                 String statusValue;
                 if (statusEnum.getValue() == true) {
-                    statusValue = "swp490.g23.onlinelearningsystem.util.enumutil.MilestoneStatusEnum.In_Progress";
+                    statusValue = "swp490.g23.onlinelearningsystem.enums.MilestoneStatusEnum.In_Progress";
                 } else {
-                    statusValue = "swp490.g23.onlinelearningsystem.util.enumutil.MilestoneStatusEnum.Open";
+                    statusValue = "swp490.g23.onlinelearningsystem.enums.MilestoneStatusEnum.Open";
                 }
                 query.append(" AND m.status = " + statusValue + " ");
             }

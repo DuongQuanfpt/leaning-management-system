@@ -13,7 +13,7 @@ import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.criteria_entity.SubmitQuery;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
-import swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum;
+import swp490.g23.onlinelearningsystem.enums.SubmitStatusEnum;
 
 @Repository
 @RequiredArgsConstructor
@@ -32,20 +32,7 @@ public class SubmitCriteria {
                 "SELECT s FROM Submit s LEFT JOIN s.group.groupMembers as m WHERE s.classUser.classes.code = '"
                         + classCode + "' "
                         + " AND (m.member = s.classUser.user OR s.group IS NULL ) "
-                        + " AND (s.milestone.status = swp490.g23.onlinelearningsystem.util.enumutil.MilestoneStatusEnum.In_Progress OR s.milestone.status IS NULL )");
-
-        // StringBuilder query = new StringBuilder(
-        // "SELECT s FROM Submit s WHERE s.classUser.classes.code = '" + classCode
-        // + "' AND (s.milestone.status =
-        // swp490.g23.onlinelearningsystem.util.enumutil.MilestoneStatusEnum.In_Progress
-        // OR s.milestone.status IS NULL )");
-
-        // if (roles.contains("ROLE_ADMIN")) {
-
-        // } else if (roles.contains("ROLE_MANAGER")) {
-        // query.append(" AND s.manager.accountName = '" + user.getAccountName() + "'
-        // ");
-        // }
+                        + " AND (s.milestone.status = swp490.g23.onlinelearningsystem.enums.MilestoneStatusEnum.In_Progress OR s.milestone.status IS NULL )");
 
         if (isGroup == true) {
             query.append(" AND s.milestone.assignment.isTeamWork = true and m.isLeader = 1 ");
@@ -69,12 +56,12 @@ public class SubmitCriteria {
             SubmitStatusEnum status = SubmitStatusEnum.fromInt(statusValue.intValue());
             if (status == SubmitStatusEnum.Evaluated) {
                 query.append(
-                        " AND s.status = swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum.Evaluated ");
+                        " AND s.status = swp490.g23.onlinelearningsystem.enums.SubmitStatusEnum.Evaluated ");
             }
 
             if (status == SubmitStatusEnum.Submitted) {
                 query.append(
-                        " AND s.status = swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum.Submitted ");
+                        " AND s.status = swp490.g23.onlinelearningsystem.enums.SubmitStatusEnum.Submitted ");
             }
 
             if (status == SubmitStatusEnum.Pending) {

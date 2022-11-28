@@ -33,7 +33,7 @@ import swp490.g23.onlinelearningsystem.entities.post.domain.Post;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
 import swp490.g23.onlinelearningsystem.entities.user_roles.domain.UserRoles;
-import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
+import swp490.g23.onlinelearningsystem.enums.UserStatus;
 
 @Entity
 @Table(name = "user")

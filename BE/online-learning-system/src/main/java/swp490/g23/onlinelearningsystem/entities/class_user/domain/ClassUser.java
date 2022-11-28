@@ -22,7 +22,7 @@ import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.MilestoneEval;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
-import swp490.g23.onlinelearningsystem.util.enumutil.TraineeStatus;
+import swp490.g23.onlinelearningsystem.enums.TraineeStatus;
 
 @Entity
 @Getter
