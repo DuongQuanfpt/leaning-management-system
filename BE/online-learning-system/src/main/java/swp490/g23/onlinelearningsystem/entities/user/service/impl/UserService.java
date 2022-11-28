@@ -40,10 +40,10 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserTypeRes
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.criteria.UserRepositoriesCriteria;
 import swp490.g23.onlinelearningsystem.entities.user.service.IUserService;
+import swp490.g23.onlinelearningsystem.enums.UserStatus;
+import swp490.g23.onlinelearningsystem.enums.enumentities.UserStatusEntity;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.util.StringUltility;
-import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
-import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.UserStatusEntity;
 
 @Service
 public class UserService implements IUserService {

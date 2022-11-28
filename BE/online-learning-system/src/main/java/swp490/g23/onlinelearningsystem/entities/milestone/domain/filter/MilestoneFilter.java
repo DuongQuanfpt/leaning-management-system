@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.assignment.domain.response.AssignmentResponseDTO;
-import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.MilestoneStatusEntity;
+import swp490.g23.onlinelearningsystem.enums.enumentities.MilestoneStatusEntity;
 
 @Getter
 @Setter

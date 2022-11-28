@@ -21,6 +21,7 @@ import net.bytebuddy.utility.RandomString;
 import swp490.g23.onlinelearningsystem.entities.auth.service.impl.AuthService;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.ClassUser;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.filter.TraineeFilterDTO;
+import swp490.g23.onlinelearningsystem.entities.class_user.domain.request.ClassEvalRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.request.TraineeRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.response.AssignmentFilterType;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.response.AssignmentGradeDTO;
@@ -45,11 +46,11 @@ import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.SubmitRepository;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
+import swp490.g23.onlinelearningsystem.enums.SubmitStatusEnum;
+import swp490.g23.onlinelearningsystem.enums.TraineeStatus;
+import swp490.g23.onlinelearningsystem.enums.UserStatus;
+import swp490.g23.onlinelearningsystem.enums.enumentities.TraineeStatusEntity;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
-import swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum;
-import swp490.g23.onlinelearningsystem.util.enumutil.TraineeStatus;
-import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
-import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.TraineeStatusEntity;
 
 @Service
 public class ClassUserService implements IClassUserService {
@@ -402,23 +403,31 @@ public class ClassUserService implements IClassUserService {
     @Override
     public ResponseEntity<ClassEvalPaginateDTO> classEvalList(int limit, int currentPage, String keyword,
             String filterAssignment,
-            User user, String classCode) {
+            Long userId, String classCode) {
 
+        User user = userRepository.findById(userId).get();
+        Classes clazz = classRepositories.findClassByCode(classCode);
         List<AssignmentFilterType> milestoneList = new ArrayList<>();
         List<ClassEvalResponseDTO> dto = new ArrayList<>();
-        List<AssignmentGradeDTO> gradeDTO = new ArrayList<>();
-        Double ongoingGrade = 0.0;
 
         TypedQuery<ClassUser> queryResult = classEvalCriteria.displayTrainee(keyword,
                 filterAssignment, user, classCode);
 
         List<ClassUser> classUsers = queryResult.getResultList();
-        for (ClassUser classUser : classUsers) {
+
+        for (Milestone milestone : clazz.getMilestones()) {
             AssignmentFilterType type = new AssignmentFilterType();
-            for (MilestoneEval eval : classUser.getMilestoneEvals()) {
-                type.setAssignmentId(eval.getMilestone().getMilestoneId());
-                type.setAssignmentTitle(eval.getMilestone().getTitle());
+            String evalWeight = milestone.getAssignment().getEval_weight().substring(0,
+                    milestone.getAssignment().getEval_weight().length() - 1);
+            type.setAssignmentId(milestone.getAssignment().getAssId());
+            type.setAssignmentTitle(milestone.getAssignment().getTitle());
+            type.setEvalWeight(evalWeight);
+            if (milestone.getAssignment().isFinal()) {
+                type.setFinal(true);
+            } else {
+                type.setFinal(false);
             }
+            type.setStatus(milestone.getStatus());
             milestoneList.add(type);
         }
 
@@ -433,30 +442,52 @@ public class ClassUserService implements IClassUserService {
         }
 
         for (ClassUser classUser : queryResult.getResultList()) {
+            List<AssignmentGradeDTO> gradeDTO = new ArrayList<>();
             ClassEvalResponseDTO responseDTO = new ClassEvalResponseDTO();
-            AssignmentGradeDTO grade = new AssignmentGradeDTO();
+            // Double ongoingGrade = 0.0;
             responseDTO.setUserName(classUser.getUser().getAccountName());
             responseDTO.setFullName(classUser.getUser().getFullName());
             responseDTO.setComment(classUser.getComment());
-            for (MilestoneEval eval : classUser.getMilestoneEvals()) {
-                grade.setAssignmentId(eval.getMilestone().getAssignment().getAssId());
-                grade.setAssingmentTitle(eval.getMilestone().getTitle());
-                grade.setGrade(eval.getGrade());
-                gradeDTO.add(grade);
-                String evalWeight = eval.getMilestone().getAssignment().getEval_weight().substring(0,
-                        eval.getMilestone().getAssignment().getEval_weight().length() - 1);
-                if (eval.getMilestone().getAssignment().isFinal()) {
-                    responseDTO.setFinalEval(eval.getGrade() * Double.parseDouble(evalWeight) / 100);
-                    continue;
-                } else {
-                    ongoingGrade += eval.getGrade() * Double.parseDouble(evalWeight) / 100;
+            for (Milestone milestone : classUser.getClasses().getMilestones()) {
+                AssignmentGradeDTO grade = new AssignmentGradeDTO();
+                grade.setAssignmentId(milestone.getAssignment().getAssId());
+                grade.setAssingmentTitle(milestone.getAssignment().getTitle());
+                grade.setStatus(milestone.getStatus());
+                String evalWeight = milestone.getAssignment().getEval_weight().substring(0,
+                        milestone.getAssignment().getEval_weight().length() - 1);
+                for (MilestoneEval eval : classUser.getMilestoneEvals()) {
+                    grade.setEvalWeight(evalWeight);
+                    if (eval.getMilestone().equals(milestone)) {
+                        // grade.setAssignmentId(milestone.getAssignment().getAssId());
+                        // grade.setAssingmentTitle(milestone.getAssignment().getTitle());
+                        grade.setGrade(eval.getGrade());
+                        if (eval.getMilestone().getAssignment().isFinal()) {
+                            grade.setFinal(true);
+                            // responseDTO.setFinalEval(eval.getGrade() * Double.parseDouble(evalWeight) /
+                            // 100);
+                            // continue;
+                        } else {
+                            grade.setFinal(false);
+                            // ongoingGrade += eval.getGrade() * Double.parseDouble(evalWeight) / 100;
+                        }
+                    }
+                    if (classUser.getFinalEval() != null) {
+                        responseDTO.setFinalEval(classUser.getFinalEval());
+                    }
+                    if (classUser.getOngoingEval() != null) {
+                        responseDTO.setOngoing(classUser.getOngoingEval());
+                    }
+                    if (classUser.getTopicEval() != null) {
+                        responseDTO.setGpa(classUser.getTopicEval());
+                    }
+                    responseDTO.setAssignmentGrade(gradeDTO);
+                    // if (responseDTO.getFinalEval() == null) {
+                    // responseDTO.setGpa(null);
+                    // } else {
+                    // responseDTO.setGpa(ongoingGrade + responseDTO.getFinalEval());
+                    // }
                 }
-            }
-            responseDTO.setOngoing(ongoingGrade / classUser.getMilestoneEvals().size());
-            if (responseDTO.getFinalEval() == null) {
-                responseDTO.setGpa(null);
-            } else {
-                responseDTO.setGpa((ongoingGrade + responseDTO.getFinalEval()) / 2);
+                gradeDTO.add(grade);
             }
             dto.add(responseDTO);
         }
@@ -464,10 +495,32 @@ public class ClassUserService implements IClassUserService {
         ClassEvalPaginateDTO responseDTO = new ClassEvalPaginateDTO();
         responseDTO.setPage(currentPage);
         responseDTO.setListResult(dto);
+        responseDTO.setAssingmentFilter(milestoneList);
         responseDTO.setTotalItem(totalItem);
         responseDTO.setTotalPage(totalPage);
 
         return ResponseEntity.ok(responseDTO);
+    }
+
+    @Override
+    public ResponseEntity<String> uodateEval(List<ClassEvalRequestDTO> requestDTOs, String classCode) {
+        for (ClassEvalRequestDTO requestDTO : requestDTOs) {
+            if (requestDTO.getAccountName() != null) {
+                User user = userRepository.findByAccountName(requestDTO.getAccountName());
+                ClassUser classUser = classUserRepositories.findByClassesAndUser(user.getUserId(), classCode);
+                if (requestDTO.getFinalEval() != null) {
+                    classUser.setFinalEval(requestDTO.getFinalEval());
+                }
+                if (requestDTO.getOngoing() != null) {
+                    classUser.setOngoingEval(requestDTO.getOngoing());
+                }
+                if (requestDTO.getGpa() != null) {
+                    classUser.setTopicEval(requestDTO.getGpa());
+                }
+                classUserRepositories.save(classUser);
+            }
+        }
+        return ResponseEntity.ok("Changes has saved successfully");
     }
 
 }

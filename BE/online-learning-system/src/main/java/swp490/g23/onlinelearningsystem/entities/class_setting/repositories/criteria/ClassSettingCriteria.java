@@ -28,7 +28,7 @@ public class ClassSettingCriteria {
             roles.add(setting.getSettingValue());
         }
         StringBuilder query = new StringBuilder(
-                "SELECT cs FROM ClassSetting cs WHERE cs.classes.status = swp490.g23.onlinelearningsystem.util.enumutil.ClassStatus.Active ");
+                "SELECT cs FROM ClassSetting cs WHERE cs.classes.status = swp490.g23.onlinelearningsystem.enums.ClassStatus.Active ");
 
         if (roles.contains("ROLE_TRAINER")) {
 

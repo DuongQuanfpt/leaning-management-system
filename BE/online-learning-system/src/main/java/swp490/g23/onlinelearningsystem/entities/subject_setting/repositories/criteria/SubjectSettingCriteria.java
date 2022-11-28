@@ -28,7 +28,7 @@ public class SubjectSettingCriteria {
             roles.add(setting.getSettingValue());
         }
         StringBuilder query = new StringBuilder(
-                "SELECT s FROM SubjectSetting s WHERE s.subject.subjectStatus = swp490.g23.onlinelearningsystem.util.enumutil.Status.Active");
+                "SELECT s FROM SubjectSetting s WHERE s.subject.subjectStatus = swp490.g23.onlinelearningsystem.enums.Status.Active");
 
         // if(roles.contains("ROLE_ADMIN")){
 

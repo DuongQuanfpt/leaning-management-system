@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.schedule.domain.response.ModuleTypeResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.schedule.domain.response.SettingTypeResponseDTO;
-import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.ScheduleStatusEntity;
+import swp490.g23.onlinelearningsystem.enums.enumentities.ScheduleStatusEntity;
 
 @Getter
 @Setter

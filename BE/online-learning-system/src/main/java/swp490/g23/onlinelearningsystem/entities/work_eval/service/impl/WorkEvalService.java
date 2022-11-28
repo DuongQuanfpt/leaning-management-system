@@ -7,8 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import swp490.g23.onlinelearningsystem.entities.eval_detail.domain.EvalDetail;
+import swp490.g23.onlinelearningsystem.entities.eval_detail.repositories.EvalDetailRepositories;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
 import swp490.g23.onlinelearningsystem.entities.milestone.repositories.MilestoneRepository;
+import swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.MilestoneEval;
+import swp490.g23.onlinelearningsystem.entities.milestone_eval.repositories.MilestoneEvalRepository;
 import swp490.g23.onlinelearningsystem.entities.subject_setting.domain.SubjectSetting;
 import swp490.g23.onlinelearningsystem.entities.subject_setting.repositories.SubjectSettingRepository;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
@@ -26,9 +30,9 @@ import swp490.g23.onlinelearningsystem.entities.work_eval.repositories.WorkEvalR
 import swp490.g23.onlinelearningsystem.entities.work_eval.service.IWorkEvalService;
 import swp490.g23.onlinelearningsystem.entities.work_update.domain.WorkUpdate;
 import swp490.g23.onlinelearningsystem.entities.work_update.repositories.WorkUpdateRepository;
+import swp490.g23.onlinelearningsystem.enums.SubmitStatusEnum;
+import swp490.g23.onlinelearningsystem.enums.SubmitWorkStatusEnum;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
-import swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum;
-import swp490.g23.onlinelearningsystem.util.enumutil.SubmitWorkStatusEnum;
 
 @Service
 public class WorkEvalService implements IWorkEvalService {
@@ -49,6 +53,12 @@ public class WorkEvalService implements IWorkEvalService {
 
     @Autowired
     private WorkUpdateRepository updateRepository;
+
+    @Autowired
+    private EvalDetailRepositories evalDetailRepositories;
+
+    @Autowired
+    private MilestoneEvalRepository milestoneEvalRepository;
 
     @Override
     public ResponseEntity<EvalResponseDTO> getWorkEval(User user, Long submitId, Long workId) {
@@ -100,7 +110,7 @@ public class WorkEvalService implements IWorkEvalService {
                 submitWork.getWork());
         for (WorkUpdate update : updates) {
             evalUpdateDTOs.add(toUpdateDTO(update));
-        }        
+        }
 
         responseDTO.setUpdates(evalUpdateDTOs);
         responseDTO.setResult(evalResultDTOs);
@@ -175,7 +185,17 @@ public class WorkEvalService implements IWorkEvalService {
             eval.setComment(requestDTO.getComment());
         }
 
+        List<WorkEval> workEvals = submitWork.getWorkEvals();
+        workEvals.add(eval);
+        submitWork.setWorkEvals(workEvals);
+
         workEvalRepository.save(eval);
+        SubmitWork newSubmitWork = workRepository.save(submitWork);
+
+        if (!submitWork.getSubmit().getMilestoneEvals().isEmpty()) {
+            milestoneRevaluate(newSubmitWork.getSubmit().getMilestoneEvals().get(0));
+            // milestoneRevaluate(savedEval.getSubmitWork().getSubmit().getMilestoneEvals().get(0));
+        }
 
         Submit submit = submitWork.getSubmit();
         if (submit.getStatus() != SubmitStatusEnum.Evaluated) {
@@ -189,6 +209,49 @@ public class WorkEvalService implements IWorkEvalService {
         }
 
         return ResponseEntity.ok("evaluated");
+    }
+
+    private void milestoneRevaluate(MilestoneEval milestoneEval) {
+        Double milestoneGrade = (double) 0;
+        boolean isUpdate = false;
+        for (EvalDetail evalDetail : milestoneEval.getEvalDetails()) {
+            if (evalDetail.getEvalCriteria().isWorkEval()) {
+                isUpdate = true;
+
+                Long workPoint = (long) 0;
+                for (SubmitWork submitWork : milestoneEval.getSubmit().getSubmitWorks()) {
+                    WorkEval latestEval = new WorkEval();
+                    for (WorkEval eval : submitWork.getWorkEvals()) {
+                        if (latestEval.getCreatedDate() == null) {
+                            latestEval = eval;
+                        }
+
+                        if (latestEval.getCreatedDate().before(eval.getCreatedDate())) {
+                            latestEval = eval;
+                        }
+                    }
+                    workPoint += latestEval.getWorkEval();
+
+                }
+                evalDetail.setTotalLoc(workPoint);
+
+                double expectedWork = evalDetail.getEvalCriteria().getExpectedWork();
+                double workGrade = workPoint / expectedWork * 10.0;
+                evalDetail.setGrade(Math.round(workGrade * 100.0) / 100.0);
+
+                evalDetailRepositories.save(evalDetail);
+
+            }
+            Double grade = evalDetail.getGrade() * evalDetail.getEvalCriteria().getEvalWeight() / 100;
+            grade = Math.round(grade * 100.0) / 100.0;
+            milestoneGrade += grade;
+        }
+
+        if (isUpdate == true) {
+            milestoneEval.setGrade(milestoneGrade + milestoneEval.getBonus());
+            milestoneEvalRepository.save(milestoneEval);
+        }
+
     }
 
     @Override

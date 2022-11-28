@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.TraineeStatusEntity;
+import swp490.g23.onlinelearningsystem.enums.enumentities.TraineeStatusEntity;
 
 @Getter
 @Setter

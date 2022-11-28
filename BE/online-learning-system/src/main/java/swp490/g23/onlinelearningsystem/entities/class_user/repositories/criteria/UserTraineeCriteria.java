@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.ClassUser;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
-import swp490.g23.onlinelearningsystem.util.enumutil.TraineeStatus;
+import swp490.g23.onlinelearningsystem.enums.TraineeStatus;
 
 @Repository
 @RequiredArgsConstructor
@@ -54,12 +54,12 @@ public class UserTraineeCriteria {
             TraineeStatus status = TraineeStatus.fromInt(statusValue.intValue());
             if (status == TraineeStatus.Active) {
                 query.append(
-                        " AND u.status = swp490.g23.onlinelearningsystem.util.enumutil.TraineeStatus.Active ");
+                        " AND u.status = swp490.g23.onlinelearningsystem.enums.TraineeStatus.Active ");
             }
 
             if (status == TraineeStatus.Inactive) {
                 query.append(
-                        " AND u.status = swp490.g23.onlinelearningsystem.util.enumutil.TraineeStatus.Inactive ");
+                        " AND u.status = swp490.g23.onlinelearningsystem.enums.TraineeStatus.Inactive ");
             }
 
             if (status == TraineeStatus.Dropout) {

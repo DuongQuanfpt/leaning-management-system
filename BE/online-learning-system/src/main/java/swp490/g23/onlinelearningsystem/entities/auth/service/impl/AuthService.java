@@ -34,14 +34,14 @@ import swp490.g23.onlinelearningsystem.entities.email.service.impl.EmailService;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
+import swp490.g23.onlinelearningsystem.enums.UserStatus;
+import swp490.g23.onlinelearningsystem.enums.EnumEntity.RoleEnum;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.InvalidTokenException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.UnverifiedUserException;
 import swp490.g23.onlinelearningsystem.util.GoogleHelper;
 import swp490.g23.onlinelearningsystem.util.JwtTokenUtil;
 import swp490.g23.onlinelearningsystem.util.StringUltility;
-import swp490.g23.onlinelearningsystem.util.enumutil.EnumEntity.RoleEnum;
-import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
 
 @Service
 public class AuthService implements IAuthService {

@@ -16,5 +16,6 @@ public class MilestoneEvalPaginateDTO {
     private int totalPage;
     private long totalItem;
     private boolean isWorkEval;
+    private boolean isEditable;
     private List<MilestoneEvalResponseDTO> listResult;
 }
