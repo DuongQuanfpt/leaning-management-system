@@ -21,5 +21,7 @@ public class ClassEvalRequestDTO {
 
     private Double finalEval;
 
+    private String comment;
+
     private List<AssignmentGradeDTO> assignmentGrade;
 }

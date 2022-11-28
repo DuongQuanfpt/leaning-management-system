@@ -552,6 +552,9 @@ public class ClassUserService implements IClassUserService {
                         ongoingGrade += eval.getGrade() * Double.parseDouble(evalWeight) / 100;
                     }
                 }
+                if (requestDTO.getComment() != null) {
+                    classUser.setComment(requestDTO.getComment());
+                }
                 classUser.setOngoingEval(Math.round(ongoingGrade * 100.0) / 100.0);
                 classUser.setTopicEval(
                         Math.round((classUser.getFinalEval() + classUser.getOngoingEval()) * 100.0) / 100.0);
