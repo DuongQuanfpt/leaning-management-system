@@ -422,6 +422,11 @@ public class ClassUserService implements IClassUserService {
             type.setAssignmentId(milestone.getAssignment().getAssId());
             type.setAssignmentTitle(milestone.getAssignment().getTitle());
             type.setEvalWeight(evalWeight);
+            if (milestone.getAssignment().isFinal()) {
+                type.setFinal(true);
+            } else {
+                type.setFinal(false);
+            }
             milestoneList.add(type);
         }
 
