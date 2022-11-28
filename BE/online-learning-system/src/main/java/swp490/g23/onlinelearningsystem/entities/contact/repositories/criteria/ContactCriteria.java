@@ -19,7 +19,7 @@ public class ContactCriteria {
         StringBuilder query = new StringBuilder("SELECT c FROM WebContact c LEFT JOIN c.staff as s WHERE 1=1");
 
 
-        query.append(" AND s IS NULL OR s.accountName ='"+ user.getAccountName() +"'");
+        query.append(" AND (s IS NULL OR s.accountName ='"+ user.getAccountName() +"')");
 
         if (keyword != null) {
             query.append(" AND (c.fullName LIKE '%" + keyword + "%' OR c.email LIKE '%" + keyword
