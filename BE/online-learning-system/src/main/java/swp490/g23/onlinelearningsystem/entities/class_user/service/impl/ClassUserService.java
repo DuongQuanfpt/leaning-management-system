@@ -518,15 +518,7 @@ public class ClassUserService implements IClassUserService {
             if (requestDTO.getAccountName() != null) {
                 User user = userRepository.findByAccountName(requestDTO.getAccountName());
                 ClassUser classUser = classUserRepositories.findByClassesAndUser(user.getUserId(), classCode);
-                if (requestDTO.getFinalEval() != null) {
-                    classUser.setFinalEval(requestDTO.getFinalEval());
-                }
-                if (requestDTO.getOngoing() != null) {
-                    classUser.setOngoingEval(requestDTO.getOngoing());
-                }
-                if (requestDTO.getGpa() != null) {
-                    classUser.setTopicEval(requestDTO.getGpa());
-                }
+                Double ongoingGrade = 0.0;
                 for (AssignmentGradeDTO grade : requestDTO.getAssignmentGrade()) {
                     Assignment assignment = assignmentRepository.findById(grade.getAssignmentId()).get();
                     List<Milestone> milestones = assignment.getMilestones();
@@ -548,6 +540,21 @@ public class ClassUserService implements IClassUserService {
                         }
                     }
                 }
+                for (MilestoneEval eval : classUser.getMilestoneEvals()) {
+                    String evalWeight = eval.getMilestone().getAssignment().getEval_weight().substring(0,
+                            eval.getMilestone().getAssignment().getEval_weight().length() - 1);
+                    if (eval.getMilestone().getAssignment().isFinal()) {
+                        Double finalEval = Math.round((eval.getGrade() * Double.parseDouble(evalWeight) / 100) * 100.0)
+                                / 100.0;
+                        classUser.setFinalEval(finalEval);
+                        continue;
+                    } else {
+                        ongoingGrade += eval.getGrade() * Double.parseDouble(evalWeight) / 100;
+                    }
+                }
+                classUser.setOngoingEval(Math.round(ongoingGrade * 100.0) / 100.0);
+                classUser.setTopicEval(
+                        Math.round((classUser.getFinalEval() + classUser.getOngoingEval()) * 100.0) / 100.0);
                 classUserRepositories.save(classUser);
             }
         }
