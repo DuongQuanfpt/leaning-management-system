@@ -71,7 +71,8 @@ public class EvalCriteriaService implements IEvalCriteriaService {
     public ResponseEntity<CriteriaPaginateResponseDTO> getCriteria(int limit, int page, String keyword,
             String statusFilter, String assignmentFilter, String classCode) {
 
-        CriteriaQuery result = criteriaRepositories.searchFilterCriteria(keyword, statusFilter, assignmentFilter);
+        CriteriaQuery result = criteriaRepositories.searchFilterCriteria(keyword, statusFilter, assignmentFilter,
+                classCode);
 
         TypedQuery<EvalCriteria> queryResult = result.getResultQuery();
         TypedQuery<Long> countQuery = result.getCountQuery();

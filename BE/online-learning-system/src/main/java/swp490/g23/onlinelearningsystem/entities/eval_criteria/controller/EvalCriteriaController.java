@@ -34,7 +34,7 @@ public class EvalCriteriaController {
             @RequestParam(name = "q", required = false) String keyword,
             @RequestParam(name = "filterStatus", required = false) String statusFilter,
             @RequestParam(name = "filterAssignment", required = false) String assignmentFilter,
-            @RequestParam(name = "classCode", required = false) String classCode) {
+            @RequestParam(name = "classCode", required = true) String classCode) {
 
         int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
         int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);

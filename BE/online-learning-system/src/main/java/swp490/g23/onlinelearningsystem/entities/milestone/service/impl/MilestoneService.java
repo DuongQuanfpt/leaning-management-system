@@ -399,6 +399,10 @@ public class MilestoneService implements IMilestoneService {
             dto.setGroupId(submit.getGroup().getGroupId());
         }
 
+        if (submit.getGroup() != null) {
+            dto.setGroupId(submit.getGroup().getGroupId());
+        }
+
         if (!submit.getMilestoneEvals().isEmpty()) {
             dto.setBonusGrade(submit.getMilestoneEvals().get(0).getBonus());
             dto.setComment(submit.getMilestoneEvals().get(0).getComment());
@@ -450,7 +454,6 @@ public class MilestoneService implements IMilestoneService {
         if (!groupMembers.isEmpty()) {
             for (GroupMember groupMember : groupMembers) {
                 MilestoneMemberDTO memberDTO = toMilestoneMemberDTO(groupMember.getMember());
-
                 memberDTO.setActive(groupMember.getIsActive());
                 memberDTO.setLeader(groupMember.getIsLeader());
                 memberDTOs.add(memberDTO);

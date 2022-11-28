@@ -1,4 +1,4 @@
-package swp490.g23.onlinelearningsystem.security;
+package swp490.g23.onlinelearningsystem.config;
 
 import javax.servlet.http.HttpServletResponse;
 
