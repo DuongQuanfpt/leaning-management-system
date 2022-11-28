@@ -33,9 +33,9 @@ import swp490.g23.onlinelearningsystem.entities.milestone.repositories.Milestone
 import swp490.g23.onlinelearningsystem.entities.milestone.service.impl.MilestoneService;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
+import swp490.g23.onlinelearningsystem.enums.Status;
+import swp490.g23.onlinelearningsystem.enums.enumentities.StatusEntity;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
-import swp490.g23.onlinelearningsystem.util.enumutil.Status;
-import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
 
 @Service
 public class EvalCriteriaService implements IEvalCriteriaService {

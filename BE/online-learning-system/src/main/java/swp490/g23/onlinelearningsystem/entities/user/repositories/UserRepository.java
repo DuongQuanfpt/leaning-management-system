@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
-import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
+import swp490.g23.onlinelearningsystem.enums.UserStatus;
 
 public interface UserRepository extends JpaRepository<User, Long> {
         @Query(value = "SELECT u FROM User u WHERE u.userId= :id AND u.status = :statusEnum")
@@ -19,14 +19,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
         Optional<User> findByEmail(String email);
 
         @Query(value = "SELECT u FROM User u WHERE u.email= :email " +
-                        "AND u.status = swp490.g23.onlinelearningsystem.util.enumutil.UserStatus.Active")
+                        "AND u.status = swp490.g23.onlinelearningsystem.enums.UserStatus.Active")
         User findActiveUserByEmail(String email);
 
         @Query(value = "SELECT u FROM User u WHERE u.email= ?1")
         User findUserWithEmail(String email);
 
         @Query(value = "SELECT u FROM User u WHERE u.accountName = :accountName " +
-                        "AND u.status = swp490.g23.onlinelearningsystem.util.enumutil.UserStatus.Active")
+                        "AND u.status = swp490.g23.onlinelearningsystem.enums.UserStatus.Active")
         User findActiveByAccountName(String accountName);
 
         @Query(value = "SELECT DISTINCT u FROM User u INNER JOIN u.settings as s WHERE s.settingValue = 'ROLE_TRAINER'")

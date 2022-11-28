@@ -44,10 +44,10 @@ import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.SubmitRepository;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
+import swp490.g23.onlinelearningsystem.enums.MilestoneStatusEnum;
+import swp490.g23.onlinelearningsystem.enums.SubmitStatusEnum;
+import swp490.g23.onlinelearningsystem.enums.enumentities.MilestoneStatusEntity;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
-import swp490.g23.onlinelearningsystem.util.enumutil.MilestoneStatusEnum;
-import swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum;
-import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.MilestoneStatusEntity;
 
 @Service
 public class MilestoneService implements IMilestoneService {
@@ -343,7 +343,8 @@ public class MilestoneService implements IMilestoneService {
         List<MilestoneGroupDTO> groupResponseDTOs = new ArrayList<>();
         List<MilestoneNoGroupDTO> noGroupDTOs = new ArrayList<>();
         List<Group> groupOfMilestone = new ArrayList<>();
-        List<MilestoneEvalDTO> evalDTOs = new ArrayList<>();
+        List<MilestoneEvalDTO> groupEvalsDTOS = new ArrayList<>();
+        List<MilestoneEvalDTO> noGroupEvalsDTOS = new ArrayList<>();
 
         if (!submits.isEmpty()) {
             for (Submit submit : submits) {
@@ -355,7 +356,13 @@ public class MilestoneService implements IMilestoneService {
                 if (!groupOfMilestone.contains(submit.getGroup())) {
                     groupOfMilestone.add(submit.getGroup());
                 }
-                evalDTOs.add(toEvalDTO(submit));
+
+                if (submit.getGroup() != null) {
+                    groupEvalsDTOS.add(toEvalDTO(submit));
+                } else {
+                    noGroupEvalsDTOS.add(toEvalDTO(submit));
+                }
+
             }
         }
 
@@ -365,10 +372,13 @@ public class MilestoneService implements IMilestoneService {
                 groupResponseDTOs.add(milestoneGroupDTO);
             }
         }
-
         responseDTO.setNoGroup(noGroupDTOs);
         responseDTO.setGroups(groupResponseDTOs);
-        responseDTO.setEvaluation(evalDTOs);
+
+        Collections.sort(groupEvalsDTOS, Comparator.comparing(MilestoneEvalDTO::getGroupId)
+                .thenComparing(MilestoneEvalDTO::isTrainee));
+        groupEvalsDTOS.addAll(noGroupEvalsDTOS);
+        responseDTO.setEvaluation(groupEvalsDTOS);
         return responseDTO;
     }
 
@@ -378,9 +388,15 @@ public class MilestoneService implements IMilestoneService {
         if (submit.getClassUser() != null) {
             dto.setUserName(submit.getClassUser().getUser().getAccountName());
             dto.setFullName(submit.getClassUser().getUser().getFullName());
+            dto.setTrainee(true);
         } else {
             dto.setUserName("Group");
             dto.setFullName(submit.getGroup().getGroupCode());
+            dto.setTrainee(false);
+        }
+
+        if (submit.getGroup() != null) {
+            dto.setGroupId(submit.getGroup().getGroupId());
         }
 
         if (submit.getGroup() != null) {

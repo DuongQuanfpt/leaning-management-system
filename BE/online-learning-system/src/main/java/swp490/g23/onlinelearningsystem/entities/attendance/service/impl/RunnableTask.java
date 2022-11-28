@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 import swp490.g23.onlinelearningsystem.entities.schedule.domain.Schedule;
 import swp490.g23.onlinelearningsystem.entities.schedule.repositories.ScheduleRepositories;
-import swp490.g23.onlinelearningsystem.util.enumutil.ScheduleStatus;
+import swp490.g23.onlinelearningsystem.enums.ScheduleStatus;
 
 public class RunnableTask implements Runnable {
 

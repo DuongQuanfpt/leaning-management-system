@@ -13,7 +13,7 @@ import swp490.g23.onlinelearningsystem.entities.schedule.domain.Schedule;
 import swp490.g23.onlinelearningsystem.entities.schedule.repositories.criteria_entity.ScheduleQuery;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
-import swp490.g23.onlinelearningsystem.util.enumutil.ScheduleStatus;
+import swp490.g23.onlinelearningsystem.enums.ScheduleStatus;
 
 @Repository
 @RequiredArgsConstructor
@@ -51,12 +51,12 @@ public class ScheduleCriteria {
             ScheduleStatus status = ScheduleStatus.fromInt(statusValue.intValue());
             if (status == ScheduleStatus.Active) {
                 query.append(
-                        " AND s.status = swp490.g23.onlinelearningsystem.util.enumutil.ScheduleStatus.Active ");
+                        " AND s.status = swp490.g23.onlinelearningsystem.enums.ScheduleStatus.Active ");
             }
 
             if (status == ScheduleStatus.Inactive) {
                 query.append(
-                        " AND s.status = swp490.g23.onlinelearningsystem.util.enumutil.ScheduleStatus.Inactive ");
+                        " AND s.status = swp490.g23.onlinelearningsystem.enums.ScheduleStatus.Inactive ");
             }
 
             if (status == ScheduleStatus.Attendance_taken) {

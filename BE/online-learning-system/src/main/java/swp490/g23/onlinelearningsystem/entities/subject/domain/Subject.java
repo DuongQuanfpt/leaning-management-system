@@ -21,7 +21,7 @@ import swp490.g23.onlinelearningsystem.entities.assignment.domain.Assignment;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.subject_setting.domain.SubjectSetting;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
-import swp490.g23.onlinelearningsystem.util.enumutil.Status;
+import swp490.g23.onlinelearningsystem.enums.Status;
 
 @Entity
 @Table(name = "subject")

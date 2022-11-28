@@ -34,10 +34,10 @@ import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
+import swp490.g23.onlinelearningsystem.enums.ScheduleStatus;
+import swp490.g23.onlinelearningsystem.enums.Status;
+import swp490.g23.onlinelearningsystem.enums.enumentities.ScheduleStatusEntity;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
-import swp490.g23.onlinelearningsystem.util.enumutil.ScheduleStatus;
-import swp490.g23.onlinelearningsystem.util.enumutil.Status;
-import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.ScheduleStatusEntity;
 
 @Service
 public class ScheduleService implements IScheduleService {

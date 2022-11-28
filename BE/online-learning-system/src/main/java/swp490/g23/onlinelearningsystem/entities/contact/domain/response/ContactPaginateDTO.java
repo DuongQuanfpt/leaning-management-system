@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.contact.domain.filter.ContactCategoryFilter;
-import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.ContactStatusEntity;
+import swp490.g23.onlinelearningsystem.enums.enumentities.ContactStatusEntity;
 
 @Getter
 @Setter

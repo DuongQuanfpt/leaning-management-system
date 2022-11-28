@@ -26,11 +26,11 @@ import swp490.g23.onlinelearningsystem.entities.subject_setting.repositories.cri
 import swp490.g23.onlinelearningsystem.entities.subject_setting.service.ISubjectSettingService;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
+import swp490.g23.onlinelearningsystem.enums.Status;
+import swp490.g23.onlinelearningsystem.enums.SubjectSettingEnum.ComplexityEnum;
+import swp490.g23.onlinelearningsystem.enums.SubjectSettingEnum.QualityEnum;
+import swp490.g23.onlinelearningsystem.enums.enumentities.StatusEntity;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
-import swp490.g23.onlinelearningsystem.util.enumutil.Status;
-import swp490.g23.onlinelearningsystem.util.enumutil.SubjectSettingEnum.ComplexityEnum;
-import swp490.g23.onlinelearningsystem.util.enumutil.SubjectSettingEnum.QualityEnum;
-import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.StatusEntity;
 
 @Service
 public class SubjectSettingService implements ISubjectSettingService {

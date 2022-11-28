@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MilestoneEvalDTO {
+public class MilestoneEvalDTO implements Comparable<MilestoneEvalDTO>{
     private Long submitId;
 
     private String userName;
@@ -23,6 +23,16 @@ public class MilestoneEvalDTO {
     private Double bonusGrade;
 
     private String comment;
+
+    private boolean isTrainee;
+
+    @Override
+    public int compareTo(MilestoneEvalDTO arg0) {
+        if(getGroupId() == null || arg0.getGroupId() == null) {
+            return 0;
+        }
+        return getGroupId().compareTo(arg0.getGroupId());
+    }
 
 
 }

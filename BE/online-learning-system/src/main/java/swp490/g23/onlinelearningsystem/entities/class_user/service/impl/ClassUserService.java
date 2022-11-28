@@ -46,11 +46,11 @@ import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.SubmitRepository;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
+import swp490.g23.onlinelearningsystem.enums.SubmitStatusEnum;
+import swp490.g23.onlinelearningsystem.enums.TraineeStatus;
+import swp490.g23.onlinelearningsystem.enums.UserStatus;
+import swp490.g23.onlinelearningsystem.enums.enumentities.TraineeStatusEntity;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
-import swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum;
-import swp490.g23.onlinelearningsystem.util.enumutil.TraineeStatus;
-import swp490.g23.onlinelearningsystem.util.enumutil.UserStatus;
-import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.TraineeStatusEntity;
 
 @Service
 public class ClassUserService implements IClassUserService {

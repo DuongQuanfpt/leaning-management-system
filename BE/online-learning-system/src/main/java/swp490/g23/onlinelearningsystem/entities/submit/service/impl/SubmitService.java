@@ -46,11 +46,11 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.entities.work_eval.domain.WorkEval;
 import swp490.g23.onlinelearningsystem.entities.work_update.domain.WorkUpdate;
+import swp490.g23.onlinelearningsystem.enums.SubmitStatusEnum;
+import swp490.g23.onlinelearningsystem.enums.SubmitWorkStatusEnum;
+import swp490.g23.onlinelearningsystem.enums.enumentities.SubmitStatusEntity;
+import swp490.g23.onlinelearningsystem.enums.enumentities.SubmitWorkStatusEntity;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
-import swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum;
-import swp490.g23.onlinelearningsystem.util.enumutil.SubmitWorkStatusEnum;
-import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.SubmitStatusEntity;
-import swp490.g23.onlinelearningsystem.util.enumutil.enumentities.SubmitWorkStatusEntity;
 
 @Service
 public class SubmitService implements ISubmitService {

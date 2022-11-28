@@ -27,7 +27,7 @@ import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
 import swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.MilestoneEval;
 import swp490.g23.onlinelearningsystem.entities.submit_work.domain.SubmitWork;
 import swp490.g23.onlinelearningsystem.entities.work_update.domain.WorkUpdate;
-import swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum;
+import swp490.g23.onlinelearningsystem.enums.SubmitStatusEnum;
 
 @Entity
 @Table(name = "submit_tbl")
@@ -35,7 +35,7 @@ import swp490.g23.onlinelearningsystem.util.enumutil.SubmitStatusEnum;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Submit extends BaseEntity implements Comparable<Submit>{
+public class Submit extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -77,9 +77,4 @@ public class Submit extends BaseEntity implements Comparable<Submit>{
     @OneToMany(mappedBy = "submit")
     private List<WorkUpdate> updates = new ArrayList<>();
 
-    @Override
-    public int compareTo(Submit arg0) {
-        // TODO Auto-generated method stub
-        return 0;
-    }
 }
