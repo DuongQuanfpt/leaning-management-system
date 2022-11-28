@@ -105,12 +105,21 @@ public class ClassUserController {
 		return classUserService.classEvalList(limit, page, keyword, assignmentFilter, user.getUserId(), classFilter);
 	}
 
-	@PutMapping(value = "/class-evaluate/update-eval")
+	@PutMapping(value = "/class-evaluate-update")
 	public ResponseEntity<String> updateEval(
 			@RequestParam(name = "classCode", required = true) String classCode,
 			@RequestBody ClassEvalWrapper wrapper) {
 
 		List<ClassEvalRequestDTO> list = wrapper.getDto();
-		return classUserService.uodateEval(list, classCode);
+		return classUserService.updateEval(list, classCode);
+	}
+
+	@GetMapping(value = "/class-evaluate-generate")
+	public ResponseEntity<String> generateMarks(
+			@RequestParam(name = "classCode", required = true) String classCode,
+			@RequestBody ClassEvalWrapper wrapper) {
+
+		List<ClassEvalRequestDTO> list = wrapper.getDto();
+		return classUserService.generateMark(list, classCode);
 	}
 }
