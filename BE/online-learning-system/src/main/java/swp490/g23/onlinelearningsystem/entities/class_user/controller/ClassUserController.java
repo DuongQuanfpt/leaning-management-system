@@ -114,7 +114,7 @@ public class ClassUserController {
 		return classUserService.updateEval(list, classCode);
 	}
 
-	@GetMapping(value = "/class-evaluate-generate")
+	@PutMapping(value = "/class-evaluate-generate")
 	public ResponseEntity<String> generateMarks(
 			@RequestParam(name = "classCode", required = true) String classCode,
 			@RequestBody ClassEvalWrapper wrapper) {
