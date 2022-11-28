@@ -34,5 +34,7 @@ public interface IClassUserService {
                         String filterAssignment,
                         Long userId, String classCode);
 
-        ResponseEntity<String> uodateEval(List<ClassEvalRequestDTO> requestDTO, String classCode);
+        ResponseEntity<String> updateEval(List<ClassEvalRequestDTO> requestDTOs, String classCode);
+
+        ResponseEntity<String> generateMark(List<ClassEvalRequestDTO> requestDTOs, String classCode);
 }
