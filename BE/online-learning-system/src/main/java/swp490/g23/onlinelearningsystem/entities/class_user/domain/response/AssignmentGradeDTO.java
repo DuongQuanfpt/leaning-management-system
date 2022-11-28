@@ -16,4 +16,8 @@ public class AssignmentGradeDTO {
     private String assingmentTitle;
 
     private Double grade;
+
+    private boolean isFinal;
+
+    private String evalWeight;
 }
