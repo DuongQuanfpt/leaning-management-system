@@ -22,5 +22,7 @@ public class AssignmentGradeDTO {
 
     private MilestoneStatusEnum status;
 
+    private String comment;
+
     private String evalWeight;
 }

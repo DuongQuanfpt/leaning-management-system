@@ -1,9 +1,12 @@
 package swp490.g23.onlinelearningsystem.entities.class_user.domain.request;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import swp490.g23.onlinelearningsystem.entities.class_user.domain.response.AssignmentGradeDTO;
 
 @Getter
 @Setter
@@ -17,4 +20,6 @@ public class ClassEvalRequestDTO {
     private Double ongoing;
 
     private Double finalEval;
+
+    private List<AssignmentGradeDTO> assignmentGrade;
 }

@@ -18,6 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import net.bytebuddy.utility.RandomString;
+import swp490.g23.onlinelearningsystem.entities.assignment.domain.Assignment;
+import swp490.g23.onlinelearningsystem.entities.assignment.repositories.AssignmentRepository;
 import swp490.g23.onlinelearningsystem.entities.auth.service.impl.AuthService;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.ClassUser;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.filter.TraineeFilterDTO;
@@ -40,6 +42,7 @@ import swp490.g23.onlinelearningsystem.entities.groupMember.domain.GroupMember;
 import swp490.g23.onlinelearningsystem.entities.groupMember.repositories.GroupMemberRepositories;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
 import swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.MilestoneEval;
+import swp490.g23.onlinelearningsystem.entities.milestone_eval.repositories.MilestoneEvalRepository;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
@@ -81,6 +84,12 @@ public class ClassUserService implements IClassUserService {
 
     @Autowired
     private ClassEvalCriteria classEvalCriteria;
+
+    @Autowired
+    private AssignmentRepository assignmentRepository;
+
+    @Autowired
+    private MilestoneEvalRepository milestoneEvalRepository;
 
     public static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
             Pattern.CASE_INSENSITIVE);
@@ -461,6 +470,7 @@ public class ClassUserService implements IClassUserService {
                         // grade.setAssignmentId(milestone.getAssignment().getAssId());
                         // grade.setAssingmentTitle(milestone.getAssignment().getTitle());
                         grade.setGrade(eval.getGrade());
+                        grade.setComment(eval.getComment());
                         if (eval.getMilestone().getAssignment().isFinal()) {
                             grade.setFinal(true);
                             // responseDTO.setFinalEval(eval.getGrade() * Double.parseDouble(evalWeight) /
@@ -516,6 +526,27 @@ public class ClassUserService implements IClassUserService {
                 }
                 if (requestDTO.getGpa() != null) {
                     classUser.setTopicEval(requestDTO.getGpa());
+                }
+                for (AssignmentGradeDTO grade : requestDTO.getAssignmentGrade()) {
+                    Assignment assignment = assignmentRepository.findById(grade.getAssignmentId()).get();
+                    List<Milestone> milestones = assignment.getMilestones();
+                    for (Milestone milestone : milestones) {
+                        if (milestone.getMilestoneEvals().isEmpty()) {
+                            MilestoneEval milestoneEval = new MilestoneEval();
+                            milestoneEval.setClassUser(classUser);
+                            milestoneEval.setGrade(grade.getGrade());
+                            milestoneEval.setComment(grade.getComment());
+                            milestoneEval.setMilestone(milestone);
+                            milestoneEvalRepository.save(milestoneEval);
+                        } else {
+                            for (MilestoneEval eval : milestone.getMilestoneEvals()) {
+                                if (eval.getClassUser().equals(classUser)) {
+                                    eval.setComment(grade.getComment());
+                                    eval.setGrade(grade.getGrade());
+                                }
+                            }
+                        }
+                    }
                 }
                 classUserRepositories.save(classUser);
             }
