@@ -46,6 +46,11 @@ const evaluationApi = {
     const url = `api/milestone-eval/${milestoneId}`
     return axiosClient.post(url, params, header)
   },
+
+  getClassEval: (params) => {
+    const url = `api/class-evaluate`
+    return axiosClient.get(url, { ...header, params })
+  },
 }
 
 export default evaluationApi
