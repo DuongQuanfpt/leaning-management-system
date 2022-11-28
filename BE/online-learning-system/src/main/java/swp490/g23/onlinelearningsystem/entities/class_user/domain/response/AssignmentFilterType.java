@@ -14,4 +14,6 @@ public class AssignmentFilterType {
     private Long assignmentId;
 
     private String assignmentTitle;
+
+    private String evalWeight;
 }

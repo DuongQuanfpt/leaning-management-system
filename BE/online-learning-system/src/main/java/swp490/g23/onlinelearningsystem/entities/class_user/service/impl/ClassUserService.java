@@ -417,8 +417,11 @@ public class ClassUserService implements IClassUserService {
 
         for (Milestone milestone : clazz.getMilestones()) {
             AssignmentFilterType type = new AssignmentFilterType();
+            String evalWeight = milestone.getAssignment().getEval_weight().substring(0,
+                    milestone.getAssignment().getEval_weight().length() - 1);
             type.setAssignmentId(milestone.getAssignment().getAssId());
             type.setAssignmentTitle(milestone.getAssignment().getTitle());
+            type.setEvalWeight(evalWeight);
             milestoneList.add(type);
         }
 
