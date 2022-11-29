@@ -315,12 +315,15 @@ public class MilestoneService implements IMilestoneService {
         responseDTO.setMilestoneId(entity.getMilestoneId());
         Assignment assignment = entity.getAssignment();
         responseDTO.setTeamWork(assignment.isTeamWork());
-        responseDTO.setAssignment(assignmentService.toDTO(assignment));
+        responseDTO.setAssignment(toAssDTO(assignment));
         // Group groups = groupRepository.findGroupByMilestone(entity.getMilestoneId());
 
         if (entity.getClasses() != null) {
             responseDTO.setClassesCode(entity.getClasses().getCode());
-            responseDTO.setClassesSize(entity.getClasses().getClassUsers().size());
+            if(!entity.getClasses().getClassUsers().isEmpty()){
+                responseDTO.setClassesSize(entity.getClasses().getClassUsers().size());
+            }
+           
         }
         responseDTO.setStatus(entity.getStatus().toString());
         if (entity.getDescription() != null) {
@@ -379,6 +382,30 @@ public class MilestoneService implements IMilestoneService {
                 .thenComparing(MilestoneEvalDTO::isTrainee));
         groupEvalsDTOS.addAll(noGroupEvalsDTOS);
         responseDTO.setEvaluation(groupEvalsDTOS);
+        return responseDTO;
+    }
+
+    public AssignmentResponseDTO toAssDTO(Assignment entity) {
+        AssignmentResponseDTO responseDTO = new AssignmentResponseDTO();
+
+        responseDTO.setAssId(entity.getAssId());
+        if (entity.getAssBody() != null) {
+            responseDTO.setAssBody(entity.getAssBody());
+        }
+        if (entity.getEval_weight() != null) {
+            responseDTO.setEval_weight(entity.getEval_weight());
+        }
+        if (entity.getTitle() != null) {
+            responseDTO.setTitle(entity.getTitle());
+        }
+        if (entity.getForSubject().getSubjectCode() != null) {
+            responseDTO.setSubjectName(entity.getForSubject().getSubjectCode());
+        }
+        responseDTO.setIsOnGoing(entity.isOnGoing() ? 1 : 0);
+        responseDTO.setIsFinal(entity.isFinal() ? 1 : 0);
+        responseDTO.setIsTeamWork(entity.isTeamWork() ? 1 : 0);
+        responseDTO.setStatus(entity.getStatus());
+
         return responseDTO;
     }
 

@@ -298,7 +298,7 @@ public class IssueService implements IIssueService {
 
         if (issue.isClosed() != true) {
             if (issue.getStatus() != null) {
-                dto.setStatus(issue.getStatus().getSettingTitle());
+                dto.setStatus(issue.getStatus().getSettingValue()());
                 dto.setStatusId(issue.getStatus().getClassSettingId());
             } else {
                 dto.setStatus("Open");
