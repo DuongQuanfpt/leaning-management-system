@@ -517,6 +517,7 @@ public class ClassUserService implements IClassUserService {
                 for (AssignmentGradeDTO grade : requestDTO.getAssignmentGrade()) {
                     Assignment assignment = assignmentRepository.findById(grade.getAssignmentId()).get();
                     List<Milestone> milestones = assignment.getMilestones();
+                    List<MilestoneEval> evals = new ArrayList<>();
                     for (Milestone milestone : milestones) {
                         if (milestone.getMilestoneEvals().isEmpty()) {
                             MilestoneEval milestoneEval = new MilestoneEval();
@@ -527,13 +528,17 @@ public class ClassUserService implements IClassUserService {
                             milestoneEvalRepository.save(milestoneEval);
                         } else {
                             for (MilestoneEval eval : milestone.getMilestoneEvals()) {
-                                if (eval.getClassUser().equals(classUser)) {
-                                    eval.setComment(grade.getComment());
-                                    eval.setGrade(grade.getGrade());
+                                if (eval.getClassUser() != null) {
+                                    if (eval.getClassUser().equals(classUser)) {
+                                        eval.setComment(grade.getComment());
+                                        eval.setGrade(grade.getGrade());
+                                        evals.add(eval);
+                                    }
                                 }
                             }
                         }
                     }
+                    milestoneEvalRepository.saveAll(evals);
                 }
                 for (MilestoneEval eval : classUser.getMilestoneEvals()) {
                     String evalWeight = eval.getMilestone().getAssignment().getEval_weight().substring(0,
@@ -578,6 +583,7 @@ public class ClassUserService implements IClassUserService {
                 for (AssignmentGradeDTO grade : requestDTO.getAssignmentGrade()) {
                     Assignment assignment = assignmentRepository.findById(grade.getAssignmentId()).get();
                     Milestone milestone = assignment.getMilestones().get(0);
+                    List<MilestoneEval> evals = new ArrayList<>();
                     for (MilestoneEval eval : classUser.getMilestoneEvals()) {
                         if (eval.getMilestone().equals(milestone)) {
                             for (EvalDetail detail : eval.getEvalDetails()) {
@@ -586,11 +592,13 @@ public class ClassUserService implements IClassUserService {
                                             / 100;
                                     Double mark = markEval + eval.getBonus();
                                     eval.setGrade(mark);
+                                    evals.add(eval);
                                 }
                             }
                         }
                         milestoneEvalRepository.save(eval);
                     }
+                    milestoneEvalRepository.saveAll(evals);
                 }
                 for (MilestoneEval eval : classUser.getMilestoneEvals()) {
                     String evalWeight = eval.getMilestone().getAssignment().getEval_weight().substring(0,
