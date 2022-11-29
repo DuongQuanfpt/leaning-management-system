@@ -39,10 +39,7 @@ const HomePage = () => {
       .then((response) => {
         console.log(response)
         setListPost(response)
-        setPaginate({
-          totalItem: response.totalItem,
-          currentPage: response.currentPage,
-        })
+        setPaginate((prev) => ({ ...prev, totalItem: response.totalItem }))
       })
       .then(() => setLoading(false))
       .catch((error) => {
@@ -126,10 +123,11 @@ const HomePage = () => {
                   </div>
                   <div className="col-lg-12 d-flex justify-content-end">
                     <Pagination
-                      total={paginate?.totalItem}
+                      total={paginate.totalItem}
                       current={paginate.currentPage}
                       onChange={(pageNumber) => {
                         setPaginate((prev) => ({ ...prev, currentPage: pageNumber }))
+                        loadData(pageNumber)
                       }}
                       showSizeChanger
                       onShowSizeChange={(current, pageSize) => {

@@ -51,6 +51,11 @@ const evaluationApi = {
     const url = `api/class-evaluate`
     return axiosClient.get(url, { ...header, params })
   },
+
+  editClassEval: (classCode, params) => {
+    const url = `api/class-evaluate-update?classCode=${classCode}`
+    return axiosClient.put(url, params, header)
+  },
 }
 
 export default evaluationApi

@@ -489,9 +489,10 @@ public class ClassUserService implements IClassUserService {
                     if (classUser.getTopicEval() != null) {
                         responseDTO.setGpa(classUser.getTopicEval());
                     }
-                    responseDTO.setAssignmentGrade(gradeDTO);
+
                 }
                 gradeDTO.add(grade);
+                responseDTO.setAssignmentGrade(gradeDTO);
             }
             dto.add(responseDTO);
         }
@@ -573,19 +574,52 @@ public class ClassUserService implements IClassUserService {
             if (requestDTO.getAccountName() != null) {
                 User user = userRepository.findByAccountName(requestDTO.getAccountName());
                 ClassUser classUser = classUserRepositories.findByClassesAndUser(user.getUserId(), classCode);
+                Double ongoingGrade = 0.0;
                 for (AssignmentGradeDTO grade : requestDTO.getAssignmentGrade()) {
                     Assignment assignment = assignmentRepository.findById(grade.getAssignmentId()).get();
                     Milestone milestone = assignment.getMilestones().get(0);
                     for (MilestoneEval eval : classUser.getMilestoneEvals()) {
                         if (eval.getMilestone().equals(milestone)) {
                             for (EvalDetail detail : eval.getEvalDetails()) {
-                                Double markEval = detail.getGrade() * detail.getEvalCriteria().getEvalWeight() / 100;
-                                Double mark = markEval + eval.getBonus();
-                                eval.setGrade(mark);
+                                if (detail.getGrade() != null && eval.getBonus() != null) {
+                                    Double markEval = detail.getGrade() * detail.getEvalCriteria().getEvalWeight()
+                                            / 100;
+                                    Double mark = markEval + eval.getBonus();
+                                    eval.setGrade(mark);
+                                }
                             }
                         }
+                        milestoneEvalRepository.save(eval);
                     }
                 }
+                for (MilestoneEval eval : classUser.getMilestoneEvals()) {
+                    String evalWeight = eval.getMilestone().getAssignment().getEval_weight().substring(0,
+                            eval.getMilestone().getAssignment().getEval_weight().length() - 1);
+                    if (eval.getMilestone().getAssignment().isFinal()) {
+                        if (eval.getGrade() != null) {
+                            Double finalEval = Math
+                                    .round((eval.getGrade() * Double.parseDouble(evalWeight) / 100) * 100.0)
+                                    / 100.0;
+                            classUser.setFinalEval(finalEval);
+                        }
+
+                        continue;
+                    } else {
+                        if (eval.getGrade() != null) {
+                            ongoingGrade += eval.getGrade() * Double.parseDouble(evalWeight) / 100;
+                        }
+
+                    }
+                }
+                if (requestDTO.getComment() != null) {
+                    classUser.setComment(requestDTO.getComment());
+                }
+                classUser.setOngoingEval(Math.round(ongoingGrade * 100.0) / 100.0);
+                if (classUser.getFinalEval() != null && classUser.getOngoingEval() != null) {
+                    classUser.setTopicEval(
+                            Math.round((classUser.getFinalEval() + classUser.getOngoingEval()) * 100.0) / 100.0);
+                }
+                classUserRepositories.save(classUser);
             }
         }
         return ResponseEntity.ok("Marks has been generated");
