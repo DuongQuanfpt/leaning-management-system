@@ -226,13 +226,16 @@ public class MilestoneService implements IMilestoneService {
         if (dto.getAssignmentId() != null) {
             milestone.setAssignment(assignmentRepository.findById(dto.getAssignmentId())
                     .orElseThrow(() -> new CustomException("Assignment doesnt exist")));
-            List<EvalCriteria> evalCriterias = milestone.getAssignment().getEvalCriteriaList();
-            List<EvalCriteria> sCriterias = new ArrayList<>();
-            for (EvalCriteria evalCriteria : evalCriterias) {
-                evalCriteria.setMilestone(milestone);
-                sCriterias.add(evalCriteria);
+            if(!milestone.getAssignment().getEvalCriteriaList().isEmpty()){
+                List<EvalCriteria> evalCriterias = milestone.getAssignment().getEvalCriteriaList();
+                List<EvalCriteria> sCriterias = new ArrayList<>();
+                for (EvalCriteria evalCriteria : evalCriterias) {
+                    evalCriteria.setMilestone(milestone);
+                    sCriterias.add(evalCriteria);
+                }
+                evalCriteriaRepositories.saveAll(sCriterias);
             }
-            evalCriteriaRepositories.saveAll(sCriterias);
+           
         } else {
             throw new CustomException("Must assign a assignment to milestone");
         }

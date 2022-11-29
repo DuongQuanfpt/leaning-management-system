@@ -159,9 +159,10 @@ public class GroupService implements IGroupService {
     }
 
     public void removeGroupConfigInMilestone(Milestone milestone, List<Group> groups) {
+        List<Submit> submitNew = new ArrayList<>();
         for (Group group : groups) {
             List<Submit> submits = group.getSubmits();
-            List<Submit> submitNew = new ArrayList<>();
+
             for (Submit submit : submits) {
                 if (submit.getMilestone().getMilestoneId() == milestone.getMilestoneId()) {
                     if (submit.getClassUser() == null) {
@@ -173,8 +174,10 @@ public class GroupService implements IGroupService {
                 }
 
             }
-            submitRepository.saveAll(submitNew);
+
         }
+        milestone.setSubmits(submitNew);
+        submitRepository.saveAll(submitNew);
 
         List<Group> deleteGroups = groupRepository.findBySubmitsIsNull();
         for (Group group : deleteGroups) {
@@ -760,33 +763,21 @@ public class GroupService implements IGroupService {
 
         List<GroupMemberResponseDTO> memberResponseDTOs = new ArrayList<>();
         if (milestoneId != null) {
-            if (!entity.getSubmits().isEmpty()) {
-
-                for (Submit submit : entity.getSubmits()) {
-
-                    if (submit.getClassUser() == null) {
-                        continue;
-                    }
-
-                    if (submit.getMilestone().getMilestoneId() == milestoneId) {
-                        continue;
-                    }
-
-                    GroupMemberResponseDTO groupResponseDTO = new GroupMemberResponseDTO();
-                    for (GroupMember member : entity.getGroupMembers()) {
-                        if (member.getMember().getAccountName()
-                                .equals(submit.getClassUser().getUser().getAccountName())) {
-                            groupResponseDTO = memberService.toDTO(member);
+            if (!entity.getGroupMembers().isEmpty()) {
+                GroupMemberResponseDTO groupResponseDTO = new GroupMemberResponseDTO();
+                for (GroupMember groupMember : entity.getGroupMembers()) {
+                    groupResponseDTO = memberService.toDTO(groupMember);
+                    for (ClassUser user : groupMember.getMember().getClassUsers()) {
+                        if (user.getClasses().getClassId() == entity.getClasses().getClassId()) {
+                            groupResponseDTO.setMemberInfo(classUserService.toTraineeDTO(user));
+                            break;
                         }
-
                     }
-
+                    
                     if (filterActive == null) {
-                        groupResponseDTO.setMemberInfo(classUserService.toTraineeDTO(submit.getClassUser()));
                         memberResponseDTOs.add(groupResponseDTO);
                     } else {
                         if (groupResponseDTO.getIsActive().toString().equals(filterActive)) {
-                            groupResponseDTO.setMemberInfo(classUserService.toTraineeDTO(submit.getClassUser()));
                             memberResponseDTOs.add(groupResponseDTO);
                         }
                     }
@@ -794,6 +785,40 @@ public class GroupService implements IGroupService {
 
                 dto.setGroupMembers(memberResponseDTOs);
             }
+            // if (!entity.getSubmits().isEmpty()) {
+
+            // for (Submit submit : entity.getSubmits()) {
+
+            // if (submit.getClassUser() == null) {
+            // continue;
+            // }
+
+            // if (submit.getMilestone().getMilestoneId() != milestoneId) {
+            // continue;
+            // }
+
+            // GroupMemberResponseDTO groupResponseDTO = new GroupMemberResponseDTO();
+            // for (GroupMember member : entity.getGroupMembers()) {
+            // if (member.getMember().getAccountName()
+            // .equals(submit.getClassUser().getUser().getAccountName())) {
+            // groupResponseDTO = memberService.toDTO(member);
+            // }
+
+            // }
+
+            // if (filterActive == null) {
+            // groupResponseDTO.setMemberInfo(classUserService.toTraineeDTO(submit.getClassUser()));
+            // memberResponseDTOs.add(groupResponseDTO);
+            // } else {
+            // if (groupResponseDTO.getIsActive().toString().equals(filterActive)) {
+            // groupResponseDTO.setMemberInfo(classUserService.toTraineeDTO(submit.getClassUser()));
+            // memberResponseDTOs.add(groupResponseDTO);
+            // }
+            // }
+            // }
+
+            // dto.setGroupMembers(memberResponseDTOs);
+            // }
         } else {
             if (!entity.getGroupMembers().isEmpty()) {
                 GroupMemberResponseDTO groupResponseDTO = new GroupMemberResponseDTO();
