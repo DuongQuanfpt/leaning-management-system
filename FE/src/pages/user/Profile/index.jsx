@@ -190,13 +190,12 @@ const Profile = () => {
                             {isAvatarMode ? (
                               <div className="row col-9 justify-content-center">
                                 <Avatar
-                                  width={900}
+                                  width="100%"
                                   height={400}
-                                  imageWidth={900}
+                                  imageWidth="100%"
                                   onCrop={handleCropAvatar}
                                   onClose={handleCloseAvatar}
                                   src={src}
-                                  className="mb-10"
                                 />
                               </div>
                             ) : (
@@ -262,7 +261,7 @@ const Profile = () => {
                                 <ErrorMsg
                                   errorMsg={error}
                                   isError={
-                                    error !== 'You have successfully changed your profile' ||
+                                    error !== 'You have successfully changed your profile' &&
                                     error !== 'You have successfully changed your avatar'
                                   }
                                 />
