@@ -579,9 +579,12 @@ public class ClassUserService implements IClassUserService {
                     for (MilestoneEval eval : classUser.getMilestoneEvals()) {
                         if (eval.getMilestone().equals(milestone)) {
                             for (EvalDetail detail : eval.getEvalDetails()) {
-                                Double markEval = detail.getGrade() * detail.getEvalCriteria().getEvalWeight() / 100;
-                                Double mark = markEval + eval.getBonus();
-                                eval.setGrade(mark);
+                                if (detail.getGrade() != null && eval.getBonus() != null) {
+                                    Double markEval = detail.getGrade() * detail.getEvalCriteria().getEvalWeight()
+                                            / 100;
+                                    Double mark = markEval + eval.getBonus();
+                                    eval.setGrade(mark);
+                                }
                             }
                         }
                     }
