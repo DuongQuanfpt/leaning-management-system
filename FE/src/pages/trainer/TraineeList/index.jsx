@@ -42,6 +42,9 @@ const TraineeList = () => {
     filterClasses: currentClass,
     filterStatus: '',
   })
+  const [loading, setLoading] = useState(false)
+  const [open, setOpen] = useState(false)
+  const [traineeSelected, setTraineeSelected] = useState({})
 
   useEffect(() => {
     traineeListApi
@@ -53,7 +56,7 @@ const TraineeList = () => {
   }, [])
 
   useEffect(() => {
-    loadData(1, filter)
+    loadData(currentPage, filter)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, currentClass])
 
@@ -70,6 +73,7 @@ const TraineeList = () => {
     if (filter.statusFilter !== '') {
       params.filterStatus = filter.statusFilter
     }
+    setLoading(true)
 
     await traineeListApi
       .getPage(params)
@@ -80,6 +84,7 @@ const TraineeList = () => {
         setTotalItem(response.totalItem)
       })
       .catch((error) => console.log(error))
+      .finally(() => setLoading(false))
   }
 
   const handleSearch = () => {
@@ -161,28 +166,35 @@ const TraineeList = () => {
   }
 
   const handleChangeStatus = async (trainee) => {
+    setLoading(true)
     await traineeListApi
       .updateStatus(trainee.userId, trainee.classes)
       .then((response) => {
         console.log(response)
-        loadData(currentPage, filter)
+        loadData(currentPage, filter, search)
       })
       .catch((error) => {
         modalError(error)
       })
+      .finally(() => setLoading(false))
   }
 
   const handleDropout = async (trainee) => {
     const params = {
       dropoutDate: dateDropout.dateString.replaceAll('/', '-'),
     }
+    setLoading(true)
     await traineeListApi
       .setDropout(trainee.userId, trainee.classes, params)
       .then((response) => {
-        loadData(currentPage, filter)
+        loadData(currentPage, filter, search)
       })
       .catch((error) => {
         modalError(error)
+      })
+      .finally(() => {
+        setLoading(false)
+        setOpen(false)
       })
   }
 
@@ -221,6 +233,8 @@ const TraineeList = () => {
           modalError('Dropout date must not empty')
           return
         }
+        console.log(dateDropout)
+        return
         handleDropout(trainee)
       },
       onCancel() {},
@@ -293,7 +307,10 @@ const TraineeList = () => {
                 type="danger"
                 shape="circle"
                 icon={<DisconnectOutlined />}
-                onClick={() => modalDropout(setting)}
+                onClick={() => {
+                  setTraineeSelected(setting)
+                  setOpen(true)
+                }}
               ></Button>
             </Tooltip>
           ) : (
@@ -400,9 +417,30 @@ const TraineeList = () => {
             </div>
           </div>
           <div className="col-lg-12">
-            <Table bordered dataSource={listTrainee} columns={columns} pagination={false} />
+            <Table bordered dataSource={listTrainee} columns={columns} pagination={false} loading={loading} />
+            <Modal
+              title={`Are you want to dropout ${traineeSelected.username} ? `}
+              open={open}
+              onOk={() => {
+                if (!dateDropout) {
+                  modalError('Dropout date must not empty')
+                  return
+                }
+                handleDropout(traineeSelected)
+              }}
+              onCancel={() => setOpen(false)}
+            >
+              <>
+                <p>Select date please: </p>
+                <DatePicker
+                  size={'large'}
+                  format={'YYYY/MM/DD'}
+                  onChange={(date, dateString) => setDateDropout({ date, dateString })}
+                />
+              </>
+            </Modal>
           </div>
-          <div className="col-lg-12 d-flex justify-content-end">
+          <div className="col-lg-12 d-flex justify-content-end mt-3">
             <Pagination current={currentPage} total={totalItem} onChange={handleChangePage} />;
           </div>
         </div>

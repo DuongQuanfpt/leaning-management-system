@@ -101,6 +101,7 @@ const AdminUserList = () => {
     setRole('All Roles')
     setStatus('All Status')
     setFilter({ q: '', filterRole: '', filterStatus: '' })
+    setSearch('')
     ITEM_PER_PAGE = 10
   }
 

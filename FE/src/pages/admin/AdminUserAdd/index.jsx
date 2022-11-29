@@ -54,23 +54,34 @@ const AdminUserAdd = () => {
   }
 
   const handleAdd = async () => {
-    if (userName === '') {
+    if (userName.trim() === '') {
       setError('Username must not empty!')
       return
     }
-    if (fullName === '') {
+    if (fullName.trim() === '') {
       setError('Fullname must not empty!')
       return
     }
-    if (email === '') {
+    if (email.trim() === '') {
       setError('Email must not empty!')
+      return
+    }
+    if (
+      !email
+        .trim()
+        .toLowerCase()
+        .match(
+          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+        )
+    ) {
+      setError('Email is invalid!')
       return
     }
     if (mobile === '') {
       setError('Mobile must not empty!')
       return
     }
-    if (mobile.length < 9 || mobile.length > 11) {
+    if (mobile.length < 9 || mobile.length > 10) {
       setError('Mobile length must 9-10 characters!')
       return
     }

@@ -24,6 +24,7 @@ const IssueAdd = () => {
     milestone: {
       milestoneTitle: 'Select Milestone',
       group: [],
+      requirement: [],
     },
     group: {
       groupName: 'Select Group',
@@ -48,6 +49,7 @@ const IssueAdd = () => {
       milestone: {
         milestoneTitle: 'Select Milestone',
         group: [],
+        requirement: [],
       },
       group: {
         groupName: 'Select Group',
@@ -203,6 +205,7 @@ const IssueAdd = () => {
                             {filter?.milestoneFilter?.map((milestone) => (
                               <CDropdownItem
                                 onClick={() => {
+                                  console.log(milestone)
                                   setDetail((prev) => ({
                                     ...prev,
                                     milestone: milestone,
@@ -213,8 +216,8 @@ const IssueAdd = () => {
                                         : 'This milestone working individually',
                                     },
                                     assignee: 'Select Assignee',
+                                    requirement: { id: null, title: 'General Requirement' },
                                   }))
-                                  console.log(milestone)
                                 }}
                               >
                                 {milestone?.milestoneTitle}
@@ -323,7 +326,7 @@ const IssueAdd = () => {
                             {detail?.requirement?.title}
                           </CDropdownToggle>
                           <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
-                            {filter?.requirement?.map((requirement) => (
+                            {detail?.milestone?.requirements?.map((requirement) => (
                               <CDropdownItem
                                 onClick={() => setDetail((prev) => ({ ...prev, requirement: requirement }))}
                               >

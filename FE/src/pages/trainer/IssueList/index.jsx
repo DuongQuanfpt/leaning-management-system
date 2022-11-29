@@ -839,7 +839,10 @@ const IssueList = () => {
                     label: status.title,
                     value: status.id,
                   }))}
-                  onChange={(value) => setBaseEditBatch((prev) => ({ ...prev, status: value }))}
+                  onChange={(value) => {
+                    setBaseEditBatch((prev) => ({ ...prev, status: value }))
+                    console.log(listFilter?.statusFilter)
+                  }}
                   allowClear={true}
                 ></Select>
               </Space>
