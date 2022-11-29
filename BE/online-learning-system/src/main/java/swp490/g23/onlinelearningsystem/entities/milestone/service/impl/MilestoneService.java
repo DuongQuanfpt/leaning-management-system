@@ -210,7 +210,6 @@ public class MilestoneService implements IMilestoneService {
 
         if (dto.getDescription() != null) {
             milestone.setDescription(dto.getDescription());
-            ;
         }
 
         if (dto.getFromDate() != null) {
@@ -224,6 +223,11 @@ public class MilestoneService implements IMilestoneService {
         milestone.setStatus(MilestoneStatusEnum.Open);
 
         if (dto.getAssignmentId() != null) {
+            Assignment assignment = assignmentRepository.findById(dto.getAssignmentId())
+                    .orElseThrow(() -> new CustomException("Assignment doesnt exist"));
+            if (!assignment.getMilestones().isEmpty()) {
+                throw new CustomException("Assignment already have milestone");
+            }
             milestone.setAssignment(assignmentRepository.findById(dto.getAssignmentId())
                     .orElseThrow(() -> new CustomException("Assignment doesnt exist")));
             List<EvalCriteria> evalCriterias = milestone.getAssignment().getEvalCriteriaList();
