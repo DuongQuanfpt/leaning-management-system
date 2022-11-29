@@ -68,7 +68,7 @@ const ClassSettingAdd = () => {
       setError('You must select one Type')
       return
     }
-    if (detail.settingTitle === '') {
+    if (detail.settingTitle.trim() === '') {
       setError('Setting title must not empty')
       return
     }
@@ -132,7 +132,7 @@ const ClassSettingAdd = () => {
                   <Breadcrumb.Item>
                     <Link to="/class-setting-list">Class Setting List</Link>
                   </Breadcrumb.Item>
-                  <Breadcrumb.Item>Class Setting Detail</Breadcrumb.Item>
+                  <Breadcrumb.Item>Class Setting Add</Breadcrumb.Item>
                 </Breadcrumb>
               </div>
             </div>

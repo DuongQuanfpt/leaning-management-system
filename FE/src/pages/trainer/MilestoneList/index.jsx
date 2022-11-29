@@ -74,7 +74,7 @@ const MilestoneList = () => {
   }, [])
 
   useEffect(() => {
-    loadData(1, filter)
+    loadData(currentPage, filter, search)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, currentClass])
 
@@ -101,7 +101,6 @@ const MilestoneList = () => {
       .then((response) => {
         console.log(response)
         setListMilestone(response.listResult)
-        setCurrentPage(page)
         setTotalItem(response.totalItem)
       })
       .catch((error) => {
@@ -118,7 +117,7 @@ const MilestoneList = () => {
   }
   const handleChangePage = (pageNumber) => {
     setCurrentPage(pageNumber)
-    loadData(pageNumber, filter)
+    loadData(pageNumber, filter, search)
   }
   const handleReload = () => {
     setSearch('')
@@ -133,6 +132,7 @@ const MilestoneList = () => {
         value: '',
       },
     })
+    setCurrentPage(1)
   }
   const handleAdd = () => {
     navigateTo('/new-milestone')
@@ -490,7 +490,7 @@ const MilestoneList = () => {
                 <Table bordered dataSource={listMilestone} columns={columns} pagination={false} loading={loading} />
               </div>
               <div className="col-lg-12 d-flex justify-content-end mt-3">
-                <Pagination current={currentPage} total={totalItem} onChange={handleChangePage} />;
+                <Pagination current={currentPage} total={totalItem} onChange={handleChangePage} />
               </div>
             </div>
           </div>

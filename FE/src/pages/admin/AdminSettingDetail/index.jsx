@@ -42,11 +42,11 @@ const AdminSettingDetail = () => {
   }
 
   const handleSave = async () => {
-    if (title === '') {
+    if (title.trim() === '') {
       setError('Title must not empty')
       return
     }
-    if (value === '') {
+    if (value.trim() === '') {
       setError('Value must not empty')
       return
     }
@@ -54,7 +54,7 @@ const AdminSettingDetail = () => {
       setError('Display Order must not empty')
       return
     }
-    if (description === '') {
+    if (description.trim() === '') {
       setError('Description must not empty')
       return
     }
@@ -62,7 +62,7 @@ const AdminSettingDetail = () => {
       settingTitle: title.trim(),
       settingValue: value.trim(),
       status: status,
-      description: description,
+      description: description.trim(),
       displayOrder: order,
     }
 

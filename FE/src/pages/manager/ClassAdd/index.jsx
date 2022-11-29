@@ -73,7 +73,7 @@ const ClassAdd = () => {
   }
 
   const handleAdd = async () => {
-    if (object.classes === '') {
+    if (object.classes.trim() === '') {
       setObject((prev) => ({ ...prev, error: 'Class code must not empty' }))
       return
     }

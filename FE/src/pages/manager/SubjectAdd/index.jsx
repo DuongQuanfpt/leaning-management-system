@@ -198,7 +198,7 @@ const SubjectAdd = () => {
                                 />
                               </div>
                             </div>
-                            <ErrorMsg errorMsg={error} />
+                            <ErrorMsg errorMsg={error} isError={error !== 'You have successfully add new subject'} />
                             <div className="d-flex">
                               <CButton size="md" className="mr-5" color="warning" onClick={modalConfirm}>
                                 Add

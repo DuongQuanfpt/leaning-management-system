@@ -16,6 +16,7 @@ import {
   Modal,
   Select,
   Input,
+  Skeleton,
 } from 'antd'
 import { CrownTwoTone, DownOutlined, ExclamationCircleOutlined, MoreOutlined, RightOutlined } from '@ant-design/icons'
 
@@ -66,6 +67,7 @@ const GroupList = () => {
   const [isTrainer, setIsTrainer] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const [isTeamwork, setIsTeamwork] = useState(true)
+  const [loading, setLoading] = useState(false)
 
   const groupNameRef = useRef(null)
   const topicNameRef = useRef(null)
@@ -105,6 +107,7 @@ const GroupList = () => {
   }, [currentClass])
 
   const loadMilestone = async () => {
+    setLoading(true)
     await groupApi
       .getFilter(currentClass)
       .then((response) => {
@@ -115,6 +118,7 @@ const GroupList = () => {
         }))
       })
       .catch((error) => console.log(error))
+      .finally(() => setLoading(false))
   }
 
   const loadGroup = async (params) => {
@@ -129,6 +133,7 @@ const GroupList = () => {
       setIsTeamwork(false)
     }
 
+    setLoading(true)
     await groupApi
       .getGroup(params)
       .then((response) => {
@@ -156,6 +161,7 @@ const GroupList = () => {
       .catch((error) => {
         console.log(error)
       })
+      .finally(() => setLoading(false))
   }
 
   const handleFilterMilestone = async (milestone) => {
@@ -850,32 +856,34 @@ const GroupList = () => {
                   </div>
                 ))}
 
-              {filter.milstone.title !== 'Select Milestone' && (
-                <div className="col-lg-12 m-b30">
-                  <Table
-                    className="m-0 p-0"
-                    style={{ transform: `translate(0px, 20px)` }}
-                    columns={columnsTrainee}
-                    dataSource={group}
-                    pagination={false}
-                    rowClassName={(record, index) => 'd-none'}
-                  />
-                  <Table
-                    columns={columnsGroup}
-                    showHeader={false}
-                    expandable={{ expandedRowRender, defaultExpandedRowKeys: [''] }}
-                    expandIcon={({ expanded, onExpand, record }) =>
-                      expanded ? (
-                        <DownOutlined className="d-flex align-items-center" onClick={(e) => onExpand(record, e)} />
-                      ) : (
-                        <RightOutlined className="d-flex align-items-center" onClick={(e) => onExpand(record, e)} />
-                      )
-                    }
-                    dataSource={group}
-                    pagination={false}
-                  />
-                </div>
-              )}
+              <Skeleton loading={loading}>
+                {filter.milstone.title !== 'Select Milestone' && (
+                  <div className="col-lg-12 m-b30">
+                    <Table
+                      className="m-0 p-0"
+                      style={{ transform: `translate(0px, 20px)` }}
+                      columns={columnsTrainee}
+                      dataSource={group}
+                      pagination={false}
+                      rowClassName={(record, index) => 'd-none'}
+                    />
+                    <Table
+                      columns={columnsGroup}
+                      showHeader={false}
+                      expandable={{ expandedRowRender, defaultExpandedRowKeys: [''] }}
+                      expandIcon={({ expanded, onExpand, record }) =>
+                        expanded ? (
+                          <DownOutlined className="d-flex align-items-center" onClick={(e) => onExpand(record, e)} />
+                        ) : (
+                          <RightOutlined className="d-flex align-items-center" onClick={(e) => onExpand(record, e)} />
+                        )
+                      }
+                      dataSource={group}
+                      pagination={false}
+                    />
+                  </div>
+                )}
+              </Skeleton>
             </div>
           </div>
         </div>

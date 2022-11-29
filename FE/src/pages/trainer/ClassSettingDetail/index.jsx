@@ -100,15 +100,15 @@ const ClassSettingDetail = () => {
     setIsEditMode(false)
   }
   const handleSave = async () => {
-    if (detail.settingTitle.trim() === '') {
+    if (detail?.settingTitle.trim() === '') {
       setError('Class setting title must not empty')
       return
     }
-    if (detail.displayOrder.length === 0) {
+    if (detail?.displayOrder.length === 0) {
       setError('Display Order must not empty')
       return
     }
-    if (detail.description.trim() === '') {
+    if (detail?.description.trim() === '') {
       setError('Desription must not empty')
       return
     }
@@ -127,7 +127,7 @@ const ClassSettingDetail = () => {
       })
       .catch((error) => {
         console.log(error)
-        setError(error)
+        setError('Something went wrong, please try again!')
       })
   }
 
