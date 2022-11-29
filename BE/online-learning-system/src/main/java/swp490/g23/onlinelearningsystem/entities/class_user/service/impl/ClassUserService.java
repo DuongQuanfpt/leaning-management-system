@@ -489,9 +489,10 @@ public class ClassUserService implements IClassUserService {
                     if (classUser.getTopicEval() != null) {
                         responseDTO.setGpa(classUser.getTopicEval());
                     }
-                    responseDTO.setAssignmentGrade(gradeDTO);
+
                 }
                 gradeDTO.add(grade);
+                responseDTO.setAssignmentGrade(gradeDTO);
             }
             dto.add(responseDTO);
         }
