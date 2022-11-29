@@ -52,11 +52,11 @@ const AdminSettingAdd = () => {
       setError('You must choose one of any type')
       return
     }
-    if (title === '') {
+    if (title.trim() === '') {
       setError('Title must not empty')
       return
     }
-    if (value === '') {
+    if (value.trim() === '') {
       setError('Value must not empty')
       return
     }
@@ -64,7 +64,7 @@ const AdminSettingAdd = () => {
       setError('Display Order must not empty')
       return
     }
-    if (description === '') {
+    if (description.trim() === '') {
       setError('Description must not empty')
       return
     }
@@ -73,7 +73,7 @@ const AdminSettingAdd = () => {
       settingTitle: title.trim(),
       settingValue: value.trim(),
       status: status,
-      description: description,
+      description: description.trim(),
       displayOrder: order,
       typeValue: type.value,
     }

@@ -311,18 +311,18 @@ const ClassEvaluation = () => {
           // },
           children: (
             <Typography.Text>
-              <Typography.Text className="mr-2">{assignmentEval.assignmentGrade[index]?.grade}</Typography.Text>
-              {assignmentEval.assignmentGrade[index]?.status === 'Closed' && (
+              <Typography.Text className="mr-2">{assignmentEval?.assignmentGrade[index]?.grade}</Typography.Text>
+              {assignmentEval?.assignmentGrade[index]?.status === 'Closed' && (
                 <Button
                   icon={<EllipsisOutlined />}
                   size="small"
                   onClick={() => {
                     setOpen((prev) => ({ ...prev, comment: true }))
                     console.log(assignmentEval)
-                    console.log(assignmentEval.assignmentGrade[index])
+                    console.log(assignmentEval?.assignmentGrade[index])
                     setCurrentComment({
                       classEval: assignmentEval,
-                      assignment: assignmentEval.assignmentGrade[index],
+                      assignment: assignmentEval?.assignmentGrade[index],
                     })
                   }}
                 ></Button>

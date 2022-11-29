@@ -107,7 +107,7 @@ const ClassDetail = () => {
   }
 
   const handleSave = async () => {
-    if (object.classes === '') {
+    if (object.classes.trim() === '') {
       setObject((prev) => ({ ...prev, error: 'Class code must not empty' }))
       return
     }
@@ -150,6 +150,7 @@ const ClassDetail = () => {
       supporter: defaultClass.supporter,
       status: defaultClass.status === 'Active' ? 1 : defaultClass.status === 'Inactive' ? 0 : -1,
       description: defaultClass.description,
+      error: '',
     }))
     setIsEditMode(false)
   }

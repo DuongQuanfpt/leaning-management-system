@@ -204,7 +204,10 @@ const SubjectDetail = () => {
                                 />
                               </div>
                             </div>
-                            <ErrorMsg errorMsg={error} />
+                            <ErrorMsg
+                              errorMsg={error}
+                              isError={error !== 'You have successfully changed your subject detail'}
+                            />
                             <div className="d-flex">
                               {isEditMode ? (
                                 <>

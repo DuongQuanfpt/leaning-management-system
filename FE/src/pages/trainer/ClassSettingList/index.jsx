@@ -67,7 +67,7 @@ const ClassSettingList = () => {
   }, [])
 
   useEffect(() => {
-    loadData(1, filter)
+    loadData(currentPage, filter, search)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, currentClass])
 
@@ -293,7 +293,7 @@ const ClassSettingList = () => {
               <div className="col-lg-12">
                 <Table bordered dataSource={listClassSetting} columns={columns} pagination={false} />
               </div>
-              <div className="col-lg-12 d-flex justify-content-end">
+              <div className="col-lg-12 d-flex justify-content-end mt-3">
                 <Pagination current={currentPage} total={totalItem} onChange={handleChangePage} />;
               </div>
             </div>

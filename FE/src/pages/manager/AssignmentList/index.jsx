@@ -57,7 +57,7 @@ const AssignmentList = () => {
   }, [])
 
   useEffect(() => {
-    loadData(1, filter)
+    loadData(currentPage, filter, search)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter])
 
@@ -91,7 +91,6 @@ const AssignmentList = () => {
   }
 
   const handleSearch = () => {
-    console.log('1')
     loadData(1, filter, search)
   }
 
