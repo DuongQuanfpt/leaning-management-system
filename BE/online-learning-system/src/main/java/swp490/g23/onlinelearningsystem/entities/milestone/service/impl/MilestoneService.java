@@ -222,22 +222,20 @@ public class MilestoneService implements IMilestoneService {
 
         milestone.setStatus(MilestoneStatusEnum.Open);
 
+        List<EvalCriteria> sCriterias = new ArrayList<>();
         if (dto.getAssignmentId() != null) {
             Assignment assignment = assignmentRepository.findById(dto.getAssignmentId())
                     .orElseThrow(() -> new CustomException("Assignment doesnt exist"));
             if (!assignment.getMilestones().isEmpty()) {
                 throw new CustomException("Assignment already have milestone");
             }
-            milestone.setAssignment(assignmentRepository.findById(dto.getAssignmentId())
-                    .orElseThrow(() -> new CustomException("Assignment doesnt exist")));
+            milestone.setAssignment(assignment);
             if(!milestone.getAssignment().getEvalCriteriaList().isEmpty()){
                 List<EvalCriteria> evalCriterias = milestone.getAssignment().getEvalCriteriaList();
-                List<EvalCriteria> sCriterias = new ArrayList<>();
                 for (EvalCriteria evalCriteria : evalCriterias) {
                     evalCriteria.setMilestone(milestone);
                     sCriterias.add(evalCriteria);
                 }
-                evalCriteriaRepositories.saveAll(sCriterias);
             }
            
         } else {
@@ -254,6 +252,7 @@ public class MilestoneService implements IMilestoneService {
         }
 
         milestoneRepository.save(milestone);
+        evalCriteriaRepositories.saveAll(sCriterias);
         submitRepository.saveAll(submits);
         return ResponseEntity.ok("Milestone added");
     }
