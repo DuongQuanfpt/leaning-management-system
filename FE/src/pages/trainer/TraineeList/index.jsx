@@ -221,37 +221,6 @@ const TraineeList = () => {
     })
   }
 
-  const modalDropout = (trainee) => {
-    Modal.confirm({
-      title: `Are you want to dropout ${trainee.username} ? `,
-      icon: <ExclamationCircleOutlined />,
-      okText: 'OK',
-      cancelText: 'Cancel',
-      okType: 'danger',
-      onOk() {
-        if (!dateDropout) {
-          modalError('Dropout date must not empty')
-          return
-        }
-        console.log(dateDropout)
-        return
-        handleDropout(trainee)
-      },
-      onCancel() {},
-      content: (
-        <>
-          <p>Select date please: </p>
-          <DatePicker
-            size={'large'}
-            format={'YYYY/MM/DD'}
-            onChange={(date, dateString) => setDateDropout({ date, dateString })}
-          />
-          ,
-        </>
-      ),
-    })
-  }
-
   const columns = [
     {
       title: 'Username',
