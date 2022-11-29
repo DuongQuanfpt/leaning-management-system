@@ -517,6 +517,7 @@ public class ClassUserService implements IClassUserService {
                 for (AssignmentGradeDTO grade : requestDTO.getAssignmentGrade()) {
                     Assignment assignment = assignmentRepository.findById(grade.getAssignmentId()).get();
                     List<Milestone> milestones = assignment.getMilestones();
+                    List<MilestoneEval> evals = new ArrayList<>();
                     for (Milestone milestone : milestones) {
                         if (milestone.getMilestoneEvals().isEmpty()) {
                             MilestoneEval milestoneEval = new MilestoneEval();
@@ -531,11 +532,13 @@ public class ClassUserService implements IClassUserService {
                                     if (eval.getClassUser().equals(classUser)) {
                                         eval.setComment(grade.getComment());
                                         eval.setGrade(grade.getGrade());
+                                        evals.add(eval);
                                     }
                                 }
                             }
                         }
                     }
+                    milestoneEvalRepository.saveAll(evals);
                 }
                 for (MilestoneEval eval : classUser.getMilestoneEvals()) {
                     String evalWeight = eval.getMilestone().getAssignment().getEval_weight().substring(0,
@@ -580,6 +583,7 @@ public class ClassUserService implements IClassUserService {
                 for (AssignmentGradeDTO grade : requestDTO.getAssignmentGrade()) {
                     Assignment assignment = assignmentRepository.findById(grade.getAssignmentId()).get();
                     Milestone milestone = assignment.getMilestones().get(0);
+                    List<MilestoneEval> evals = new ArrayList<>();
                     for (MilestoneEval eval : classUser.getMilestoneEvals()) {
                         if (eval.getMilestone().equals(milestone)) {
                             for (EvalDetail detail : eval.getEvalDetails()) {
@@ -588,11 +592,13 @@ public class ClassUserService implements IClassUserService {
                                             / 100;
                                     Double mark = markEval + eval.getBonus();
                                     eval.setGrade(mark);
+                                    evals.add(eval);
                                 }
                             }
                         }
                         milestoneEvalRepository.save(eval);
                     }
+                    milestoneEvalRepository.saveAll(evals);
                 }
                 for (MilestoneEval eval : classUser.getMilestoneEvals()) {
                     String evalWeight = eval.getMilestone().getAssignment().getEval_weight().substring(0,
@@ -626,7 +632,5 @@ public class ClassUserService implements IClassUserService {
         }
         return ResponseEntity.ok("Marks has been generated");
     }
-
-    {"dto":[{"accountName":"hoangnh00001","comment":"Khá lắm","assignmentGrade":[{"assignmentId":3,"grade":null,"comment":null},{"assignmentId":14,"grade":2.48,"comment":"OK1"},{"assignmentId":24,"grade":null,"comment":null},{"assignmentId":34,"grade":null,"comment":null},{"assignmentId":35,"grade":null,"comment":null},{"assignmentId":36,"grade":null,"comment":null},{"assignmentId":44,"grade":null,"comment":null},{"assignmentId":254,"grade":null,"comment":null}]},{"accountName":"hoangnh00002","comment":null,"assignmentGrade":[{"assignmentId":3,"grade":3.2,"comment":"Quite Good"},{"assignmentId":14,"grade":2.48,"comment":"OK2"},{"assignmentId":24,"grade":null,"comment":null},{"assignmentId":34,"grade":0,"comment":null},{"assignmentId":35,"grade":null,"comment":null},{"assignmentId":36,"grade":null,"comment":null},{"assignmentId":44,"grade":null,"comment":null},{"assignmentId":254,"grade":null,"comment":null}]},{"accountName":"hoangnh00003","comment":null,"assignmentGrade":[{"assignmentId":3,"grade":0,"comment":null},{"assignmentId":14,"grade":3,"comment":"OK3"},{"assignmentId":24,"grade":null,"comment":null},{"assignmentId":34,"grade":null,"comment":null},{"assignmentId":35,"grade":null,"comment":null},{"assignmentId":36,"grade":null,"comment":null},{"assignmentId":44,"grade":null,"comment":null},{"assignmentId":254,"grade":null,"comment":null}]},{"accountName":"hoangnh00004","comment":null,"assignmentGrade":[{"assignmentId":3,"grade":0,"comment":null},{"assignmentId":14,"grade":4,"comment":"OK4"},{"assignmentId":24,"grade":null,"comment":null},{"assignmentId":34,"grade":null,"comment":null},{"assignmentId":35,"grade":null,"comment":null},{"assignmentId":36,"grade":null,"comment":null},{"assignmentId":44,"grade":null,"comment":null},{"assignmentId":254,"grade":null,"comment":null}]},{"accountName":"hoangnh00005","comment":null,"assignmentGrade":[{"assignmentId":3,"grade":0.62,"comment":"OK"},{"assignmentId":14,"grade":5,"comment":"OK5"},{"assignmentId":24,"grade":null,"comment":null},{"assignmentId":34,"grade":null,"comment":null},{"assignmentId":35,"grade":null,"comment":null},{"assignmentId":36,"grade":null,"comment":null},{"assignmentId":44,"grade":null,"comment":null},{"assignmentId":254,"grade":null,"comment":null}]},{"accountName":"hoangnh00006","comment":null,"assignmentGrade":[{"assignmentId":3,"grade":0.64,"comment":"Fine"},{"assignmentId":14,"grade":6,"comment":"OK6"},{"assignmentId":24,"grade":null,"comment":null},{"assignmentId":34,"grade":null,"comment":null},{"assignmentId":35,"grade":null,"comment":null},{"assignmentId":36,"grade":null,"comment":null},{"assignmentId":44,"grade":null,"comment":null},{"assignmentId":254,"grade":null,"comment":null}]},{"accountName":"hoangnh00007","comment":null,"assignmentGrade":[{"assignmentId":3,"grade":1.88,"comment":"Bad"},{"assignmentId":14,"grade":7,"comment":"OK7"},{"assignmentId":24,"grade":null,"comment":null},{"assignmentId":34,"grade":null,"comment":null},{"assignmentId":35,"grade":null,"comment":null},{"assignmentId":36,"grade":null,"comment":null},{"assignmentId":44,"grade":null,"comment":null},{"assignmentId":254,"grade":null,"comment":null}]},{"accountName":"hoangnh00008","comment":null,"assignmentGrade":[{"assignmentId":3,"grade":null,"comment":null},{"assignmentId":14,"grade":8,"comment":"OK8"},{"assignmentId":24,"grade":null,"comment":null},{"assignmentId":34,"grade":null,"comment":null},{"assignmentId":35,"grade":null,"comment":null},{"assignmentId":36,"grade":null,"comment":null},{"assignmentId":44,"grade":null,"comment":null},{"assignmentId":254,"grade":null,"comment":null}]},{"accountName":"hoangnh00009","comment":null,"assignmentGrade":[{"assignmentId":3,"grade":null,"comment":null},{"assignmentId":14,"grade":9,"comment":"OK9"},{"assignmentId":24,"grade":null,"comment":null},{"assignmentId":34,"grade":null,"comment":null},{"assignmentId":35,"grade":null,"comment":null},{"assignmentId":36,"grade":null,"comment":null},{"assignmentId":44,"grade":null,"comment":null},{"assignmentId":254,"grade":null,"comment":null}]},{"accountName":"hoangnh00010","comment":null,"assignmentGrade":[{"assignmentId":3,"grade":1.12,"comment":"Bad"},{"assignmentId":14,"grade":3,"comment":"OK10"},{"assignmentId":24,"grade":null,"comment":null},{"assignmentId":34,"grade":null,"comment":null},{"assignmentId":35,"grade":null,"comment":null},{"assignmentId":36,"grade":null,"comment":null},{"assignmentId":44,"grade":null,"comment":null},{"assignmentId":254,"grade":null,"comment":null}]},{"accountName":"hoangnh00011","comment":null,"assignmentGrade":[{"assignmentId":3,"grade":null,"comment":null},{"assignmentId":14,"grade":4,"comment":"OK11"},{"assignmentId":24,"grade":null,"comment":null},{"assignmentId":34,"grade":null,"comment":null},{"assignmentId":35,"grade":null,"comment":null},{"assignmentId":36,"grade":null,"comment":null},{"assignmentId":44,"grade":null,"comment":null},{"assignmentId":254,"grade":null,"comment":null}]},{"accountName":"hoangnh00012","comment":null,"assignmentGrade":[{"assignmentId":3,"grade":null,"comment":null},{"assignmentId":14,"grade":5,"comment":"OK12"},{"assignmentId":24,"grade":null,"comment":null},{"assignmentId":34,"grade":null,"comment":null},{"assignmentId":35,"grade":null,"comment":null},{"assignmentId":36,"grade":null,"comment":null},{"assignmentId":44,"grade":null,"comment":null},{"assignmentId":254,"grade":null,"comment":null}]},{"accountName":"hoangnh00013","comment":null,"assignmentGrade":[{"assignmentId":3,"grade":null,"comment":null},{"assignmentId":14,"grade":6,"comment":"OK13"},{"assignmentId":24,"grade":null,"comment":null},{"assignmentId":34,"grade":null,"comment":null},{"assignmentId":35,"grade":null,"comment":null},{"assignmentId":36,"grade":null,"comment":null},{"assignmentId":44,"grade":null,"comment":null},{"assignmentId":254,"grade":null,"comment":null}]}]}
 
 }
