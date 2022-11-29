@@ -1023,6 +1023,14 @@ const SubmitDetail = () => {
                                   updateDate: moment().format('YYYY-MM-DD'),
                                   milestoneId: values.milestone,
                                 }
+                                if (values.title.trim() === '') {
+                                  toastMessage('error', 'Work Update Title must not empty!')
+                                  return
+                                }
+                                if (values.content.trim() === '') {
+                                  toastMessage('error', 'Work Update Content must not empty!')
+                                  return
+                                }
                                 evaluationApi
                                   .addWorkUpdate(
                                     submitSelected.submitWorkId.submitId,
@@ -1164,6 +1172,14 @@ const SubmitDetail = () => {
                                   description: values.content.trim(),
                                   updateDate: moment().format('YYYY-MM-DD'),
                                   milestoneId: values.milestone,
+                                }
+                                if (values.title.trim() === '') {
+                                  toastMessage('error', 'Work Update Title must not empty!')
+                                  return
+                                }
+                                if (values.content.trim() === '') {
+                                  toastMessage('error', 'Work Update Content must not empty!')
+                                  return
                                 }
                                 evaluationApi
                                   .editWorkUpdate(values.updateId, params)

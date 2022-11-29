@@ -12,10 +12,12 @@ import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 import webContactApi from '~/api/webContactApi'
+import { useSelector } from 'react-redux'
 
 let ITEM_PER_PAGE = 10
 const ContactList = () => {
   const navigateTo = useNavigate()
+  const { token } = useSelector((state) => state.auth)
 
   const [listContact, setListContact] = useState([])
   const [listSupporter, setListSupporter] = useState([])
@@ -39,7 +41,7 @@ const ContactList = () => {
 
   useEffect(() => {
     webContactApi
-      .getPage({ page: 1 })
+      .getPage({ page: 1 }, token)
       .then((response) => {
         setListSupporter(response.suppFilter)
         setListCategory(response.contactFilter)
@@ -75,7 +77,7 @@ const ContactList = () => {
     }
 
     await webContactApi
-      .getPage(params)
+      .getPage(params, token)
       .then((response) => {
         console.log(response)
         setListContact(response.listResult)

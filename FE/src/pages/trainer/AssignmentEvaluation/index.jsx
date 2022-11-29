@@ -219,11 +219,8 @@ const AssignementEvaluation = () => {
       const row = await form.validateFields()
       //Get data form
       console.log(row)
+      console.log(rowUpdated)
 
-      if (row.bonusGrade > 2 || row.bonusGrade < -2) {
-        toastMessage('error', 'Bonus / Penalty must between -2 and 2')
-        return
-      }
       if (row.bonusGrade > 2 || row.bonusGrade < -2) {
         toastMessage('error', 'Bonus / Penalty must between -2 and 2')
         return
@@ -610,9 +607,6 @@ const AssignementEvaluation = () => {
   }
 
   const handleImportEval = async () => {
-    console.log(evalSelected)
-    console.log(listImported)
-    console.log(data)
     //Check length of data is modified
     if (listImported.length === 0) {
       toastMessage('error', 'File uploaded must not empty, follow the template please')

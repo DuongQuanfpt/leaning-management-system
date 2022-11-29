@@ -11,9 +11,9 @@ const webContactApi = {
     const url = `/api/contact-add`
     return axiosClient.post(url, params)
   },
-  getPage: (params) => {
+  getPage: (params, token) => {
     const url = `/api/contact`
-    return axiosClient.get(url, { ...header, params })
+    return axiosClient.get(url, { headers: { Authorization: `Bearer ${token}` }, params })
   },
 
   getDetail: (id) => {
