@@ -103,6 +103,10 @@ const NewMilestone = () => {
       })
       .catch((error) => {
         console.log(error)
+        if (error.response.data.message === 'Assignment already have milestone') {
+          setError('Subject Assignment were used already')
+          return
+        }
         setError('Somthing went wrong, please try again')
       })
   }
