@@ -394,34 +394,34 @@ const ClassEvaluation = () => {
   const handleGenerateEvaluation = async (assignmentSelected) => {
     setLoading(true)
 
-    const newData = [...data].map((item) => ({
-      ...item,
-      assignmentGrade: item.assignmentGrade.map((item2) => ({
-        ...item2,
-        grade: item2.assignmentId === assignmentSelected.assignmentId ? null : item2.grade,
-      })),
-    }))
+    // const newData = [...data].map((item) => ({
+    //   ...item,
+    //   assignmentGrade: item.assignmentGrade.map((item2) => ({
+    //     ...item2,
+    //     grade: item2.assignmentId === assignmentSelected.assignmentId ? null : item2.grade,
+    //   })),
+    // }))
 
-    const params = {
-      dto: newData.map((item) => ({
-        accountName: item.userName,
-        comment: item.comment,
-        assignmentGrade: item.assignmentGrade.map((item2) => ({
-          assignmentId: item2.assignmentId,
-          grade: item2.grade,
-          comment: item2.comment,
-        })),
-      })),
-    }
+    // const params = {
+    //   dto: newData.map((item) => ({
+    //     accountName: item.userName,
+    //     comment: item.comment,
+    //     assignmentGrade: item.assignmentGrade.map((item2) => ({
+    //       assignmentId: item2.assignmentId,
+    //       grade: item2.grade,
+    //       comment: item2.comment,
+    //     })),
+    //   })),
+    // }
 
-    await evaluationApi
-      .editClassEval(currentClass, params)
-      .then((response) => {
-        console.log(response)
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+    // await evaluationApi
+    //   .editClassEval(currentClass, params)
+    //   .then((response) => {
+    //     console.log(response)
+    //   })
+    //   .catch((error) => {
+    //     console.log(error)
+    //   })
 
     const params2 = {
       dto: data.map((item) => ({
