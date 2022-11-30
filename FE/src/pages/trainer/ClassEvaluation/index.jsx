@@ -387,13 +387,43 @@ const ClassEvaluation = () => {
         toastMessage('error', 'Clear Assignment Evaluation failed, try again later!')
       })
       .finally(() => {
-        setOpen((prev) => ({ ...prev, comment: false }))
         loadData()
       })
   }
 
   const handleGenerateEvaluation = async (assignmentSelected) => {
+    setLoading(true)
+
+    const newData = [...data].map((item) => ({
+      ...item,
+      assignmentGrade: item.assignmentGrade.map((item2) => ({
+        ...item2,
+        grade: item2.assignmentId === assignmentSelected.assignmentId ? null : item2.grade,
+      })),
+    }))
+
     const params = {
+      dto: newData.map((item) => ({
+        accountName: item.userName,
+        comment: item.comment,
+        assignmentGrade: item.assignmentGrade.map((item2) => ({
+          assignmentId: item2.assignmentId,
+          grade: item2.grade,
+          comment: item2.comment,
+        })),
+      })),
+    }
+
+    await evaluationApi
+      .editClassEval(currentClass, params)
+      .then((response) => {
+        console.log(response)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+
+    const params2 = {
       dto: data.map((item) => ({
         accountName: item.userName,
         assignmentGrade: [
@@ -405,7 +435,7 @@ const ClassEvaluation = () => {
     }
 
     await evaluationApi
-      .editClassEval(currentClass, params)
+      .generateClassEval(currentClass, params2)
       .then((response) => {
         console.log(response)
         toastMessage('success', 'Generate Assignment Evaluation successfully!')
@@ -415,12 +445,14 @@ const ClassEvaluation = () => {
         toastMessage('error', 'Generate Assignment Evaluation failed, try again later!')
       })
       .finally(() => {
+        setLoading(false)
         setOpen((prev) => ({ ...prev, import: false }))
         loadData()
       })
   }
 
   const handleImportEval = async () => {
+    setLoading(true)
     //Check length of data is modified
     if (listImported.length === 0) {
       toastMessage('error', 'File uploaded must not empty, follow the template please')
@@ -488,6 +520,7 @@ const ClassEvaluation = () => {
       })
       .finally(() => {
         setOpen((prev) => ({ ...prev, import: false }))
+        setLoading(false)
         loadData()
       })
   }
@@ -519,37 +552,40 @@ const ClassEvaluation = () => {
   const handleExportMark = () => {
     try {
       let listExport = []
-      // if (filter.assignment.length !== 0) {
-      //   listExport = [
-      //     ...data.map((evaluation) => {
-      //       const objectReturn = {
-      //         UserName: evaluation.userName,
-      //         FullName: evaluation.fullName,
-      //         Comment: evaluation.comment,
-      //       }
-      //       evaluation.assignmentGrade.forEach((item, index) => {
-      //         if (filter.assignment.includes(item.assignmentId)) {
-      //           objectReturn[item.assignmentTitle] = item.grade
-      //         } else {
-      //         }
-      //       })
-      //       return objectReturn
-      //     }),
-      //   ]
-      //   console.log(listExport)
-      // } else {
-      //   console.log(listExport)
-      // }
-      // console.log(data)
-      // console.log(filter.assignment)
-      return
+      let colName = ['UserName', 'FullName', 'Comment']
+      let colWidth = [{ wch: 20 }, { wch: 20 }, { wch: 25 }]
+      if (filter.assignment.length === 0) {
+        listExport = [
+          ...data.map((evaluation, index) => {
+            let objectReturn = {
+              UserName: evaluation.userName,
+              FullName: evaluation.fullName,
+              Comment: evaluation.comment,
+            }
+            evaluation.assignmentGrade.forEach((item, index) => {
+              objectReturn = {
+                ...objectReturn,
+                [`${item.assingmentTitle} ${item.evalWeight}%`]: item.grade,
+              }
+            })
+
+            return objectReturn
+          }),
+        ]
+
+        listAssignment.forEach((item) => {
+          colName.push(`${item?.assignmentTitle} ${item?.evalWeight}%`)
+          colWidth.push({ wch: 15 })
+        })
+      } else {
+      }
       const ws = utils.json_to_sheet(listExport)
       const wb = utils.book_new()
-      utils.sheet_add_aoa(ws, [['UserName', 'FullName', 'Mark', 'Comment']], { origin: 'A1' })
-      var wscols = [{ wch: 20 }, { wch: 20 }, { wch: 20 }, { wch: 20 }]
+      utils.sheet_add_aoa(ws, [colName], { origin: 'A1' })
+      var wscols = colWidth
       ws['!cols'] = wscols
       utils.book_append_sheet(wb, ws, 'Data')
-      writeFileXLSX(wb, 'MarkData.xlsx')
+      writeFileXLSX(wb, `MarkDataOf${currentClass}.xlsx`)
       toastMessage('success', 'Export Mark Successfully')
     } catch {
       toastMessage('error', 'Export Mark Failed, try again later')

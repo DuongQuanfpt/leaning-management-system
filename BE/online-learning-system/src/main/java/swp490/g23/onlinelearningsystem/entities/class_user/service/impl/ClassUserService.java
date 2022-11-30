@@ -593,6 +593,14 @@ public class ClassUserService implements IClassUserService {
                                     Double mark = markEval + eval.getBonus();
                                     eval.setGrade(mark);
                                     evals.add(eval);
+                                } else if (detail.getGrade() != null && eval.getBonus() == null) {
+                                    Double markEval = detail.getGrade() * detail.getEvalCriteria().getEvalWeight()
+                                            / 100;
+                                    eval.setGrade(markEval);
+                                    evals.add(eval);
+                                } else {
+                                    eval.setGrade(null);
+                                    evals.add(eval);
                                 }
                             }
                         }

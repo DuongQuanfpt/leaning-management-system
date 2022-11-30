@@ -85,12 +85,12 @@ const SubjectSettingAdd = () => {
       return
     }
 
-    if (result.settingTitle === '') {
+    if (result.settingTitle.trim() === '') {
       setError('Setting Title must not empty')
       return
     }
 
-    if (result.settingValue === '' || String(result.settingValue) === '') {
+    if (result.settingValue.trim() === '' || String(result.settingValue).trim() === '') {
       setError('Setting Value must not empty')
       return
     }
