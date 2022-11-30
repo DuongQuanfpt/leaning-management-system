@@ -82,7 +82,7 @@ const MilestoneList = () => {
     setLoading(true)
     const params = {
       limit: ITEM_PER_PAGE,
-      page: currentPage,
+      page: page,
       filterClass: currentClass,
     }
 

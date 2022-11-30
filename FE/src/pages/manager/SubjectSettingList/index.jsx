@@ -100,12 +100,15 @@ const SubjectSettingList = () => {
 
   const handleFilterSubject = (subject) => {
     setFilter((prev) => ({ ...prev, subject: subject }))
+    setCurrentPage(1)
   }
   const handleFilterType = (type) => {
     setFilter((prev) => ({ ...prev, type: type }))
+    setCurrentPage(1)
   }
   const handleFilterStatus = (status) => {
     setFilter((prev) => ({ ...prev, status: status }))
+    setCurrentPage(1)
   }
 
   const handleChangePage = (pageNumber) => {

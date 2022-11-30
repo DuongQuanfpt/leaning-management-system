@@ -56,7 +56,7 @@ const Random = () => {
   }
 
   const handleNextStep = () => {
-    const listStudent = groupDetail.traineeList
+    const listStudent = [...groupDetail.traineeList]
 
     const numberStudent = groupDetail.traineeList.length
     let inputGroup = numberGroupInput.current.input.value
@@ -109,7 +109,6 @@ const Random = () => {
         })),
       ],
     }
-
     await groupApi
       .overrideGroup(id, params)
       .then((response) => {

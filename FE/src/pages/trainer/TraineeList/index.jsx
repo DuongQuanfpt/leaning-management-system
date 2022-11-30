@@ -56,7 +56,7 @@ const TraineeList = () => {
   }, [])
 
   useEffect(() => {
-    loadData(currentPage, filter)
+    loadData(currentPage, filter, search)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, currentClass])
 
@@ -218,37 +218,6 @@ const TraineeList = () => {
         handleChangeStatus(trainee)
       },
       onCancel() {},
-    })
-  }
-
-  const modalDropout = (trainee) => {
-    Modal.confirm({
-      title: `Are you want to dropout ${trainee.username} ? `,
-      icon: <ExclamationCircleOutlined />,
-      okText: 'OK',
-      cancelText: 'Cancel',
-      okType: 'danger',
-      onOk() {
-        if (!dateDropout) {
-          modalError('Dropout date must not empty')
-          return
-        }
-        console.log(dateDropout)
-        return
-        handleDropout(trainee)
-      },
-      onCancel() {},
-      content: (
-        <>
-          <p>Select date please: </p>
-          <DatePicker
-            size={'large'}
-            format={'YYYY/MM/DD'}
-            onChange={(date, dateString) => setDateDropout({ date, dateString })}
-          />
-          ,
-        </>
-      ),
     })
   }
 

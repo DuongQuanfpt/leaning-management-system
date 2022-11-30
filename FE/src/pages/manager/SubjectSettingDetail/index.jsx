@@ -82,12 +82,12 @@ const SubjectSettingDetail = () => {
       description: description,
     }
 
-    if (title === '') {
+    if (title.trim() === '') {
       setError('Setting Title must not empty')
       return
     }
 
-    if (value === '' || String(value) === '') {
+    if (value.trim() === '' || String(value).trim() === '') {
       setError('Setting Value must not empty')
       return
     }
