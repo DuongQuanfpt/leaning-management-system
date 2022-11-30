@@ -21,27 +21,9 @@ public class ClassEvalCriteria {
     public TypedQuery<ClassUser> displayTrainee(String keyword, String filterAssignment,
             User user, String classCode) {
 
-        List<Setting> settings = user.getSettings();
-        List<String> roles = new ArrayList<>();
-        for (Setting setting : settings) {
-            roles.add(setting.getSettingValue());
-        }
         StringBuilder query = new StringBuilder(
                 "SELECT u FROM ClassUser u WHERE u.classes.code = '"
                         + classCode + "'");
-
-        if (roles.contains("ROLE_TRAINER") && roles.contains("ROLE_ TRAINEE")) {
-            query.append(
-                    " AND u.classes.userTrainer.accountName = '" + user.getAccountName() + "' OR u.user.accountName = '"
-                            + user.getAccountName() + "'");
-        } else {
-            if (roles.contains("ROLE_TRAINER")) {
-                query.append(" AND u.classes.userTrainer.accountName = '" + user.getAccountName() + "'");
-            }
-            if (roles.contains("ROLE_TRAINEE")) {
-                query.append(" AND u.user.accountName = '" + user.getAccountName() + "'");
-            }
-        }
 
         if (keyword != null) {
             query.append(" AND (u.user.accountName LIKE '%" + keyword + "%')");
