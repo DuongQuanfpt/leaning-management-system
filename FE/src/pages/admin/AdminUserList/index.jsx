@@ -43,7 +43,7 @@ const AdminUserList = () => {
   }, [])
 
   useEffect(() => {
-    loadData(currentPage, filter)
+    loadData(currentPage, filter, search)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter])
 

@@ -77,7 +77,7 @@ const ClassList = () => {
   }, [])
 
   useEffect(() => {
-    loadData(currentPage, filter)
+    loadData(currentPage, filter, search)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, currentClass])
 
@@ -176,7 +176,7 @@ const ClassList = () => {
 
   const handleChangePage = (pageNumber) => {
     setCurrentPage(pageNumber)
-    loadData(pageNumber, filter)
+    loadData(pageNumber, filter, search)
   }
 
   const modalConfirm = (subject) => {
