@@ -23,7 +23,7 @@ public class AttendanceResponseDTO {
 
     private List<UserAttendanceResponseDTO> userAttendance;
 
-    private String absentPercent;
+    private Double absentPercent;
 
     private HashMap<String, AttendanceStatus> slotStatus;
 }
