@@ -490,17 +490,17 @@ const ClassEvaluation = () => {
       return
     }
     //Check username and fullname data is modified
-    data.every((item, index) => {
-      if (item.userName !== listImported[index].UserName) {
-        toastMessage('error', 'Username of student is modified, follow the template please')
+    const checkModifiedUsername = data.every((item, index) => item.userName === listImported[index].UserName)
+    const checkModifiedFullname = data.every((item, index) => item.fullName === listImported[index].FullName)
 
-        return
-      }
-      if (item.fullName !== listImported[index].FullName) {
-        toastMessage('error', 'FullName of student is modified, follow the template please')
-        return
-      }
-    })
+    if (!checkModifiedUsername) {
+      toastMessage('error', 'Username of student is modified, follow the template please')
+      return
+    }
+    if (!checkModifiedFullname) {
+      toastMessage('error', 'FullName of student is modified, follow the template please')
+      return
+    }
 
     const newData = [...data]
 
@@ -508,7 +508,7 @@ const ClassEvaluation = () => {
       item.assignmentGrade.forEach((item2) => {
         if (item2.assignmentId === evalSelected.assignmentId) {
           item2.grade = listImported[index].Mark
-          item2.comment = listImported[index].Comment
+          item2.comment = listImported[index].Comment === undefined ? null : listImported[index].Comment
         }
       })
     })
@@ -524,6 +524,9 @@ const ClassEvaluation = () => {
         })),
       })),
     }
+
+    console.log(params)
+    console.log(listImported)
     setLoading(true)
 
     await evaluationApi
