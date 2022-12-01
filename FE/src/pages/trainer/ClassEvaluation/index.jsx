@@ -524,9 +524,6 @@ const ClassEvaluation = () => {
         })),
       })),
     }
-
-    console.log(params)
-    console.log(listImported)
     setLoading(true)
 
     await evaluationApi
