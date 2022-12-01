@@ -738,7 +738,11 @@ const AssignementEvaluation = () => {
   }
 
   const customLocale = {
-    emptyText: !filter.milestone?.value ? 'Select Milestone to see Evaluation' : 'No Data',
+    emptyText: !filter.milestone?.value
+      ? 'Select Milestone to see Evaluation'
+      : !filter?.group?.value
+      ? 'Select Group to see Evaluation'
+      : 'No Data',
   }
 
   return (
@@ -890,10 +894,7 @@ const AssignementEvaluation = () => {
                     size="small"
                     columns={mergedColumns}
                     rowClassName="editable-row"
-                    pagination={{
-                      onChange: cancel,
-                      pageSize: 999,
-                    }}
+                    pagination={false}
                     scroll={{
                       x: '100%',
                     }}
