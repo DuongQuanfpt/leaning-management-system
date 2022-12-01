@@ -151,7 +151,7 @@ public class MilestoneService implements IMilestoneService {
     @Override
     public ResponseEntity<MilestoneResponseDTO> milestoneDetail(Long id) {
         Milestone milestone = milestoneRepository.findById(id)
-                .orElseThrow(() -> new CustomException("current user setting doesnt exist"));
+                .orElseThrow(() -> new CustomException("milestone setting doesnt exist"));
         return ResponseEntity.ok(toDTO(milestone));
     }
 
@@ -251,10 +251,10 @@ public class MilestoneService implements IMilestoneService {
             submits.add(submit);
         }
 
-        milestoneRepository.save(milestone);
+        Milestone savedMilestone = milestoneRepository.save(milestone);
         evalCriteriaRepositories.saveAll(sCriterias);
         submitRepository.saveAll(submits);
-        return ResponseEntity.ok("Milestone added");
+        return ResponseEntity.ok(savedMilestone.getTitle());
     }
 
     @Override
@@ -348,14 +348,15 @@ public class MilestoneService implements IMilestoneService {
             responseDTO.setTitle(entity.getTitle());
         }
 
-        List<Submit> submits = entity.getSubmits();
+      
         List<MilestoneGroupDTO> groupResponseDTOs = new ArrayList<>();
         List<MilestoneNoGroupDTO> noGroupDTOs = new ArrayList<>();
         List<Group> groupOfMilestone = new ArrayList<>();
         List<MilestoneEvalDTO> groupEvalsDTOS = new ArrayList<>();
         List<MilestoneEvalDTO> noGroupEvalsDTOS = new ArrayList<>();
 
-        if (!submits.isEmpty()) {
+        if (!entity.getSubmits().isEmpty()) {
+            List<Submit> submits = entity.getSubmits();
             for (Submit submit : submits) {
                 if (submit.getGroup() == null) {
                     MilestoneNoGroupDTO noGroupDto = toNoGroupDTO(submit.getClassUser().getUser());

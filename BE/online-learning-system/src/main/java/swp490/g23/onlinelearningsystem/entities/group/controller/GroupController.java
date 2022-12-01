@@ -20,6 +20,7 @@ import swp490.g23.onlinelearningsystem.entities.group.domain.filter.GroupFilter;
 import swp490.g23.onlinelearningsystem.entities.group.domain.request.GroupRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.group.domain.request.GroupSetWrapper;
 import swp490.g23.onlinelearningsystem.entities.group.domain.response.GroupClassDTO;
+import swp490.g23.onlinelearningsystem.entities.group.domain.response.GroupCreateDTO;
 import swp490.g23.onlinelearningsystem.entities.group.domain.response.GroupPaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.group.domain.response.GroupResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.group.service.impl.GroupService;
@@ -96,7 +97,7 @@ public class GroupController {
 	}
 
 	@PostMapping(value = "/group-add/{memberName}/{milestoneId}")
-	public ResponseEntity<String> addMemberToNewGroup(@RequestBody GroupRequestDTO dto,
+	public ResponseEntity<GroupCreateDTO> addMemberToNewGroup(@RequestBody GroupRequestDTO dto,
 			@PathVariable("milestoneId") Long milestoneId,
 			@PathVariable("memberName") String memberName) {
 
