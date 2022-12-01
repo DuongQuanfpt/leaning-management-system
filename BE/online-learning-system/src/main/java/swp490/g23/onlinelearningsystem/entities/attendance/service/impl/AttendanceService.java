@@ -92,15 +92,18 @@ public class AttendanceService implements IAttendanceService {
                     .compareTo(att2.getDate());
             Collections.sort(userAttendances, comparatorAsc);
             for (Schedule schedule : schedules) {
-                if (schedule.getStatus().equals(ScheduleStatus.Inactive)) {
+                if (schedule.getAttendances().isEmpty()) {
                     userAttendances.add(new UserAttendanceResponseDTO(
                             schedule.getClassSetting().getSettingValue(),
                             schedule.getTrainingDate().toString()));
                 }
             }
+            Double absentPer = Math
+                    .round((countAbsent / size * 100) * 100.0)
+                    / 100.0;
             attendanceResponseDTO.setSlotStatus(list);
             attendanceResponseDTO.setUserAttendance(userAttendances);
-            attendanceResponseDTO.setAbsentPercent(new DecimalFormat("##.##").format((countAbsent / size) * 100));
+            attendanceResponseDTO.setAbsentPercent(absentPer);
             attendanceResponseDTO.setClassCode(clazz.getCode());
             attendanceResponseDTOs.add(attendanceResponseDTO);
         }

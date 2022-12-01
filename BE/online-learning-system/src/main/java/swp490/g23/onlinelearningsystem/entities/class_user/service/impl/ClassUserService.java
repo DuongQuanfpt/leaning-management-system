@@ -640,7 +640,6 @@ public class ClassUserService implements IClassUserService {
         for (ClassEvalRequestDTO requestDTO : requestDTOs) {
             ClassEvalKey key = new ClassEvalKey();
             ClassUser classUser = new ClassUser();
-            Double ongoingGrade = 0.0;
             if (requestDTO.getAccountName() != null) {
                 key.setAccountName(requestDTO.getAccountName());
                 if (listUser.containsKey(requestDTO.getAccountName())) {
@@ -656,6 +655,10 @@ public class ClassUserService implements IClassUserService {
                 if (list.containsKey(key)) {
                     MilestoneEval eval = list.get(key);
                     List<EvalDetail> details = eval.getEvalDetails();
+                    if (details.isEmpty()) {
+                        eval.setGrade(null);
+                        evals.add(eval);
+                    }
                     if (eval.getMilestone().equals(milestone)) {
                         for (EvalDetail detail : details) {
                             if (detail.getGrade() != null && eval.getBonus() != null) {
