@@ -1,11 +1,5 @@
 import axiosClient from './axiosClient'
 
-const currentAccessToken = JSON.parse(JSON.parse(localStorage.getItem('persist:LMS')).auth).token
-
-const header = {
-  headers: { Authorization: `Bearer ${currentAccessToken}` },
-}
-
 const userApi = {
   getProfile: (token) => {
     const url = `/user`
@@ -16,10 +10,9 @@ const userApi = {
     return axiosClient.get(url, header)
   },
 
-  updateProfile: (params) => {
-    console.log(currentAccessToken)
+  updateProfile: (params, token) => {
     const url = `/user/update-profile`
-    return axiosClient.put(url, params, header)
+    return axiosClient.put(url, params, { headers: { Authorization: `Bearer ${token}` } })
   },
 }
 

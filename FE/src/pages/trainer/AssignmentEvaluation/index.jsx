@@ -308,6 +308,7 @@ const AssignementEvaluation = () => {
       width: 35,
       editable: true,
       fixed: 'left',
+      render: (_, { bonusGrade }) => (bonusGrade === null ? null : bonusGrade.toFixed(2)),
     },
     {
       title: 'WP',
@@ -316,6 +317,7 @@ const AssignementEvaluation = () => {
       width: 35,
       editable: false,
       fixed: 'left',
+      render: (_, { workPoint }) => (workPoint === null ? null : workPoint.toFixed(2)),
     },
     {
       title: 'WG',
@@ -324,6 +326,7 @@ const AssignementEvaluation = () => {
       width: 35,
       editable: false,
       fixed: 'left',
+      render: (_, { workGrade }) => (workGrade === null ? null : workGrade.toFixed(2)),
     },
     {
       title: () => (
@@ -336,6 +339,7 @@ const AssignementEvaluation = () => {
       key: Math.random(),
       editable: false,
       fixed: 'left',
+      render: (_, { milestoneGrade }) => (milestoneGrade === null ? null : milestoneGrade.toFixed(2)),
     },
     {
       title: 'Full Name',
@@ -440,7 +444,11 @@ const AssignementEvaluation = () => {
       width: 65,
       render: (_, assignmentEval) => (
         <Typography.Text>
-          <Typography.Text className="mr-2">{assignmentEval.criteriaPoints[index]?.grade}</Typography.Text>
+          <Typography.Text className="mr-2">
+            {assignmentEval.criteriaPoints[index]?.grade === null
+              ? null
+              : assignmentEval.criteriaPoints[index]?.grade.toFixed(2)}
+          </Typography.Text>
           {isEditable && (
             <Button
               icon={<EllipsisOutlined />}
@@ -607,36 +615,41 @@ const AssignementEvaluation = () => {
   }
 
   const handleImportEval = async () => {
+    console.log(data)
+    console.log(listImported)
     //Check length of data is modified
     if (listImported.length === 0) {
       toastMessage('error', 'File uploaded must not empty, follow the template please')
       return
     }
     //Check Eval mark is number and must between 0 and 10
-    listImported.every((item) => {
-      if (isNaN(item.Evaluation)) {
-        return toastMessage('error', 'Evaluation Mark must a number')
-      }
-      if (item.Evaluation < 0 || item.Evaluation > 10) {
-        return toastMessage('error', 'Evaluation Mark must between 0 and 10')
-      }
-    })
+    const checkIsNumber = listImported.every((item) => !isNaN(item.Evaluation))
+    const checkIsMark = listImported.every((item) => item.Evaluation <= 10 && item.Evaluation >= 0)
+    if (!checkIsNumber) {
+      toastMessage('error', 'Evaluation Mark must a number')
+      return
+    }
+    if (!checkIsMark) {
+      toastMessage('error', 'Evaluation Mark must between 0 and 10')
+      return
+    }
     //Check length data is modified
     if (data.length !== listImported.length) {
       toastMessage('error', 'Number of student is modified, follow the template please')
       return
     }
     //Check username and fullname data is modified
-    data.every((item, index) => {
-      if (item.userName !== listImported[index].UserName) {
-        toastMessage('error', 'Username of student is modified, follow the template please')
-        return
-      }
-      if (item.fullName !== listImported[index].FullName) {
-        toastMessage('error', 'FullName of student is modified, follow the template please')
-        return
-      }
-    })
+    const checkModifiedUsername = data.every((item, index) => item.userName === listImported[index].UserName)
+    const checkModifiedFullname = data.every((item, index) => item.fullName === listImported[index].FullName)
+
+    if (!checkModifiedUsername) {
+      toastMessage('error', 'Username of student is modified, follow the template please')
+      return
+    }
+    if (!checkModifiedFullname) {
+      toastMessage('error', 'FullName of student is modified, follow the template please')
+      return
+    }
 
     const newData = [...data]
 
@@ -738,7 +751,11 @@ const AssignementEvaluation = () => {
   }
 
   const customLocale = {
-    emptyText: !filter.milestone?.value ? 'Select Milestone to see Evaluation' : 'No Data',
+    emptyText: !filter.milestone?.value
+      ? 'Select Milestone to see Evaluation'
+      : !filter?.group?.value
+      ? 'Select Group to see Evaluation'
+      : 'No Data',
   }
 
   return (
@@ -890,10 +907,7 @@ const AssignementEvaluation = () => {
                     size="small"
                     columns={mergedColumns}
                     rowClassName="editable-row"
-                    pagination={{
-                      onChange: cancel,
-                      pageSize: 999,
-                    }}
+                    pagination={false}
                     scroll={{
                       x: '100%',
                     }}

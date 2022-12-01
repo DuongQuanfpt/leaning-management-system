@@ -2,34 +2,38 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { setProfile } from '~/redux/ProfileSlice/profileSlice'
 import Avatar from 'react-avatar-edit'
 import { CContainer, CRow, CCol, CForm, CButton } from '@coreui/react'
 
 import userApi from '~/api/profileApi'
+import { setProfile } from '~/redux/ProfileSlice/profileSlice'
 
 import ErrorMsg from '~/components/Common/ErrorMsg'
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 
 import avatar from '~/assets/images/profile/pic1.jpg'
+import { message, Modal } from 'antd'
 
 const Profile = () => {
   const profileData = useSelector((state) => state.profile)
+
+  const dispatch = useDispatch()
 
   const [isEditMode, setIsEditMode] = useState(false)
   const [userName, setUserName] = useState('')
   const [name, setName] = useState('')
   const [mobile, setMobile] = useState('')
   const [error, setError] = useState('')
+  const [open, setOpen] = useState(false)
 
   const [isAvatarMode, setIsAvatarMode] = useState(false)
   // eslint-disable-next-line no-unused-vars
   const [src, setSrc] = useState(null)
   const [preview, setPreview] = useState(null)
+  const [loading, setLoading] = useState(false)
 
-  const dispatch = useDispatch()
-  const currentProfile = useSelector((state) => state.profile)
+  const { token } = useSelector((state) => state.auth)
 
   useEffect(() => {
     setUserName(profileData.username)
@@ -39,9 +43,16 @@ const Profile = () => {
   }, [])
 
   const handleAvatar = () => {
-    setIsAvatarMode(true)
-    setPreview(null)
-    setError('')
+    setOpen(true)
+    return
+  }
+  const toastMessage = (type, mes) => {
+    message[type]({
+      content: mes,
+      style: {
+        transform: `translate(0, 8vh)`,
+      },
+    })
   }
 
   const handleCropAvatar = (view) => {
@@ -53,20 +64,27 @@ const Profile = () => {
   }
 
   const handleSaveAvatar = async () => {
+    setLoading(true)
     const params = {
       avatarBase64: preview,
     }
     await userApi
-      .updateProfile(params)
+      .updateProfile(params, token)
       .then((response) => {
         console.log(response)
         setIsEditMode(false)
-        setError('You have successfully changed your avatar')
-        // dispatch(setProfile({ ...response }))
+        dispatch(setProfile({ ...profileData, avatar_url: response.avatar_url }))
+        setError('You have successfully changed your avatar, refresh page to see you changed!')
+        toastMessage('success', 'You have successfully changed your avatar, refresh page to see you changed!')
+        window.location.reload(true)
       })
       .catch((error) => {
         console.log(error)
         setError('Change avatar failed, please try again')
+      })
+      .finally(() => {
+        setLoading(false)
+        setOpen(false)
       })
   }
 
@@ -94,16 +112,11 @@ const Profile = () => {
       mobile,
     }
     await userApi
-      .updateProfile(data)
-      .then(() => {
+      .updateProfile(data, token)
+      .then((response) => {
         setIsEditMode(false)
-        setError('You have successfully changed your profile')
-        dispatch(
-          setProfile({
-            ...currentProfile,
-            ...data,
-          }),
-        )
+        setError('You have successfully changed your profile!')
+        // dispatch(setProfile({ ...profileData, ...response }))
       })
       .catch((error) => {
         console.log(error)
@@ -117,9 +130,10 @@ const Profile = () => {
   }
 
   const handleReset = () => {
+    console.log(profileData)
     setUserName(profileData.username)
     setName(profileData.fullName)
-    setMobile(profileData.mobile)
+    setMobile(profileData.mobile ?? '')
     setError('')
   }
 
@@ -261,8 +275,9 @@ const Profile = () => {
                                 <ErrorMsg
                                   errorMsg={error}
                                   isError={
-                                    error !== 'You have successfully changed your profile' &&
-                                    error !== 'You have successfully changed your avatar'
+                                    error !== 'You have successfully changed your profile!' &&
+                                    error !==
+                                      'You have successfully changed your avatar, refresh page to see you changed!'
                                   }
                                 />
                                 <div className="d-flex">
@@ -295,6 +310,28 @@ const Profile = () => {
                             )}
                           </div>
                         </div>
+                        <Modal
+                          title="Upload Avatar"
+                          open={open}
+                          onOk={() => {
+                            handleSaveAvatar()
+                            // setOpen(false)
+                            // navigateTo(0)
+                          }}
+                          onCancel={() => {
+                            setOpen(false)
+                          }}
+                          confirmLoading={loading}
+                        >
+                          <Avatar
+                            width={'100%'}
+                            height={400}
+                            imageWidth={400}
+                            onCrop={handleCropAvatar}
+                            onClose={handleCloseAvatar}
+                            src={src}
+                          />
+                        </Modal>
                       </div>
                     </div>
                   </div>
