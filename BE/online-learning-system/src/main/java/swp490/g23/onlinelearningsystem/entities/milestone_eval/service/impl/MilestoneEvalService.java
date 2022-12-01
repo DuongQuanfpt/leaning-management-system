@@ -99,7 +99,7 @@ public class MilestoneEvalService implements IMilestoneEvalService {
     private MilestoneDTO toMilestoneDTO(Milestone milestone) {
         MilestoneDTO dto = new MilestoneDTO();
         dto.setMilestoneId(milestone.getMilestoneId());
-        dto.setMilestoneName(milestone.getTitle());
+        dto.setMilestoneName(milestone.getAssignment().getTitle());
         dto.setTeamWork(milestone.getAssignment().isTeamWork());
 
         List<MilestoneEvalCriteriaFilter> criteriaFilters = new ArrayList<>();

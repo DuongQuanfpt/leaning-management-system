@@ -557,6 +557,9 @@ public class ClassUserService implements IClassUserService {
                     milestoneEval.setGrade(grade.getGrade());
                     milestoneEval.setComment(grade.getComment());
                     milestoneEval.setMilestone(milestone);
+                    for (Submit submit : classUser.getSubmits()) {
+                        
+                    }
                     evals.add(milestoneEval);
                 } else {
                     // if (list.containsKey(key)) {
