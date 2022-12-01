@@ -54,7 +54,7 @@ const ScheduleList = () => {
   }, [])
 
   useEffect(() => {
-    loadData(1, filter)
+    loadData(currentPage, filter, search)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, currentClass])
 
@@ -81,7 +81,6 @@ const ScheduleList = () => {
       .getSchedule(params)
       .then((response) => {
         console.log(response)
-        setCurrentPage(page)
         setTotalItem(response.totalItem)
         setSchedule(response.listResult)
       })
@@ -93,7 +92,8 @@ const ScheduleList = () => {
   }
 
   const handleChangePage = (pageNumber) => {
-    loadData(pageNumber, filter)
+    setCurrentPage(pageNumber)
+    loadData(pageNumber, filter, search)
   }
 
   const handleSearch = () => {
@@ -102,6 +102,7 @@ const ScheduleList = () => {
 
   const handleFilterStatus = (status) => {
     console.log(status)
+    setCurrentPage(1)
     setFilter((prev) => ({ ...prev, status: status }))
   }
 
@@ -117,6 +118,7 @@ const ScheduleList = () => {
       class: currentClass,
     }))
     setSearch('')
+    setCurrentPage(1)
   }
 
   const columns = [

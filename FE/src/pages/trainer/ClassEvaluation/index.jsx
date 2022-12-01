@@ -21,8 +21,6 @@ import {
   Upload,
 } from 'antd'
 
-// import evaluationApi from '~/api/evaluationApi'
-
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
@@ -57,8 +55,7 @@ const EditableCell = ({ editing, dataIndex, title, inputType, record, index, chi
 }
 
 const ClassEvaluation = () => {
-  // const { id } = useParams()
-  const { currentClass } = useSelector((state) => state.profile)
+  const { currentClass, roles } = useSelector((state) => state.profile)
   const [loading, setLoading] = useState(false)
   const [filter, setFilter] = useState({
     assignment: [],
@@ -79,8 +76,10 @@ const ClassEvaluation = () => {
   const [evalSelected, setEvalSelected] = useState([])
   const [listImported, setListImported] = useState([])
   const [search, setSearch] = useState('')
+  const [isEditable, setIsEditable] = useState(false)
 
   useEffect(() => {
+    setIsEditable(false)
     loadData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentClass, search])
@@ -99,6 +98,11 @@ const ClassEvaluation = () => {
         console.log(response)
         setListAssignment(response.assingmentFilter)
         setData(response.listResult.map((item, index) => ({ ...item, key: index })))
+        if (roles.includes('trainer')) {
+          setIsEditable(true)
+        } else {
+          setIsEditable(false)
+        }
       })
       .catch((error) => {
         console.log(error)
@@ -116,22 +120,17 @@ const ClassEvaluation = () => {
   }
 
   const edit = (record) => {
-    form.setFieldsValue({
-      name: '',
-      age: '',
-      address: '',
-      ...record,
-    })
+    form.resetFields()
+    form.setFieldsValue({})
     setEditingKey(record.key)
   }
   const cancel = () => {
     setEditingKey('')
   }
   const save = async (key) => {
-    const rowUpdated = data[key]
     try {
       const row = await form.validateFields()
-
+      const rowUpdated = data[key]
       rowUpdated.comment = row.comment
       delete row.comment
 
@@ -152,51 +151,71 @@ const ClassEvaluation = () => {
             return
           }
         }
-
-        const params = {
-          dto: [
-            {
-              comment: rowUpdated.comment,
-              accountName: rowUpdated.userName,
-              gpa: rowUpdated.gpa,
-              ongoing: rowUpdated.ongoing,
-              finalEval: rowUpdated.finalEval,
-              assignmentGrade: rowUpdated.assignmentGrade.map((item) => ({
-                assignmentId: item.assignmentId,
-                grade: item.grade,
-                comment: item.comment,
-              })),
-            },
-          ],
-        }
-
-        console.log(params)
-        await evaluationApi
-          .editClassEval(currentClass, params)
-          .then((response) => {
-            console.log(response)
-            toastMessage('success', 'Edit Assignment Evaluation successfully!')
-          })
-          .catch((error) => {
-            console.log(error)
-            toastMessage('error', 'Edit Assignment Evaluation failed, try again later!')
-          })
-          .finally(() => {
-            loadData()
-          })
       }
 
-      //Disable Edit Mode
-      setEditingKey('')
+      const params = {
+        dto: [
+          {
+            comment: rowUpdated.comment,
+            accountName: rowUpdated.userName,
+            gpa: rowUpdated.gpa,
+            ongoing: rowUpdated.ongoing,
+            finalEval: rowUpdated.finalEval,
+            assignmentGrade: rowUpdated.assignmentGrade.map((item) => ({
+              assignmentId: item.assignmentId,
+              grade: item.grade,
+              comment: item.comment,
+            })),
+          },
+        ],
+      }
+
+      console.log(params)
+      await evaluationApi
+        .editClassEval(currentClass, params)
+        .then((response) => {
+          console.log(response)
+          toastMessage('success', 'Edit Assignment Evaluation successfully!')
+        })
+        .catch((error) => {
+          console.log(error)
+          toastMessage('error', 'Edit Assignment Evaluation failed, try again later!')
+        })
+        .finally(() => {
+          loadData()
+          //Disable Edit Mode
+          setEditingKey('')
+        })
     } catch (errInfo) {
       console.log('Validate Failed:', errInfo)
     }
   }
   const columns = [
     { title: 'Comments', dataIndex: 'comment', editable: true, key: 0, width: 220, fixed: 'left' },
-    { title: 'Final', dataIndex: 'finalEval', editable: false, width: 70, fixed: 'left' },
-    { title: 'OG', dataIndex: 'ongoing', editable: false, width: 70, fixed: 'left' },
-    { title: 'GPA', dataIndex: 'gpa', editable: false, width: 70, fixed: 'left' },
+    {
+      title: 'Final',
+      dataIndex: 'finalEval',
+      editable: false,
+      width: 70,
+      fixed: 'left',
+      render: (_, { finalEval }) => (finalEval === null ? null : finalEval.toFixed(2)),
+    },
+    {
+      title: 'OG',
+      dataIndex: 'ongoing',
+      editable: false,
+      width: 70,
+      fixed: 'left',
+      render: (_, { ongoing }) => (ongoing === null ? null : ongoing.toFixed(2)),
+    },
+    {
+      title: 'GPA',
+      dataIndex: 'gpa',
+      editable: false,
+      width: 70,
+      fixed: 'left',
+      render: (_, { gpa }) => (gpa === null ? null : gpa.toFixed(2)),
+    },
     { title: 'Full Name', dataIndex: 'fullName', editable: false, width: 120, fixed: 'left' },
     { title: 'Student', dataIndex: 'userName', editable: false, width: 120, fixed: 'left' },
   ]
@@ -245,7 +264,7 @@ const ClassEvaluation = () => {
             >
               <Typography.Text>{`Assignment ${index + 1}`}</Typography.Text>
             </Tooltip>
-            {data.length > 0 && item.status === 'Closed' && (
+            {data.length > 0 && item.status === 'Closed' && isEditable && (
               <Popover
                 className="ml-2"
                 content={
@@ -299,20 +318,14 @@ const ClassEvaluation = () => {
       hidden: filter.assignment.length === 0 ? false : !filter.assignment.includes(item.assignmentId),
       render: (_, assignmentEval) => {
         return {
-          // props: {
-          //   style: {
-          //     backgroundColor:
-          //       assignmentEval.assignmentGrade[index]?.status === 'Open'
-          //         ? '#d5f2bb'
-          //         : assignmentEval.assignmentGrade[index]?.status === 'In_Progress'
-          //         ? '#b7dcfa'
-          //         : '#fac8c3',
-          //   },
-          // },
           children: (
             <Typography.Text>
-              <Typography.Text className="mr-2">{assignmentEval?.assignmentGrade[index]?.grade}</Typography.Text>
-              {assignmentEval?.assignmentGrade[index]?.status === 'Closed' && (
+              <Typography.Text className="mr-2">
+                {assignmentEval?.assignmentGrade[index]?.grade === null
+                  ? null
+                  : assignmentEval?.assignmentGrade[index]?.grade.toFixed(2)}
+              </Typography.Text>
+              {isEditable && assignmentEval?.assignmentGrade[index]?.status === 'Closed' && (
                 <Button
                   icon={<EllipsisOutlined />}
                   size="small"
@@ -335,7 +348,7 @@ const ClassEvaluation = () => {
     .reverse()
     .concat(columns)
     .reverse()
-    .concat(columnsAction)
+    .concat(isEditable ? columnsAction : [])
     .filter((col) => !col.hidden)
   const mergedColumns = assignmentColumns.map((col) => {
     if (!Number.isInteger(col.key)) {
@@ -356,6 +369,7 @@ const ClassEvaluation = () => {
   })
 
   const handleClearEvaluation = async (assignmentSelected) => {
+    setLoading(true)
     const newData = [...data].map((item) => ({
       ...item,
       assignmentGrade: item.assignmentGrade.map((item2) => ({
@@ -452,38 +466,41 @@ const ClassEvaluation = () => {
   }
 
   const handleImportEval = async () => {
-    setLoading(true)
+    const checkIsNumber = listImported.every((item) => !isNaN(item.Mark))
+    const checkIsMark = listImported.every((item) => item.Mark <= 10 && item.Mark >= 0)
+
+    if (!checkIsNumber) {
+      toastMessage('error', 'Evaluation Mark must a number')
+      return
+    }
+    if (!checkIsMark) {
+      toastMessage('error', 'Evaluation Mark must between 0 and 10')
+      return
+    }
+
     //Check length of data is modified
     if (listImported.length === 0) {
       toastMessage('error', 'File uploaded must not empty, follow the template please')
       return
     }
 
-    //Check Eval mark is number and must between 0 and 10
-    listImported.every((item) => {
-      if (isNaN(item.Mark)) {
-        return toastMessage('error', 'Evaluation Mark must a number')
-      }
-      if (item.Mark < 0 || item.Mark > 10) {
-        return toastMessage('error', 'Evaluation Mark must between 0 and 10')
-      }
-    })
     //Check length data is modified
     if (data.length !== listImported.length) {
       toastMessage('error', 'Number of student is modified, follow the template please')
       return
     }
     //Check username and fullname data is modified
-    data.every((item, index) => {
-      if (item.userName !== listImported[index].UserName) {
-        toastMessage('error', 'Username of student is modified, follow the template please')
-        return
-      }
-      if (item.fullName !== listImported[index].FullName) {
-        toastMessage('error', 'FullName of student is modified, follow the template please')
-        return
-      }
-    })
+    const checkModifiedUsername = data.every((item, index) => item.userName === listImported[index].UserName)
+    const checkModifiedFullname = data.every((item, index) => item.fullName === listImported[index].FullName)
+
+    if (!checkModifiedUsername) {
+      toastMessage('error', 'Username of student is modified, follow the template please')
+      return
+    }
+    if (!checkModifiedFullname) {
+      toastMessage('error', 'FullName of student is modified, follow the template please')
+      return
+    }
 
     const newData = [...data]
 
@@ -491,7 +508,7 @@ const ClassEvaluation = () => {
       item.assignmentGrade.forEach((item2) => {
         if (item2.assignmentId === evalSelected.assignmentId) {
           item2.grade = listImported[index].Mark
-          item2.comment = listImported[index].Comment
+          item2.comment = listImported[index].Comment === undefined ? null : listImported[index].Comment
         }
       })
     })
@@ -507,6 +524,7 @@ const ClassEvaluation = () => {
         })),
       })),
     }
+    setLoading(true)
 
     await evaluationApi
       .editClassEval(currentClass, params)
@@ -698,9 +716,11 @@ const ClassEvaluation = () => {
                     />
                   </div>
                   <div className="col-lg-6 d-flex justify-content-end">
-                    <Button type="primary" className="ml-1" onClick={handleExportMark}>
-                      Export Marks
-                    </Button>
+                    {isEditable && (
+                      <Button type="primary" className="ml-1" onClick={handleExportMark}>
+                        Export Marks
+                      </Button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -717,10 +737,7 @@ const ClassEvaluation = () => {
                     columns={mergedColumns}
                     rowClassName="editable-row"
                     size="small"
-                    pagination={{
-                      onChange: cancel,
-                      pageSize: 8,
-                    }}
+                    pagination={false}
                     scroll={{
                       x: '100%',
                     }}
@@ -734,6 +751,7 @@ const ClassEvaluation = () => {
                   style={{ left: '30px' }}
                   open={open.comment}
                   okText="Save"
+                  confirmLoading={loading}
                   onOk={async () => {
                     console.log(currentComment)
                     const params = {
@@ -799,8 +817,8 @@ const ClassEvaluation = () => {
                   open={open.import}
                   onOk={async () => {
                     handleImportEval()
-                    console.log(evalSelected)
                   }}
+                  confirmLoading={loading}
                   onCancel={() => setOpen((prev) => ({ ...prev, import: false }))}
                 >
                   <Space className="d-flex flex-column w-100">
