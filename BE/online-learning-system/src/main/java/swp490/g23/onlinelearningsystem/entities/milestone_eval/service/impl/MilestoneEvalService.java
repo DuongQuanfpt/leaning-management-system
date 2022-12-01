@@ -2,7 +2,6 @@ package swp490.g23.onlinelearningsystem.entities.milestone_eval.service.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 import javax.persistence.TypedQuery;

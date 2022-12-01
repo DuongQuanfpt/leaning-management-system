@@ -1,7 +1,6 @@
 package swp490.g23.onlinelearningsystem.entities.work_update.domain;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

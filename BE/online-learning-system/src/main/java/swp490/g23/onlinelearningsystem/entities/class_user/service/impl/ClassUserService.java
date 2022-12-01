@@ -542,6 +542,7 @@ public class ClassUserService implements IClassUserService {
                     classUser = listUser.get(requestDTO.getAccountName());
                 }
             }
+            List<Submit> submits = classUser.getSubmits();
             if (requestDTO.getComment() != null) {
                 classUser.setComment(requestDTO.getComment());
             }
@@ -557,8 +558,15 @@ public class ClassUserService implements IClassUserService {
                     milestoneEval.setGrade(grade.getGrade());
                     milestoneEval.setComment(grade.getComment());
                     milestoneEval.setMilestone(milestone);
+<<<<<<< HEAD
                     for (Submit submit : classUser.getSubmits()) {
                         
+=======
+                    for (Submit submit : submits) {
+                        if (submit.getMilestone().equals(milestone)) {
+                            milestoneEval.setSubmit(submit);
+                        }
+>>>>>>> 0424edd27c893c681e83668af1bcbd7563852c3d
                     }
                     evals.add(milestoneEval);
                 } else {
