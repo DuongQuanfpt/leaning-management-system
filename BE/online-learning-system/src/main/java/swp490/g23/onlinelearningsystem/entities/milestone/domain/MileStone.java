@@ -18,6 +18,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import swp490.g23.onlinelearningsystem.entities.BaseEntity;
 import swp490.g23.onlinelearningsystem.entities.assignment.domain.Assignment;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
@@ -36,6 +37,7 @@ import swp490.g23.onlinelearningsystem.enums.MilestoneStatusEnum;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class Milestone extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

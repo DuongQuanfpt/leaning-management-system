@@ -88,9 +88,7 @@ public class MilestoneEvalService implements IMilestoneEvalService {
 
         List<MilestoneDTO> milestoneDTOs = new ArrayList<>();
         for (Milestone milestone : classes.getMilestones()) {
-            if (milestone.getStatus() == MilestoneStatusEnum.In_Progress) {
                 milestoneDTOs.add(toMilestoneDTO(milestone));
-            }
         }
 
         MilestoneEvalFilter milestoneEvalFilter = new MilestoneEvalFilter();

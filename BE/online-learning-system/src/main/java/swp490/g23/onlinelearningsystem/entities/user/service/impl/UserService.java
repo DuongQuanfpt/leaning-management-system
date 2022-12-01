@@ -359,7 +359,7 @@ public class UserService implements IUserService {
         if (requestDTO.getRoles() != null) {
             for (Setting setting : settingRepositories.findAllRole()) {
                 for (String role : roles) {
-                    if (setting.getRoleName().equals(role)) {
+                    if (setting.getSettingValue().equals(role)) {
                         settings.add(setting);
                     }
                 }
