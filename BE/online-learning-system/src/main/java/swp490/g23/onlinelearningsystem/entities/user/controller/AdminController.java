@@ -47,7 +47,7 @@ public class AdminController {
 
 		int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
 		int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
-		return userService.displayUsers(limit, page, keyword, roleFilter, statusFilter );
+		return userService.displayUsers(limit, page, keyword, roleFilter, statusFilter);
 	}
 
 	@GetMapping(value = "/user-filter")
@@ -69,7 +69,7 @@ public class AdminController {
 	}
 
 	@PutMapping(value = "/user-status/{id}")
-	public ResponseEntity<String> updateSettingStatus(@PathVariable("id") Long id) {
+	public ResponseEntity<String> updateUserStatus(@PathVariable("id") Long id) {
 
 		return userService.updateStatus(id);
 	}
