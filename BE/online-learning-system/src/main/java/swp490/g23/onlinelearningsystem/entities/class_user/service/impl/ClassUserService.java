@@ -19,8 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import net.bytebuddy.utility.RandomString;
-import swp490.g23.onlinelearningsystem.entities.assignment.domain.Assignment;
-import swp490.g23.onlinelearningsystem.entities.assignment.repositories.AssignmentRepository;
 import swp490.g23.onlinelearningsystem.entities.auth.service.impl.AuthService;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.ClassUser;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.filter.TraineeFilterDTO;
@@ -87,9 +85,6 @@ public class ClassUserService implements IClassUserService {
 
     @Autowired
     private ClassEvalCriteria classEvalCriteria;
-
-    @Autowired
-    private AssignmentRepository assignmentRepository;
 
     @Autowired
     private MilestoneEvalRepository milestoneEvalRepository;
@@ -425,7 +420,7 @@ public class ClassUserService implements IClassUserService {
         TypedQuery<ClassUser> queryResult = classEvalCriteria.displayTrainee(keyword,
                 filterAssignment, user, classCode);
 
-        List<ClassUser> classUsers = queryResult.getResultList();
+        // List<ClassUser> classUsers = queryResult.getResultList();
 
         for (Milestone milestone : clazz.getMilestones()) {
             AssignmentFilterType type = new AssignmentFilterType();

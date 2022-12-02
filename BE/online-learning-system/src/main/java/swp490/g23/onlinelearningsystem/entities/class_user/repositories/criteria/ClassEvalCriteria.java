@@ -1,8 +1,5 @@
 package swp490.g23.onlinelearningsystem.entities.class_user.repositories.criteria;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
@@ -10,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import lombok.RequiredArgsConstructor;
 import swp490.g23.onlinelearningsystem.entities.class_user.domain.ClassUser;
-import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 
 @Repository

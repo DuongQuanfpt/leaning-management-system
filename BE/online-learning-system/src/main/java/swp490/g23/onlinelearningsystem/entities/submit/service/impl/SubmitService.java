@@ -3,6 +3,7 @@ package swp490.g23.onlinelearningsystem.entities.submit.service.impl;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.TypedQuery;
@@ -208,14 +209,30 @@ public class SubmitService implements ISubmitService {
         Submit currentSubmit = submitRepository.findById(submitId)
                 .orElseThrow(() -> new CustomException("submit doesnt exist"));
 
+        HashMap<Long, Issue> requirementOfSubmit = new HashMap<Long, Issue>();
+        for (Issue issue : currentSubmit.getMilestone().getIssues()) {
+            if (issue.getType() == null) {
+                if (currentSubmit.getGroup() != null) {
+                    if (issue.getGroup() == null) {
+                        continue;
+                    }
+
+                    if (issue.getGroup() != null && !issue.getGroup().equals(currentSubmit.getGroup())) {
+                        continue;
+                    }
+                }
+                requirementOfSubmit.put(issue.getIssueId(), issue);
+            }
+        }
+
         User currentUser = userRepository.findById(user.getUserId()).get();
-        if (!currentUser.equals(currentSubmit.getClassUser().getUser())) {
+        if (!currentUser.getAccountName().equals(currentSubmit.getClassUser().getUser().getAccountName())) {
             throw new CustomException("not owner of this submit");
         }
 
         List<SubmitWork> submitWorks = new ArrayList<>();
         for (SubmitRequirementRequestDTO requirementRequest : requestDTO.getRequirements()) {
-            Submit author = new Submit();
+            Submit author = null;
             if (requirementRequest.getAssigneeName() == null) {
                 continue;
             }
@@ -230,12 +247,24 @@ public class SubmitService implements ISubmitService {
                         break;
                     }
                 }
+
+                if (author == null) {
+                    throw new CustomException("Request assignee not in this group");
+                }
             } else {
                 author = currentSubmit;
             }
 
-            Issue requirement = issueRepository.findById(requirementRequest.getRequirementId())
-                    .orElseThrow(() -> new CustomException("requirement doesnt exist"));
+            // Issue requirement =
+            // issueRepository.findById(requirementRequest.getRequirementId())
+            // .orElseThrow(() -> new CustomException("requirement doesnt exist"));
+            Issue requirement;
+            if (requirementOfSubmit.containsKey(requirementRequest.getRequirementId())) {
+                requirement = requirementOfSubmit.get(requirementRequest.getRequirementId());
+            } else {
+                throw new CustomException("One of requested requirement list doesnt belong in this submit");
+            }
+
             SubmitWork submitWork = new SubmitWork();
             submitWork.setSubmit(author);
             submitWork.setWork(requirement);
@@ -283,7 +312,7 @@ public class SubmitService implements ISubmitService {
             submitWorkRepository.removeWorkOfSubmit(currentSubmit);
         }
 
-        submitWorkRepository.saveAll(submitWorks);
+        List<SubmitWork> savedSubmitWorks = submitWorkRepository.saveAll(submitWorks);
         submitRepository.saveAll(submitChanged);
 
         return ResponseEntity.ok("file submitted");
@@ -641,11 +670,11 @@ public class SubmitService implements ISubmitService {
         dto.setMilestone(submitWork.getMilestone().getTitle());
         dto.setRequirement(submitWork.getWork().getTitle());
         dto.setStatus(submitWork.getStatus());
-        
-        if(submitWork.getRejectReason() != null) {
+
+        if (submitWork.getRejectReason() != null) {
             dto.setRejectReason(submitWork.getRejectReason());
         }
-       
+
         if (!submitWork.getWorkEvals().isEmpty()) {
             WorkEval latestEval = new WorkEval();
             for (WorkEval eval : submitWork.getWorkEvals()) {

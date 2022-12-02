@@ -1,7 +1,5 @@
 package swp490.g23.onlinelearningsystem.entities.attendance.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import swp490.g23.onlinelearningsystem.entities.schedule.domain.Schedule;
 import swp490.g23.onlinelearningsystem.entities.schedule.repositories.ScheduleRepositories;
