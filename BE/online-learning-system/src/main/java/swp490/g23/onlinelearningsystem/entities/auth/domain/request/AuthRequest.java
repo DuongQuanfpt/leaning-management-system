@@ -1,7 +1,6 @@
 package swp490.g23.onlinelearningsystem.entities.auth.domain.request;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Pattern;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

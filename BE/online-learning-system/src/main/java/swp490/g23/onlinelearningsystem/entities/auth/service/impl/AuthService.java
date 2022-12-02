@@ -3,7 +3,6 @@ package swp490.g23.onlinelearningsystem.entities.auth.service.impl;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.mail.MessagingException;

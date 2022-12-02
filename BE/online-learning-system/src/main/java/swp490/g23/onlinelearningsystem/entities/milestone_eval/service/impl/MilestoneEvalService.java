@@ -347,7 +347,7 @@ public class MilestoneEvalService implements IMilestoneEvalService {
         Submit currentSubmit = submitRepository.findById(submitId)
                 .orElseThrow(() -> new CustomException("submit doesnt exist"));
 
-        User currentUser = userRepository.findById(user.getUserId()).get();
+        // User currentUser = userRepository.findById(user.getUserId()).get();
         // if (!currentUser.equals(currentSubmit.getClassUser().getUser())) {
         // throw new CustomException("not owner of this submit");
         // }
@@ -450,33 +450,6 @@ public class MilestoneEvalService implements IMilestoneEvalService {
         evalDTO.setQualityname(latestEval.getQuality().getSettingTitle());
         evalDTO.setCurrentPoint(latestEval.getWorkEval());
         return evalDTO;
-    }
-
-    @Override
-    public ResponseEntity<String> milestoneEvalClear(Long milestoneId, Long criteriaId) {
-        Milestone milestone = milestoneRepository.findById(milestoneId)
-                .orElseThrow(() -> new CustomException("Milestone doesnt exist"));
-
-        List<EvalDetail> newDetails = new ArrayList<>();
-       
-        for (MilestoneEval milestoneEval : milestone.getMilestoneEvals()) {
-            for (EvalDetail detail : milestoneEval.getEvalDetails()) {
-                if(detail.getEvalCriteria().getCriteriaId() == criteriaId){
-                    detail.setGrade(null);
-                    newDetails.add(detail);
-                }
-            }
-        }
-
-        evalDetailRepositories.saveAll(newDetails);
-        milestoneGradeEvaluate(milestone);
-
-        return ResponseEntity.ok("criteria evaluation cleared");
-    }
-
-    private void milestoneGradeEvaluate(Milestone milestone) {
-        List<MilestoneEval> newMilestoneEval = new ArrayList<>();
-        
     }
 
 }
