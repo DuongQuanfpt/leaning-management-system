@@ -124,7 +124,6 @@ const AssignementEvaluation = () => {
     evaluationApi
       .getAssignmentEvalFilter(currentClass)
       .then((response) => {
-        console.log(response)
         setFilter({})
         setData([])
         setListFilter((prev) => ({ ...prev, milestone: response.milestones }))
@@ -202,11 +201,12 @@ const AssignementEvaluation = () => {
 
   //Edit row on table
   const edit = (record) => {
-    console.log(record)
-    form.setFieldsValue({
-      bonusGrade: 0,
-      ...record,
-    })
+    // console.log(record)
+    // form.setFieldsValue({
+    //   bonusGrade: 0,
+    //   ...record,
+    // })
+    form.resetFields()
     setEditingKey(record.key)
   }
   const cancel = () => {
@@ -445,9 +445,9 @@ const AssignementEvaluation = () => {
       render: (_, assignmentEval) => (
         <Typography.Text>
           <Typography.Text className="mr-2">
-            {assignmentEval.criteriaPoints[index]?.grade === null
+            {assignmentEval?.criteriaPoints[index]?.grade === null
               ? null
-              : assignmentEval.criteriaPoints[index]?.grade.toFixed(2)}
+              : Number(assignmentEval?.criteriaPoints[index]?.grade)?.toFixed(2)}
           </Typography.Text>
           {isEditable && (
             <Button
