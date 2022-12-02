@@ -323,7 +323,7 @@ const ClassEvaluation = () => {
               <Typography.Text className="mr-2">
                 {assignmentEval?.assignmentGrade[index]?.grade === null
                   ? null
-                  : assignmentEval?.assignmentGrade[index]?.grade.toFixed(2)}
+                  : Number(assignmentEval?.assignmentGrade[index]?.grade)?.toFixed(2)}
               </Typography.Text>
               {isEditable && assignmentEval?.assignmentGrade[index]?.status === 'Closed' && (
                 <Button

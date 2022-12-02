@@ -200,7 +200,7 @@ public class AttendanceService implements IAttendanceService {
             }
             RunnableTask task = new RunnableTask(schedule, scheduleRepositories);
             schedule.setStatus(ScheduleStatus.Active);
-            scheduler.schedule(task, 1, TimeUnit.DAYS);
+            scheduler.schedule(task, 10, TimeUnit.MINUTES);
             attendanceRepositories.saveAll(attendances);
         }
         return ResponseEntity.ok("update successfully!");
