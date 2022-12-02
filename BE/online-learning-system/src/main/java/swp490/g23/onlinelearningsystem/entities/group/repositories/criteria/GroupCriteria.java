@@ -30,7 +30,7 @@ public class GroupCriteria {
                 "SELECT DISTINCT g FROM Group g JOIN g.submits as s  WHERE 1=1  ");
 
         // if (roles.contains("ROLE_TRAINER")) {
-
+            //aaaaa
         // } else if (roles.contains("ROLE_SUPPORTER")) {
         // query.append(" AND cs.classes.userSupporter.accountName = '" +
         // user.getAccountName() + "' ");

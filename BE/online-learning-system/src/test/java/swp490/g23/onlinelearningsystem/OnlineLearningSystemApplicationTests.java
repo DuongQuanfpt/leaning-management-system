@@ -9,7 +9,4 @@ class OnlineLearningSystemApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
-	
-
 }

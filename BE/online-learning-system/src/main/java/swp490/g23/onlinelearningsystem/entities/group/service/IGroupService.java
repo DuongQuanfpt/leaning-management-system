@@ -8,6 +8,7 @@ import swp490.g23.onlinelearningsystem.entities.group.domain.filter.GroupFilter;
 import swp490.g23.onlinelearningsystem.entities.group.domain.request.GroupRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.group.domain.request.GroupSetWrapper;
 import swp490.g23.onlinelearningsystem.entities.group.domain.response.GroupClassDTO;
+import swp490.g23.onlinelearningsystem.entities.group.domain.response.GroupCreateDTO;
 import swp490.g23.onlinelearningsystem.entities.group.domain.response.GroupPaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.group.domain.response.GroupResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestoneResponseDTO;
@@ -21,7 +22,7 @@ public interface IGroupService {
     ResponseEntity<String> editGroup(Long id ,GroupRequestDTO dto);
     ResponseEntity<GroupFilter> groupFilter(Long userId , String classCode);
     ResponseEntity<GroupClassDTO> groupSetFilter(Long id);
-    ResponseEntity<String> groupCreate(Long milestoneId,GroupRequestDTO dto ,String memberName);
+    ResponseEntity<GroupCreateDTO> groupCreate(Long milestoneId,GroupRequestDTO dto ,String memberName);
     ResponseEntity<String> groupDetach(Long id , Long milestoneId);
     ResponseEntity<String> groupRemoveAll(Long milestoneId);
     ResponseEntity<String> groupStatus(Long groupId);

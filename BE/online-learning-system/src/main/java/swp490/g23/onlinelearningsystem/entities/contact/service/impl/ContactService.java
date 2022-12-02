@@ -57,10 +57,10 @@ public class ContactService implements IContactService {
     @Override
     public ResponseEntity<ContactPaginateDTO> getAllContact(String q, int limit, int page, // display ,search and filter
                                                                                            // all webcontact,
-            String filterCategory, String filterStatus , String filterSupp , User user) {
-        
-        User user2 = userRepository.findById(user.getUserId()).get();        
-        ContactQuery result = contactCriteria.displaySetting(q, filterCategory, filterStatus ,filterSupp,user2);
+            String filterCategory, String filterStatus, String filterSupp, User user) {
+
+        User user2 = userRepository.findById(user.getUserId()).get();
+        ContactQuery result = contactCriteria.displaySetting(q, filterCategory, filterStatus, filterSupp, user2);
         TypedQuery<WebContact> queryResult = result.getResultQuery();
         TypedQuery<Long> countQuery = result.getCountQuery();
 
@@ -137,19 +137,23 @@ public class ContactService implements IContactService {
     public ResponseEntity<String> editContactDetail(Long id, ContactRequestDTO dto, User user) {
         WebContact contact = contactRepository.findById(id)
                 .orElseThrow(() -> new CustomException("Contact doesnt exist"));
+
+        User author = userRepository.findById(user.getUserId()).get();
+
         if (dto.getResponse() != null) {
             contact.setResponse(dto.getResponse());
+            // if (contact.getResponse().equals(dto.getResponse())
+            // && contact.getStatus()
+            // .equals(ContactStatus.getFromValue(Integer.parseInt(dto.getStatus())).get()))
+            // {
+            // contact.setStaff(author);
+            // }
         }
 
         if (dto.getStatus() != null) {
             contact.setStatus(ContactStatus.getFromValue(Integer.parseInt(dto.getStatus())).get());
         }
-
-        if (contact.getResponse().equals(dto.getResponse())
-                && contact.getStatus().equals(ContactStatus.getFromValue(Integer.parseInt(dto.getStatus())).get())) {
-            contact.setStaff(user);
-        }
-
+        contact.setStaff(author);
         contactRepository.save(contact);
         return ResponseEntity.ok("Contact updated");
     }

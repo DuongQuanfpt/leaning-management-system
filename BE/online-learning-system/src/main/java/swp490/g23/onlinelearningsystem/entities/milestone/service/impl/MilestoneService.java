@@ -151,7 +151,7 @@ public class MilestoneService implements IMilestoneService {
     @Override
     public ResponseEntity<MilestoneResponseDTO> milestoneDetail(Long id) {
         Milestone milestone = milestoneRepository.findById(id)
-                .orElseThrow(() -> new CustomException("current user setting doesnt exist"));
+                .orElseThrow(() -> new CustomException("milestone setting doesnt exist"));
         return ResponseEntity.ok(toDTO(milestone));
     }
 
@@ -222,21 +222,22 @@ public class MilestoneService implements IMilestoneService {
 
         milestone.setStatus(MilestoneStatusEnum.Open);
 
+        List<EvalCriteria> sCriterias = new ArrayList<>();
         if (dto.getAssignmentId() != null) {
             Assignment assignment = assignmentRepository.findById(dto.getAssignmentId())
                     .orElseThrow(() -> new CustomException("Assignment doesnt exist"));
             if (!assignment.getMilestones().isEmpty()) {
                 throw new CustomException("Assignment already have milestone");
             }
-            milestone.setAssignment(assignmentRepository.findById(dto.getAssignmentId())
-                    .orElseThrow(() -> new CustomException("Assignment doesnt exist")));
-            List<EvalCriteria> evalCriterias = milestone.getAssignment().getEvalCriteriaList();
-            List<EvalCriteria> sCriterias = new ArrayList<>();
-            for (EvalCriteria evalCriteria : evalCriterias) {
-                evalCriteria.setMilestone(milestone);
-                sCriterias.add(evalCriteria);
+            milestone.setAssignment(assignment);
+            if(!milestone.getAssignment().getEvalCriteriaList().isEmpty()){
+                List<EvalCriteria> evalCriterias = milestone.getAssignment().getEvalCriteriaList();
+                for (EvalCriteria evalCriteria : evalCriterias) {
+                    evalCriteria.setMilestone(milestone);
+                    sCriterias.add(evalCriteria);
+                }
             }
-            evalCriteriaRepositories.saveAll(sCriterias);
+           
         } else {
             throw new CustomException("Must assign a assignment to milestone");
         }
@@ -250,9 +251,10 @@ public class MilestoneService implements IMilestoneService {
             submits.add(submit);
         }
 
-        milestoneRepository.save(milestone);
+        Milestone savedMilestone = milestoneRepository.save(milestone);
+        evalCriteriaRepositories.saveAll(sCriterias);
         submitRepository.saveAll(submits);
-        return ResponseEntity.ok("Milestone added");
+        return ResponseEntity.ok(savedMilestone.getTitle());
     }
 
     @Override
@@ -319,12 +321,15 @@ public class MilestoneService implements IMilestoneService {
         responseDTO.setMilestoneId(entity.getMilestoneId());
         Assignment assignment = entity.getAssignment();
         responseDTO.setTeamWork(assignment.isTeamWork());
-        responseDTO.setAssignment(assignmentService.toDTO(assignment));
+        responseDTO.setAssignment(toAssDTO(assignment));
         // Group groups = groupRepository.findGroupByMilestone(entity.getMilestoneId());
 
         if (entity.getClasses() != null) {
             responseDTO.setClassesCode(entity.getClasses().getCode());
-            responseDTO.setClassesSize(entity.getClasses().getClassUsers().size());
+            if(!entity.getClasses().getClassUsers().isEmpty()){
+                responseDTO.setClassesSize(entity.getClasses().getClassUsers().size());
+            }
+           
         }
         responseDTO.setStatus(entity.getStatus().toString());
         if (entity.getDescription() != null) {
@@ -343,14 +348,15 @@ public class MilestoneService implements IMilestoneService {
             responseDTO.setTitle(entity.getTitle());
         }
 
-        List<Submit> submits = entity.getSubmits();
+      
         List<MilestoneGroupDTO> groupResponseDTOs = new ArrayList<>();
         List<MilestoneNoGroupDTO> noGroupDTOs = new ArrayList<>();
         List<Group> groupOfMilestone = new ArrayList<>();
         List<MilestoneEvalDTO> groupEvalsDTOS = new ArrayList<>();
         List<MilestoneEvalDTO> noGroupEvalsDTOS = new ArrayList<>();
 
-        if (!submits.isEmpty()) {
+        if (!entity.getSubmits().isEmpty()) {
+            List<Submit> submits = entity.getSubmits();
             for (Submit submit : submits) {
                 if (submit.getGroup() == null) {
                     MilestoneNoGroupDTO noGroupDto = toNoGroupDTO(submit.getClassUser().getUser());
@@ -383,6 +389,30 @@ public class MilestoneService implements IMilestoneService {
                 .thenComparing(MilestoneEvalDTO::isTrainee));
         groupEvalsDTOS.addAll(noGroupEvalsDTOS);
         responseDTO.setEvaluation(groupEvalsDTOS);
+        return responseDTO;
+    }
+
+    public AssignmentResponseDTO toAssDTO(Assignment entity) {
+        AssignmentResponseDTO responseDTO = new AssignmentResponseDTO();
+
+        responseDTO.setAssId(entity.getAssId());
+        if (entity.getAssBody() != null) {
+            responseDTO.setAssBody(entity.getAssBody());
+        }
+        if (entity.getEval_weight() != null) {
+            responseDTO.setEval_weight(entity.getEval_weight());
+        }
+        if (entity.getTitle() != null) {
+            responseDTO.setTitle(entity.getTitle());
+        }
+        if (entity.getForSubject().getSubjectCode() != null) {
+            responseDTO.setSubjectName(entity.getForSubject().getSubjectCode());
+        }
+        responseDTO.setIsOnGoing(entity.isOnGoing() ? 1 : 0);
+        responseDTO.setIsFinal(entity.isFinal() ? 1 : 0);
+        responseDTO.setIsTeamWork(entity.isTeamWork() ? 1 : 0);
+        responseDTO.setStatus(entity.getStatus());
+
         return responseDTO;
     }
 

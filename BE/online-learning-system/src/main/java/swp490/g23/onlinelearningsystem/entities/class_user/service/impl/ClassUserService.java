@@ -511,7 +511,6 @@ public class ClassUserService implements IClassUserService {
 
     @Override
     public ResponseEntity<String> updateEval(List<ClassEvalRequestDTO> requestDTOs, String classCode) {
-
         List<MilestoneEval> evals = new ArrayList<>();
         List<ClassUser> classUserAdd = new ArrayList<>();
         Classes clazz = classRepositories.findClassByCode(classCode);
@@ -537,7 +536,116 @@ public class ClassUserService implements IClassUserService {
         for (ClassEvalRequestDTO requestDTO : requestDTOs) {
             ClassEvalKey key = new ClassEvalKey();
             ClassUser classUser = new ClassUser();
+            if (requestDTO.getAccountName() != null) {
+                key.setAccountName(requestDTO.getAccountName());
+                if (listUser.containsKey(requestDTO.getAccountName())) {
+                    classUser = listUser.get(requestDTO.getAccountName());
+                }
+            }
+            List<Submit> submits = classUser.getSubmits();
+            if (requestDTO.getComment() != null) {
+                classUser.setComment(requestDTO.getComment());
+            }
+            for (AssignmentGradeDTO grade : requestDTO.getAssignmentGrade()) {
+                Milestone milestone = new Milestone();
+                key.setAssignmentId(grade.getAssignmentId());
+                if (listMilestone.containsKey(grade.getAssignmentId())) {
+                    milestone = listMilestone.get(grade.getAssignmentId());
+                }
+                if (!list.containsKey(key)) {
+                    MilestoneEval milestoneEval = new MilestoneEval();
+                    milestoneEval.setClassUser(classUser);
+                    milestoneEval.setGrade(grade.getGrade());
+                    milestoneEval.setComment(grade.getComment());
+                    milestoneEval.setMilestone(milestone);
+                    for (Submit submit : submits) {
+                        if (submit.getMilestone().equals(milestone)) {
+                            milestoneEval.setSubmit(submit);
+                        }
+                    }
+                    evals.add(milestoneEval);
+                } else {
+                    // if (list.containsKey(key)) {
+                    MilestoneEval eval = list.get(key);
+                    if (eval.getClassUser() != null) {
+                        if (eval.getClassUser().equals(classUser)) {
+                            eval.setComment(grade.getComment());
+                            eval.setGrade(grade.getGrade());
+                            evals.add(eval);
+                        }
+                    }
+                }
+            }
+        }
+        milestoneEvalRepository.saveAll(evals);
+        List<ClassUser> userList = classUserRepositories.findByClasses(clazz);
+        for (ClassUser classUser : userList) {
             Double ongoingGrade = 0.0;
+            for (MilestoneEval eval : classUser.getMilestoneEvals()) {
+                String evalWeight = eval.getMilestone().getAssignment().getEval_weight().substring(0,
+                        eval.getMilestone().getAssignment().getEval_weight().length() - 1);
+                if (eval.getMilestone().getAssignment().isFinal()) {
+                    if (eval.getGrade() != null) {
+                        Double finalEval = Math
+                                .round((eval.getGrade() * Double.parseDouble(evalWeight) / 100) * 100.0)
+                                / 100.0;
+                        classUser.setFinalEval(finalEval);
+                    }
+                    if (eval.getGrade() == null) {
+                        classUser.setFinalEval(null);
+                    }
+
+                    continue;
+                } else {
+                    if (eval.getGrade() != null) {
+                        ongoingGrade += eval.getGrade() * Double.parseDouble(evalWeight) / 100;
+                    }
+
+                }
+            }
+            classUser.setOngoingEval(Math.round(ongoingGrade * 100.0) / 100.0);
+            if (classUser.getFinalEval() != null && classUser.getOngoingEval() != null) {
+                classUser.setTopicEval(
+                        Math.round((classUser.getFinalEval() + classUser.getOngoingEval()) * 100.0) / 100.0);
+            }
+            if (classUser.getFinalEval() == null || classUser.getOngoingEval() == null) {
+                classUser.setTopicEval(null);
+            }
+            classUserAdd.add(classUser);
+        }
+
+        classUserRepositories.saveAll(classUserAdd);
+        return ResponseEntity.ok("Changes has saved successfully");
+    }
+
+    @Override
+    public ResponseEntity<String> generateMark(List<ClassEvalRequestDTO> requestDTOs, String classCode) {
+        List<MilestoneEval> evals = new ArrayList<>();
+        List<ClassUser> classUserAdd = new ArrayList<>();
+        Classes clazz = classRepositories.findClassByCode(classCode);
+        List<ClassUser> classUsers = clazz.getClassUsers();
+        List<Milestone> milestones = clazz.getMilestones();
+        HashMap<ClassEvalKey, MilestoneEval> list = new HashMap<>();
+        HashMap<String, ClassUser> listUser = new HashMap<>();
+        HashMap<Long, Milestone> listMilestone = new HashMap<>();
+
+        for (ClassUser user : classUsers) {
+            for (MilestoneEval eval : user.getMilestoneEvals()) {
+                ClassEvalKey key = new ClassEvalKey();
+                key.setAccountName(user.getUser().getAccountName());
+                key.setAssignmentId(eval.getMilestone().getAssignment().getAssId());
+                list.put(key, eval);
+            }
+            listUser.put(user.getUser().getAccountName(), user);
+        }
+
+        for (Milestone milestone : milestones) {
+            listMilestone.put(milestone.getAssignment().getAssId(), milestone);
+        }
+
+        for (ClassEvalRequestDTO requestDTO : requestDTOs) {
+            ClassEvalKey key = new ClassEvalKey();
+            ClassUser classUser = new ClassUser();
             if (requestDTO.getAccountName() != null) {
                 key.setAccountName(requestDTO.getAccountName());
                 if (listUser.containsKey(requestDTO.getAccountName())) {
@@ -550,28 +658,41 @@ public class ClassUserService implements IClassUserService {
                 if (listMilestone.containsKey(grade.getAssignmentId())) {
                     milestone = listMilestone.get(grade.getAssignmentId());
                 }
-                if (milestone.getMilestoneEvals().isEmpty()) {
-                    MilestoneEval milestoneEval = new MilestoneEval();
-                    milestoneEval.setClassUser(classUser);
-                    milestoneEval.setGrade(grade.getGrade());
-                    milestoneEval.setComment(grade.getComment());
-                    milestoneEval.setMilestone(milestone);
-                    evals.add(milestoneEval);
-                } else {
-                    if (list.containsKey(key)) {
-                        MilestoneEval eval = list.get(key);
-                        if (eval.getClassUser() != null) {
-                            if (eval.getClassUser().equals(classUser)) {
-                                eval.setComment(grade.getComment());
-                                eval.setGrade(grade.getGrade());
+                if (list.containsKey(key)) {
+                    MilestoneEval eval = list.get(key);
+                    List<EvalDetail> details = eval.getEvalDetails();
+                    if (details.isEmpty()) {
+                        eval.setGrade(null);
+                        evals.add(eval);
+                    }
+                    if (eval.getMilestone().equals(milestone)) {
+                        for (EvalDetail detail : details) {
+                            if (detail.getGrade() != null && eval.getBonus() != null) {
+                                Double markEval = detail.getGrade() * detail.getEvalCriteria().getEvalWeight()
+                                        / 100;
+                                Double mark = markEval + eval.getBonus();
+                                eval.setGrade(mark);
+                                evals.add(eval);
+                            } else if (detail.getGrade() != null && eval.getBonus() == null) {
+                                Double markEval = detail.getGrade() * detail.getEvalCriteria().getEvalWeight()
+                                        / 100;
+                                eval.setGrade(markEval);
+                                evals.add(eval);
+                            } else {
+                                eval.setGrade(null);
                                 evals.add(eval);
                             }
                         }
                     }
                 }
             }
-            if (list.containsKey(key)) {
-                MilestoneEval eval = list.get(key);
+
+        }
+        milestoneEvalRepository.saveAll(evals);
+        List<ClassUser> userList = classUserRepositories.findByClasses(clazz);
+        for (ClassUser classUser : userList) {
+            Double ongoingGrade = 0.0;
+            for (MilestoneEval eval : classUser.getMilestoneEvals()) {
                 String evalWeight = eval.getMilestone().getAssignment().getEval_weight().substring(0,
                         eval.getMilestone().getAssignment().getEval_weight().length() - 1);
                 if (eval.getMilestone().getAssignment().isFinal()) {
@@ -580,6 +701,9 @@ public class ClassUserService implements IClassUserService {
                                 .round((eval.getGrade() * Double.parseDouble(evalWeight) / 100) * 100.0)
                                 / 100.0;
                         classUser.setFinalEval(finalEval);
+                    }
+                    if (eval.getGrade() == null) {
+                        classUser.setFinalEval(null);
                     }
 
                     continue;
@@ -590,150 +714,17 @@ public class ClassUserService implements IClassUserService {
 
                 }
             }
-            if (requestDTO.getComment() != null) {
-                classUser.setComment(requestDTO.getComment());
-            }
             classUser.setOngoingEval(Math.round(ongoingGrade * 100.0) / 100.0);
             if (classUser.getFinalEval() != null && classUser.getOngoingEval() != null) {
                 classUser.setTopicEval(
                         Math.round((classUser.getFinalEval() + classUser.getOngoingEval()) * 100.0) / 100.0);
             }
+            if (classUser.getFinalEval() == null || classUser.getOngoingEval() == null) {
+                classUser.setTopicEval(null);
+            }
             classUserAdd.add(classUser);
         }
-
-        // for (ClassEvalRequestDTO requestDTO : requestDTOs) {
-        // if (requestDTO.getAccountName() != null) {
-        // List<MilestoneEval> evalList = classUser.getMilestoneEvals();
-        // Double ongoingGrade = 0.0;
-        // for (AssignmentGradeDTO grade : requestDTO.getAssignmentGrade()) {
-        // Assignment assignment =
-        // assignmentRepository.findById(grade.getAssignmentId()).get();
-        // Milestone milestone = assignment.getMilestones().get(0);
-        // List<MilestoneEval> listEvals = milestone.getMilestoneEvals();
-
-        // if (milestone.getMilestoneEvals().isEmpty()) {
-        // MilestoneEval milestoneEval = new MilestoneEval();
-        // milestoneEval.setClassUser(classUser);
-        // milestoneEval.setGrade(grade.getGrade());
-        // milestoneEval.setComment(grade.getComment());
-        // milestoneEval.setMilestone(milestone);
-        // evals.add(milestoneEval);
-        // } else {
-        // for (MilestoneEval eval : listEvals) {
-        // if (eval.getClassUser() != null) {
-        // if (eval.getClassUser().equals(classUser)) {
-        // eval.setComment(grade.getComment());
-        // eval.setGrade(grade.getGrade());
-        // evals.add(eval);
-        // }
-        // }
-        // }
-        // }
-        // }
-        // for (MilestoneEval eval : evalList) {
-        // String evalWeight =
-        // eval.getMilestone().getAssignment().getEval_weight().substring(0,
-        // eval.getMilestone().getAssignment().getEval_weight().length() - 1);
-        // if (eval.getMilestone().getAssignment().isFinal()) {
-        // if (eval.getGrade() != null) {
-        // Double finalEval = Math
-        // .round((eval.getGrade() * Double.parseDouble(evalWeight) / 100) * 100.0)
-        // / 100.0;
-        // classUser.setFinalEval(finalEval);
-        // }
-
-        // continue;
-        // } else {
-        // if (eval.getGrade() != null) {
-        // ongoingGrade += eval.getGrade() * Double.parseDouble(evalWeight) / 100;
-        // }
-
-        // }
-        // }
-        // if (requestDTO.getComment() != null) {
-        // classUser.setComment(requestDTO.getComment());
-        // }
-        // classUser.setOngoingEval(Math.round(ongoingGrade * 100.0) / 100.0);
-        // if (classUser.getFinalEval() != null && classUser.getOngoingEval() != null) {
-        // classUser.setTopicEval(
-        // Math.round((classUser.getFinalEval() + classUser.getOngoingEval()) * 100.0) /
-        // 100.0);
-        // }
-        // classUsers.add(classUser);
-        // }
-        // }
         classUserRepositories.saveAll(classUserAdd);
-        milestoneEvalRepository.saveAll(evals);
-        return ResponseEntity.ok("Changes has saved successfully");
-    }
-
-    @Override
-    public ResponseEntity<String> generateMark(List<ClassEvalRequestDTO> requestDTOs, String classCode) {
-        for (ClassEvalRequestDTO requestDTO : requestDTOs) {
-            if (requestDTO.getAccountName() != null) {
-                User user = userRepository.findByAccountName(requestDTO.getAccountName());
-                ClassUser classUser = classUserRepositories.findByClassesAndUser(user.getUserId(), classCode);
-                List<MilestoneEval> evalList = classUser.getMilestoneEvals();
-                Double ongoingGrade = 0.0;
-                for (AssignmentGradeDTO grade : requestDTO.getAssignmentGrade()) {
-                    Assignment assignment = assignmentRepository.findById(grade.getAssignmentId()).get();
-                    Milestone milestone = assignment.getMilestones().get(0);
-                    List<MilestoneEval> evals = new ArrayList<>();
-                    for (MilestoneEval eval : classUser.getMilestoneEvals()) {
-                        List<EvalDetail> details = eval.getEvalDetails();
-                        if (eval.getMilestone().equals(milestone)) {
-                            for (EvalDetail detail : details) {
-                                if (detail.getGrade() != null && eval.getBonus() != null) {
-                                    Double markEval = detail.getGrade() * detail.getEvalCriteria().getEvalWeight()
-                                            / 100;
-                                    Double mark = markEval + eval.getBonus();
-                                    eval.setGrade(mark);
-                                    evals.add(eval);
-                                } else if (detail.getGrade() != null && eval.getBonus() == null) {
-                                    Double markEval = detail.getGrade() * detail.getEvalCriteria().getEvalWeight()
-                                            / 100;
-                                    eval.setGrade(markEval);
-                                    evals.add(eval);
-                                } else {
-                                    eval.setGrade(null);
-                                    evals.add(eval);
-                                }
-                            }
-                        }
-                        milestoneEvalRepository.save(eval);
-                    }
-                    milestoneEvalRepository.saveAll(evals);
-                }
-                for (MilestoneEval eval : evalList) {
-                    String evalWeight = eval.getMilestone().getAssignment().getEval_weight().substring(0,
-                            eval.getMilestone().getAssignment().getEval_weight().length() - 1);
-                    if (eval.getMilestone().getAssignment().isFinal()) {
-                        if (eval.getGrade() != null) {
-                            Double finalEval = Math
-                                    .round((eval.getGrade() * Double.parseDouble(evalWeight) / 100) * 100.0)
-                                    / 100.0;
-                            classUser.setFinalEval(finalEval);
-                        }
-
-                        continue;
-                    } else {
-                        if (eval.getGrade() != null) {
-                            ongoingGrade += eval.getGrade() * Double.parseDouble(evalWeight) / 100;
-                        }
-
-                    }
-                }
-                if (requestDTO.getComment() != null) {
-                    classUser.setComment(requestDTO.getComment());
-                }
-                classUser.setOngoingEval(Math.round(ongoingGrade * 100.0) / 100.0);
-                if (classUser.getFinalEval() != null && classUser.getOngoingEval() != null) {
-                    classUser.setTopicEval(
-                            Math.round((classUser.getFinalEval() + classUser.getOngoingEval()) * 100.0) / 100.0);
-                }
-                classUserRepositories.save(classUser);
-            }
-        }
         return ResponseEntity.ok("Marks has been generated");
     }
 
