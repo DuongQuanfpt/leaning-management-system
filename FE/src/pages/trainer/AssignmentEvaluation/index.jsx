@@ -815,7 +815,9 @@ const AssignementEvaluation = () => {
                           toastMessage('error', 'No student matched!')
                         } else {
                           toastMessage('success', `Found ${value}`)
-                          edit(result[0])
+                          if (isEditable) {
+                            edit(result[0])
+                          }
                         }
                       }}
                     />
