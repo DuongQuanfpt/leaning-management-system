@@ -6,11 +6,11 @@ import java.security.GeneralSecurityException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,6 +24,7 @@ import swp490.g23.onlinelearningsystem.entities.auth.service.impl.AuthService;
 @RequestMapping("/auth")
 @CrossOrigin
 public class AuthController {
+
 
     @Autowired
     private AuthService authService;
@@ -54,6 +55,13 @@ public class AuthController {
         return authService.register(request, request.getPassword());
     }
 
+    @PutMapping("/resend-verify")
+    public ResponseEntity<String> resend(@RequestBody AuthRequest request) {
+     
+        return authService.resendVerify(request);
+    }
+    
+
     /**
      * Verify user
      * @param token 
@@ -71,4 +79,6 @@ public class AuthController {
 
         return authService.googleAuthenticate(authRequest);
     }
+
+   
 }

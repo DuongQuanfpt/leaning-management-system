@@ -55,12 +55,4 @@ public class WorkEval extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "quality_id")
     private SubjectSetting quality;
-
-    // @ManyToOne
-    // @JoinColumn(name = "new_complexity_id")
-    // private SubjectSetting newComplexity;
-
-    // @ManyToOne
-    // @JoinColumn(name = "new_quality_id")
-    // private SubjectSetting newQuality;
 }

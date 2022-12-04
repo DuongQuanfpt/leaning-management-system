@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MilestoneMemberDTO {
-   
+
     private String userName;
 
     private String fullName;

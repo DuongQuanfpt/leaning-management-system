@@ -15,7 +15,7 @@ import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.Milest
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 
 public interface IGroupService {
-    ResponseEntity<GroupPaginateDTO> getGroup(int limit, int page, String keyword, String filterActive,
+    ResponseEntity<GroupPaginateDTO> getGroup(int limit, int page, String keyword, Long statusFilter,
             String filterMilestone, User user);
 
     ResponseEntity<GroupResponseDTO> groupDetail(Long id);

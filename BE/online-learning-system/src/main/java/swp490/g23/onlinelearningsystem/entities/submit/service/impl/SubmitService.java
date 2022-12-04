@@ -17,7 +17,6 @@ import swp490.g23.onlinelearningsystem.entities.class_setting.domain.ClassSettin
 import swp490.g23.onlinelearningsystem.entities.group.domain.Group;
 import swp490.g23.onlinelearningsystem.entities.groupMember.domain.GroupMember;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.Issue;
-import swp490.g23.onlinelearningsystem.entities.issue.repositories.IssueRepository;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
 import swp490.g23.onlinelearningsystem.entities.milestone.repositories.MilestoneRepository;
 import swp490.g23.onlinelearningsystem.entities.s3amazon.service.impl.S3Service;
@@ -34,6 +33,7 @@ import swp490.g23.onlinelearningsystem.entities.submit.domain.request.SubmitRequ
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.MilestoneFilterType;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitDetailDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitDetailFilterDTO;
+import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitNewResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitPaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.SubmitRepository;
@@ -67,9 +67,6 @@ public class SubmitService implements ISubmitService {
 
     @Autowired
     private SubmitWorkRepository submitWorkRepository;
-
-    @Autowired
-    private IssueRepository issueRepository;
 
     @Autowired
     private MilestoneRepository milestoneRepository;
@@ -204,7 +201,7 @@ public class SubmitService implements ISubmitService {
     }
 
     @Override
-    public ResponseEntity<String> newSubmit(User user, Long submitId, SubmitRequirementWrapper requestDTO,
+    public ResponseEntity<List<SubmitNewResponseDTO>> newSubmit(User user, Long submitId, SubmitRequirementWrapper requestDTO,
             MultipartFile file) {
         Submit currentSubmit = submitRepository.findById(submitId)
                 .orElseThrow(() -> new CustomException("submit doesnt exist"));
@@ -315,7 +312,15 @@ public class SubmitService implements ISubmitService {
         List<SubmitWork> savedSubmitWorks = submitWorkRepository.saveAll(submitWorks);
         submitRepository.saveAll(submitChanged);
 
-        return ResponseEntity.ok("file submitted");
+        return ResponseEntity.ok(newResponseDTOs(savedSubmitWorks));
+    }
+
+    private List<SubmitNewResponseDTO> newResponseDTOs ( List<SubmitWork> savedSubmitWorks) {
+        List<SubmitNewResponseDTO> dtos = new ArrayList<>();
+        for (SubmitWork submitWork : savedSubmitWorks) {
+            dtos.add(new SubmitNewResponseDTO(submitWork.getSubmit().getSubmitId(),submitWork.getWork().getIssueId()));
+        }
+        return dtos;
     }
 
     @Override

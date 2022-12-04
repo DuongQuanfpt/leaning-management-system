@@ -7,13 +7,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import swp490.g23.onlinelearningsystem.entities.group.domain.response.GroupMilestoneDTO;
-import swp490.g23.onlinelearningsystem.enums.enumentities.MemberStatusEntity;
+import swp490.g23.onlinelearningsystem.enums.enumentities.TraineeStatusEntity;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class GroupFilter {
-    private List<MemberStatusEntity> statusFilter;
+    private List<TraineeStatusEntity> statusFilter;
     private List<GroupMilestoneDTO> milstoneFilter;
 }

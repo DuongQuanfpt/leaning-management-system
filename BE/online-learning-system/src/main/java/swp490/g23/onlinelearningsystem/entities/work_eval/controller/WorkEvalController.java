@@ -16,6 +16,7 @@ import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.work_eval.domain.request.EvalRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.work_eval.domain.response.EvalResponseDTO;
+import swp490.g23.onlinelearningsystem.entities.work_eval.domain.response.NewEvalResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.work_eval.service.impl.WorkEvalService;
 
 @RestController
@@ -35,7 +36,7 @@ public class WorkEvalController {
     }
 
     @PostMapping(value = "/work-eval/{submitId}/{workId}/{milestoneId}")
-    public ResponseEntity<String> workEvaluation(@PathVariable("submitId") Long submitId,
+    public ResponseEntity<NewEvalResponseDTO> workEvaluation(@PathVariable("submitId") Long submitId,
             @PathVariable("workId") Long workId,
             @PathVariable("milestoneId") Long milestoneId,
             @RequestBody EvalRequestDTO requestDTO,
