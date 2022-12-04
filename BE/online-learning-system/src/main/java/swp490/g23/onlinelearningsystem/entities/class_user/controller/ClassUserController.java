@@ -76,7 +76,7 @@ public class ClassUserController {
 	public ResponseEntity<List<TraineeImportResponse>> importTrainee(@RequestBody TraineeWrapper wrapper,
 			@PathVariable("classCode") String classCode) {
 		List<TraineeRequestDTO> list = wrapper.getDto();
-		return classUserService.addTrainee(list, classCode);
+		return classUserService.traineeImport(list, classCode);
 	}
 
 	@GetMapping(value = "/trainee-detail/{userId}/{classCode}")
@@ -122,4 +122,12 @@ public class ClassUserController {
 		List<ClassEvalRequestDTO> list = wrapper.getDto();
 		return classUserService.generateMark(list, classCode);
 	}
+
+	@PostMapping(value = "/trainee-add")
+	public ResponseEntity<String> traineeAdd(@RequestBody TraineeRequestDTO dto,
+			@RequestParam(name = "classCode", required = true) String classCode) {
+
+		return classUserService.addTrainee(dto, classCode);
+	}
+
 }

@@ -18,7 +18,7 @@ public interface IClassUserService {
 
         ResponseEntity<TraineeFilterDTO> getFilter();
 
-        ResponseEntity<List<TraineeImportResponse>> addTrainee(List<TraineeRequestDTO> requestDTO, String classCode);
+        ResponseEntity<List<TraineeImportResponse>> traineeImport(List<TraineeRequestDTO> requestDTO, String classCode);
 
         ResponseEntity<String> updateStatus(Long userId, String classCode);
 
@@ -35,4 +35,6 @@ public interface IClassUserService {
         ResponseEntity<String> updateEval(List<ClassEvalRequestDTO> requestDTOs, String classCode);
 
         ResponseEntity<String> generateMark(List<ClassEvalRequestDTO> requestDTOs, String classCode);
+
+        ResponseEntity<String> addTrainee(TraineeRequestDTO dto, String classCode);
 }
