@@ -141,7 +141,7 @@ const HomePage = () => {
                   <Space className="w-100">
                     <Card
                       title={<Typography.Title level={5}>Category</Typography.Title>}
-                      className="w-100"
+                      className="w-100 p-0 m-0"
                       size="small"
                       loading={loading}
                     >

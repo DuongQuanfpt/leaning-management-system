@@ -14,8 +14,6 @@ import swp490.g23.onlinelearningsystem.entities.assignment.domain.Assignment;
 import swp490.g23.onlinelearningsystem.entities.assignment.domain.response.AssignmentResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.assignment.repositories.AssignmentRepository;
 import swp490.g23.onlinelearningsystem.entities.assignment.service.impl.AssignmentService;
-import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
-import swp490.g23.onlinelearningsystem.entities.classes.repositories.ClassRepositories;
 import swp490.g23.onlinelearningsystem.entities.eval_criteria.domain.EvalCriteria;
 import swp490.g23.onlinelearningsystem.entities.eval_criteria.domain.filter.CriteriaFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.eval_criteria.domain.request.CriteriaRequestDTO;
@@ -60,9 +58,6 @@ public class EvalCriteriaService implements IEvalCriteriaService {
 
     @Autowired
     private MilestoneService milestoneService;
-
-    @Autowired
-    private ClassRepositories classRepositories;
 
     @Autowired
     private UserRepository userRepository;

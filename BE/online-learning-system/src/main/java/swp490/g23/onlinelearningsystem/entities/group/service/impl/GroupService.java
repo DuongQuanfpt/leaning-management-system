@@ -340,7 +340,7 @@ public class GroupService implements IGroupService {
         group.setStatus(Status.Active);
         group.setClasses(milestone.getClasses());
 
-        Group savedGroup = groupRepository.save(group);
+        groupRepository.save(group);
 
         // Create group member detail
         GroupMember newMember = new GroupMember();

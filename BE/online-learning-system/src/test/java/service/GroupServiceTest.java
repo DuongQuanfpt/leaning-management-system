@@ -2,10 +2,8 @@ package service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -161,25 +159,27 @@ public class GroupServiceTest {
     }
 
      /**
-     * group create- request sent member name not in milestone classes
+     * group create- request sent milestone inprogress
      */
 
     @Test
     void groupCreate_UTC003() {
+        Milestone inprogressMilestone = milestone;
+        inprogressMilestone.setStatus(MilestoneStatusEnum.In_Progress);
 
         GroupCreateDTO expectedResult = new GroupCreateDTO();
         expectedResult.setGroupCode("Group A");
         expectedResult.setGroupId((long) 1);
         expectedResult.setMembers(List.of("quan"));
 
-        Mockito.when(milestoneRepository.findById((long) 1)).thenReturn(Optional.of(milestone));
-        Mockito.when(classUserRepositories.findByClassesAndUserName(anyString(), anyString())).thenReturn(null);
+        Mockito.when(milestoneRepository.findById((long) 1)).thenReturn(Optional.of(inprogressMilestone));
+        Mockito.when(classUserRepositories.findByClassesAndUserName("quan", "ABC123")).thenReturn(classUser);
         
         GroupRequestDTO groupCreateDTO = new GroupRequestDTO();
         groupCreateDTO.setGroupCode("Group A");
         Exception expectedEx = assertThrows(CustomException.class, () -> groupService.groupCreate((long) 1, groupCreateDTO, "quan").getBody());
         
-        assertEquals(expectedEx.getMessage(), "trainee not found in this milestone");
+        assertEquals(expectedEx.getMessage(), "Milestone of this group is in progress or have been closed , edit is not possible");
     }
 
      /**
@@ -247,7 +247,7 @@ public class GroupServiceTest {
     }
 
      /**
-     * group create- move member from old group  to newly created group
+     * group create- old group milestone is inprogress
      */
 
     @Test
@@ -261,7 +261,7 @@ public class GroupServiceTest {
 
         Milestone milestoneOfOldGroup = new Milestone();
         milestoneOfOldGroup.setMilestoneId((long) 1);
-        milestoneOfOldGroup.setStatus(MilestoneStatusEnum.Open);
+        milestoneOfOldGroup.setStatus(MilestoneStatusEnum.In_Progress);
         milestoneOfOldGroup.setClasses(classes);
       
         Submit submit = new Submit();
@@ -277,14 +277,11 @@ public class GroupServiceTest {
         Mockito.when(milestoneRepository.findById((long) 1)).thenReturn(Optional.of(milestone));
         Mockito.when(classUserRepositories.findByClassesAndUserName("quan", "ABC123")).thenReturn(classUser);
         Mockito.when(groupRepository.findGroupByMilestoneAndUser(milestone, classUser.getUser())).thenReturn(oldGroup);
-        Mockito.when(memberRepositories.save(Mockito.any(GroupMember.class))).thenReturn(groupMember);
-
+        
         GroupRequestDTO groupCreateDTO = new GroupRequestDTO();
         groupCreateDTO.setGroupCode("Group A");
-        GroupCreateDTO actual = groupService.groupCreate((long) 1, groupCreateDTO, "quan").getBody();
+        Exception expectedEx = assertThrows(CustomException.class, () -> groupService.groupCreate((long) 1, groupCreateDTO, "quan").getBody());
 
-        assertEquals(expectedResult.getGroupCode(), actual.getGroupCode());
-        assertEquals(expectedResult.getGroupId(), actual.getGroupId());
-        assertEquals(expectedResult.getMembers(), actual.getMembers());
+        assertEquals(expectedEx.getMessage(), "Cant apply changes ,Some milestone of this group is in progress or have been close");
     }
 }

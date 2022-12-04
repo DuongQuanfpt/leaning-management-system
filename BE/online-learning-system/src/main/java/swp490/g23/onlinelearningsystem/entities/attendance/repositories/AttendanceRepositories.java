@@ -1,7 +1,5 @@
 package swp490.g23.onlinelearningsystem.entities.attendance.repositories;
 
-import java.time.LocalDate;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
