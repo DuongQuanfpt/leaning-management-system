@@ -41,7 +41,7 @@ public class GroupController {
 			@RequestParam(name = "page", required = false) String currentPage,
 			@RequestParam(name = "limit", required = false) String requestLimit,
 			@RequestParam(name = "q", required = false) String keyword,
-			@RequestParam(name = "filterStatus", required = false) String statusFilter,
+			@RequestParam(name = "filterStatus", required = false) Long statusFilter,
 			@RequestParam(name = "filterMilestone", required = true) String milestoneFilter,
 			@AuthenticationPrincipal User user) {
 

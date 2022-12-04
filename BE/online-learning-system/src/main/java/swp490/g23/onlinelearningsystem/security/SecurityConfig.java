@@ -69,10 +69,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/contact-subjects").permitAll()
                 .antMatchers("/api/contact-add").permitAll()
                 .antMatchers("/api/post").permitAll()
+                .antMatchers("/api/tranteng").permitAll()
                 .antMatchers("/api/post-view/**").permitAll()
                 .antMatchers("/error").permitAll()
                 .antMatchers("/user/forgot-processing").permitAll()
                 .antMatchers("/auth/register").permitAll()
+                .antMatchers("/auth/resend-verify").permitAll()
                 .antMatchers("/auth/verify/**").permitAll()
                 // .antMatchers("/auth/login-google").permitAll()
                 .anyRequest().authenticated().and();

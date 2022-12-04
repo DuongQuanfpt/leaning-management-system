@@ -94,8 +94,8 @@ public class AuthService implements IAuthService {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         User user = new User();
         user.setFullName(request.getFullName());
-        
-        String accountName = user.getFullName().replaceAll("\\s+","").toLowerCase();
+
+        String accountName = user.getFullName().replaceAll("\\s+", "").toLowerCase();
         user.setAccountName(accountNameGenerate(accountName));
 
         user.setEmail(request.getEmail());
@@ -117,12 +117,12 @@ public class AuthService implements IAuthService {
         return ResponseEntity.ok("Successfull register , password has been to your email");
     }
 
-    public String accountNameGenerate(String accountName){
+    public String accountNameGenerate(String accountName) {
         accountName = StringUltility.removeAccent(accountName);
         List<User> userWithSameName = userRepository.getUserWithAccNameStartWith(accountName);
-        if(!userWithSameName.isEmpty()){
-            accountName += userWithSameName.size();  
-        } 
+        if (!userWithSameName.isEmpty()) {
+            accountName += userWithSameName.size();
+        }
         return accountName;
     }
 
@@ -165,7 +165,7 @@ public class AuthService implements IAuthService {
             user.setEmail(email);
             user.setFullName(name);
 
-            String accountName = user.getFullName().replaceAll("\\s+","").toLowerCase();
+            String accountName = user.getFullName().replaceAll("\\s+", "").toLowerCase();
             user.setAccountName(accountNameGenerate(accountName));
 
             user.setPassword(encoder.encode(pass));
@@ -182,12 +182,12 @@ public class AuthService implements IAuthService {
 
         } else {
             user = userRepository.findByEmail(email).get();
-            if(user.getAvatar_url()== null) {
+            if (user.getAvatar_url() == null) {
                 user.setAvatar_url(pictureUrl);
             }
 
-            if(user.getAccountName() == null) {
-                String accountName = user.getFullName().replaceAll("\\s+","").toLowerCase();
+            if (user.getAccountName() == null) {
+                String accountName = user.getFullName().replaceAll("\\s+", "").toLowerCase();
                 user.setAccountName(accountNameGenerate(accountName));
             }
 
@@ -245,6 +245,32 @@ public class AuthService implements IAuthService {
         details.setSubject(subject);
 
         emailService.sendMimeMail(details);
+    }
+
+    @Override
+    public ResponseEntity<String> resendVerify(AuthRequest request) {
+        User user = userRepository.findUserWithEmail(request.getEmail());
+        if (user != null) {
+            if (user.getMailToken() != null) {
+                user.setMailToken(RandomString.make(30));
+                userRepository.save(user);
+            } else {
+                throw new CustomException("user already verified");
+            }
+        } else {
+            throw new CustomException("user doesnt exist");
+        }
+
+        try {
+
+            String verifyUrl = request.getLink() + user.getMailToken();
+            System.out.println(verifyUrl);
+            sendRegisterMail(request.getEmail(), verifyUrl);
+        } catch (UnsupportedEncodingException | MessagingException e) {
+            e.printStackTrace();
+        }
+
+        return ResponseEntity.ok("verification mail sended");
     }
 
 }

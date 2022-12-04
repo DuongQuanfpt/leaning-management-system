@@ -1,6 +1,7 @@
 package swp490.g23.onlinelearningsystem.entities.submit.controller;
 
 import java.util.Base64;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,7 @@ import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.NewSubmitFi
 import swp490.g23.onlinelearningsystem.entities.submit.domain.filter.SubmitFilterDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.request.SubmitRequirementWrapper;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitDetailFilterDTO;
+import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitNewResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.domain.response.SubmitPaginateDTO;
 import swp490.g23.onlinelearningsystem.entities.submit.service.impl.SubmitService;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
@@ -71,7 +73,7 @@ public class SubmitController {
     }
 
     @PostMapping(value = "/new-submit/{submitId}")
-    public ResponseEntity<String> newSubmit(@PathVariable("submitId") Long submitId,
+    public ResponseEntity<List<SubmitNewResponseDTO>> newSubmit(@PathVariable("submitId") Long submitId,
             @RequestPart(name = "requirementIds", required = false) String base64Requirement,
             @RequestPart(name = "submitFile") MultipartFile submitFile,
             @AuthenticationPrincipal User user) throws JsonMappingException, JsonProcessingException {
