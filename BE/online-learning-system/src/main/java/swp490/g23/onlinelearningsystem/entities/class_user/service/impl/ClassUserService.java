@@ -206,7 +206,7 @@ public class ClassUserService implements IClassUserService {
     }
 
     @Override
-    public ResponseEntity<List<TraineeImportResponse>> addTrainee(List<TraineeRequestDTO> listRequestDTO,
+    public ResponseEntity<List<TraineeImportResponse>> traineeImport(List<TraineeRequestDTO> listRequestDTO,
             String classCode) {
         String newPass = RandomString.make(10);
         // List<ClassUser> newList = new ArrayList<>();
@@ -387,6 +387,72 @@ public class ClassUserService implements IClassUserService {
         classUserRepositories.save(classUser);
         updateSubmit(classUser);
         return ResponseEntity.ok("Trainee has been dropped out");
+    }
+
+    @Override
+    public ResponseEntity<String> addTrainee(TraineeRequestDTO dto, String classCode) {
+        String newPass = RandomString.make(10);
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        List<Setting> settings = Arrays.asList(settingRepositories.findBySettingValue("ROLE_TRAINEE"));
+        User newTrainee = new User();
+        ClassUser classUser = new ClassUser();
+        String nameRequest = dto.getFullName();
+        String emailRequest = dto.getEmail();
+        Classes clazz = classRepositories.findClassByCode(classCode);
+
+        if (emailRequest != null) {
+            Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailRequest);
+            if (!userRepository.findByEmail(emailRequest).isPresent()) {
+                if (nameRequest != null) {
+                    String username = nameRequest.replaceAll("\\s+", "").toLowerCase();
+                    newTrainee.setAccountName(authService.accountNameGenerate(username));
+                    newTrainee.setFullName(nameRequest);
+                } else {
+                    throw new CustomException("Full name is empty!");
+                }
+                if (matcher.find()) {
+                    newTrainee.setEmail(emailRequest);
+                    newTrainee.setPassword(encoder.encode(newPass));
+                    newTrainee.setSettings(settings);
+                    newTrainee.setStatus(UserStatus.Inactive);
+                    classUser.setUser(newTrainee);
+                } else {
+                    throw new CustomException("Email is wrong format");
+                }
+                try {
+                    authService.sendGooglePass(emailRequest, newPass);
+                } catch (UnsupportedEncodingException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (MessagingException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                userRepository.save(newTrainee);
+            } else {
+                if (userRepository.findByEmail(emailRequest).isPresent()
+                        && classUserRepositories.findByClassesAndUser(
+                                userRepository.findByEmail(emailRequest).get().getUserId(), classCode) == null) {
+                    if (nameRequest != null) {
+                        if (!nameRequest.equals(userRepository.findByEmail(emailRequest).get().getFullName())) {
+                            throw new CustomException("This email already used by another user!");
+                        }
+                        classUser.setUser(userRepository.findByEmail(emailRequest).get());
+                    }
+                    classUser.setUser(userRepository.findByEmail(emailRequest).get());
+                } else {
+                    throw new CustomException("Email have already existed!");
+                }
+            }
+        } else {
+            throw new CustomException("Email is empty!");
+        }
+        classUser.setClasses(clazz);
+        classUser.setStatus(TraineeStatus.Inactive);
+        classUserRepositories.save(classUser);
+        importSubmit(classUser);
+
+        return ResponseEntity.ok("Trainee added successfully");
     }
 
     // convert to DTO
