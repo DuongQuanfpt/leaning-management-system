@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import contactUsApi from '~/api/contactUsApi'
 import webContactApi from '~/api/webContactApi'
 import ErrorMsg from '~/components/Common/ErrorMsg'
+import ToastMessage from '~/components/Common/ToastMessage'
 
 const ContactUs = () => {
   const [name, setName] = useState('')
@@ -28,11 +29,11 @@ const ContactUs = () => {
 
   const handleSubmit = async () => {
     if (name === '') {
-      setError('Your name must not empty')
+      ToastMessage('error', 'Your name must not empty', 9)
       return
     }
     if (email === '') {
-      setError('Your email must not empty')
+      ToastMessage('error', 'Your email must not empty', 9)
       return
     }
     if (
@@ -40,23 +41,23 @@ const ContactUs = () => {
         /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
       )
     ) {
-      setError('Your email is not valid')
+      ToastMessage('error', 'Your is not valid', 9)
       return
     }
     if (phone === '') {
-      setError('Your phone number must not empty')
+      ToastMessage('error', 'Your phone number must not empty', 9)
       return
     }
     if (phone.length < 9 || phone.length > 11) {
-      setError('Your phone must 9-10 characters')
+      ToastMessage('error', 'Your phone number must 9-10 characters', 9)
       return
     }
     if (subject.title === 'Choose your Category') {
-      setError('Your must choose one category')
+      ToastMessage('error', 'Your must choose one category', 9)
       return
     }
     if (message === '') {
-      setError('Your message must not empty')
+      ToastMessage('error', 'Your message must not empty', 9)
       return
     }
     const params = {
@@ -67,7 +68,10 @@ const ContactUs = () => {
       email: email,
     }
 
-    await webContactApi.addContact(params).then((response) => setError('Your contact added successfully'))
+    await webContactApi
+      .addContact(params)
+      .then((response) => ToastMessage('success', 'Your contact sent successfully', 9))
+      .catch((error) => ToastMessage('error', 'Your contact sent failed, try again later', 9))
   }
 
   return (
@@ -81,7 +85,10 @@ const ContactUs = () => {
                 <h2 className="title-head">
                   Contact <span>Us</span>
                 </h2>
-                <p>It is a long established fact that a reader will be distracted by the readable content of a page</p>
+                <p>
+                  Please select a category below related to your inquiry. If you don't find what you need, fill it our
+                  contacts form
+                </p>
               </div>
               <div className="row placeani">
                 <div className="col-lg-12">

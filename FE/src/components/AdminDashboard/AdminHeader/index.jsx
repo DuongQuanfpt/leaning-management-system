@@ -45,7 +45,7 @@ const AdminHeader = () => {
   const currentClass = useSelector((state) => state.profile.currentClass)
   const [search, setSearch] = useState('')
 
-  const debouncedSearch = useDebounce(search, 1000)
+  const debouncedSearch = useDebounce(search, 400)
 
   useEffect(() => {
     dispatch(setSearchQueryDashboard(debouncedSearch))

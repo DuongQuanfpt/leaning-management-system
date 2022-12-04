@@ -3,10 +3,10 @@ import postApi from '~/api/postApi'
 import { Card, Image, Pagination, Space, Typography, Button } from 'antd'
 import { Link, useNavigate } from 'react-router-dom'
 import Header from '~/components/Homepage/Header'
-import MainSlider from '~/components/Homepage/MainSlider'
 import ContactUs from '~/components/Homepage/ContactUs'
 import Footer from '~/components/Homepage/Footer'
 import { useSelector } from 'react-redux'
+import { useDebounce } from '~/hooks/useDebounce'
 
 const HomePage = () => {
   let ITEM_PER_PAGE = 10
@@ -19,19 +19,21 @@ const HomePage = () => {
     totalItem: 0,
     currentPage: 1,
   })
+  const searchQueryHomepage = useSelector((state) => state.sidebar.searchQueryHomepage)
 
   useEffect(() => {
-    loadData(paginate.currentPage)
+    loadData(paginate.currentPage, searchQueryHomepage)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ITEM_PER_PAGE])
+  }, [ITEM_PER_PAGE, searchQueryHomepage])
 
-  const loadData = async (page) => {
+  const loadData = async (page, q = undefined) => {
     setLoading(true)
     const params = {
       isNotice: false,
       topView: 10,
       page: page,
       limit: ITEM_PER_PAGE,
+      q: q,
     }
 
     await postApi
@@ -50,14 +52,23 @@ const HomePage = () => {
 
   return (
     <>
-      <Header />
+      <Header isPost={true} />
       <div className="page-content bg-white">
-        <MainSlider />
+        <div style={{ height: '90px', backgroundColor: '#ebedef' }}></div>
         <div className="content-block" id="content-area">
           <div className="body flex-grow-1 px-3 py-3" style={{ backgroundColor: '#ebedef' }}>
             <div className="col-lg-12 m-b30">
               <div className="row">
                 <div className="col-lg-9 mt-3">
+                  <div className="col-lg-12">
+                    <Space>
+                      {!searchQueryHomepage ? null : (
+                        <Typography.Title level={4} className="mb-3">
+                          {`Found ${listPost?.listResult?.length} results with keyword '${searchQueryHomepage}'`}
+                        </Typography.Title>
+                      )}
+                    </Space>
+                  </div>
                   <div className="col-lg-12">
                     {listPost?.listResult?.map((post) => (
                       <Card className="w-100 mb-3" loading={loading}>
