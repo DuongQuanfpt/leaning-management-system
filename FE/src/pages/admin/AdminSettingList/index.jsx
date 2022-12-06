@@ -3,9 +3,9 @@ import { useNavigate, Link } from 'react-router-dom'
 
 import { CButton, CDropdown, CDropdownToggle, CDropdownMenu, CDropdownItem } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import { cilPlus, cilSearch, cilSync } from '@coreui/icons'
+import { cilPlus } from '@coreui/icons'
 
-import { Table, Button, Space, Breadcrumb, Tooltip, Modal, Tag, Pagination } from 'antd'
+import { Table, Button, Space, Breadcrumb, Tooltip, Modal, Tag, Pagination, Input } from 'antd'
 import { CloseOutlined, CheckOutlined, EyeOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 
 import settingListApi from '~/api/settingListApi'
@@ -13,6 +13,7 @@ import settingListApi from '~/api/settingListApi'
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
+import ToastMessage from '~/components/Common/ToastMessage'
 
 let ITEM_PER_PAGE = 10
 const AdminSettingList = () => {
@@ -28,7 +29,7 @@ const AdminSettingList = () => {
 
   const [search, setSearch] = useState('')
   const [type, setType] = useState('All Type')
-  const [status, setStatus] = useState('All Status')
+  const [status, setStatus] = useState('All Statuses')
   const [filter, setFilter] = useState({
     filterType: '',
     filterStatus: '',
@@ -76,9 +77,15 @@ const AdminSettingList = () => {
   }
 
   const handleActive = async (id) => {
-    await settingListApi.changeActive(id).then((response) => {
-      loadData(currentPage, filter)
-    })
+    await settingListApi
+      .changeActive(id)
+      .then((response) => {
+        loadData(currentPage, filter)
+        ToastMessage('success', 'Change status successfully')
+      })
+      .catch(() => {
+        ToastMessage('error', 'Change status failed, try again later')
+      })
   }
 
   const handleSearch = () => {
@@ -95,14 +102,6 @@ const AdminSettingList = () => {
     setStatus(status.name)
   }
 
-  const handleReload = () => {
-    setFilter({ q: '', filterType: '', filterStatus: '' })
-    setType('All Type')
-    setStatus('All Status')
-    setSearch('')
-    ITEM_PER_PAGE = 10
-  }
-
   const handleAdd = () => {
     navigateTo('/setting-add')
   }
@@ -116,30 +115,33 @@ const AdminSettingList = () => {
     {
       title: 'Type',
       dataIndex: 'typeName',
-      sorter: (a, b) => a.typeName?.length - b.typeName?.length,
-      width: '20%',
+      sorter: (a, b) => a.typeName.localeCompare(b.typeName, 'en', { sensitivity: 'base' }),
+      width: '30%',
     },
     {
       title: 'Title',
       dataIndex: 'settingTitle',
-      sorter: (a, b) => a.settingTitle?.length - b.settingTitle?.length,
-      width: '20%',
+      sorter: (a, b) => a.settingTitle.localeCompare(b.settingTitle, 'en', { sensitivity: 'base' }),
+      width: '30%',
     },
 
     {
       title: 'Value',
       dataIndex: 'settingValue',
+      sorter: (a, b) => a.settingValue.localeCompare(b.settingValue, 'en', { sensitivity: 'base' }),
       width: '25%',
     },
     {
       title: 'Display Order',
       dataIndex: 'displayOrder',
+      sorter: (a, b) => a.displayOrder.localeCompare(b.displayOrder, 'en', { sensitivity: 'base' }),
       width: '15%',
     },
     {
       title: 'Status',
       dataIndex: 'status',
-      width: '15%',
+      width: '5%',
+      sorter: (a, b) => a.status.localeCompare(b.status, 'en', { sensitivity: 'base' }),
       render: (_, { status }) => (
         <Tag color={status === 'Active' ? 'blue' : 'red'} key={status}>
           {status}
@@ -147,7 +149,7 @@ const AdminSettingList = () => {
       ),
     },
     {
-      title: 'Action',
+      title: 'Actions',
       dataIndex: 'action',
       render: (_, setting) => (
         <Space size="middle">
@@ -206,48 +208,40 @@ const AdminSettingList = () => {
                 </Breadcrumb>
               </div>
               <div className="col-6 d-flex w-80">
-                <input
-                  type="search"
-                  id="form1"
-                  className="form-control"
-                  placeholder="Searching by title...."
+                <Input.Search
+                  placeholder="Search by title...."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
+                  onSearch={handleSearch}
+                  size="large"
                 />
-                <CButton
-                  color="primary"
-                  type="submit"
-                  className="text-light ml-10"
-                  onClick={handleSearch}
-                  value={search}
-                >
-                  <CIcon icon={cilSearch} />
-                </CButton>
               </div>
-              <div className="col-4 d-flex justify-content-end">
-                <CDropdown className="ml-4">
+              <div className="col-4 d-flex justify-content-end" style={{ gap: '10px' }}>
+                <CDropdown>
                   <CDropdownToggle color="secondary">{type}</CDropdownToggle>
                   <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
+                    <CDropdownItem onClick={() => handleFilterType({ title: 'All Type', value: undefined })}>
+                      All Type
+                    </CDropdownItem>
                     {listType.map((type) => (
                       <CDropdownItem onClick={() => handleFilterType(type)}>{type.title}</CDropdownItem>
                     ))}
                   </CDropdownMenu>
                 </CDropdown>
-                <CDropdown className="ml-4">
+                <CDropdown>
                   <CDropdownToggle color="secondary">{status}</CDropdownToggle>
                   <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
+                    <CDropdownItem onClick={() => handleFilterStatus({ name: 'All Statuses', value: undefined })}>
+                      All Statuses
+                    </CDropdownItem>
+
                     {listStatus.map((status) => (
                       <CDropdownItem onClick={() => handleFilterStatus(status)}>{status.name}</CDropdownItem>
                     ))}
                   </CDropdownMenu>
                 </CDropdown>
-                <Tooltip title="Reload" placement="top">
-                  <CButton color="success" type="submit" className="text-light ml-4" onClick={handleReload}>
-                    <CIcon icon={cilSync} />
-                  </CButton>
-                </Tooltip>
                 <Tooltip title="Add New Setting" placement="top">
-                  <CButton color="danger" type="submit" className="text-light ml-4" onClick={handleAdd}>
+                  <CButton color="danger" type="submit" className="text-light" onClick={handleAdd}>
                     <CIcon icon={cilPlus} />
                   </CButton>
                 </Tooltip>

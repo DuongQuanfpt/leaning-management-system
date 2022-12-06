@@ -44,13 +44,13 @@ const Login = () => {
   const dispatch = useDispatch()
   const currentAccessToken = useSelector((state) => state.auth.token)
 
-  useEffect(() => {
-    //If already logged then navigate to homepage
-    if (currentAccessToken) {
-      navigateTo('/')
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  // useEffect(() => {
+  //   //If already logged then navigate to homepage
+  //   if (currentAccessToken) {
+  //     navigateTo('/')
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [])
 
   const submitForm = async (data) => {
     if (!isValid) return
@@ -71,7 +71,7 @@ const Login = () => {
             dispatch(setProfile(response))
             dispatch(setCurrentClass(response.classCodes[0]))
             setLogged(true)
-            navigateTo('/')
+            navigateTo('/dashboard')
           })
           .catch((error) => {})
       })
@@ -122,7 +122,7 @@ const Login = () => {
           dispatch(setProfile(response))
           dispatch(setCurrentClass(response.classCodes[0]))
           setLogged(true)
-          navigateTo('/')
+          navigateTo('/dashboard')
         })
       })
       .catch(() => {

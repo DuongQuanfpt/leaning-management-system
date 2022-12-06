@@ -5,7 +5,7 @@ import { CButton, CDropdown, CDropdownToggle, CDropdownMenu, CDropdownItem } fro
 import CIcon from '@coreui/icons-react'
 import { cilPlus, cilSearch, cilSync } from '@coreui/icons'
 
-import { Table, Button, Space, Tag, Breadcrumb, Tooltip, Modal, Pagination } from 'antd'
+import { Table, Button, Space, Tag, Breadcrumb, Tooltip, Modal, Pagination, Input } from 'antd'
 import { ExclamationCircleOutlined, CloseOutlined, CheckOutlined, EyeOutlined } from '@ant-design/icons'
 
 import subjectListApi from '~/api/subjectListApi'
@@ -27,9 +27,9 @@ const SubjectList = () => {
   const [currentPage, setCurrentPage] = useState(1)
 
   const [search, setSearch] = useState('')
-  const [manager, setManager] = useState('All Manager')
-  const [expert, setExpert] = useState('All Expert')
-  const [status, setStatus] = useState('All Status')
+  const [manager, setManager] = useState('All Managers')
+  const [expert, setExpert] = useState('All Experts')
+  const [status, setStatus] = useState('All Statuses')
   const [filter, setFilter] = useState({
     managerUsername: '',
     expertUsername: '',
@@ -59,13 +59,13 @@ const SubjectList = () => {
     if (q !== '') {
       params.q = q.trim()
     }
-    if (filter.managerUsername !== '') {
+    if (filter.managerUsername !== '' && filter.managerUsername !== 'All Managers') {
       params.filterManager = filter.managerUsername
     }
-    if (filter.expertUsername !== '') {
+    if (filter.expertUsername !== '' && filter.expertUsername !== 'All Experts') {
       params.filterExpert = filter.expertUsername
     }
-    if (filter.subjectStatus !== '') {
+    if (filter.subjectStatus !== '' && filter.subjectStatus !== 'All Statuses') {
       params.filterStatus = filter.subjectStatus
     }
     setLoading(true)
@@ -112,14 +112,6 @@ const SubjectList = () => {
     setFilter({ ...filter, subjectStatus: status.value })
     setStatus(status.name)
   }
-  const handleReload = () => {
-    setFilter({ managerUsername: '', expertUsername: '', subjectStatus: '' })
-    setManager('All Manager')
-    setExpert('All Expert')
-    setStatus('All Status')
-    setSearch('')
-    ITEM_PER_PAGE = 10
-  }
   const handleAdd = () => {
     navigateTo('/subject-add')
   }
@@ -149,31 +141,32 @@ const SubjectList = () => {
     {
       title: 'Code',
       dataIndex: 'subjectCode',
-      sorter: (a, b) => a.subjectCode?.length - b.subjectCode?.length,
+      sorter: (a, b) => a.subjectCode.localeCompare(b.subjectCode, 'en', { sensitivity: 'base' }),
       width: '15%',
     },
     {
       title: 'Name',
       dataIndex: 'subjectName',
-      sorter: (a, b) => a.subjectName?.length - b.subjectName?.length,
+      sorter: (a, b) => a.subjectName.localeCompare(b.subjectName, 'en', { sensitivity: 'base' }),
       width: '35%',
     },
     {
       title: 'Manager',
       dataIndex: 'managerUsername',
-      sorter: (a, b) => a.managerUsername?.length - b.managerUsername?.length,
+      sorter: (a, b) => a.managerUsername.localeCompare(b.managerUsername, 'en', { sensitivity: 'base' }),
       width: '15%',
     },
     {
       title: 'Expert',
       dataIndex: 'expertUsername',
-      sorter: (a, b) => a.expertUsername?.length - b.expertUsername?.length,
+      sorter: (a, b) => a.expertUsername.localeCompare(b.expertUsername, 'en', { sensitivity: 'base' }),
       width: '15%',
     },
     {
       title: 'Status',
       dataIndex: 'subjectStatus',
       width: '10%',
+      sorter: (a, b) => a.subjectStatus.localeCompare(b.subjectStatus, 'en', { sensitivity: 'base' }),
 
       render: (_, { subjectStatus }) => (
         <Tag color={subjectStatus === 'Active' ? 'blue' : 'red'} key={subjectStatus}>
@@ -228,51 +221,50 @@ const SubjectList = () => {
                   <Breadcrumb.Item>Subject List</Breadcrumb.Item>
                 </Breadcrumb>
               </div>
-              <div className="col-5 d-flex w-80">
-                <input
-                  type="search"
-                  id="form1"
-                  className="form-control"
-                  placeholder="Searching by Code or Name...."
+              <div className="col-4 d-flex w-80">
+                <Input.Search
+                  placeholder="Search by Code or Name...."
                   value={search}
+                  className="w-80"
+                  size="large"
                   onChange={(e) => setSearch(e.target.value)}
+                  onSearch={handleSearch}
                 />
-                <CButton color="primary" type="submit" className="text-light ml-10" onClick={handleSearch}>
-                  <CIcon icon={cilSearch} />
-                </CButton>
               </div>
-              <div className="col-5 d-flex justify-content-end">
-                <CDropdown className="ml-4">
+              <div className="col-6 d-flex justify-content-end" style={{ gap: '10px' }}>
+                <CDropdown className="">
                   <CDropdownToggle color="secondary">{manager}</CDropdownToggle>
                   <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
+                    <CDropdownItem onClick={() => handleFilterManager('All Managers')}>All Managers</CDropdownItem>
+
                     {listManager.map((manager) => (
                       <CDropdownItem onClick={() => handleFilterManager(manager)}>{manager}</CDropdownItem>
                     ))}
                   </CDropdownMenu>
                 </CDropdown>
-                <CDropdown className="ml-4">
+                <CDropdown className="">
                   <CDropdownToggle color="secondary">{expert}</CDropdownToggle>
                   <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
+                    <CDropdownItem onClick={() => handleFilterExpert('All Experts')}>{'All Experts'}</CDropdownItem>
                     {listExpert.map((expert) => (
                       <CDropdownItem onClick={() => handleFilterExpert(expert)}>{expert}</CDropdownItem>
                     ))}
                   </CDropdownMenu>
                 </CDropdown>
-                <CDropdown className="ml-4">
+                <CDropdown className="">
                   <CDropdownToggle color="secondary">{status}</CDropdownToggle>
                   <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
+                    <CDropdownItem onClick={() => handleFilterStatus({ name: 'All Statuses', value: undefined })}>
+                      {'All Statuses'}
+                    </CDropdownItem>
+
                     {listStatus.map((status) => (
                       <CDropdownItem onClick={() => handleFilterStatus(status)}>{status.name}</CDropdownItem>
                     ))}
                   </CDropdownMenu>
                 </CDropdown>
-                <Tooltip title="Reload" placement="top">
-                  <CButton color="success" type="submit" className="text-light ml-4" onClick={handleReload}>
-                    <CIcon icon={cilSync} />
-                  </CButton>
-                </Tooltip>
                 <Tooltip title="Add New Subject" placement="top">
-                  <CButton color="danger" type="submit" className="text-light ml-4" onClick={handleAdd}>
+                  <CButton color="danger" type="submit" className="text-light " onClick={handleAdd}>
                     <CIcon icon={cilPlus} />
                   </CButton>
                 </Tooltip>

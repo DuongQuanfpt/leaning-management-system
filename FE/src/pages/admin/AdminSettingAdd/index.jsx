@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Radio, Modal } from 'antd'
+import { Radio, Modal, Typography } from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
@@ -138,7 +138,9 @@ const AdminSettingAdd = () => {
                         <div className="widget-inner">
                           <div className="row">
                             <div className="form-group col-6">
-                              <label className="col-form-label">Type</label>
+                              <label className="col-form-label">
+                                Type<Typography.Text type="danger">*</Typography.Text>
+                              </label>
                               <div>
                                 <CDropdown className="w-100">
                                   <CDropdownToggle color="warning">{type.title}</CDropdownToggle>
@@ -151,7 +153,9 @@ const AdminSettingAdd = () => {
                               </div>
                             </div>
                             <div className="form-group col-6">
-                              <label className="col-form-label">Title</label>
+                              <label className="col-form-label">
+                                Title<Typography.Text type="danger">*</Typography.Text>
+                              </label>
                               <div>
                                 <input
                                   className="form-control"
@@ -162,7 +166,9 @@ const AdminSettingAdd = () => {
                               </div>
                             </div>
                             <div className="form-group col-6">
-                              <label className="col-form-label">Value</label>
+                              <label className="col-form-label">
+                                Value<Typography.Text type="danger">*</Typography.Text>
+                              </label>
                               <div>
                                 <input
                                   className="form-control"
@@ -173,7 +179,9 @@ const AdminSettingAdd = () => {
                               </div>
                             </div>
                             <div className="form-group col-6">
-                              <label className="col-form-label">Status</label>
+                              <label className="col-form-label">
+                                Status<Typography.Text type="danger">*</Typography.Text>
+                              </label>
                               <div>
                                 <Radio.Group onChange={handleChangeStatus} value={status}>
                                   <Radio value={1}>Active</Radio>
@@ -182,7 +190,9 @@ const AdminSettingAdd = () => {
                               </div>
                             </div>
                             <div className="form-group col-12">
-                              <label className="col-form-label">Display Order</label>
+                              <label className="col-form-label">
+                                Display Order<Typography.Text type="danger">*</Typography.Text>
+                              </label>
                               <div>
                                 <input
                                   className="form-control"
@@ -193,7 +203,9 @@ const AdminSettingAdd = () => {
                               </div>
                             </div>
                             <div className="form-group col-12">
-                              <label className="col-form-label">Description</label>
+                              <label className="col-form-label">
+                                Description<Typography.Text type="danger">*</Typography.Text>
+                              </label>
                               <div>
                                 <textarea
                                   className="form-control"

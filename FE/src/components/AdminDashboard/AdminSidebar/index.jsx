@@ -26,9 +26,12 @@ const AdminSidebar = () => {
     <>
       <CSidebar
         position="fixed"
-        unfoldable={unfoldable}
+        unfoldable={false}
         visible={sidebarShow}
-        onVisibleChange={(visible) => dispatch(setSidebarShow(visible))}
+        onVisibleChange={(visible) => {
+          dispatch(setSidebarShow(visible))
+          dispatch(setSidebarUnfoldable(!unfoldable))
+        }}
       >
         <CSidebarBrand className="d-none d-md-flex" to="/">
           <CIcon className="sidebar-brand-full" icon={logoNegative} height={35} />
@@ -39,7 +42,6 @@ const AdminSidebar = () => {
             <AdminSidebarNav items={_nav} />
           </SimpleBar>
         </CSidebarNav>
-        <CSidebarToggler className="d-none d-lg-flex" onClick={() => dispatch(setSidebarUnfoldable(!unfoldable))} />
       </CSidebar>
     </>
   )

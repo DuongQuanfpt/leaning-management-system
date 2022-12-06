@@ -63,7 +63,7 @@ const TraineeDetail = () => {
     const params = {
       status: trainee.status,
       dropDate: trainee.dropDate,
-      note: trainee.note.trim(),
+      note: trainee.note,
     }
 
     await traineeListApi
