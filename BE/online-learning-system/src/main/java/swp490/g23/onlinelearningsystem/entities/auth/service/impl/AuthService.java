@@ -251,7 +251,7 @@ public class AuthService implements IAuthService {
     public ResponseEntity<String> resendVerify(AuthRequest request) {
         User user = userRepository.findUserWithEmail(request.getEmail());
         if (user != null) {
-            if (user.getMailToken() != null) {
+            if (user.getStatus() == UserStatus.Unverified) {
                 user.setMailToken(RandomString.make(30));
                 userRepository.save(user);
             } else {

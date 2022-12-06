@@ -20,7 +20,7 @@ public class ClassRepositoriesCriteria {
     private final EntityManager em;
 
     public TypedQuery<Classes> displayClass(String keyword, String filterTerm, String filterTrainer,
-            String filterSupporter, String filterBranch, String filterStatus, User currentUser) {
+            String filterSupporter, String filterBranch, String filterStatus, User currentUser,String filterSubject) {
 
         List<Setting> settings = currentUser.getSettings();
         List<String> roles = new ArrayList<>();
@@ -28,10 +28,10 @@ public class ClassRepositoriesCriteria {
             roles.add(setting.getSettingValue());
         }
 
-        StringBuilder query = new StringBuilder("SELECT DISTINCT c FROM Classes c  WHERE 1=1");
+        StringBuilder query = new StringBuilder("SELECT DISTINCT c FROM Classes c  WHERE c.subject.subjectStatus = swp490.g23.onlinelearningsystem.enums.Status.Active ");
 
         if (roles.contains("ROLE_MANAGER")) {
-
+            query.append("AND c.subject.manager.accountName = '" + currentUser.getAccountName() + "'");
         } else if (roles.contains("ROLE_TRAINER") && roles.contains("ROLE_SUPPORTER")) {
             query.append(" AND c.userTrainer.accountName = '" + currentUser.getAccountName() + "' OR c.userSupporter.accountName = '"
                     + currentUser.getAccountName() + "'");
@@ -58,13 +58,17 @@ public class ClassRepositoriesCriteria {
 
         if (filterTrainer != null) {
             query.append("AND c.userTrainer.accountName = '" + filterTrainer + "'");
-        }
+        }  
 
         if (filterSupporter != null) {
             query.append("AND c.userSupporter.accountName = '" + filterSupporter + "'");
         }
         if (filterBranch != null) {
             query.append("AND c.settingBranch.settingValue = '" + filterBranch + "'");
+        }
+
+        if (filterSubject != null) {
+            query.append("AND c.subject.subjectCode = '" + filterSubject + "'");
         }
 
         query.append(" ORDER BY c.classId ASC");

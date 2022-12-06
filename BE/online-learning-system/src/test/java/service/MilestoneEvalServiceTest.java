@@ -163,7 +163,7 @@ public class MilestoneEvalServiceTest {
     }
 
     /**
-     * milestone eval - nonexistent milestone
+     * milestone eval - request criteria not in milestone
      */
 
     @Test
@@ -175,7 +175,7 @@ public class MilestoneEvalServiceTest {
         evalRequestDTO.setSubmitId((long) 0);
         evalRequestDTO.setComment("something");
         evalRequestDTO.setGrade(6.69);
-        evalRequestDTO.setBonus((double) 0);
+        evalRequestDTO.setBonus((double) 1.0);
         evalRequestDTO.setWorkGrade(8.99);
         evalRequestDTO.setWorkPoint((long) 274);
         evalRequestDTO.setWorkCriteriaId((long) 1);
@@ -195,6 +195,111 @@ public class MilestoneEvalServiceTest {
         Exception expectedEx = assertThrows(CustomException.class,
                 () -> milestoneEvalService.milestoneEval((long) 1, wrapper));
         assertEquals(expectedEx.getMessage(), "Some criteria in request do not belong in milestone");
+    }
+
+    /**
+     * milestone eval - invalid milestone grade
+     */
+
+    @Test
+    void milestoneEval_UTC005() {
+
+        MilestoneEvalRequestWrapper wrapper = createRequest();
+        List<MilestoneEvalRequestDTO> dtos = wrapper.getEvalList();
+        MilestoneEvalRequestDTO evalRequestDTO = new MilestoneEvalRequestDTO();
+        evalRequestDTO.setSubmitId((long) 0);
+        evalRequestDTO.setComment("something");
+        evalRequestDTO.setGrade(-6.69);
+        evalRequestDTO.setBonus((double) 0);
+        evalRequestDTO.setWorkGrade(8.99);
+        evalRequestDTO.setWorkPoint((long) 274);
+        evalRequestDTO.setWorkCriteriaId((long) 1);
+
+        List<EvalCriteriaRequest> criteriaRequests = new ArrayList<>();
+        EvalCriteriaRequest criteriaRequest = new EvalCriteriaRequest();
+        criteriaRequest.setCriteriaId((long) 1);
+        criteriaRequest.setComment("comment ");
+        criteriaRequest.setGrade((double) 3);
+        criteriaRequests.add(criteriaRequest);
+
+        evalRequestDTO.setCriteria(criteriaRequests);
+        dtos.add(evalRequestDTO);
+        wrapper.setEvalList(dtos);
+        Mockito.when(milestoneRepository.findById(anyLong())).thenReturn(Optional.of(milestone));
+
+        Exception expectedEx = assertThrows(CustomException.class,
+                () -> milestoneEvalService.milestoneEval((long) 1, wrapper));
+        assertEquals(expectedEx.getMessage(), "invalid milestone grade");
+    }
+
+    /**
+     * milestone eval - invalid milestone bonus
+     */
+
+    @Test
+    void milestoneEval_UTC006() {
+
+        MilestoneEvalRequestWrapper wrapper = createRequest();
+        List<MilestoneEvalRequestDTO> dtos = wrapper.getEvalList();
+        MilestoneEvalRequestDTO evalRequestDTO = new MilestoneEvalRequestDTO();
+        evalRequestDTO.setSubmitId((long) 0);
+        evalRequestDTO.setComment("something");
+        evalRequestDTO.setGrade(6.69);
+        evalRequestDTO.setBonus((double) 10);
+        evalRequestDTO.setWorkGrade(8.99);
+        evalRequestDTO.setWorkPoint((long) 274);
+        evalRequestDTO.setWorkCriteriaId((long) 1);
+
+        List<EvalCriteriaRequest> criteriaRequests = new ArrayList<>();
+        EvalCriteriaRequest criteriaRequest = new EvalCriteriaRequest();
+        criteriaRequest.setCriteriaId((long) 1);
+        criteriaRequest.setComment("comment ");
+        criteriaRequest.setGrade((double) 3);
+        criteriaRequests.add(criteriaRequest);
+
+        evalRequestDTO.setCriteria(criteriaRequests);
+        dtos.add(evalRequestDTO);
+        wrapper.setEvalList(dtos);
+        Mockito.when(milestoneRepository.findById(anyLong())).thenReturn(Optional.of(milestone));
+
+        Exception expectedEx = assertThrows(CustomException.class,
+                () -> milestoneEvalService.milestoneEval((long) 1, wrapper));
+        assertEquals(expectedEx.getMessage(), "invalid milestone bonus grade");
+    }
+
+     /**
+     * milestone eval - invalid criteria grade
+     */
+
+    @Test
+    void milestoneEval_UTC007() {
+
+        MilestoneEvalRequestWrapper wrapper = createRequest();
+        List<MilestoneEvalRequestDTO> dtos = wrapper.getEvalList();
+        MilestoneEvalRequestDTO evalRequestDTO = new MilestoneEvalRequestDTO();
+        evalRequestDTO.setSubmitId((long) 0);
+        evalRequestDTO.setComment("something");
+        evalRequestDTO.setGrade(6.69);
+        evalRequestDTO.setBonus((double) 0);
+        evalRequestDTO.setWorkGrade(8.99);
+        evalRequestDTO.setWorkPoint((long) 274);
+        evalRequestDTO.setWorkCriteriaId((long) 1);
+
+        List<EvalCriteriaRequest> criteriaRequests = new ArrayList<>();
+        EvalCriteriaRequest criteriaRequest = new EvalCriteriaRequest();
+        criteriaRequest.setCriteriaId((long) 1);
+        criteriaRequest.setComment("comment ");
+        criteriaRequest.setGrade((double) -3);
+        criteriaRequests.add(criteriaRequest);
+
+        evalRequestDTO.setCriteria(criteriaRequests);
+        dtos.add(evalRequestDTO);
+        wrapper.setEvalList(dtos);
+        Mockito.when(milestoneRepository.findById(anyLong())).thenReturn(Optional.of(milestone));
+
+        Exception expectedEx = assertThrows(CustomException.class,
+                () -> milestoneEvalService.milestoneEval((long) 1, wrapper));
+        assertEquals(expectedEx.getMessage(), "invalid criteria grade");
     }
 
     private MilestoneEvalRequestWrapper createRequest() {

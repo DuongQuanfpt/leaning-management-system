@@ -343,12 +343,9 @@ public class SubmitServiceTest {
     wrapper.setRequirements(List.of(dto));
 
     Mockito.when(submitRepository.findById((long) 1)).thenReturn(Optional.of(submit));
-    Mockito.when(userRepository.findById((long) 1)).thenReturn(Optional.of(currentLogin));
-    Mockito.when(s3Service.saveSubmit(any(MultipartFile.class), anyString())).thenReturn(null);
-    Exception expectedEx = assertThrows(CustomException.class, () -> submitService.newSubmit(currentLogin, (long) 1, wrapper, multipartFile));
+    Exception expectedEx = assertThrows(CustomException.class, () -> submitService.newSubmit(currentLogin, (long) 1, wrapper, null));
 
-    assertEquals(expectedEx.getMessage(), "file upload failed");
+    assertEquals(expectedEx.getMessage(), "must submit a file");
   }
-
 
 }

@@ -314,8 +314,18 @@ public class MilestoneEvalService implements IMilestoneEvalService {
             }
 
             milestoneEval.setComment(requestDTO.getComment());
-            milestoneEval.setBonus(requestDTO.getBonus());
-            milestoneEval.setGrade(requestDTO.getGrade());
+            if (requestDTO.getBonus() >= 0 && requestDTO.getBonus() <= 2) {
+                milestoneEval.setBonus(requestDTO.getBonus());
+            }else {
+                throw new CustomException("invalid milestone bonus grade"); 
+            }
+
+            if (requestDTO.getGrade() >= 0 && requestDTO.getGrade() <= 10) {
+                milestoneEval.setGrade(requestDTO.getGrade());
+            }else {
+                throw new CustomException("invalid milestone grade"); 
+            }
+         
 
             List<EvalCriteriaRequest> requestList = requestDTO.getCriteria();
             if (requestDTO.getWorkCriteriaId() != null) {
@@ -347,7 +357,13 @@ public class MilestoneEvalService implements IMilestoneEvalService {
                     detail.setTotalLoc(requestDTO.getWorkPoint());
                 }
                 detail.setComment(criteriaRequest.getComment());
-                detail.setGrade(criteriaRequest.getGrade());
+
+                if (criteriaRequest.getGrade() >= 0 && criteriaRequest.getGrade() <= 10) {
+                    detail.setGrade(criteriaRequest.getGrade());
+                }else {
+                    throw new CustomException("invalid criteria grade"); 
+                }
+               
 
                 newEvalDetails.add(detail);
             }

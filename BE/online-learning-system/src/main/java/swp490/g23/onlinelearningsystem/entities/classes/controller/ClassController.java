@@ -39,17 +39,18 @@ public class ClassController {
 			@RequestParam(name = "filterSupporter", required = false) String filterSupporter,
 			@RequestParam(name = "filterBranch", required = false) String filterBranch,
 			@RequestParam(name = "filterStatus", required = false) String filterStatus,
+			@RequestParam(name = "filterSubject", required = false) String filterSubject,
 			@AuthenticationPrincipal User user) {
 
 		int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
 		int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
-		return classService.displayClasses(limit, page, keyword, filterTerm, filterTrainer, filterSupporter, filterBranch, filterStatus,user);
+		return classService.displayClasses(limit, page, keyword, filterTerm, filterTrainer, filterSupporter, filterBranch, filterStatus,user,filterSubject);
 	}
 
     @GetMapping("/class-filter")
-	public ResponseEntity<ClassFilterDTO> getUserFilter() {
+	public ResponseEntity<ClassFilterDTO> getUserFilter(@AuthenticationPrincipal User user) {
 
-		return classService.getFilter();
+		return classService.getFilter(user);
 	}
 
 	@GetMapping("/class-detail/{id}")

@@ -293,6 +293,7 @@ public class UserService implements IUserService {
             user.setStatus(UserStatus.Inactive);
         } else {
             user.setStatus(UserStatus.Active);
+            user.setMailToken(null);
         }
         userRepository.save(user);
         return ResponseEntity.ok("User status updated");

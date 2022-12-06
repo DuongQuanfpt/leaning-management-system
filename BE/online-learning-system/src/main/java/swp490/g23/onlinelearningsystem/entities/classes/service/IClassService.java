@@ -10,10 +10,10 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 
 public interface IClassService {
     ResponseEntity<ClassResponsePaginateDTO> displayClasses(int limit, int currentPage,  String keyword, String filterTerm, String filterTrainer,
-                                                            String filterSupporter, String filterBranch, String filterStatus , User user);
+                                                            String filterSupporter, String filterBranch, String filterStatus , User user,String filterSubject);
     ResponseEntity<ClassResponseDTO> viewClass(long id);
     ResponseEntity<String> updateClass(ClassRequestDTO dto , Long id);
     ResponseEntity<String> updateStatus(Long id);
-    ResponseEntity<ClassFilterDTO> getFilter();
+    ResponseEntity<ClassFilterDTO> getFilter( User user);
     ResponseEntity<String> addClass(ClassRequestDTO requestDTO);
 }

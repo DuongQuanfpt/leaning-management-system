@@ -141,6 +141,7 @@ public class MilestoneServiceTest {
         Milestone mockRepository = mockData();
         MilestoneRequestDTO createDTO = new MilestoneRequestDTO();
         createDTO.setClassesCode("ABC123");
+        createDTO.setAssignmentId(null);
         createDTO.setTitle("milestone A");
         createDTO.setDescription("Description A");
 

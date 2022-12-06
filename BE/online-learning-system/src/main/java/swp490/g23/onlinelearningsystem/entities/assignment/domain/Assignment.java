@@ -36,7 +36,7 @@ public class Assignment extends BaseEntity {
     @Column
     private String title;
 
-    @Column
+    @Column(columnDefinition="TEXT")
     private String assBody;
 
     @Column

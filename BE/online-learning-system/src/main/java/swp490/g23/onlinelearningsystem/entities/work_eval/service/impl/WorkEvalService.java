@@ -171,13 +171,13 @@ public class WorkEvalService implements IWorkEvalService {
         SubjectSetting quality = null;
 
         for (SubjectSetting subjectSetting : currentMilestone.getAssignment().getForSubject().getSettings()) {
-            if (subjectSetting.getSubjectSettingId() == requestDTO.getComplexityId()) {
+            if (subjectSetting.getSubjectSettingId().equals(requestDTO.getComplexityId())) {
                 if (subjectSetting.getType().getSettingValue().equals("TYPE_COMPLEXITY")) {
                     complexity = subjectSetting;
                 }
             }
 
-            if (subjectSetting.getSubjectSettingId() == requestDTO.getQualityId()) {
+            if (subjectSetting.getSubjectSettingId().equals(requestDTO.getQualityId())) {
                 if (subjectSetting.getType().getSettingValue().equals("TYPE_QUALITY")) {
                     quality = subjectSetting;
                 }
@@ -215,9 +215,26 @@ public class WorkEvalService implements IWorkEvalService {
         }
 
         Submit submit = submitWork.getSubmit();
-        if (submit.getStatus() != SubmitStatusEnum.Evaluated) {
-            submit.setStatus(SubmitStatusEnum.Evaluated);
-            submitRepository.save(submit);
+        if (submit.getGroup() != null) {
+            List<Submit> changedSubmits = new ArrayList<>();
+            for (Submit submitOfGroup : submit.getGroup().getSubmits()) {
+                if (submitOfGroup.getMilestone().getMilestoneId().equals(currentMilestone.getMilestoneId())) {
+                    if(submitOfGroup.getStatus() != SubmitStatusEnum.Evaluated){
+                        submitOfGroup.setStatus(SubmitStatusEnum.Evaluated);
+                        changedSubmits.add(submitOfGroup);
+                    }
+                }
+            }
+
+            if (!changedSubmits.isEmpty()) {
+                submitRepository.saveAll(changedSubmits);
+            }
+
+        } else {
+            if (submit.getStatus() != SubmitStatusEnum.Evaluated) {
+                submit.setStatus(SubmitStatusEnum.Evaluated);
+                submitRepository.save(submit);
+            }
         }
 
         if (submitWork.getStatus() != SubmitWorkStatusEnum.Evaluated) {
@@ -228,7 +245,7 @@ public class WorkEvalService implements IWorkEvalService {
         return ResponseEntity.ok(toNewEvalResponse(savedEval));
     }
 
-    private NewEvalResponseDTO toNewEvalResponse(WorkEval workEval){
+    private NewEvalResponseDTO toNewEvalResponse(WorkEval workEval) {
         NewEvalResponseDTO dto = new NewEvalResponseDTO();
         dto.setWorkEvalId(workEval.getWorkEvalId());
         dto.setComplexity(workEval.getComplexity().getSettingTitle());

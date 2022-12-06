@@ -205,6 +205,10 @@ public class SubmitService implements ISubmitService {
             MultipartFile file) {
         Submit currentSubmit = submitRepository.findById(submitId)
                 .orElseThrow(() -> new CustomException("submit doesnt exist"));
+        
+        if(file == null){
+            throw new CustomException("must submit a file");
+        }
 
         HashMap<Long, Issue> requirementOfSubmit = new HashMap<Long, Issue>();
         for (Issue issue : currentSubmit.getMilestone().getIssues()) {

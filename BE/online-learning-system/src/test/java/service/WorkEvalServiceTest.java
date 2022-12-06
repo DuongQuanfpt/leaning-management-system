@@ -187,7 +187,7 @@ public class WorkEvalServiceTest {
     }
 
     /**
-     * work eval - nonexistent submitwork
+     * work eval - nonexistent milestone
      */
 
     @Test
