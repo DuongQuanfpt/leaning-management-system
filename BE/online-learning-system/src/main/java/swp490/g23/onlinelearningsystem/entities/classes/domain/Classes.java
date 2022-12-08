@@ -46,7 +46,7 @@ public class Classes extends BaseEntity {
     @Column
     private ClassStatus status;
 
-    @Column
+    @Column(columnDefinition="TEXT")
     private String description;
 
     @ManyToOne

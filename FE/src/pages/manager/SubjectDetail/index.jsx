@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
@@ -15,7 +16,7 @@ import {
   CDropdownMenu,
   CDropdownItem,
 } from '@coreui/react'
-import { Breadcrumb, Radio } from 'antd'
+import { Breadcrumb, Radio, Skeleton, Typography } from 'antd'
 
 import ErrorMsg from '~/components/Common/ErrorMsg'
 import subjectListApi from '~/api/subjectListApi'
@@ -23,6 +24,7 @@ import { useSelector } from 'react-redux'
 
 const SubjectDetail = () => {
   const { id } = useParams()
+  const navigateTo = useNavigate()
 
   // eslint-disable-next-line no-unused-vars
   const [subjectDetail, setSubjectDetail] = useState({})
@@ -39,6 +41,7 @@ const SubjectDetail = () => {
   const [status, setStatus] = useState(0)
   const [body, setBody] = useState('')
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const { roles } = useSelector((state) => state.profile)
 
@@ -51,6 +54,7 @@ const SubjectDetail = () => {
   }, [])
 
   const loadData = async () => {
+    setLoading(true)
     subjectListApi
       .getFilter()
       .then((response) => {
@@ -58,6 +62,7 @@ const SubjectDetail = () => {
         setListExpert(response.expertFilter)
       })
       .catch((error) => setError('Something went wrong, please try again'))
+      .finally(() => setLoading(false))
 
     subjectListApi
       .getDetail(id)
@@ -71,9 +76,26 @@ const SubjectDetail = () => {
         setBody(response.body)
       })
       .catch((error) => setError('Something went wrong, please try again'))
+      .finally(() => setLoading(false))
   }
 
   const handleSave = async () => {
+    if (code.trim() === '') {
+      setError('Subject Code must not empty')
+      return
+    }
+    if (name.trim() === '') {
+      setError('Subject Name must not empty')
+      return
+    }
+    if (manager === 'Select Manager') {
+      setError('You must select one Manager')
+      return
+    }
+    if (expert === 'Select Expert') {
+      setError('You must select one Expert')
+      return
+    }
     const params = {
       subjectCode: code,
       subjectName: name,
@@ -95,14 +117,8 @@ const SubjectDetail = () => {
   }
 
   const handleCancel = () => {
-    setError('')
-    setIsEditMode(false)
+    navigateTo('/subject-list')
   }
-  const handleEdit = () => {
-    setError('')
-    setIsEditMode(true)
-  }
-
   const handleChangeStatus = (e) => {
     setStatus(e.target.value)
   }
@@ -132,101 +148,100 @@ const SubjectDetail = () => {
                     <div className="col-lg-12 m-b30">
                       <div className="widget-box">
                         <div className="widget-inner">
-                          <div className="row">
-                            <div className="form-group col-6">
-                              <label className="col-form-label">Code</label>
-                              <div>
-                                <input
-                                  className="form-control"
-                                  type="text"
-                                  value={code}
-                                  onChange={(e) => setCode(e.target.value)}
-                                  disabled={isAdmin ? !isEditMode : true}
-                                />
+                          <Skeleton loading={loading}>
+                            <div className="row">
+                              <div className="form-group col-6">
+                                <label className="col-form-label">
+                                  Code <Typography.Text type="danger">*</Typography.Text>
+                                </label>
+                                <div>
+                                  <input
+                                    className="form-control"
+                                    type="text"
+                                    value={code}
+                                    onChange={(e) => setCode(e.target.value)}
+                                    disabled={isAdmin ? false : true}
+                                  />
+                                </div>
+                              </div>
+                              <div className="form-group col-6">
+                                <label className="col-form-label">
+                                  Name <Typography.Text type="danger">*</Typography.Text>
+                                </label>
+                                <div>
+                                  <input
+                                    className="form-control"
+                                    type="text"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    disabled={isAdmin ? false : true}
+                                  />
+                                </div>
+                              </div>
+                              <div className="form-group col-6">
+                                <label className="col-form-label">
+                                  Manager <Typography.Text type="danger">*</Typography.Text>
+                                </label>
+                                <CDropdown className="w-100">
+                                  <CDropdownToggle color="warning" disabled={isAdmin ? false : true}>
+                                    {manager}
+                                  </CDropdownToggle>
+                                  <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
+                                    {listManager.map((manager) => (
+                                      <CDropdownItem onClick={() => setManager(manager)}>{manager}</CDropdownItem>
+                                    ))}
+                                  </CDropdownMenu>
+                                </CDropdown>
+                              </div>
+                              <div className="form-group col-6">
+                                <label className="col-form-label">
+                                  Expert <Typography.Text type="danger">*</Typography.Text>
+                                </label>
+                                <CDropdown className="w-100">
+                                  <CDropdownToggle color="warning">{expert}</CDropdownToggle>
+                                  <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
+                                    {listExpert.map((expert) => (
+                                      <CDropdownItem onClick={() => setExpert(expert)}>{expert}</CDropdownItem>
+                                    ))}
+                                  </CDropdownMenu>
+                                </CDropdown>
+                              </div>
+                              <div className="form-group col-6">
+                                <label className="col-form-label">
+                                  Status <Typography.Text type="danger">*</Typography.Text>
+                                </label>
+                                <div>
+                                  <Radio.Group onChange={handleChangeStatus} value={status}>
+                                    <Radio value={1}>Active</Radio>
+                                    <Radio value={0}>Inactive</Radio>
+                                  </Radio.Group>
+                                </div>
+                              </div>
+                              <div className="form-group col-12">
+                                <label className="col-form-label">Description</label>
+                                <div>
+                                  <textarea
+                                    className="form-control"
+                                    type="text"
+                                    value={body}
+                                    onChange={(e) => setBody(e.target.value)}
+                                  />
+                                </div>
+                              </div>
+                              <ErrorMsg
+                                errorMsg={error}
+                                isError={error !== 'You have successfully changed your subject detail'}
+                              />
+                              <div className="d-flex">
+                                <CButton size="md" className="mr-5" color="warning" onClick={handleSave}>
+                                  Save
+                                </CButton>
+                                <CButton size="md" color="warning" onClick={handleCancel}>
+                                  Cancel
+                                </CButton>
                               </div>
                             </div>
-                            <div className="form-group col-6">
-                              <label className="col-form-label">Name</label>
-                              <div>
-                                <input
-                                  className="form-control"
-                                  type="text"
-                                  value={name}
-                                  onChange={(e) => setName(e.target.value)}
-                                  disabled={isAdmin ? !isEditMode : true}
-                                />
-                              </div>
-                            </div>
-                            <div className="form-group col-6">
-                              <label className="col-form-label">Manager</label>
-                              <CDropdown className="w-100">
-                                <CDropdownToggle color="warning" disabled={isAdmin ? !isEditMode : true}>
-                                  {manager}
-                                </CDropdownToggle>
-                                <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
-                                  {listManager.map((manager) => (
-                                    <CDropdownItem onClick={() => setManager(manager)}>{manager}</CDropdownItem>
-                                  ))}
-                                </CDropdownMenu>
-                              </CDropdown>
-                            </div>
-                            <div className="form-group col-6">
-                              <label className="col-form-label">Expert</label>
-                              <CDropdown className="w-100">
-                                <CDropdownToggle color="warning" disabled={!isEditMode}>
-                                  {expert}
-                                </CDropdownToggle>
-                                <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
-                                  {listExpert.map((expert) => (
-                                    <CDropdownItem onClick={() => setExpert(expert)}>{expert}</CDropdownItem>
-                                  ))}
-                                </CDropdownMenu>
-                              </CDropdown>
-                            </div>
-                            <div className="form-group col-6">
-                              <label className="col-form-label">Status</label>
-                              <div>
-                                <Radio.Group onChange={handleChangeStatus} value={status} disabled={!isEditMode}>
-                                  <Radio value={1}>Active</Radio>
-                                  <Radio value={0}>Inactive</Radio>
-                                </Radio.Group>
-                              </div>
-                            </div>
-                            <div className="form-group col-12">
-                              <label className="col-form-label">Description</label>
-                              <div>
-                                <textarea
-                                  className="form-control"
-                                  type="text"
-                                  value={body}
-                                  onChange={(e) => setBody(e.target.value)}
-                                  disabled={!isEditMode}
-                                />
-                              </div>
-                            </div>
-                            <ErrorMsg
-                              errorMsg={error}
-                              isError={error !== 'You have successfully changed your subject detail'}
-                            />
-                            <div className="d-flex">
-                              {isEditMode ? (
-                                <>
-                                  <CButton size="md" className="mr-5" color="warning" onClick={handleSave}>
-                                    Save
-                                  </CButton>
-                                  <CButton size="md" color="warning" onClick={handleCancel}>
-                                    Cancel
-                                  </CButton>
-                                </>
-                              ) : (
-                                <>
-                                  <CButton size="md" color="warning" onClick={handleEdit}>
-                                    Edit
-                                  </CButton>
-                                </>
-                              )}
-                            </div>
-                          </div>
+                          </Skeleton>
                         </div>
                       </div>
                     </div>

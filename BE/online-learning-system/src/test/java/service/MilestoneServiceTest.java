@@ -56,11 +56,11 @@ public class MilestoneServiceTest {
     @InjectMocks
     private AssignmentService assignmentService;
 
-     /**
+    /**
      * milestone id exist
      */
     @Test
-    void findById_UTC001() {
+    void milestoneDetail_UTC001() {
 
         Milestone mockRepository = mockData();
 
@@ -76,21 +76,20 @@ public class MilestoneServiceTest {
         assertEquals(actual.getClassesCode(), mockResult.getClassesCode());
     }
 
-    
-     /**
+    /**
      * milestone id not exist
      */
 
     @Test
-    void findById_UTC002() {
-        assertThrows(CustomException.class, () -> {
-            milestoneService.milestoneDetail((long) 1);
-        });
+    void milestoneDetail_UTC002() {
+        Mockito.when(milestoneRepository.findById(null)).thenReturn(Optional.empty());
+        Exception expectedEx = assertThrows(CustomException.class, () -> milestoneService.milestoneDetail(null));
+        assertEquals(expectedEx.getMessage(), "milestone setting doesnt exist");
 
     }
 
     /**
-     * add milestone 
+     * add milestone
      */
 
     @Test
@@ -112,11 +111,12 @@ public class MilestoneServiceTest {
                 .thenReturn(mockRepository.getAssignment().getEvalCriteriaList());
 
         String actual = milestoneService.milestonAdd(createDTO).getBody();
+        String expected = "milestone A";
 
-        assertEquals(actual, mockRepository.getTitle());
+        assertEquals(actual, expected);
     }
 
-     /**
+    /**
      * add milestone with no class
      */
 
@@ -132,7 +132,7 @@ public class MilestoneServiceTest {
         assertEquals(expectedEx.getMessage(), "Must assign a class to milestone");
     }
 
-     /**
+    /**
      * add milestone with no assignment
      */
 
@@ -141,6 +141,7 @@ public class MilestoneServiceTest {
         Milestone mockRepository = mockData();
         MilestoneRequestDTO createDTO = new MilestoneRequestDTO();
         createDTO.setClassesCode("ABC123");
+        createDTO.setAssignmentId(null);
         createDTO.setTitle("milestone A");
         createDTO.setDescription("Description A");
 
@@ -149,7 +150,7 @@ public class MilestoneServiceTest {
         assertEquals(expectedEx.getMessage(), "Must assign a assignment to milestone");
     }
 
-     /**
+    /**
      * add milestone assign to an assignment that already have a milestone
      */
 
@@ -157,8 +158,8 @@ public class MilestoneServiceTest {
     void milestoneAdd_UTC004() {
         Milestone mockRepository = mockData();
         Assignment assignment = mockRepository.getAssignment();
-        assignment.setMilestones( List.of(mockRepository));
-        
+        assignment.setMilestones(List.of(mockRepository));
+
         MilestoneRequestDTO createDTO = new MilestoneRequestDTO();
         createDTO.setClassesCode("ABC123");
         createDTO.setTitle("milestone A");
@@ -172,7 +173,7 @@ public class MilestoneServiceTest {
         assertEquals(expectedEx.getMessage(), "Assignment already have milestone");
     }
 
-      /**
+    /**
      * add milestone assign to non existent class
      */
 
@@ -190,7 +191,7 @@ public class MilestoneServiceTest {
         assertEquals(expectedEx.getMessage(), "Assignment doesnt exist");
     }
 
-     /**
+    /**
      * add milestone assign to non existent assignment
      */
 

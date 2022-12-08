@@ -23,7 +23,7 @@ import logoWhite2 from '~/assets/images/logo-white-2.png'
 import bannerImg from '~/assets/images/background/bg2.jpg'
 
 const Register = () => {
-  const clientId = process.env.clientId
+  const clientId = process.env.REACT_APP_LMS_GOOGLE_CLIENT_ID
 
   const navigateTo = useNavigate()
 

@@ -1,8 +1,9 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 
 import { CContainer, CRow, CCol, CForm, CButton } from '@coreui/react'
-import { Breadcrumb, Radio, Modal } from 'antd'
+import { Breadcrumb, Radio, Modal, Typography, Skeleton } from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 
 import Multiselect from 'multiselect-react-dropdown'
@@ -17,6 +18,7 @@ import avatar from '~/assets/images/profile/pic1.jpg'
 
 const AdminUserDetail = () => {
   const { id } = useParams()
+  const navigateTo = useNavigate()
 
   const [userDetail, setUserDetail] = useState({})
   const [isEditMode, setIsEditMode] = useState(false)
@@ -28,25 +30,33 @@ const AdminUserDetail = () => {
   const [status, setStatus] = useState('')
   const [note, setNote] = useState('')
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     // eslint-disable-next-line no-unused-vars
-    userListApi.getDetail(id).then((response) => {
-      setUserDetail(response)
-      setUserName(response.username)
-      setFullName(response.fullName == null ? '' : response.fullName)
-      setMobile(response.mobile == null ? '' : response.mobile)
-      setRoles(response.roles)
-      setStatus(response.status === 'Active' ? 1 : response.status === 'Inactive' ? 0 : -1)
-      setNote(response.note)
-    })
-    userListApi.getFilter().then((response) => {
-      setAllRoles(response.roleFilter)
-    })
+    setLoading(true)
+    userListApi
+      .getDetail(id)
+      .then((response) => {
+        setUserDetail(response)
+        setUserName(response.username)
+        setFullName(response.fullName == null ? '' : response.fullName)
+        setMobile(response.mobile == null ? '' : response.mobile)
+        setRoles(response.roles)
+        setStatus(response.status === 'Active' ? 1 : response.status === 'Inactive' ? 0 : -1)
+        setNote(response.note)
+      })
+      .catch((error) => console.log(error))
+      .finally(() => setLoading(false))
+    userListApi
+      .getFilter()
+      .then((response) => {
+        setAllRoles(response.roleFilter)
+      })
+      .catch((error) => console.log(error))
+      .finally(() => setLoading(false))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  console.log(userDetail)
 
   const handleSave = async () => {
     const rolesData = roles.map((role) => role.value)
@@ -89,22 +99,6 @@ const AdminUserDetail = () => {
       })
   }
 
-  const handleCancel = () => {
-    setUserName(userDetail.username == null ? '' : userDetail.username)
-    setFullName(userDetail.fullName == null ? '' : userDetail.fullName)
-    setMobile(userDetail.mobile == null ? '' : userDetail.mobile)
-    setRoles(userDetail.roles)
-    setStatus(userDetail.status === 'Active' ? 1 : userDetail.status === 'Inactive' ? 0 : -1)
-    setNote(userDetail.note == null ? '' : userDetail.note)
-    setError('')
-    setIsEditMode(false)
-  }
-
-  const handleEdit = () => {
-    setIsEditMode(true)
-    setError('')
-  }
-
   const handleChangeStatus = (e) => {
     setStatus(e.target.value)
   }
@@ -112,7 +106,7 @@ const AdminUserDetail = () => {
   const modalConfirm = () => {
     setError('')
     Modal.confirm({
-      title: `Are you want to add new User?`,
+      title: `Are you want to save new information?`,
       icon: <ExclamationCircleOutlined />,
       okText: 'OK',
       cancelText: 'Cancel',
@@ -165,115 +159,125 @@ const AdminUserDetail = () => {
                               </div>
                             </div>
                             <div className="row col-9">
-                              <div className="form-group col-6">
-                                <label className="col-form-label">Username</label>
-                                <div>
-                                  <input
-                                    className="form-control"
-                                    type="text"
-                                    value={userName}
-                                    onChange={(e) => setUserName(e.target.value)}
-                                    disabled={!isEditMode}
-                                  />
+                              <Skeleton loading={loading}>
+                                <div className="form-group col-6">
+                                  <label className="col-form-label">
+                                    Username <Typography.Text type="danger">*</Typography.Text>
+                                  </label>
+                                  <div>
+                                    <input
+                                      className="form-control"
+                                      type="text"
+                                      value={userName}
+                                      onChange={(e) => setUserName(e.target.value)}
+                                    />
+                                  </div>
                                 </div>
-                              </div>
-                              <div className="form-group col-6">
-                                <label className="col-form-label">Full name</label>
-                                <div>
-                                  <input
-                                    className="form-control"
-                                    type="text"
-                                    value={fullName}
-                                    onChange={(e) => setFullName(e.target.value)}
-                                    disabled={!isEditMode}
-                                  />
+                              </Skeleton>
+                              <Skeleton loading={loading}>
+                                <div className="form-group col-6">
+                                  <label className="col-form-label">
+                                    Full name <Typography.Text type="danger">*</Typography.Text>
+                                  </label>
+                                  <div>
+                                    <input
+                                      className="form-control"
+                                      type="text"
+                                      value={fullName}
+                                      onChange={(e) => setFullName(e.target.value)}
+                                    />
+                                  </div>
                                 </div>
-                              </div>
-                              <div className="form-group col-6">
-                                <label className="col-form-label">Email</label>
-                                <div>
-                                  <input
-                                    className="form-control"
-                                    type="text"
-                                    value={userDetail.email}
-                                    disabled={true}
-                                  />
+                              </Skeleton>
+                              <Skeleton loading={loading}>
+                                <div className="form-group col-6">
+                                  <label className="col-form-label">Email</label>
+                                  <div>
+                                    <input
+                                      className="form-control"
+                                      type="text"
+                                      value={userDetail.email}
+                                      disabled={true}
+                                    />
+                                  </div>
                                 </div>
-                              </div>
-                              <div className="form-group col-6">
-                                <label className="col-form-label">Mobile</label>
-                                <div>
-                                  <input
-                                    className="form-control"
-                                    type="number"
-                                    value={mobile}
-                                    onChange={(e) => setMobile(e.target.value)}
-                                    disabled={!isEditMode}
-                                  />
+                              </Skeleton>
+                              <Skeleton loading={loading}>
+                                <div className="form-group col-6">
+                                  <label className="col-form-label">
+                                    Mobile <Typography.Text type="danger">*</Typography.Text>
+                                  </label>
+                                  <div>
+                                    <input
+                                      className="form-control"
+                                      type="number"
+                                      value={mobile}
+                                      onChange={(e) => setMobile(e.target.value)}
+                                    />
+                                  </div>
                                 </div>
-                              </div>
-                              <div className="form-group col-6">
-                                <label className="col-form-label">Role</label>
-                                <div>
-                                  <Multiselect
-                                    displayValue="title"
-                                    isObject={true}
-                                    options={allRoles}
-                                    placeholder={''}
-                                    emptyRecordMsg={'No role available'}
-                                    avoidHighlightFirstOption={true}
-                                    showArrow={true}
-                                    selectedValues={roles}
-                                    onSelect={(e) => setRoles(e)}
-                                    onRemove={(e) => setRoles(e)}
-                                    showCheckbox
-                                    disable={!isEditMode}
-                                  />
+                              </Skeleton>
+                              <Skeleton loading={loading}>
+                                <div className="form-group col-6">
+                                  <label className="col-form-label">
+                                    Role <Typography.Text type="danger">*</Typography.Text>
+                                  </label>
+                                  <div>
+                                    <Multiselect
+                                      displayValue="title"
+                                      isObject={true}
+                                      options={allRoles}
+                                      placeholder={''}
+                                      emptyRecordMsg={'No role available'}
+                                      avoidHighlightFirstOption={true}
+                                      showArrow={true}
+                                      selectedValues={roles}
+                                      onSelect={(e) => setRoles(e)}
+                                      onRemove={(e) => setRoles(e)}
+                                      showCheckbox
+                                    />
+                                  </div>
                                 </div>
-                              </div>
-                              <div className="form-group col-6">
-                                <label className="col-form-label">Status</label>
-                                <div>
-                                  <Radio.Group onChange={handleChangeStatus} value={status} disabled={!isEditMode}>
-                                    <Radio value={1}>Active</Radio>
-                                    <Radio value={0}>Inactive</Radio>
-                                    <Radio value={-1}>Unverified</Radio>
-                                  </Radio.Group>
+                              </Skeleton>
+                              <Skeleton loading={loading}>
+                                <div className="form-group col-6">
+                                  <label className="col-form-label">
+                                    Status <Typography.Text type="danger">*</Typography.Text>
+                                  </label>
+                                  <div>
+                                    <Radio.Group onChange={handleChangeStatus} value={status}>
+                                      <Radio value={1}>Active</Radio>
+                                      <Radio value={0}>Inactive</Radio>
+                                      <Radio value={-1}>Unverified</Radio>
+                                    </Radio.Group>
+                                  </div>
                                 </div>
-                              </div>
-                              <div className="form-group col-12">
-                                <label className="col-form-label">Note</label>
-                                <div>
-                                  <textarea
-                                    className="form-control"
-                                    type="text"
-                                    value={note}
-                                    onChange={(e) => setNote(e.target.value)}
-                                    disabled={!isEditMode}
-                                  />
+                              </Skeleton>
+                              <Skeleton loading={loading}>
+                                <div className="form-group col-12">
+                                  <label className="col-form-label">Note </label>
+                                  <div>
+                                    <textarea
+                                      className="form-control"
+                                      type="text"
+                                      value={note}
+                                      onChange={(e) => setNote(e.target.value)}
+                                    />
+                                  </div>
                                 </div>
-                              </div>
+                              </Skeleton>
                               <ErrorMsg
                                 errorMsg={error}
                                 isError={error === 'You have successfully changed your user detail' ? false : true}
                               />
+
                               <div className="d-flex">
-                                {isEditMode ? (
-                                  <>
-                                    <CButton className="mr-5" size="md" color="warning" onClick={modalConfirm}>
-                                      Save
-                                    </CButton>
-                                    <CButton size="md" color="warning" onClick={handleCancel}>
-                                      Cancel
-                                    </CButton>
-                                  </>
-                                ) : (
-                                  <>
-                                    <CButton size="md" color="warning" onClick={handleEdit}>
-                                      Edit
-                                    </CButton>
-                                  </>
-                                )}
+                                <CButton className="mr-5" size="md" color="warning" onClick={modalConfirm}>
+                                  Save
+                                </CButton>
+                                <CButton size="md" color="warning" onClick={() => navigateTo('/user-list')}>
+                                  Cancel
+                                </CButton>
                               </div>
                             </div>
                           </div>

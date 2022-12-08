@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 import { CContainer, CRow, CCol, CButton } from '@coreui/react'
-import { Breadcrumb, Radio, Modal } from 'antd'
+import { Breadcrumb, Radio, Modal, Typography } from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 
 import Multiselect from 'multiselect-react-dropdown'
@@ -144,7 +144,9 @@ const AdminUserAdd = () => {
                         <div className="row col-12 w-100">
                           <div className="row col-12">
                             <div className="form-group col-6">
-                              <label className="col-form-label">Username</label>
+                              <label className="col-form-label">
+                                Username <Typography.Text type="danger">*</Typography.Text>
+                              </label>
                               <div>
                                 <input
                                   className="form-control"
@@ -155,7 +157,9 @@ const AdminUserAdd = () => {
                               </div>
                             </div>
                             <div className="form-group col-6">
-                              <label className="col-form-label">Full name</label>
+                              <label className="col-form-label">
+                                Full name <Typography.Text type="danger">*</Typography.Text>
+                              </label>
                               <div>
                                 <input
                                   className="form-control"
@@ -166,7 +170,9 @@ const AdminUserAdd = () => {
                               </div>
                             </div>
                             <div className="form-group col-6">
-                              <label className="col-form-label">Email</label>
+                              <label className="col-form-label">
+                                Email <Typography.Text type="danger">*</Typography.Text>
+                              </label>
                               <div>
                                 <input
                                   className="form-control"
@@ -177,7 +183,9 @@ const AdminUserAdd = () => {
                               </div>
                             </div>
                             <div className="form-group col-6">
-                              <label className="col-form-label">Mobile</label>
+                              <label className="col-form-label">
+                                Mobile <Typography.Text type="danger">*</Typography.Text>
+                              </label>
                               <div>
                                 <input
                                   className="form-control"
@@ -188,7 +196,9 @@ const AdminUserAdd = () => {
                               </div>
                             </div>
                             <div className="form-group col-6">
-                              <label className="col-form-label">Role</label>
+                              <label className="col-form-label">
+                                Role <Typography.Text type="danger">*</Typography.Text>
+                              </label>
                               <div>
                                 <Multiselect
                                   displayValue="title"
@@ -206,7 +216,9 @@ const AdminUserAdd = () => {
                               </div>
                             </div>
                             <div className="form-group col-6">
-                              <label className="col-form-label">Status</label>
+                              <label className="col-form-label">
+                                Status <Typography.Text type="danger">*</Typography.Text>
+                              </label>
                               <div>
                                 <Radio.Group onChange={handleChangeStatus} value={status}>
                                   <Radio value={1}>Active</Radio>
@@ -216,7 +228,9 @@ const AdminUserAdd = () => {
                               </div>
                             </div>
                             <div className="form-group col-12">
-                              <label className="col-form-label">Note</label>
+                              <label className="col-form-label">
+                                Note <Typography.Text type="danger">*</Typography.Text>
+                              </label>
                               <div>
                                 <textarea
                                   className="form-control"

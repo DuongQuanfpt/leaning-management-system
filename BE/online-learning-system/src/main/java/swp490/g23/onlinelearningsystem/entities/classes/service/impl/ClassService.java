@@ -50,7 +50,7 @@ public class ClassService implements IClassService {
     @Override
     public ResponseEntity<ClassResponsePaginateDTO> displayClasses(int limit, int currentPage, String keyword,
             String filterTerm, String filterTrainer,
-            String filterSupporter, String filterBranch, String filterStatus, User user) {
+            String filterSupporter, String filterBranch, String filterStatus, User user , String filterSubject) {
 
         User currentUser = userRepository.findById(user.getUserId()).get();
         List<ClassResponseDTO> classes = new ArrayList<>();
@@ -62,7 +62,7 @@ public class ClassService implements IClassService {
         List<String> classFilter = new ArrayList<>();
 
         TypedQuery<Classes> queryResult = classCriteria.displayClass(keyword, filterTerm, filterTrainer,
-                filterSupporter, filterBranch, filterStatus, currentUser);
+                filterSupporter, filterBranch, filterStatus, currentUser,filterSubject);
 
         List<Classes> classList = queryResult.getResultList();
 
@@ -219,36 +219,37 @@ public class ClassService implements IClassService {
     }
 
     @Override
-    public ResponseEntity<ClassFilterDTO> getFilter() {
+    public ResponseEntity<ClassFilterDTO> getFilter(User user) {
+        User currentUser = userRepository.findById(user.getUserId()).orElseThrow(() -> new CustomException("user doesnt exist"));
         List<String> listTrainer = new ArrayList<>();
         List<String> listSupporter = new ArrayList<>();
         List<String> subjectFilter = new ArrayList<>();
-        List<String> classFilter = new ArrayList<>();
         List<ClassTypeResponseDTO> listTerm = new ArrayList<>();
         List<ClassTypeResponseDTO> listBranch = new ArrayList<>();
+
         List<Setting> settingTerm = settingRepositories.termList();
         List<Setting> settingBranch = settingRepositories.branchList();
-        Setting roleTrainer = settingRepositories.findBySettingValue("ROLE_TRAINER");
-        Setting roleSupporter = settingRepositories.findBySettingValue("ROLE_SUPPORTER");
+        // Setting roleTrainer = settingRepositories.findBySettingValue("ROLE_TRAINER");
+        // Setting roleSupporter = settingRepositories.findBySettingValue("ROLE_SUPPORTER");
         List<ClassStatusEntity> statuses = new ArrayList<>();
         List<User> userTrainers = userRepository.findTrainer();
         List<User> userSupporters = userRepository.findSupport();
-        List<Subject> subjects = subjecRepository.findSubjectActive();
-        List<Classes> classes = classRepositories.findAll();
+        List<Subject> subjects = subjecRepository.findSubjectOfUser(currentUser);
+        // List<Classes> classes = classRepositories.findAll();
 
         for (Subject subject : subjects) {
             subjectFilter.add(subject.getSubjectCode());
         }
 
-        for (User user : userTrainers) {
-            if (user.getSettings().contains(roleTrainer)) {
-                listTrainer.add(user.getAccountName());
-            }
+        for (User trainer : userTrainers) {
+            // if (trainer.getSettings().contains(roleTrainer)) {
+                listTrainer.add(trainer.getAccountName());
+            // }
         }
-        for (User user : userSupporters) {
-            if (user.getSettings().contains(roleSupporter)) {
-                listSupporter.add(user.getAccountName());
-            }
+        for (User supp : userSupporters) {
+            // if (supp.getSettings().contains(roleSupporter)) {
+                listSupporter.add(supp.getAccountName());
+            // }
         }
         for (Setting setting : settingTerm) {
             listTerm.add(new ClassTypeResponseDTO(setting.getSettingTitle(), setting.getSettingValue()));
@@ -261,9 +262,9 @@ public class ClassService implements IClassService {
             statuses.add(new ClassStatusEntity(status));
         }
 
-        for (Classes clazz : classes) {
-            classFilter.add(clazz.getCode());
-        }
+        // for (Classes clazz : classes) {
+        //     classFilter.add(clazz.getCode());
+        // }
 
         ClassFilterDTO filterDTO = new ClassFilterDTO();
         filterDTO.setStatusFilter(statuses);
@@ -273,7 +274,7 @@ public class ClassService implements IClassService {
         filterDTO.setBranches(listBranch);
         filterDTO.setBranches(listBranch);
         filterDTO.setSubjectFilter(subjectFilter);
-        filterDTO.setClassCodeFilter(classFilter);
+        // filterDTO.setClassCodeFilter(classFilter);
 
         return ResponseEntity.ok(filterDTO);
     }

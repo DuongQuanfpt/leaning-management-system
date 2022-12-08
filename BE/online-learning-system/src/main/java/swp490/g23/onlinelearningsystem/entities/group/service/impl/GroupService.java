@@ -43,13 +43,11 @@ import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
 import swp490.g23.onlinelearningsystem.entities.submit.repositories.SubmitRepository;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
-import swp490.g23.onlinelearningsystem.enums.MemberStatusEnum;
 import swp490.g23.onlinelearningsystem.enums.MilestoneStatusEnum;
 import swp490.g23.onlinelearningsystem.enums.Status;
 import swp490.g23.onlinelearningsystem.enums.SubmitStatusEnum;
 import swp490.g23.onlinelearningsystem.enums.TraineeStatus;
-import swp490.g23.onlinelearningsystem.enums.enumentities.MemberStatusEntity;
-import swp490.g23.onlinelearningsystem.enums.enumentities.StatusEntity;
+import swp490.g23.onlinelearningsystem.enums.enumentities.TraineeStatusEntity;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 
 @Service
@@ -86,7 +84,7 @@ public class GroupService implements IGroupService {
     private ClassUserService classUserService;
 
     @Override
-    public ResponseEntity<GroupPaginateDTO> getGroup(int limit, int page, String keyword, String filterActive,
+    public ResponseEntity<GroupPaginateDTO> getGroup(int limit, int page, String keyword, Long filterActive,
             String filterMilestone, User user) {
         User currentUser = userRepository.findById(user.getUserId()).get();
 
@@ -94,10 +92,10 @@ public class GroupService implements IGroupService {
         TypedQuery<Group> queryResult = result.getResultQuery();
         TypedQuery<Long> countQuery = result.getCountQuery();
 
-        List<StatusEntity> statusFilter = new ArrayList<>();
-        for (Status status : new ArrayList<Status>(EnumSet.allOf(Status.class))) {
-            statusFilter.add(new StatusEntity(status));
-        }
+        // List<StatusEntity> statusFilter = new ArrayList<>();
+        // for (Status status : new ArrayList<Status>(EnumSet.allOf(Status.class))) {
+        //     statusFilter.add(new StatusEntity(status));
+        // }
 
         Long totalItem = countQuery.getSingleResult();
         int totalPage;
@@ -119,6 +117,12 @@ public class GroupService implements IGroupService {
         if (filterMilestone != null) {
             List<Submit> submits = submitRepository.getNoGroupMember(Long.parseLong(filterMilestone));
             for (Submit submit : submits) {
+                if(filterActive != null){
+                    TraineeStatus status = TraineeStatus.fromInt(filterActive.intValue());
+                    if (!submit.getClassUser().getStatus().equals(status)) {
+                        continue;
+                    }
+                }
                 noGroupMembers.add(classUserService.toTraineeDTO(submit.getClassUser()));
             }
 
@@ -130,7 +134,7 @@ public class GroupService implements IGroupService {
         paginateDTO.setTotalPage(totalPage);
         paginateDTO.setListResult(responseDTOs);
         paginateDTO.setNoGroup(noGroupMembers);
-        paginateDTO.setStatusFilter(statusFilter);
+        // paginateDTO.setStatusFilter(statusFilter);
         return ResponseEntity.ok(paginateDTO);
     }
 
@@ -239,33 +243,24 @@ public class GroupService implements IGroupService {
 
         GroupFilter filter = new GroupFilter();
 
-        List<MemberStatusEntity> statusFilter = new ArrayList<>();
-        for (MemberStatusEnum status : new ArrayList<MemberStatusEnum>(EnumSet.allOf(MemberStatusEnum.class))) {
-            statusFilter.add(new MemberStatusEntity(status));
+        // List<TraineeStatus> statusFilter = new ArrayList<>();
+        // for (MemberStatusEnum status : new ArrayList<MemberStatusEnum>(EnumSet.allOf(MemberStatusEnum.class))) {
+        //     statusFilter.add(new MemberStatusEntity(status));
+        // }
+
+        List<TraineeStatusEntity> statues = new ArrayList<>();
+        for (TraineeStatus status : new ArrayList<TraineeStatus>(EnumSet.allOf(TraineeStatus.class))) {
+            statues.add(new TraineeStatusEntity(status));
         }
 
         List<Milestone> milestones = milestoneRepository.getByClassCode(classCode);
         List<GroupMilestoneDTO> groupMilestoneDTOs = new ArrayList<>();
         for (Milestone milestone : milestones) {
-            // if (roles.contains("ROLE_TRAINER") || roles.contains("ROLE_SUPPORTER")) {
-            // if (milestone.getClasses().getUserSupporter().equals(currentUser)
-            // || (milestone.getClasses().getUserTrainer().equals(currentUser))) {
-            // responseDTOs.add(milestoneService.toDTO(milestone));
-            // }
-            // }
-            // else if (roles.contains("ROLE_TRAINEE")) {
-            // for (ClassUser classUser : milestone.getClasses().getClassUsers()) {
-            // if (classUser.getUser().equals(currentUser)) {
-            // responseDTOs.add(milestoneService.toDTO(milestone));
-            // }
-            // }
-            // }
             groupMilestoneDTOs.add(toMilestoneDTO(milestone));
-
         }
 
         filter.setMilstoneFilter(groupMilestoneDTOs);
-        filter.setStatusFilter(statusFilter);
+        filter.setStatusFilter(statues);
         return ResponseEntity.ok(filter);
     }
 
@@ -745,7 +740,7 @@ public class GroupService implements IGroupService {
         return false;
     }
 
-    public GroupResponseDTO toDTO(Group entity, Long milestoneId, String filterActive) {
+    public GroupResponseDTO toDTO(Group entity, Long milestoneId, Long filterActive) {
         GroupResponseDTO dto = new GroupResponseDTO();
 
         dto.setGroupId(entity.getGroupId());
@@ -806,7 +801,8 @@ public class GroupService implements IGroupService {
                     if (filterActive == null) {
                         memberResponseDTOs.add(groupResponseDTO);
                     } else {
-                        if (groupResponseDTO.getIsActive().toString().equals(filterActive)) {
+                        TraineeStatus status = TraineeStatus.fromInt(filterActive.intValue());
+                        if (groupResponseDTO.getMemberInfo().getStatus().equals(status)) {
                             memberResponseDTOs.add(groupResponseDTO);
                         }
                     }

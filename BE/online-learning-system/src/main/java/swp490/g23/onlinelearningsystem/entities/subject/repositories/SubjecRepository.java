@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import swp490.g23.onlinelearningsystem.entities.subject.domain.Subject;
+import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 
 public interface SubjecRepository extends JpaRepository<Subject, Long> {
     Subject findBySubjectCode(String subjectCode);
@@ -18,4 +19,8 @@ public interface SubjecRepository extends JpaRepository<Subject, Long> {
 
     @Query(value = "SELECT s FROM Subject s WHERE s.subjectStatus = '1'")
     List<Subject> findSubjectActive();
+
+    @Query(value = "SELECT DISTINCT s FROM Subject s JOIN s.classes as c WHERE c.userTrainer = :user OR c.userSupporter = :user OR s.manager = :user ")
+    List<Subject> findSubjectOfUser(User user);
+
 }

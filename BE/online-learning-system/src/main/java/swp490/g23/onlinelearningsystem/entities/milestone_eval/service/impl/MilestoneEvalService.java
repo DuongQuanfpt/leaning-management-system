@@ -87,7 +87,7 @@ public class MilestoneEvalService implements IMilestoneEvalService {
 
         List<MilestoneDTO> milestoneDTOs = new ArrayList<>();
         for (Milestone milestone : classes.getMilestones()) {
-                milestoneDTOs.add(toMilestoneDTO(milestone));
+            milestoneDTOs.add(toMilestoneDTO(milestone));
         }
 
         MilestoneEvalFilter milestoneEvalFilter = new MilestoneEvalFilter();
@@ -151,7 +151,7 @@ public class MilestoneEvalService implements IMilestoneEvalService {
         Milestone milestone = listResult.get(0).getMilestone();
         paginateDTO.setWorkEval(false);
 
-        if(milestone.getStatus() == MilestoneStatusEnum.Closed){
+        if (milestone.getStatus() == MilestoneStatusEnum.Closed) {
             paginateDTO.setEditable(false);
         } else {
             paginateDTO.setEditable(true);
@@ -283,6 +283,16 @@ public class MilestoneEvalService implements IMilestoneEvalService {
             }
         }
 
+        HashMap<Long, Submit> submitOfMilestone = new HashMap<Long, Submit>();
+        for (Submit submit : milestone.getSubmits()) {
+            submitOfMilestone.put(submit.getSubmitId(), submit);
+        }
+
+        HashMap<Long, EvalCriteria> criteriaOfMilestone = new HashMap<Long, EvalCriteria>();
+        for (EvalCriteria criteria : milestone.getCriteriaList()) {
+            criteriaOfMilestone.put(criteria.getCriteriaId(), criteria);
+        }
+
         List<MilestoneEval> newMilestoneEvals = new ArrayList<>();
         List<EvalDetail> newEvalDetails = new ArrayList<>();
         for (MilestoneEvalRequestDTO requestDTO : requestWrapper.getEvalList()) {
@@ -292,16 +302,30 @@ public class MilestoneEvalService implements IMilestoneEvalService {
             if (milestoneEvals.containsKey(requestDTO.getSubmitId())) {
                 milestoneEval = milestoneEvals.get(requestDTO.getSubmitId());
             } else {
-                Submit submit = submitRepository.findById(requestDTO.getSubmitId())
-                        .orElseThrow(() -> new CustomException("Submit doesnt exist"));
+                Submit submit = new Submit();
+                if (submitOfMilestone.containsKey(requestDTO.getSubmitId())) {
+                    submit = submitOfMilestone.get(requestDTO.getSubmitId());
+                } else {
+                    throw new CustomException("Some submit in request do not belong in this milestone");
+                }
                 milestoneEval.setMilestone(milestone);
                 milestoneEval.setSubmit(submit);
                 milestoneEval.setClassUser(submit.getClassUser());
             }
 
             milestoneEval.setComment(requestDTO.getComment());
-            milestoneEval.setBonus(requestDTO.getBonus());
-            milestoneEval.setGrade(requestDTO.getGrade());
+            if (requestDTO.getBonus() >= 0 && requestDTO.getBonus() <= 2) {
+                milestoneEval.setBonus(requestDTO.getBonus());
+            }else {
+                throw new CustomException("invalid milestone bonus grade"); 
+            }
+
+            if (requestDTO.getGrade() >= 0 && requestDTO.getGrade() <= 10) {
+                milestoneEval.setGrade(requestDTO.getGrade());
+            }else {
+                throw new CustomException("invalid milestone grade"); 
+            }
+         
 
             List<EvalCriteriaRequest> requestList = requestDTO.getCriteria();
             if (requestDTO.getWorkCriteriaId() != null) {
@@ -311,7 +335,7 @@ public class MilestoneEvalService implements IMilestoneEvalService {
                 requestList.add(workCriteria);
             }
 
-            for (EvalCriteriaRequest criteriaRequest : requestDTO.getCriteria()) {
+            for (EvalCriteriaRequest criteriaRequest : requestList) {
                 EvalDetail detail = new EvalDetail();
 
                 MilestoneeEvalCriteriaKey key = new MilestoneeEvalCriteriaKey(requestDTO.getSubmitId(),
@@ -319,8 +343,12 @@ public class MilestoneEvalService implements IMilestoneEvalService {
                 if (milestoneCriteriaDetails.containsKey(key)) {
                     detail = milestoneCriteriaDetails.get(key);
                 } else {
-                    EvalCriteria criteria = criteriaRepositories.findById(criteriaRequest.getCriteriaId())
-                            .orElseThrow(() -> new CustomException("criteria doesnt exist"));
+                    EvalCriteria criteria = new EvalCriteria();
+                    if (criteriaOfMilestone.containsKey(criteriaRequest.getCriteriaId())) {
+                        criteria = criteriaOfMilestone.get(criteriaRequest.getCriteriaId());
+                    } else {
+                        throw new CustomException("Some criteria in request do not belong in milestone");
+                    }
                     detail.setEvalCriteria(criteria);
                     detail.setMilestoneEval(milestoneEval);
                 }
@@ -329,7 +357,13 @@ public class MilestoneEvalService implements IMilestoneEvalService {
                     detail.setTotalLoc(requestDTO.getWorkPoint());
                 }
                 detail.setComment(criteriaRequest.getComment());
-                detail.setGrade(criteriaRequest.getGrade());
+
+                if (criteriaRequest.getGrade() >= 0 && criteriaRequest.getGrade() <= 10) {
+                    detail.setGrade(criteriaRequest.getGrade());
+                }else {
+                    throw new CustomException("invalid criteria grade"); 
+                }
+               
 
                 newEvalDetails.add(detail);
             }

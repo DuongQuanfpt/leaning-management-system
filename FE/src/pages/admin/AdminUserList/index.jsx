@@ -3,9 +3,9 @@ import { useNavigate, Link } from 'react-router-dom'
 
 import { CButton, CDropdown, CDropdownToggle, CDropdownMenu, CDropdownItem } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import { cilPlus, cilSearch, cilSync } from '@coreui/icons'
+import { cilPlus } from '@coreui/icons'
 
-import { Table, Button, Space, Tag, Breadcrumb, Pagination, Tooltip, Modal } from 'antd'
+import { Table, Button, Space, Tag, Breadcrumb, Pagination, Tooltip, Modal, Input } from 'antd'
 import { EyeOutlined, CloseOutlined, CheckOutlined, ExclamationCircleOutlined, LikeOutlined } from '@ant-design/icons'
 
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
@@ -28,10 +28,10 @@ const AdminUserList = () => {
   const [currentPage, setCurrentPage] = useState(1)
 
   const [role, setRole] = useState('All Roles')
-  const [status, setStatus] = useState('All Status')
+  const [status, setStatus] = useState('All Statuses')
   const [filter, setFilter] = useState({
-    filterRole: '',
-    filterStatus: '',
+    filterRole: 'All Roles',
+    filterStatus: 'All Statuses',
   })
   const [loading, setLoading] = useState(false)
 
@@ -56,10 +56,10 @@ const AdminUserList = () => {
     if (q !== '') {
       params.q = q.trim()
     }
-    if (filter.filterRole !== '') {
+    if (filter.filterRole !== 'All Roles' && filter.filterRole !== undefined) {
       params.filterRole = filter.filterRole
     }
-    if (filter.filterStatus !== '') {
+    if (filter.filterStatus !== 'All Statuses' && filter.filterStatus !== undefined) {
       params.filterStatus = filter.filterStatus
     }
     await userListApi
@@ -96,15 +96,6 @@ const AdminUserList = () => {
     setStatus(status.name)
   }
 
-  const handleReload = () => {
-    setCurrentPage(1)
-    setRole('All Roles')
-    setStatus('All Status')
-    setFilter({ q: '', filterRole: '', filterStatus: '' })
-    setSearch('')
-    ITEM_PER_PAGE = 10
-  }
-
   const handleAdd = () => {
     navigateTo('/user-add')
   }
@@ -133,32 +124,32 @@ const AdminUserList = () => {
     {
       title: 'Username',
       dataIndex: 'username',
-      sorter: (a, b) => a.username?.length - b.username?.length,
+      sorter: (a, b) => a.username.localeCompare(b.username, 'en', { sensitivity: 'base' }),
       width: '15%',
     },
     {
       title: 'Fullname',
       dataIndex: 'fullName',
-      sorter: (a, b) => a.fullName?.length - b.fullName?.length,
+      sorter: (a, b) => a.fullName.localeCompare(b.fullName, 'en', { sensitivity: 'base' }),
       width: '15%',
     },
     {
       title: 'Email',
       dataIndex: 'email',
-      sorter: (a, b) => a.email?.length - b.email?.length,
+      sorter: (a, b) => a.email.localeCompare(b.email, 'en', { sensitivity: 'base' }),
       width: '20%',
     },
 
     {
       title: 'Mobile',
       dataIndex: 'mobile',
-      sorter: (a, b) => a.mobile?.length - b.mobile?.length,
+      sorter: (a, b) => a.mobile?.localeCompare(b.mobile, 'en', { sensitivity: 'base' }),
       width: '15%',
     },
     {
       title: 'Role',
       dataIndex: 'roles',
-      sorter: (a, b) => a.roles.length - b.roles.length,
+      sorter: (a, b) => a.roles.join('').localeCompare(b.roles.join(''), 'en', { sensitivity: 'base' }),
       width: '15%',
       render: (_, { roles }) => (
         <>
@@ -206,6 +197,7 @@ const AdminUserList = () => {
       title: 'Status',
       dataIndex: 'status',
       width: '10%',
+      sorter: (a, b) => a.status.localeCompare(b.status, 'en', { sensitivity: 'base' }),
       render: (_, { status }) => (
         <Tag color={status === 'Active' ? 'blue' : status === 'Inactive' ? 'red' : 'gold'} key={status}>
           {status}
@@ -213,7 +205,7 @@ const AdminUserList = () => {
       ),
     },
     {
-      title: 'Action',
+      title: 'Actions',
       dataIndex: 'action',
       width: '10%',
       render: (_, user) => (
@@ -261,7 +253,7 @@ const AdminUserList = () => {
         <div className="body flex-grow-1 px-3 m-b30">
           <div className="col-lg-12 m-b30">
             <div className="row">
-              <div className="col-2 d-flex align-items-center">
+              <div className="col-lg-2 d-flex align-items-center">
                 <Breadcrumb>
                   <Breadcrumb.Item>
                     <Link to="/dashboard">Dashboard</Link>
@@ -269,46 +261,47 @@ const AdminUserList = () => {
                   <Breadcrumb.Item>User List</Breadcrumb.Item>
                 </Breadcrumb>
               </div>
-              <div className="col-6 d-flex w-80">
-                <input
-                  type="search"
-                  id="form1"
-                  className="form-control"
-                  placeholder="Searching by Fullname, Email or Mobile...."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
-                <CButton color="primary" type="submit" className="text-light ml-10" onClick={handleSearch}>
-                  <CIcon icon={cilSearch} />
-                </CButton>
-              </div>
-              <div className="col-4 d-flex justify-content-end">
-                <CDropdown className="ml-4">
-                  <CDropdownToggle color="secondary">{role}</CDropdownToggle>
-                  <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
-                    {listRoles.map((role) => (
-                      <CDropdownItem onClick={() => handleFilterRole(role)}>{role.title}</CDropdownItem>
-                    ))}
-                  </CDropdownMenu>
-                </CDropdown>
-                <CDropdown className="ml-4">
-                  <CDropdownToggle color="secondary">{status}</CDropdownToggle>
-                  <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
-                    {listStatus.map((status) => (
-                      <CDropdownItem onClick={() => handleFilterStatus(status)}>{status.name}</CDropdownItem>
-                    ))}
-                  </CDropdownMenu>
-                </CDropdown>
-                <Tooltip title="Reload" placement="top">
-                  <CButton color="success" type="submit" className="text-light ml-4" onClick={handleReload}>
-                    <CIcon icon={cilSync} />
-                  </CButton>
-                </Tooltip>
-                <Tooltip title="Add New User" placement="top">
-                  <CButton color="danger" type="submit" className="text-light ml-4" onClick={handleAdd}>
-                    <CIcon icon={cilPlus} />
-                  </CButton>
-                </Tooltip>
+              <div className="col-lg-10 d-flex align-items-center">
+                <div className="col-6 d-flex w-100">
+                  <Input.Search
+                    type="search"
+                    id="form1"
+                    size="large"
+                    placeholder="Search by Fullname, Email or Mobile...."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    onSearch={handleSearch}
+                  />
+                </div>
+                <div className="col-6 d-flex w-100 justify-content-end" style={{ gap: '10px' }}>
+                  <CDropdown>
+                    <CDropdownToggle color="secondary">{role}</CDropdownToggle>
+                    <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
+                      <CDropdownItem onClick={() => handleFilterRole({ title: 'All Roles', value: undefined })}>
+                        All Roles
+                      </CDropdownItem>
+                      {listRoles.map((role) => (
+                        <CDropdownItem onClick={() => handleFilterRole(role)}>{role.title}</CDropdownItem>
+                      ))}
+                    </CDropdownMenu>
+                  </CDropdown>
+                  <CDropdown>
+                    <CDropdownToggle color="secondary">{status}</CDropdownToggle>
+                    <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
+                      <CDropdownItem onClick={() => handleFilterStatus({ name: 'All Statuses', value: undefined })}>
+                        All Statuses
+                      </CDropdownItem>
+                      {listStatus.map((status) => (
+                        <CDropdownItem onClick={() => handleFilterStatus(status)}>{status.name}</CDropdownItem>
+                      ))}
+                    </CDropdownMenu>
+                  </CDropdown>
+                  <Tooltip title="Add New User" placement="top">
+                    <CButton color="danger" type="submit" className="text-light" onClick={handleAdd}>
+                      <CIcon icon={cilPlus} />
+                    </CButton>
+                  </Tooltip>
+                </div>
               </div>
             </div>
           </div>
