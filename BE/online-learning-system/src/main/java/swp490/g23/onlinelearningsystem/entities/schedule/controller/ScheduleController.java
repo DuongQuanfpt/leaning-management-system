@@ -31,7 +31,7 @@ public class ScheduleController {
     private ScheduleService scheduleService;
 
     @GetMapping(value = "/schedule")
-    public ResponseEntity<SchedulePaginateDTO> displayMilestone(
+    public ResponseEntity<SchedulePaginateDTO> displaySchedule(
             @RequestParam(name = "page", required = false) String currentPage,
             @RequestParam(name = "limit", required = false) String requestLimit,
             @RequestParam(name = "q", required = false) String keyword,
