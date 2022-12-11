@@ -25,12 +25,12 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 @CrossOrigin
 @RequestMapping(Setting.API_PREFIX)
 public class ClassController {
-    
-    @Autowired
+
+	@Autowired
 	private ClassService classService;
 
-    @GetMapping("/class")
-    public ResponseEntity<ClassResponsePaginateDTO> classList(
+	@GetMapping("/class")
+	public ResponseEntity<ClassResponsePaginateDTO> classList(
 			@RequestParam(name = "page", required = false) String currentPage,
 			@RequestParam(name = "limit", required = false) String requestLimit,
 			@RequestParam(name = "q", required = false) String keyword,
@@ -44,35 +44,36 @@ public class ClassController {
 
 		int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
 		int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
-		return classService.displayClasses(limit, page, keyword, filterTerm, filterTrainer, filterSupporter, filterBranch, filterStatus,user,filterSubject);
+		return classService.displayClasses(limit, page, keyword, filterTerm, filterTrainer, filterSupporter,
+				filterBranch, filterStatus, user, filterSubject);
 	}
 
-    @GetMapping("/class-filter")
-	public ResponseEntity<ClassFilterDTO> getUserFilter(@AuthenticationPrincipal User user) {
+	@GetMapping("/class-filter")
+	public ResponseEntity<ClassFilterDTO> getFilter(@AuthenticationPrincipal User user) {
 
 		return classService.getFilter(user);
 	}
 
 	@GetMapping("/class-detail/{id}")
-	public ResponseEntity<ClassResponseDTO> getUser(@PathVariable("id") Long id) {
+	public ResponseEntity<ClassResponseDTO> viewClass(@PathVariable("id") Long id) {
 
 		return classService.viewClass(id);
 	}
 
 	@PutMapping(value = "/class-detail/{id}")
-	public ResponseEntity<String> viewSetting(@PathVariable("id") Long id, @RequestBody ClassRequestDTO requestDTO) {
+	public ResponseEntity<String> updateClass(@PathVariable("id") Long id, @RequestBody ClassRequestDTO requestDTO) {
 
-		return classService.updateClass(requestDTO,id);
+		return classService.updateClass(requestDTO, id);
 	}
 
 	@PutMapping(value = "/class-status/{id}")
-	public ResponseEntity<String> updateSettingStatus(@PathVariable("id") Long id) {
+	public ResponseEntity<String> updateClassStatus(@PathVariable("id") Long id) {
 
 		return classService.updateStatus(id);
 	}
 
 	@PostMapping(value = "/class-add")
-	public ResponseEntity<String> addUser(@RequestBody ClassRequestDTO requestDTO) {
+	public ResponseEntity<String> addClass(@RequestBody ClassRequestDTO requestDTO) {
 
 		return classService.addClass(requestDTO);
 	}
