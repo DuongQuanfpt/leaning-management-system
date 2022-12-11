@@ -27,11 +27,11 @@ public class AssignmentController {
 	@Autowired
 	private AssignmentService assignmentService;
 
-	@GetMapping(value = "/tranteng")
-	public ResponseEntity<String> hpbd() {
+	// @GetMapping(value = "/tranteng")
+	// public ResponseEntity<String> hpbd() {
 
-		return ResponseEntity.ok("chuc minh sinh nhat ://///////");
-	}
+	// 	return ResponseEntity.ok("chuc minh sinh nhat ://///////");
+	// }
 
 	@GetMapping(value = "/assignment")
 	public ResponseEntity<AssignmentPaginate> getAssignment(

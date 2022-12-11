@@ -151,7 +151,7 @@ public class MilestoneEvalService implements IMilestoneEvalService {
         Milestone milestone = listResult.get(0).getMilestone();
         paginateDTO.setWorkEval(false);
 
-        if (milestone.getStatus() == MilestoneStatusEnum.Closed) {
+        if (milestone.getStatus() != MilestoneStatusEnum.In_Progress) {
             paginateDTO.setEditable(false);
         } else {
             paginateDTO.setEditable(true);
@@ -314,23 +314,32 @@ public class MilestoneEvalService implements IMilestoneEvalService {
             }
 
             milestoneEval.setComment(requestDTO.getComment());
-            if (requestDTO.getBonus() >= 0 && requestDTO.getBonus() <= 2) {
+            if(requestDTO.getBonus() != null) {
+                if (requestDTO.getBonus() >= 0 && requestDTO.getBonus() <= 2) {
+                    milestoneEval.setBonus(requestDTO.getBonus());
+                }else {
+                    throw new CustomException("invalid milestone bonus grade"); 
+                }
+            } else {
                 milestoneEval.setBonus(requestDTO.getBonus());
-            }else {
-                throw new CustomException("invalid milestone bonus grade"); 
             }
+          
 
-            if (requestDTO.getGrade() >= 0 && requestDTO.getGrade() <= 10) {
-                milestoneEval.setGrade(requestDTO.getGrade());
+            if(requestDTO.getGrade() != null){
+                if (requestDTO.getGrade() >= 0 && requestDTO.getGrade() <= 10) {
+                    milestoneEval.setGrade(requestDTO.getGrade());
+                }else {
+                    throw new CustomException("invalid milestone grade"); 
+                }
             }else {
-                throw new CustomException("invalid milestone grade"); 
+                milestoneEval.setGrade(requestDTO.getGrade());
             }
-         
 
             List<EvalCriteriaRequest> requestList = requestDTO.getCriteria();
             if (requestDTO.getWorkCriteriaId() != null) {
                 EvalCriteriaRequest workCriteria = new EvalCriteriaRequest();
                 workCriteria.setCriteriaId(requestDTO.getWorkCriteriaId());
+
                 workCriteria.setGrade(requestDTO.getWorkGrade());
                 requestList.add(workCriteria);
             }
@@ -358,13 +367,17 @@ public class MilestoneEvalService implements IMilestoneEvalService {
                 }
                 detail.setComment(criteriaRequest.getComment());
 
-                if (criteriaRequest.getGrade() >= 0 && criteriaRequest.getGrade() <= 10) {
+                if(criteriaRequest.getGrade() != null) {
+                    if (criteriaRequest.getGrade() >= 0 && criteriaRequest.getGrade() <= 10) {
+                        detail.setGrade(criteriaRequest.getGrade());
+                    }else {
+                        throw new CustomException("invalid criteria grade"); 
+                    }
+                   
+                } else {
                     detail.setGrade(criteriaRequest.getGrade());
-                }else {
-                    throw new CustomException("invalid criteria grade"); 
                 }
-               
-
+                
                 newEvalDetails.add(detail);
             }
 

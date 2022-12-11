@@ -49,7 +49,7 @@ public class WebContact extends BaseEntity {
     @Column(columnDefinition="TEXT")
     private String message;
 
-    @Column
+    @Column(columnDefinition="TEXT")
     private String response;
 
     @Column

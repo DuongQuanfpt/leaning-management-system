@@ -1,9 +1,11 @@
 package swp490.g23.onlinelearningsystem.entities.contact.service.impl;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
+import javax.mail.MessagingException;
 import javax.persistence.TypedQuery;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,8 @@ import swp490.g23.onlinelearningsystem.entities.contact.repositories.ContactRepo
 import swp490.g23.onlinelearningsystem.entities.contact.repositories.criteria.ContactCriteria;
 import swp490.g23.onlinelearningsystem.entities.contact.repositories.criteriaEntity.ContactQuery;
 import swp490.g23.onlinelearningsystem.entities.contact.service.IContactService;
+import swp490.g23.onlinelearningsystem.entities.email.EmailDetails;
+import swp490.g23.onlinelearningsystem.entities.email.service.impl.EmailService;
 import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
 import swp490.g23.onlinelearningsystem.entities.setting.repositories.SettingRepositories;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
@@ -41,6 +45,9 @@ public class ContactService implements IContactService {
 
     @Autowired
     private UserRepository userRepository;
+    
+    @Autowired
+    private EmailService emailService;
 
     @Override
     public ResponseEntity<List<ContactCategoryFilter>> contactFilter() {// get category to filter
@@ -142,12 +149,12 @@ public class ContactService implements IContactService {
 
         if (dto.getResponse() != null) {
             contact.setResponse(dto.getResponse());
-            // if (contact.getResponse().equals(dto.getResponse())
-            // && contact.getStatus()
-            // .equals(ContactStatus.getFromValue(Integer.parseInt(dto.getStatus())).get()))
-            // {
-            // contact.setStaff(author);
-            // }
+            try {
+                sendResponseEmail(contact.getEmail(),contact);
+            } catch (UnsupportedEncodingException | MessagingException e) {
+               
+               throw new CustomException("sent response fail");
+            }
         }
 
         if (dto.getStatus() != null) {
@@ -156,6 +163,23 @@ public class ContactService implements IContactService {
         contact.setStaff(author);
         contactRepository.save(contact);
         return ResponseEntity.ok("Contact updated");
+    }
+
+    public void sendResponseEmail(String email , WebContact contact)
+            throws UnsupportedEncodingException, MessagingException {
+
+        EmailDetails details = new EmailDetails();
+
+        details.setRecipient(email);
+
+        String subject = "RE:["+contact.getContactId()+"] : "+contact.getMessage()+"";
+
+        String content = contact.getResponse();
+
+        details.setMsgBody(content);
+        details.setSubject(subject);
+
+        emailService.sendMimeMail(details);
     }
 
     @Override
@@ -186,40 +210,6 @@ public class ContactService implements IContactService {
         contactRepository.save(entity);
         return ResponseEntity.ok("New contact added");
     }
-
-    // public WebContact toEntity(ContactRequestDTO dto) {
-    // WebContact entity = new WebContact();
-
-    // if (dto.getFullName() != null) {
-    // entity.setFullName(entity.getFullName());
-    // }
-
-    // if (dto.getEmail() != null) {
-    // entity.setEmail(entity.getEmail());
-    // }
-
-    // if (dto.getMessage() != null) {
-    // entity.setMessage(entity.getMessage());
-    // }
-
-    // if (dto.getMobile() != null) {
-    // entity.setMobile(entity.getMobile());
-    // }
-
-    // if (dto.getResponse() != null) {
-    // entity.setFullName(entity.getFullName());
-    // }
-
-    // if (dto.getStatus() != null) {
-    // entity.setStatus(ContactStatus.valueOf(entity.getStatus().toString()));
-    // }
-
-    // if (entity.getResponse() != null) {
-    // responseDTO.setResponse(entity.getResponse());
-    // }
-
-    // return entity;
-    // }
 
     public ContactResponseDTO toDTO(WebContact entity) {
         ContactResponseDTO responseDTO = new ContactResponseDTO();

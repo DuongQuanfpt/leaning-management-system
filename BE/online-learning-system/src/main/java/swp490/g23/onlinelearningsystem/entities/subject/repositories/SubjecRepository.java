@@ -20,7 +20,10 @@ public interface SubjecRepository extends JpaRepository<Subject, Long> {
     @Query(value = "SELECT s FROM Subject s WHERE s.subjectStatus = '1'")
     List<Subject> findSubjectActive();
 
-    @Query(value = "SELECT DISTINCT s FROM Subject s JOIN s.classes as c WHERE c.userTrainer = :user OR c.userSupporter = :user OR s.manager = :user ")
+    @Query(value = "SELECT DISTINCT s FROM Subject s JOIN s.classes as c WHERE (c.userTrainer = :user OR c.userSupporter = :user OR s.manager = :user) AND s.subjectStatus = '1' ")
     List<Subject> findSubjectOfUser(User user);
+
+    @Query(value = "SELECT  s FROM Subject s WHERE s.manager = :user AND s.subjectStatus = '1' ")
+    List<Subject> findSubjectOfManager(User user);
 
 }

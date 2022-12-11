@@ -265,12 +265,33 @@ public class AuthService implements IAuthService {
 
             String verifyUrl = request.getLink() + user.getMailToken();
             System.out.println(verifyUrl);
-            sendRegisterMail(request.getEmail(), verifyUrl);
+            sendVerifyMail(request.getEmail(), verifyUrl);
         } catch (UnsupportedEncodingException | MessagingException e) {
             e.printStackTrace();
         }
 
         return ResponseEntity.ok("verification mail sended");
+    }
+
+    public void sendVerifyMail(String email, String verifyUrl)
+            throws UnsupportedEncodingException, MessagingException {
+
+        EmailDetails details = new EmailDetails();
+
+        details.setRecipient(email);
+
+        String subject = "Verify account";
+
+        String content = "<p>Hello,</p>"
+                + "<p>We have sent a verify email per your request.</p>"
+                + "<p>For the final step , click the link below to activate your account :</p>"
+                + "<p><a href=\"" + verifyUrl + "\">Click to verify your account  </a></p>"
+                + "<br>";
+
+        details.setMsgBody(content);
+        details.setSubject(subject);
+
+        emailService.sendMimeMail(details);
     }
 
 }

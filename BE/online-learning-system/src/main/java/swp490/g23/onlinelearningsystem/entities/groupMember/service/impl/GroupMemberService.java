@@ -129,7 +129,14 @@ public class GroupMemberService implements IGroupMemberService {
                 memberRepositories.removeMemberByGroup(oldMember.getMember(), oldMember.getGroup());
 
                 if (oldMember.getIsLeader() && oldGroup.getGroupMembers().size() >= 1) {
-                    GroupMember newLeader = oldGroup.getGroupMembers().get(0);
+                    GroupMember newLeader = new GroupMember();
+                    for (int i = 0; i < oldGroup.getGroupMembers().size(); i++) {
+                        if(!oldMember.equals(oldGroup.getGroupMembers().get(i))){
+                            newLeader = oldGroup.getGroupMembers().get(i);
+                            break;
+                        }     
+                    }
+                    
                     newLeader.setIsLeader(true);
                     memberRepositories.save(newLeader);
                 }

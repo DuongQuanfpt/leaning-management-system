@@ -393,7 +393,7 @@ public class GroupService implements IGroupService {
         createDTO.setGroupId(groupMember.getGroup().getGroupId());
 
         List<String> members = new ArrayList<>();
-        if (!groupMember.getGroup().getGroupMembers().isEmpty()) {
+        if (groupMember.getGroup().getGroupMembers()!=null && !groupMember.getGroup().getGroupMembers().isEmpty()) {
             for (GroupMember member : groupMember.getGroup().getGroupMembers()) {
                 members.add(member.getMember().getAccountName());
             }
