@@ -94,7 +94,7 @@ public class GroupService implements IGroupService {
 
         // List<StatusEntity> statusFilter = new ArrayList<>();
         // for (Status status : new ArrayList<Status>(EnumSet.allOf(Status.class))) {
-        //     statusFilter.add(new StatusEntity(status));
+        // statusFilter.add(new StatusEntity(status));
         // }
 
         Long totalItem = countQuery.getSingleResult();
@@ -117,7 +117,7 @@ public class GroupService implements IGroupService {
         if (filterMilestone != null) {
             List<Submit> submits = submitRepository.getNoGroupMember(Long.parseLong(filterMilestone));
             for (Submit submit : submits) {
-                if(filterActive != null){
+                if (filterActive != null) {
                     TraineeStatus status = TraineeStatus.fromInt(filterActive.intValue());
                     if (!submit.getClassUser().getStatus().equals(status)) {
                         continue;
@@ -244,8 +244,9 @@ public class GroupService implements IGroupService {
         GroupFilter filter = new GroupFilter();
 
         // List<TraineeStatus> statusFilter = new ArrayList<>();
-        // for (MemberStatusEnum status : new ArrayList<MemberStatusEnum>(EnumSet.allOf(MemberStatusEnum.class))) {
-        //     statusFilter.add(new MemberStatusEntity(status));
+        // for (MemberStatusEnum status : new
+        // ArrayList<MemberStatusEnum>(EnumSet.allOf(MemberStatusEnum.class))) {
+        // statusFilter.add(new MemberStatusEntity(status));
         // }
 
         List<TraineeStatusEntity> statues = new ArrayList<>();
@@ -308,10 +309,16 @@ public class GroupService implements IGroupService {
             }
 
             // set new leader for old group if trainee was a leader
-            if (oldMember.getIsLeader() && oldGroup.getGroupMembers().size() >= 1) {
-                GroupMember newLeader = oldGroup.getGroupMembers().get(0);
-                newLeader.setIsLeader(true);
-                memberRepositories.save(newLeader);
+            if (oldMember.getIsLeader() && !oldGroup.getGroupMembers().isEmpty()) {
+                GroupMember newLeader = new GroupMember();
+                for (int i = 0; i < oldGroup.getGroupMembers().size(); i++) {
+                    if (!oldMember.equals(oldGroup.getGroupMembers().get(i))) {
+                        newLeader = oldGroup.getGroupMembers().get(i);
+                        newLeader.setIsLeader(true);
+                        memberRepositories.save(newLeader);
+                        break;
+                    }
+                }
             }
 
             // milestones to apply changess
@@ -393,7 +400,7 @@ public class GroupService implements IGroupService {
         createDTO.setGroupId(groupMember.getGroup().getGroupId());
 
         List<String> members = new ArrayList<>();
-        if (groupMember.getGroup().getGroupMembers()!=null && !groupMember.getGroup().getGroupMembers().isEmpty()) {
+        if (groupMember.getGroup().getGroupMembers() != null && !groupMember.getGroup().getGroupMembers().isEmpty()) {
             for (GroupMember member : groupMember.getGroup().getGroupMembers()) {
                 members.add(member.getMember().getAccountName());
             }

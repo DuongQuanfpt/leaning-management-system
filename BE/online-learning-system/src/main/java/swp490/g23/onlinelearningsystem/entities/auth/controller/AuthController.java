@@ -68,7 +68,7 @@ public class AuthController {
      * @return set user status to ACTIVE , and mailToken to null
      */
     @GetMapping(value = "/verify")
-    public ResponseEntity<?> forgotPassword(@RequestParam("token") String token) {
+    public ResponseEntity<?> verify(@RequestParam("token") String token) {
 
         return authService.verifyUser(token);
     }
