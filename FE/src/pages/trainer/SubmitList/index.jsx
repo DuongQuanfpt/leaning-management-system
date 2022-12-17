@@ -17,6 +17,11 @@ const SubmitList = () => {
   const { currentClass } = useSelector((state) => state.profile)
 
   useEffect(() => {
+    document.title = 'LMS - Submit List'
+    window.scrollTo(0, 0)
+  }, [])
+
+  useEffect(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentClass])
 

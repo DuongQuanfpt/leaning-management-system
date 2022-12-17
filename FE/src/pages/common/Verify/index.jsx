@@ -8,14 +8,22 @@ import { CButton } from '@coreui/react'
 import { useEffect } from 'react'
 import { useState } from 'react'
 import registerApi from '~/api/registerApi'
+import { Skeleton } from 'antd'
 
 const Verify = () => {
   const { search } = useLocation()
   const token = new URLSearchParams(search).get('token')
+  const [loading, setLoading] = useState(false)
 
   const [verifySuccess, setVerifySuccess] = useState(false)
 
   useEffect(() => {
+    document.title = 'LMS - Verify'
+    window.scrollTo(0, 0)
+  }, [])
+
+  useEffect(() => {
+    setLoading(true)
     const params = {
       params: {
         token: token,
@@ -31,6 +39,7 @@ const Verify = () => {
         console.log(error)
         setVerifySuccess(false)
       })
+      .finally(() => setLoading(false))
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -45,21 +54,23 @@ const Verify = () => {
         </div>
         <div className="account-form-inner">
           <div className="account-container">
-            <div className="error-page">
-              <h2 className="m-b15">Verify Account {verifySuccess ? 'Successfully' : 'Failed'}</h2>
-              <p className="m-b30">
-                {verifySuccess
-                  ? 'Your account now is activated and already to login!'
-                  : 'This account maybe is verified or not available, try again!'}
-              </p>
-              <div className="">
-                <Link to="/login">
-                  <CButton name="submit" type="submit" value="Submit" className="btn button-md m-t15" color="warning">
-                    Go to Login
-                  </CButton>
-                </Link>
+            <Skeleton loading={loading}>
+              <div className="error-page">
+                <h2 className="m-b15">Verify Account {verifySuccess ? 'Successfully' : 'Failed'}</h2>
+                <p className="m-b30">
+                  {verifySuccess
+                    ? 'Your account now is activated and already to login!'
+                    : 'This account maybe is verified or not available, try again!'}
+                </p>
+                <div className="">
+                  <Link to="/login">
+                    <CButton name="submit" type="submit" value="Submit" className="btn button-md m-t15" color="warning">
+                      Go to Login
+                    </CButton>
+                  </Link>
+                </div>
               </div>
-            </div>
+            </Skeleton>
           </div>
         </div>
       </div>

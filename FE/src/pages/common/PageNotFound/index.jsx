@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 // Images
@@ -6,6 +6,11 @@ import logoWhite2 from '~/assets/images/logo-white-2.png'
 import bannerImg from '~/assets/images/background/bg2.jpg'
 
 const Error404 = () => {
+  useEffect(() => {
+    document.title = 'LMS - 404 Page Not Found'
+    window.scrollTo(0, 0)
+  }, [])
+
   return (
     <>
       <div className="account-form">

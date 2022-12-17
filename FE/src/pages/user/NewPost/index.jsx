@@ -38,6 +38,11 @@ const NewPost = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  useEffect(() => {
+    document.title = 'LMS - New Post'
+    window.scrollTo(0, 0)
+  }, [])
+
   const loadData = async () => {
     const params = {
       isNotice: true,
@@ -188,7 +193,7 @@ const NewPost = () => {
             <div className="row">
               <div className="col-lg-12 mb-3">
                 <Typography.Text strong>Title</Typography.Text>
-                <Input
+                <Input.TextArea
                   value={postDetail.postTitle}
                   placeholder="Title of Post"
                   onChange={(e) => setPostDetail((prev) => ({ ...prev, postTitle: e.target.value }))}

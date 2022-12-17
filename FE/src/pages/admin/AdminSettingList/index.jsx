@@ -35,6 +35,10 @@ const AdminSettingList = () => {
     filterStatus: '',
   })
   const [loading, setLoading] = useState(false)
+  useEffect(() => {
+    document.title = 'LMS - Setting List'
+    window.scrollTo(0, 0)
+  }, [])
 
   useEffect(() => {
     settingListApi.getFilter().then((response) => {

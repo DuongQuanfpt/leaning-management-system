@@ -4,9 +4,9 @@ import { useSelector } from 'react-redux'
 
 import { CButton, CDropdown, CDropdownToggle, CDropdownMenu, CDropdownItem } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import { cilPlus, cilSearch, cilSync } from '@coreui/icons'
+import { cilPlus } from '@coreui/icons'
 
-import { Table, Button, Space, Tag, Breadcrumb, Tooltip, Modal, Pagination } from 'antd'
+import { Table, Button, Space, Tag, Breadcrumb, Tooltip, Modal, Pagination, Input } from 'antd'
 import { ExclamationCircleOutlined, CloseOutlined, CheckOutlined, EyeOutlined } from '@ant-design/icons'
 
 import classListApi from '~/api/classListApi'
@@ -22,27 +22,24 @@ const ClassList = () => {
 
   const [listClass, setListClass] = useState([])
 
-  const [listTerm, setListTerm] = useState([])
-  const [listBranch, setListBranch] = useState([])
   const [listTrainer, setListTrainer] = useState([])
-  const [listSupporter, setListSupporter] = useState([])
   const [listStatus, setListStatus] = useState([])
+  const [listSubject, setListSubject] = useState([])
 
   const [totalItem, setTotalItem] = useState(1)
   const [currentPage, setCurrentPage] = useState(1)
 
   const [search, setSearch] = useState('')
-  const [term, setTerm] = useState('All Term')
-  const [branch, setBranch] = useState('All Branch')
-  const [trainer, setTrainer] = useState('All Trainer')
-  const [supporter, setSupporter] = useState('All Supporter')
-  const [status, setStatus] = useState('All Status')
+  const [trainer, setTrainer] = useState('All Trainers')
+  const [subject, setSubject] = useState('All Subjects')
+  const [status, setStatus] = useState('All Statuses')
   const [filter, setFilter] = useState({
     filterTerm: '',
     filterBranch: '',
     filterTrainer: '',
     filterSupporter: '',
     filterStatus: '',
+    filterSubject: '',
   })
   // eslint-disable-next-line no-unused-vars
   const [role, setRole] = useState({
@@ -54,11 +51,10 @@ const ClassList = () => {
 
   useEffect(() => {
     classListApi.getFilter().then((response) => {
-      setListTerm(response.terms)
-      setListBranch(response.branches)
+      console.log(response)
       setListTrainer(response.trainerFilter)
-      setListSupporter(response.supporterFilter)
       setListStatus(response.statusFilter)
+      setListSubject(response.subjectFilter)
     })
 
     if (roles.includes('manager')) {
@@ -80,6 +76,10 @@ const ClassList = () => {
     loadData(currentPage, filter, search)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, currentClass])
+  useEffect(() => {
+    document.title = 'LMS - Class List'
+    window.scrollTo(0, 0)
+  }, [])
 
   const loadData = async (page, filter, q = '') => {
     const params = {
@@ -90,20 +90,14 @@ const ClassList = () => {
     if (q !== '') {
       params.q = q.trim()
     }
-    if (filter.filterTerm !== '') {
-      params.filterTerm = filter.filterTerm
-    }
-    if (filter.filterBranch !== '') {
-      params.filterBranch = filter.filterBranch
-    }
-    if (filter.filterTrainer !== '') {
+    if (filter.filterTrainer !== '' && filter.filterTrainer !== 'All Trainers') {
       params.filterTrainer = filter.filterTrainer
     }
-    if (filter.filterSupporter !== '') {
-      params.filterSupporter = filter.filterSupporter
-    }
-    if (filter.filterStatus !== '') {
+    if (filter.filterStatus !== '' && filter.filterStatus !== 'All Statuses') {
       params.filterStatus = filter.filterStatus
+    }
+    if (filter.filterSubject !== '' && filter.filterSubject !== 'All Subjects') {
+      params.filterSubject = filter.filterSubject
     }
     setLoading(true)
     await classListApi
@@ -128,46 +122,23 @@ const ClassList = () => {
       .finally(() => setLoading(false))
   }
 
-  const handleFilterTerm = (term) => {
-    setFilter({ ...filter, filterTerm: term.value })
-    setTerm(term.title)
-  }
-  const handleFilterBranch = (branch) => {
-    setFilter({ ...filter, filterBranch: branch.value })
-    setBranch(branch.title)
-  }
   const handleFilterTrainer = (trainer) => {
     setFilter({ ...filter, filterTrainer: trainer })
     setTrainer(trainer)
   }
-  const handleFilterSupporter = (supporter) => {
-    setFilter({ ...filter, filterSupporter: supporter })
-    setSupporter(supporter)
-  }
+
   const handleFilterStatus = (status) => {
     setFilter({ ...filter, filterStatus: status.value })
-    setTerm(status.name)
+    setStatus(status.name)
+  }
+
+  const handleFilterSubject = (status) => {
+    setFilter({ ...filter, filterSubject: status })
+    setSubject(status)
   }
 
   const handleSearch = () => {
     loadData(1, filter, search)
-  }
-
-  const handleReload = () => {
-    setFilter({
-      filterTerm: '',
-      filterBranch: '',
-      filterTrainer: '',
-      filterSupporter: '',
-      filterStatus: '',
-    })
-    setTerm('All Term')
-    setBranch('All Branch')
-    setTrainer('All Trainer')
-    setSupporter('All Supporter')
-    setStatus('All Status')
-    setSearch('')
-    ITEM_PER_PAGE = 10
   }
 
   const handleAdd = () => {
@@ -198,24 +169,25 @@ const ClassList = () => {
       title: 'Class',
       dataIndex: 'code',
       width: '10%',
+      sorter: (a, b) => a.code.toString().localeCompare(b.code.toString(), 'en', { sensitivity: 'base' }),
     },
     {
       title: 'Subject',
       dataIndex: 'subjectCode',
-      sorter: (a, b) => a.subjectCode?.length - b.subjectCode?.length,
+      sorter: (a, b) => a.subjectCode.toString().localeCompare(b.subjectCode.toString(), 'en', { sensitivity: 'base' }),
       width: '25%',
     },
     {
       title: 'Term',
       dataIndex: 'term',
-      sorter: (a, b) => a.term - b.term,
+      sorter: (a, b) => a.term.toString().localeCompare(b.term.toString(), 'en', { sensitivity: 'base' }),
       width: '10%',
       render: (_, { term }) => term?.title,
     },
     {
       title: 'Branch',
       dataIndex: 'branch',
-      sorter: (a, b) => a.branch?.length - b.branch?.length,
+      sorter: (a, b) => a.branch.toString().localeCompare(b.branch.toString(), 'en', { sensitivity: 'base' }),
       width: '10%',
 
       render: (_, { branch }) => branch?.title,
@@ -223,20 +195,20 @@ const ClassList = () => {
     {
       title: 'Trainer',
       dataIndex: 'trainer',
-      sorter: (a, b) => a.trainer?.length - b.trainer?.length,
+      sorter: (a, b) => a.trainer.toString().localeCompare(b.trainer.toString(), 'en', { sensitivity: 'base' }),
       width: '10%',
     },
     {
       title: 'Supporter',
       dataIndex: 'supporter',
-      sorter: (a, b) => a.supporter?.length - b.supporter?.length,
+      sorter: (a, b) => a.supporter.toString().localeCompare(b.supporter.toString(), 'en', { sensitivity: 'base' }),
       width: '10%',
     },
     {
       title: 'Status',
       dataIndex: 'status',
       width: '7.5%',
-      sorter: (a, b) => a.status?.length - b.status?.length,
+      sorter: (a, b) => a.status.toString().localeCompare(b.status.toString(), 'en', { sensitivity: 'base' }),
       render: (_, { status }) => (
         <Tag color={status === 'Active' ? 'blue' : status === 'Inactive' ? 'red' : 'grey'} key={status}>
           {status}
@@ -292,72 +264,53 @@ const ClassList = () => {
                   <Breadcrumb.Item>Class List</Breadcrumb.Item>
                 </Breadcrumb>
               </div>
-              <div className="col-3 d-flex w-80">
-                <input
-                  type="search"
-                  id="form1"
-                  className="form-control"
+              <div className="col-4 d-flex w-80">
+                <Input.Search
                   placeholder="Searching by Code or Subject...."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
+                  size="large"
+                  onSearch={handleSearch}
                 />
-                <CButton color="primary" type="submit" className="text-light ml-10" onClick={handleSearch}>
-                  <CIcon icon={cilSearch} />
-                </CButton>
               </div>
-              <div className="col-7 d-flex justify-content-end">
-                <CDropdown className="ml-2">
-                  <CDropdownToggle color="secondary">{term}</CDropdownToggle>
+              <div className="col-6 d-flex justify-content-end" style={{ gap: '10px' }}>
+                <CDropdown className="">
+                  <CDropdownToggle color="secondary">{subject}</CDropdownToggle>
                   <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
-                    {listTerm.map((term) => (
-                      <CDropdownItem onClick={() => handleFilterTerm(term)}>{term.title}</CDropdownItem>
-                    ))}
-                  </CDropdownMenu>
-                </CDropdown>
-                <CDropdown className="ml-2">
-                  <CDropdownToggle color="secondary">{branch}</CDropdownToggle>
-                  <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
-                    {listBranch.map((branch) => (
-                      <CDropdownItem onClick={() => handleFilterBranch(branch)}>{branch.title}</CDropdownItem>
+                    <CDropdownItem onClick={() => handleFilterSubject('All Subjects')}>{'All Subjects'}</CDropdownItem>
+                    {listSubject.map((subject) => (
+                      <CDropdownItem onClick={() => handleFilterSubject(subject)}>{subject}</CDropdownItem>
                     ))}
                   </CDropdownMenu>
                 </CDropdown>
                 {role.isTrainer ? null : (
-                  <CDropdown className="ml-2">
+                  <CDropdown className="">
                     <CDropdownToggle color="secondary">{trainer}</CDropdownToggle>
                     <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
+                      <CDropdownItem onClick={() => handleFilterTrainer('All Trainers')}>
+                        {'All Trainers'}
+                      </CDropdownItem>
                       {listTrainer.map((trainer) => (
                         <CDropdownItem onClick={() => handleFilterTrainer(trainer)}>{trainer}</CDropdownItem>
                       ))}
                     </CDropdownMenu>
                   </CDropdown>
                 )}
-                {role.isSupporter ? null : (
-                  <CDropdown className="ml-2">
-                    <CDropdownToggle color="secondary">{supporter}</CDropdownToggle>
-                    <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
-                      {listSupporter.map((supporter) => (
-                        <CDropdownItem onClick={() => handleFilterSupporter(supporter)}>{supporter}</CDropdownItem>
-                      ))}
-                    </CDropdownMenu>
-                  </CDropdown>
-                )}
-                <CDropdown className="ml-2">
+                <CDropdown className="">
                   <CDropdownToggle color="secondary">{status}</CDropdownToggle>
                   <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
+                    <CDropdownItem onClick={() => handleFilterStatus({ name: 'All Statuses', value: undefined })}>
+                      {'All Statuses'}
+                    </CDropdownItem>
                     {listStatus.map((status) => (
                       <CDropdownItem onClick={() => handleFilterStatus(status)}>{status.name}</CDropdownItem>
                     ))}
                   </CDropdownMenu>
                 </CDropdown>
-                <Tooltip title="Reload" placement="top">
-                  <CButton color="success" type="submit" className="text-light ml-4" onClick={handleReload}>
-                    <CIcon icon={cilSync} />
-                  </CButton>
-                </Tooltip>
+
                 {role.isManager && (
                   <Tooltip title="Add New Class" placement="top">
-                    <CButton color="danger" type="submit" className="text-light ml-4" onClick={handleAdd}>
+                    <CButton color="danger" type="submit" className="text-light" onClick={handleAdd}>
                       <CIcon icon={cilPlus} />
                     </CButton>
                   </Tooltip>

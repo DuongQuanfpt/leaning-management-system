@@ -22,6 +22,11 @@ const AttendanceTracking = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  useEffect(() => {
+    document.title = 'LMS - Attendance Tracking'
+    window.scrollTo(0, 0)
+  }, [])
+
   const loadData = async () => {
     setLoading(true)
 
@@ -179,7 +184,7 @@ const AttendanceTracking = () => {
                         <Link to="/dashboard">Dashboard</Link>
                       </Breadcrumb.Item>
                       <Breadcrumb.Item>
-                        <Link to="/schedule-list">Schedule List</Link>
+                        <Link to="/my-schedule">My Schedule</Link>
                       </Breadcrumb.Item>
                       <Breadcrumb.Item>Attendance Tracking</Breadcrumb.Item>
                     </Breadcrumb>

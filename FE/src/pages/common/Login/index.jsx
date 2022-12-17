@@ -1,6 +1,6 @@
-import React, { Fragment, useState, useEffect } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
 import * as Yup from 'yup'
 import { useForm } from 'react-hook-form'
@@ -20,9 +20,11 @@ import ErrorMsg from '~/components/Common/ErrorMsg'
 // Images
 import logoWhite2 from '~/assets/images/logo-white-2.png'
 import bannerImg from '~/assets/images/background/bg2.jpg'
+import { Typography } from 'antd'
 
 const Login = () => {
   const clientId = process.env.REACT_APP_LMS_GOOGLE_CLIENT_ID
+  const captchaKey = process.env.REACT_APP_LMS_RECAPTCHA_KEY
 
   const schema = Yup.object().shape({
     email: Yup.string().required().email(),
@@ -32,8 +34,10 @@ const Login = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid, isSubmitting },
+    watch,
+    formState: { errors, isSubmitting },
   } = useForm({ resolver: yupResolver(schema), mode: 'onTouched' })
+  const watchAllFields = watch()
 
   const navigateTo = useNavigate()
 
@@ -42,19 +46,14 @@ const Login = () => {
   const [verified, setVerified] = useState(false)
 
   const dispatch = useDispatch()
-  const currentAccessToken = useSelector((state) => state.auth.token)
 
-  // useEffect(() => {
-  //   //If already logged then navigate to homepage
-  //   if (currentAccessToken) {
-  //     navigateTo('/')
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [])
+  useEffect(() => {
+    document.title = 'LMS - Login'
+    window.scrollTo(0, 0)
+  }, [])
 
   const submitForm = async (data) => {
-    if (!isValid) return
-
+    setError('')
     //Get user token
     await authApi
       .getAuthToken(data)
@@ -73,7 +72,9 @@ const Login = () => {
             setLogged(true)
             navigateTo('/dashboard')
           })
-          .catch((error) => {})
+          .catch((error) => {
+            console.log(error)
+          })
       })
       .catch((error) => {
         setLogged(false)
@@ -136,6 +137,25 @@ const Login = () => {
     }
   }
 
+  const handleResend = async () => {
+    const urlFE = process.env.REACT_APP_LMS_FE_URL
+    const params = {
+      email: watchAllFields.email.trim(),
+      link: `${urlFE}/verify?token=`,
+    }
+
+    await authApi
+      .resendVerifyMail(params)
+      .then((response) => {
+        console.log(response)
+        setError('Resend verify mail successfully')
+      })
+      .catch((error) => {
+        setError('Resend verify mail failed, try again later')
+        console.log(error)
+      })
+  }
+
   return (
     <>
       <div className="account-form">
@@ -152,7 +172,7 @@ const Login = () => {
               </h2>
               <p>
                 Don't have an account?{' '}
-                <Link to="/register" color="text-danger" className="link-decoration">
+                <Link to="/register" className="link-decoration text-primary">
                   Create one here
                 </Link>
               </p>
@@ -168,7 +188,6 @@ const Login = () => {
                         required=""
                         placeholder="Email"
                         className="form-control"
-                        autoComplete="true"
                         {...register('email')}
                       />
                     </div>
@@ -185,7 +204,6 @@ const Login = () => {
                         required=""
                         placeholder="Your Password"
                         className="form-control"
-                        autoComplete="true"
                         {...register('password')}
                       />
                     </div>
@@ -197,23 +215,28 @@ const Login = () => {
                 </div>
                 <div className="col-lg-12">
                   <div className="form-group form-forget">
-                    <div className="custom-control custom-checkbox">
-                      <input type="checkbox" className="custom-control-input" id="customControlAutosizing" />
-                      <label className="custom-control-label" htmlFor="customControlAutosizing">
-                        Remember me
-                      </label>
-                    </div>
                     <Link to="/forget-password" className="ml-auto text-primary link-decoration">
                       Forgot Password?
                     </Link>
                   </div>
                 </div>
                 <div className="col-lg-12 mb-10">
-                  <ReCAPTCHA sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" onChange={handleCaptchaOnChange} />
+                  <ReCAPTCHA sitekey={captchaKey} onChange={handleCaptchaOnChange} />
                 </div>
-                <div className="col-lg-12 mb-10">
+                <div className="col-lg-12 mb-10 mt-3">
                   {logged ? <ErrorMsg errorMsg="Your email or password is not available" /> : <Fragment />}
-                  {error !== '' ? <ErrorMsg errorMsg={error} /> : <Fragment />}
+                  {error !== '' ? (
+                    <ErrorMsg errorMsg={error} isError={error !== 'Resend verify mail successfully'} />
+                  ) : (
+                    <Fragment />
+                  )}
+                  {error === 'This account is unverified' ? (
+                    <p className="h6 text-danger">
+                      Click <Typography.Link onClick={handleResend}>here</Typography.Link> to resend verify mail
+                    </p>
+                  ) : (
+                    <Fragment />
+                  )}
                   <CButton
                     name="submit"
                     type="submit"
@@ -229,7 +252,7 @@ const Login = () => {
                   <GoogleLogin
                     className="bg-danger text-light"
                     clientId={clientId}
-                    buttonText="Sign Up with Google"
+                    buttonText="Sign In with Google"
                     onSuccess={onSuccess}
                     onFailure={onFailure}
                     cookiePolicy={'single_host_origin'}

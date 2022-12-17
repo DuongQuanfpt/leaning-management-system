@@ -61,6 +61,11 @@ const SubmitDetail = () => {
   const [workUpdateForm, setWorkUpdateForm] = useState({})
 
   useEffect(() => {
+    document.title = 'LMS - Submit Detail'
+    window.scrollTo(0, 0)
+  }, [])
+
+  useEffect(() => {
     loadData(filter)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter])
@@ -216,11 +221,11 @@ const SubmitDetail = () => {
                     setListWorkEval(response)
                     setFormEvaluation((prev) => ({
                       ...prev,
-                      function: response.functionName,
-                      functionDescription: response.functionDescription,
-                      complexity: response.complexityFilter[0],
-                      quality: response.qualityFilter[0],
-                      workPoint: (response.complexityFilter[0].point ?? 0 * response.qualityFilter[0].point ?? 0) / 100,
+                      function: response?.functionName,
+                      functionDescription: response?.functionDescription,
+                      complexity: response?.complexityFilter[0],
+                      quality: response?.qualityFilter[0],
+                      workPoint: (response.complexityFilter[0]?.point * response.qualityFilter[0]?.point) / 100,
                     }))
                   })
                   .then(() => setLoading(false))
@@ -646,7 +651,7 @@ const SubmitDetail = () => {
 
                           <Col className="gutter-row mb-3" span={8}>
                             <Typography.Text strong>Work Point</Typography.Text>
-                            <Input readOnly value={formEvaluation.workPoint} />
+                            <Input readOnly value={isNaN(formEvaluation.workPoint) ? 0 : formEvaluation.workPoint} />
                           </Col>
                         </Row>
                         <Row gutter={16}>

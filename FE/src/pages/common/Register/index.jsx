@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 
@@ -24,6 +24,7 @@ import bannerImg from '~/assets/images/background/bg2.jpg'
 
 const Register = () => {
   const clientId = process.env.REACT_APP_LMS_GOOGLE_CLIENT_ID
+  const captchaKey = process.env.REACT_APP_LMS_RECAPTCHA_KEY
 
   const navigateTo = useNavigate()
 
@@ -45,7 +46,13 @@ const Register = () => {
     formState: { errors, isValid, isSubmitting },
   } = useForm({ resolver: yupResolver(schema), mode: 'onTouched' })
 
+  useEffect(() => {
+    document.title = 'LMS - Register'
+    window.scrollTo(0, 0)
+  }, [])
+
   const submitForm = async (data) => {
+    setError('')
     if (!isValid) return
     if (data.password !== data.confirmPassword) {
       setError('Your password and confirm password is not matched')
@@ -87,7 +94,6 @@ const Register = () => {
         //Get profile data
         userApi.getProfile(token).then((response) => {
           dispatch(setProfile(response))
-
           navigateTo('/')
         })
       })
@@ -200,7 +206,7 @@ const Register = () => {
                   </div>
                 </div>
                 <div className="col-lg-12 mb-10">
-                  <ReCAPTCHA sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" onChange={handleCaptchaOnChange} />
+                  <ReCAPTCHA sitekey={captchaKey} onChange={handleCaptchaOnChange} />
                 </div>
                 <div className="col-lg-12 m-b30 m-t15">
                   <ErrorMsg errorMsg={error} />

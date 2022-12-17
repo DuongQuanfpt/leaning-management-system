@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { Breadcrumb, Modal, Radio, Segmented, Skeleton } from 'antd'
+import { Breadcrumb, Modal, Radio, Segmented, Skeleton, Typography } from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 
 import { CButton, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
@@ -94,6 +94,10 @@ const EvalCriteriaAdd = () => {
       })
       .finally(() => setLoading(false))
   }
+  useEffect(() => {
+    document.title = 'LMS - Eval Criteria Add'
+    window.scrollTo(0, 0)
+  }, [])
 
   const handleAdd = async () => {
     if (!detail?.assignment?.assignment?.assId) {
@@ -243,7 +247,9 @@ const EvalCriteriaAdd = () => {
                         </div>
                       )}
                       <div className="form-group col-12">
-                        <label className="col-form-label">Assignment</label>
+                        <label className="col-form-label">
+                          Assignment <Typography.Text type="danger">*</Typography.Text>
+                        </label>
                         <div>
                           <CDropdown className="w-100">
                             <CDropdownToggle color="warning">{`${
@@ -261,8 +267,10 @@ const EvalCriteriaAdd = () => {
                           </CDropdown>
                         </div>
                       </div>
-                      <div className="form-group col-4">
-                        <label className="col-form-label">Eval Criteria Name</label>
+                      <div className="form-group col-12">
+                        <label className="col-form-label">
+                          Eval Criteria Name <Typography.Text type="danger">*</Typography.Text>
+                        </label>
                         <div>
                           <input
                             className="form-control"
@@ -272,8 +280,10 @@ const EvalCriteriaAdd = () => {
                           />
                         </div>
                       </div>
-                      <div className="form-group col-4">
-                        <label className="col-form-label">Evaluation Weight (%)</label>
+                      <div className="form-group col-6">
+                        <label className="col-form-label">
+                          Evaluation Weight (%) <Typography.Text type="danger">*</Typography.Text>
+                        </label>
                         <div>
                           <input
                             className="form-control"
@@ -283,8 +293,10 @@ const EvalCriteriaAdd = () => {
                           />
                         </div>
                       </div>
-                      <div className="form-group col-4">
-                        <label className="col-form-label">Expected Work</label>
+                      <div className="form-group col-6">
+                        <label className="col-form-label">
+                          Expected Work <Typography.Text type="danger">*</Typography.Text>
+                        </label>
                         <div>
                           <input
                             className="form-control"
@@ -302,20 +314,11 @@ const EvalCriteriaAdd = () => {
                         ></textarea> */}
                         </div>
                       </div>
+
                       <div className="form-group col-4">
-                        <label className="col-form-label">Status</label>
-                        <div>
-                          <Radio.Group
-                            value={detail.status}
-                            onChange={(e) => setDetail((prev) => ({ ...prev, status: e.target.value }))}
-                          >
-                            <Radio value={1}>Active</Radio>
-                            <Radio value={0}>Inactive</Radio>
-                          </Radio.Group>
-                        </div>
-                      </div>
-                      <div className="form-group col-4">
-                        <label className="col-form-label">Is Team Eval</label>
+                        <label className="col-form-label">
+                          Team Evaluation? <Typography.Text type="danger">*</Typography.Text>
+                        </label>
                         <div>
                           <Radio.Group
                             value={detail.isTeamEval}
@@ -327,7 +330,9 @@ const EvalCriteriaAdd = () => {
                         </div>
                       </div>
                       <div className="form-group col-4">
-                        <label className="col-form-label">Is Work Eval</label>
+                        <label className="col-form-label">
+                          Work Evaluation <Typography.Text type="danger">*</Typography.Text>
+                        </label>
                         <div>
                           <Radio.Group
                             value={detail.isWorkEval}
@@ -338,9 +343,24 @@ const EvalCriteriaAdd = () => {
                           </Radio.Group>
                         </div>
                       </div>
-
+                      <div className="form-group col-4">
+                        <label className="col-form-label">
+                          Status <Typography.Text type="danger">*</Typography.Text>
+                        </label>
+                        <div>
+                          <Radio.Group
+                            value={detail.status}
+                            onChange={(e) => setDetail((prev) => ({ ...prev, status: e.target.value }))}
+                          >
+                            <Radio value={1}>Active</Radio>
+                            <Radio value={0}>Inactive</Radio>
+                          </Radio.Group>
+                        </div>
+                      </div>
                       <div className="form-group col-12">
-                        <label className="col-form-label">Description</label>
+                        <label className="col-form-label">
+                          Description <Typography.Text type="danger">*</Typography.Text>{' '}
+                        </label>
                         <div>
                           <textarea
                             name="message"

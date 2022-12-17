@@ -40,6 +40,11 @@ const traineeListApi = {
     const url = `/api/trainee-import/${code}`
     return axiosClient.post(url, params, header)
   },
+
+  addTrainee: (code, params) => {
+    const url = `/api/trainee-add?classCode=${code}`
+    return axiosClient.post(url, params, header)
+  },
 }
 
 export default traineeListApi

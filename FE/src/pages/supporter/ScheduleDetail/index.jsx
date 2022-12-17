@@ -50,6 +50,11 @@ const ScheduleDetail = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  useEffect(() => {
+    document.title = 'LMS - Schedule Detail'
+    window.scrollTo(0, 0)
+  }, [])
+
   const loadData = async () => {
     await scheduleApi
       .getDetail(id)

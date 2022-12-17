@@ -42,6 +42,11 @@ const NewSubmit = () => {
   const [zipFile, setZipFile] = useState(null)
 
   useEffect(() => {
+    document.title = 'LMS - New Submit'
+    window.scrollTo(0, 0)
+  }, [])
+
+  useEffect(() => {
     setLoading(true)
     submitApi
       .getListSubmitFilter(id)

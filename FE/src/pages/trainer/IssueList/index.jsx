@@ -139,6 +139,11 @@ const IssueList = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, ITEM_PER_PAGE])
 
+  useEffect(() => {
+    document.title = 'LMS - Issue List'
+    window.scrollTo(0, 0)
+  }, [])
+
   const loadData = async (page, filter, q = '') => {
     setIsLoading(true)
     const params = {

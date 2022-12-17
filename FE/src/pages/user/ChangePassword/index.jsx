@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react'
 import axios from 'axios'
 import { CContainer, CRow, CCol, CButton } from '@coreui/react'
@@ -16,6 +16,11 @@ const AdminChangePassword = () => {
   const [error, setError] = useState('')
 
   const currentAccessToken = useSelector((state) => state.auth.token)
+
+  useEffect(() => {
+    document.title = 'LMS - Change Password'
+    window.scrollTo(0, 0)
+  }, [])
 
   const handleReset = () => {
     setOldPassword('')

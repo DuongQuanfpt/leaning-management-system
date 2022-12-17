@@ -210,6 +210,7 @@ const classEvalCriteriaListRoutes = [
   { path: '/class-criteria-list', component: ClassEvalCriteriaList },
   { path: '/class-criteria-detail/:id', component: ClassEvalCriteriaDetail },
   { path: '/class-criteria-add', component: ClassEvalCriteriaAdd },
+  { path: '/class-criteria-add/:id', component: ClassEvalCriteriaAdd },
 ]
 
 const groupListRoutes = [

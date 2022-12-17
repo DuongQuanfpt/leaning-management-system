@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { Breadcrumb, Segmented } from 'antd'
@@ -15,6 +15,11 @@ import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 
 const NewGroup = () => {
   const [mode, setMode] = useState('Upload file')
+
+  useEffect(() => {
+    document.title = 'LMS - New Group'
+    window.scrollTo(0, 0)
+  }, [])
 
   return (
     <div>

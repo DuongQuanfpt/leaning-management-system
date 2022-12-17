@@ -7,14 +7,13 @@ import { setCurrentClass } from '~/redux/ProfileSlice/profileSlice'
 import { setSidebarShow, setSearchQueryDashboard } from '~/redux/SidebarSlice/sidebarSlice'
 
 import { DownOutlined } from '@ant-design/icons'
-import { Dropdown, Input, Menu, Space } from 'antd'
+import { Dropdown, Input, Menu, Space, Typography } from 'antd'
 
-import { CContainer, CHeader, CHeaderBrand, CHeaderNav, CHeaderToggler, CNavItem } from '@coreui/react'
+import { CContainer, CHeader, CHeaderNav, CHeaderToggler, CNavItem } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilMenu } from '@coreui/icons'
 
 import AdminHeaderDropdown from './AdminHeaderDropdown'
-import { logo } from 'src/assets/brand/logo'
 import logoWhite from '~/assets/images/logo.png'
 import { useEffect } from 'react'
 
@@ -74,9 +73,7 @@ const AdminHeader = () => {
         <CHeaderToggler className="ps-1" onClick={() => dispatch(setSidebarShow(!sidebarShow))}>
           <CIcon icon={cilMenu} size="lg" />
         </CHeaderToggler>
-        <CHeaderBrand className="mx-auto d-md-none" to="/">
-          <CIcon icon={logo} height={48} alt="Logo" />
-        </CHeaderBrand>
+
         <CHeaderNav className="d-none d-md-flex me-auto ml-3" style={{ width: '600px' }}>
           <CNavItem>
             <div className="menu-logo" style={{ height: '50px' }}>
@@ -107,14 +104,27 @@ const AdminHeader = () => {
 
         {/* {showDropdownClassPathname.includes(location.pathname) && ( */}
         <CHeaderNav>
-          <Dropdown overlay={menu}>
-            <a onClick={(e) => e.preventDefault()}>
-              <Space>
-                {currentClass}
-                <DownOutlined />
-              </Space>
-            </a>
-          </Dropdown>
+          {currentClass ? (
+            <>
+              <Typography.Link className="pr-2" style={{ cursor: 'default' }}>
+                Working at class
+              </Typography.Link>
+              <Dropdown overlay={menu}>
+                <a onClick={(e) => e.preventDefault()}>
+                  <Space>
+                    {currentClass}
+                    <DownOutlined />
+                  </Space>
+                </a>
+              </Dropdown>
+            </>
+          ) : (
+            <>
+              <Typography.Link className="pr-2" style={{ cursor: 'default' }}>
+                Join class to work with
+              </Typography.Link>
+            </>
+          )}
         </CHeaderNav>
         {/* // )} */}
         <CHeaderNav className="ms-3">

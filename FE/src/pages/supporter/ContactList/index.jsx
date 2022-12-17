@@ -56,6 +56,11 @@ const ContactList = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter])
 
+  useEffect(() => {
+    document.title = 'LMS - Contact List'
+    window.scrollTo(0, 0)
+  }, [])
+
   const loadData = async (page, filter, q = '') => {
     setLoading(true)
     const params = {

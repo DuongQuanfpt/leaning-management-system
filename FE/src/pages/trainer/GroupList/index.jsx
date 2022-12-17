@@ -88,6 +88,10 @@ const GroupList = () => {
           name: 'Inactive',
           value: 0,
         },
+        {
+          name: 'Dropout',
+          value: -1,
+        },
       ],
     })
     setFilter({
@@ -106,6 +110,11 @@ const GroupList = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentClass])
 
+  useEffect(() => {
+    document.title = 'LMS - Group List'
+    window.scrollTo(0, 0)
+  }, [])
+
   const loadMilestone = async () => {
     setLoading(true)
     await groupApi
@@ -123,13 +132,16 @@ const GroupList = () => {
 
   const loadGroup = async (params) => {
     const isOpen = milestoneDetail.milstoneFilter.filter((item) => item.milestoneId === params.filterMilestone)
-    if (isOpen[0].status !== 'Open') {
-      setIsOpen(false)
-    } else {
+    console.log(isOpen)
+    if (isOpen[0].status === 'Open') {
       setIsOpen(true)
+    } else {
+      setIsOpen(false)
     }
 
-    if (!isOpen[0].teamWork) {
+    if (isOpen[0].teamWork === true) {
+      setIsTeamwork(true)
+    } else {
       setIsTeamwork(false)
     }
 
@@ -191,7 +203,7 @@ const GroupList = () => {
       filterMilestone: filter.milstone.milestoneId,
     }
     if (filter.status.value !== null) {
-      params.filterStatus = filter.status.value === 1 ? true : false
+      params.filterStatus = filter.status.value
     }
     if (filter.milstone.title !== 'Select Milestone') {
       loadGroup(params)
@@ -661,9 +673,18 @@ const GroupList = () => {
             props: {
               style: { padding: 0, margin: 0 },
             },
-            children: trainee.groupId && (
-              <Tag color={trainee?.isActive ? 'green' : 'red'} key={trainee?.isActive}>
-                {trainee.isActive ? 'Active' : 'Inactive'}
+            children: (
+              <Tag
+                color={
+                  trainee?.memberInfo?.status === 'Active'
+                    ? 'green'
+                    : trainee?.memberInfo?.status === 'Inactive'
+                    ? 'red'
+                    : 'grey'
+                }
+                key={trainee?.memberInfo?.status}
+              >
+                {trainee.memberInfo?.status}
               </Tag>
             ),
           }
@@ -802,66 +823,73 @@ const GroupList = () => {
                   </div>
                 </div>
               </div>
-
-              {filter.milstone.title !== 'Select Milestone' &&
-                isTrainer &&
-                (isOpen ? (
-                  !isHaveGroup ? (
-                    isTeamwork ? (
-                      <div className="col-lg-12">
-                        <Typography.Text className="mr-4" type="warning" strong>
-                          Trainee have not been grouped
-                        </Typography.Text>
-                        {isTrainer && (
-                          <Button type="link " onClick={() => navigateTo(`/new-group/${filter.milstone.milestoneId}`)}>
-                            <Typography.Link strong underline>
-                              Create Groups
-                            </Typography.Link>
-                          </Button>
+              <Skeleton loading={loading}>
+                <div className="mb-3">
+                  {filter.milstone.title !== 'Select Milestone' &&
+                    isTrainer &&
+                    (isOpen ? (
+                      <>
+                        {isTeamwork ? (
+                          <>
+                            {!isHaveGroup ? (
+                              <div className="col-lg-12">
+                                <Typography.Text className="mr-4" type="warning" strong>
+                                  Trainee have not been grouped
+                                </Typography.Text>
+                                {isTrainer && (
+                                  <Button
+                                    type="link "
+                                    onClick={() => navigateTo(`/new-group/${filter.milstone.milestoneId}`)}
+                                  >
+                                    <Typography.Link strong underline>
+                                      Create Groups
+                                    </Typography.Link>
+                                  </Button>
+                                )}
+                              </div>
+                            ) : (
+                              <div className="col-lg-12">
+                                <Typography.Text className="mr-4" type="warning" strong>
+                                  This milestone has groups already
+                                </Typography.Text>
+                                <Button
+                                  type="link "
+                                  onClick={() => navigateTo(`/new-group/${filter.milstone.milestoneId}`)}
+                                >
+                                  <Typography.Link strong underline>
+                                    Reset Groups
+                                  </Typography.Link>
+                                </Button>
+                                <Button type="link " onClick={handleRemoveGroups}>
+                                  <Typography.Link strong underline>
+                                    Remove Groups
+                                  </Typography.Link>
+                                </Button>
+                              </div>
+                            )}
+                          </>
+                        ) : (
+                          <div className="col-lg-12">
+                            <Typography.Text className="mr-4" type="warning" strong>
+                              This milestone is working individually, you can't create group for this milestone
+                            </Typography.Text>
+                          </div>
                         )}
-                      </div>
+                      </>
                     ) : (
-                      <div className="col-lg-12">
+                      <div className="col-lg-12 mt-1 mb-1">
                         <Typography.Text className="mr-4" type="warning" strong>
-                          This milestone is working individually, you can't create group for this milestone
+                          This milestone already In_Progress or Close, you can't reconfigurate group this milestone
                         </Typography.Text>
                       </div>
-                    )
-                  ) : (
-                    <div className="col-lg-12">
-                      <Typography.Text className="mr-4" type="warning" strong>
-                        This milestone has groups already
-                      </Typography.Text>
-                      {isTrainer && (
-                        <>
-                          <Button type="link " onClick={() => navigateTo(`/new-group/${filter.milstone.milestoneId}`)}>
-                            <Typography.Link strong underline>
-                              Reset Groups
-                            </Typography.Link>
-                          </Button>
-                          <Button type="link " onClick={handleRemoveGroups}>
-                            <Typography.Link strong underline>
-                              Remove Groups
-                            </Typography.Link>
-                          </Button>
-                        </>
-                      )}
-                    </div>
-                  )
-                ) : (
-                  <div className="col-lg-12 mt-1 mb-1">
-                    <Typography.Text className="mr-4" type="warning" strong>
-                      This milestone already In_Progress or Close, you can't reconfigurate group this milestone
-                    </Typography.Text>
-                  </div>
-                ))}
-
+                    ))}
+                </div>
+              </Skeleton>
               <Skeleton loading={loading}>
                 {filter.milstone.title !== 'Select Milestone' && (
                   <div className="col-lg-12 m-b30">
                     <Table
                       className="m-0 p-0"
-                      style={{ transform: `translate(0px, 20px)` }}
                       columns={columnsTrainee}
                       dataSource={group}
                       pagination={false}

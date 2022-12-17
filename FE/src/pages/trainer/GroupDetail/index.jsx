@@ -31,6 +31,11 @@ const GroupDetail = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  useEffect(() => {
+    document.title = 'LMS - Group Detail'
+    window.scrollTo(0, 0)
+  }, [])
+
   const loadData = async () => {
     await groupApi
       .getDetail(id)
