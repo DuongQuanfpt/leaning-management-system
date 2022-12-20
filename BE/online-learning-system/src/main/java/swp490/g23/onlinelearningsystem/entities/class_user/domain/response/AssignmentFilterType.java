@@ -16,6 +16,8 @@ public class AssignmentFilterType {
 
     private String assignmentTitle;
 
+    private String milestoneTitle;
+
     private String evalWeight;
 
     private boolean isFinal;

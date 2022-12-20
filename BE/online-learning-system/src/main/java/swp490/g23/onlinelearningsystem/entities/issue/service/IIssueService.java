@@ -29,5 +29,7 @@ public interface IIssueService {
 
     ResponseEntity<IssueDetailDTO> issueDetail(Long issueId , User user);
 
+    ResponseEntity<String> removeIssue(Long issueId , User user);
+
     ResponseEntity<String> issueMultiChange(User user , IssueMultiRequestDTO multiRequestDTO);
 }

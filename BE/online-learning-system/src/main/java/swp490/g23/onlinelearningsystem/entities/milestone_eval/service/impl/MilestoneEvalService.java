@@ -98,7 +98,7 @@ public class MilestoneEvalService implements IMilestoneEvalService {
     private MilestoneDTO toMilestoneDTO(Milestone milestone) {
         MilestoneDTO dto = new MilestoneDTO();
         dto.setMilestoneId(milestone.getMilestoneId());
-        dto.setMilestoneName(milestone.getAssignment().getTitle());
+        dto.setMilestoneName(milestone.getTitle());
         dto.setTeamWork(milestone.getAssignment().isTeamWork());
 
         List<MilestoneEvalCriteriaFilter> criteriaFilters = new ArrayList<>();
@@ -160,6 +160,9 @@ public class MilestoneEvalService implements IMilestoneEvalService {
         for (EvalCriteria criteria : milestone.getCriteriaList()) {
             if (criteria.isWorkEval() == true && criteria.getStatus() == Status.Active) {
                 paginateDTO.setWorkEval(true);
+                paginateDTO.setWorkWeight(criteria.getEvalWeight());
+                paginateDTO.setExpectedWork(criteria.getExpectedWork());
+                
                 break;
             }
         }

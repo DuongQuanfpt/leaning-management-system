@@ -16,6 +16,8 @@ public class AssignmentGradeDTO {
 
     private String assingmentTitle;
 
+    private String milestoneTitle;
+
     private Double grade;
 
     private boolean isFinal;

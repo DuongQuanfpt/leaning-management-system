@@ -141,7 +141,8 @@ public class SubmitService implements ISubmitService {
         List<SubmitFilterMilestoneDTO> filterMilestoneDTOs = new ArrayList<>();
         SubmitFilterMilestoneDTO allMilestone = new SubmitFilterMilestoneDTO();
         allMilestone.setMilestoneId((long) 0);
-        allMilestone.setMilestoneTitle("All Milestone");
+        allMilestone.setMilestoneTitle("All Assignment");
+        allMilestone.setAssignmentTitle("All Assignment");
 
         filterMilestoneDTOs.add(allMilestone);
         for (Milestone milestone : milestoneOfClass) {
@@ -380,7 +381,7 @@ public class SubmitService implements ISubmitService {
 
             for (Milestone milestone : submit.getClassUser().getClasses().getMilestones()) {
                 if (!milestone.getAssignment().isTeamWork()) {
-                    milestones.add(toMilestoneFilterDto(submit.getMilestone()));
+                    milestones.add(toMilestoneFilterDto(milestone));
                 }
             }
 
