@@ -47,7 +47,8 @@ public class IssueController {
 			@RequestParam(name = "isIssue", required = false) boolean isIssue,
 			@RequestParam(name = "filter", required = false) String filterJson,
 			@RequestParam(name = "milestoneId", required = false) Long filterMilestoneId,
-			@PathVariable("classCode") String classCode) throws JsonMappingException, JsonProcessingException{
+			@PathVariable("classCode") String classCode,
+			@AuthenticationPrincipal User user) throws JsonMappingException, JsonProcessingException{
 
 		int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
 		int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
@@ -59,7 +60,7 @@ public class IssueController {
 			filterRequestDTO = new ObjectMapper().readValue(decodedFilter, IssueFilterRequestDTO.class);
 			
 		}
-		return issueService.getIssueList(page, limit, keyword, classCode, isIssue, filterMilestoneId, filterRequestDTO);
+		return issueService.getIssueList(page, limit, keyword, classCode, isIssue, filterMilestoneId, filterRequestDTO ,user);
 	}
 
 	@GetMapping(value = "/issue-list-filter/{classCode}")

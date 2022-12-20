@@ -89,15 +89,15 @@ public class IssueService implements IIssueService {
 
     @Override
     public ResponseEntity<IssueListDTO> getIssueList(int page, int limit, String keyword, String classCode,
-            boolean isIssue, Long filterMilestoneId, IssueFilterRequestDTO filterRequestDTO) {
+            boolean isIssue, Long filterMilestoneId, IssueFilterRequestDTO filterRequestDTO , User user) {
         Classes classes = classRepositories.findClassByCode(classCode);
        
         if (classes == null) {
             throw new CustomException("Class doesnt exist");
         }
-
+        User login = userRepository.findById(user.getUserId()).get();
         IssueQuery result = issueCriteria.searchFilterQuery(keyword, classCode, isIssue, filterMilestoneId,
-                filterRequestDTO);
+                filterRequestDTO , login);
         TypedQuery<Issue> queryResult = result.getResultQuery();
         TypedQuery<Long> countQuery = result.getCountQuery();
 
@@ -152,7 +152,7 @@ public class IssueService implements IIssueService {
     public IssueSettingFilterDto toSettingFilterDTO(ClassSetting setting) {
         IssueSettingFilterDto dto = new IssueSettingFilterDto();
         dto.setId(setting.getClassSettingId());
-        dto.setTitle(setting.getSettingValue());
+        dto.setTitle(setting.getSettingTitle());
         return dto;
     }
 
@@ -388,10 +388,11 @@ public class IssueService implements IIssueService {
             asigneeFilter.add(user.getAccountName());
         }
 
-        // List<Group> groups = groupRepository.getGroupOfIssueByClass(classCode);
         List<Group> groups = new ArrayList<>();
         if (milestoneId != null) {
-            groups = groupRepository.findGroupByMilestone(milestoneId);
+            if(author.getSettings().contains(trainerRole)){
+                groups = groupRepository.findGroupByMilestone(milestoneId);
+            }
         }
 
         List<IssueGroupFilterDTO> groupDTOs = new ArrayList<>();
@@ -666,7 +667,7 @@ public class IssueService implements IIssueService {
 
     public IssueSettingDTO toSettingDTO(ClassSetting setting) {
         IssueSettingDTO dto = new IssueSettingDTO();
-        dto.setTitle(setting.getSettingValue());
+        dto.setTitle(setting.getSettingTitle());
         dto.setId(setting.getClassSettingId());
         return dto;
     }
