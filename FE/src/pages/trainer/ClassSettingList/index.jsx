@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
-import { Breadcrumb, Button, Modal, Pagination, Space, Table, Tag, Tooltip } from 'antd'
+import { Breadcrumb, Button, Input, Modal, Pagination, Space, Table, Tag, Tooltip } from 'antd'
 import { CheckOutlined, CloseOutlined, ExclamationCircleOutlined, EyeOutlined } from '@ant-design/icons'
 
 import { CButton, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import { cilPlus, cilSearch, cilSync } from '@coreui/icons'
+import { cilPlus } from '@coreui/icons'
 
 import classSettingListApi from '~/api/classSettingListApi'
 
@@ -37,14 +37,15 @@ const ClassSettingList = () => {
   })
   const [filter, setFilter] = useState({
     type: {
-      title: 'Select Type',
+      title: 'All Types',
       value: '',
     },
     status: {
-      name: 'Select Status',
+      name: 'All Statuses',
       value: '',
     },
   })
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     classSettingListApi
@@ -71,17 +72,24 @@ const ClassSettingList = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, currentClass])
 
+  useEffect(() => {
+    document.title = 'LMS - Class Setting List'
+    window.scrollTo(0, 0)
+  }, [])
+
   const loadData = async (page, filter, q = '') => {
     const params = { limit: ITEM_PER_PAGE, page: page, filterClass: currentClass }
     if (q !== '') {
       params.q = q.trim()
     }
-    if (filter.type.title !== 'Select Type') {
+    if (filter.type.title !== 'All Types') {
       params.filterType = filter.type.value
     }
-    if (filter.status.name !== 'Select Status') {
+    if (filter.status.name !== 'All Statuses') {
       params.filterStatus = filter.status.value
     }
+    setLoading(true)
+
     await classSettingListApi
       .getPage(params)
       .then((response) => {
@@ -93,6 +101,7 @@ const ClassSettingList = () => {
       .catch((error) => {
         console.log(error)
       })
+      .finally(() => setLoading(false))
   }
 
   const handleSearch = () => {
@@ -110,21 +119,6 @@ const ClassSettingList = () => {
   const handleChangePage = (pageNumber) => {
     setCurrentPage(pageNumber)
     loadData(pageNumber, filter)
-  }
-
-  const handleReload = () => {
-    setSearch('')
-    setFilter({
-      subject: 'Select Subject',
-      type: {
-        title: 'Select Type',
-        value: '',
-      },
-      status: {
-        name: 'Select Status',
-        value: '',
-      },
-    })
   }
 
   const handleAdd = () => {
@@ -146,43 +140,40 @@ const ClassSettingList = () => {
     {
       title: 'Setting Title',
       dataIndex: 'settingTitle',
-      sorter: (a, b) => a.settingTitle?.length - b.settingTitle?.length,
+      sorter: (a, b) =>
+        a.settingTitle.toString().localeCompare(b.settingTitle.toString(), 'en', { sensitivity: 'base' }),
       width: '15%',
     },
     {
       title: 'Setting Value',
       dataIndex: 'settingValue',
-      sorter: (a, b) => a.settingValue?.length - b.settingValue?.length,
+      sorter: (a, b) =>
+        a.settingValue.toString().localeCompare(b.settingValue.toString(), 'en', { sensitivity: 'base' }),
       width: '15%',
     },
     {
       title: 'Type',
       dataIndex: 'typeName',
-      sorter: (a, b) => a.typeName.title?.length - b.typeName.title?.length,
+      sorter: (a, b) => a.typeName.toString().localeCompare(b.typeName.toString(), 'en', { sensitivity: 'base' }),
       render: (_, { typeName }) => typeName.title,
-      width: '15%',
+      width: '10%',
     },
     {
       title: 'Status',
       dataIndex: 'status',
-      width: '10%',
-      sorter: (a, b) => a.status?.length - b.status?.length,
+      width: '5%',
+      sorter: (a, b) => a.status.toString().localeCompare(b.status.toString(), 'en', { sensitivity: 'base' }),
       render: (_, { status }) => (
         <Tag color={status === 'Active' ? 'blue' : status === 'Inactive' ? 'red' : 'grey'} key={status}>
           {status}
         </Tag>
       ),
     },
-    {
-      title: 'Description',
-      dataIndex: 'description',
-      sorter: (a, b) => a.description.length - b.description.length,
-      width: '35%',
-    },
+
     {
       title: 'Actions',
       dataIndex: 'actions',
-      width: '10%',
+      width: '5%',
       render: (_, subject) => (
         <Space size="middle" align="baseline">
           {role.isTrainer && (
@@ -246,43 +237,42 @@ const ClassSettingList = () => {
                     </Breadcrumb>
                   </div>
                   <div className="col-4 d-flex w-80">
-                    <input
-                      type="search"
-                      id="form1"
-                      className="form-control"
-                      placeholder="Searching by Class title..."
+                    <Input.Search
+                      size="large"
+                      placeholder="Searchby Class title..."
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
+                      onSearch={handleSearch}
                     />
-                    <CButton color="primary" type="submit" className="text-light ml-10" onClick={handleSearch}>
-                      <CIcon icon={cilSearch} />
-                    </CButton>
                   </div>
-                  <div className="col-6 d-flex justify-content-end">
-                    <CDropdown className="ml-4">
+                  <div className="col-6 d-flex justify-content-end" style={{ gap: '10px' }}>
+                    <CDropdown className="">
                       <CDropdownToggle color="secondary">{filter.type.title}</CDropdownToggle>
                       <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
+                        <CDropdownItem onClick={() => handleFilterType({ title: 'All Types', value: '' })}>
+                          All Types
+                        </CDropdownItem>
+
                         {listFilter.typeFilter.map((type) => (
                           <CDropdownItem onClick={() => handleFilterType(type)}>{type.title}</CDropdownItem>
                         ))}
                       </CDropdownMenu>
                     </CDropdown>
-                    <CDropdown className="ml-4">
+                    <CDropdown className="">
                       <CDropdownToggle color="secondary">{filter.status.name}</CDropdownToggle>
                       <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
+                        <CDropdownItem onClick={() => handleFilterStatus({ name: 'All Statuses', value: '' })}>
+                          All Statuses
+                        </CDropdownItem>
+
                         {listFilter.statusFilter.map((status) => (
                           <CDropdownItem onClick={() => handleFilterStatus(status)}>{status.name}</CDropdownItem>
                         ))}
                       </CDropdownMenu>
                     </CDropdown>
-                    <Tooltip title="Reload" placement="top">
-                      <CButton color="success" type="submit" className="text-light ml-4" onClick={handleReload}>
-                        <CIcon icon={cilSync} />
-                      </CButton>
-                    </Tooltip>
                     {role.isTrainer && (
                       <Tooltip title="Add New Class Setting" placement="right">
-                        <CButton color="danger" type="submit" className="text-light ml-4" onClick={handleAdd}>
+                        <CButton color="danger" type="submit" className="text-light " onClick={handleAdd}>
                           <CIcon icon={cilPlus} />
                         </CButton>
                       </Tooltip>
@@ -291,7 +281,7 @@ const ClassSettingList = () => {
                 </div>
               </div>
               <div className="col-lg-12">
-                <Table bordered dataSource={listClassSetting} columns={columns} pagination={false} />
+                <Table bordered dataSource={listClassSetting} columns={columns} pagination={false} loading={loading} />
               </div>
               <div className="col-lg-12 d-flex justify-content-end mt-3">
                 <Pagination current={currentPage} total={totalItem} onChange={handleChangePage} />;

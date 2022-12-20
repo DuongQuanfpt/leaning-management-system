@@ -24,6 +24,11 @@ const Category = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ITEM_PER_PAGE, id])
 
+  useEffect(() => {
+    document.title = 'LMS - Category'
+    window.scrollTo(0, 0)
+  }, [])
+
   const loadData = async (page) => {
     setLoading(true)
 

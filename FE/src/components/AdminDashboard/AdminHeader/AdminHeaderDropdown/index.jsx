@@ -14,7 +14,7 @@ const AdminHeaderDropdown = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('persist:LMS')
-    window.location.replace('/')
+    window.location.replace('/login')
   }
   return (
     <>
@@ -23,21 +23,21 @@ const AdminHeaderDropdown = () => {
           <CAvatar src={!!profileData.avatar_url === true ? profileData.avatar_url : avatar} size="md" />
         </CDropdownToggle>
         <CDropdownMenu className="pt-0" placement="bottom-end">
-          <CDropdownItem style={{ cursor: 'default' }}>
-            <Space className="d-flex flex-column p-0 m-0" style={{ gap: '0px' }}>
-              <Space className="d-flex flex-column">
-                <Typography.Text strong style={{ fontSize: '14px', lineHeight: '1px' }}>
-                  {profileData.fullName}
-                </Typography.Text>
-              </Space>
-              <Space className="d-flex flex-column">
-                <Typography.Text style={{ fontSize: '12px', lineHeight: '1px' }}>
-                  {profileData.username}
-                </Typography.Text>
-              </Space>
-              <Space className="d-flex flex-column">
-                <Typography.Text style={{ fontSize: '12px', lineHeight: '1px' }}>{profileData.email}</Typography.Text>
-              </Space>
+          <CDropdownItem style={{ cursor: 'default' }} className="p-0 m-0 px-3">
+            <Space className="d-flex flex-column p-0 m-0">
+              <Typography.Text strong style={{ fontSize: '16px', lineHeight: '0' }}>
+                {profileData.fullName}
+              </Typography.Text>
+            </Space>
+            <Space className="d-flex flex-column p-0 m-0">
+              <Typography.Text italic style={{ fontSize: '12px', lineHeight: '0' }}>
+                {profileData.username}
+              </Typography.Text>
+            </Space>
+            <Space className="d-flex flex-column p-0 m-0">
+              <Typography.Text italic style={{ fontSize: '12px', lineHeight: '0' }}>
+                {profileData.email}
+              </Typography.Text>
             </Space>
           </CDropdownItem>
           <CDropdownDivider />

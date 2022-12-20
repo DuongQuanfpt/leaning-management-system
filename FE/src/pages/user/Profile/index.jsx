@@ -13,7 +13,7 @@ import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 
 import avatar from '~/assets/images/profile/pic1.jpg'
-import { message, Modal } from 'antd'
+import { Modal } from 'antd'
 
 const Profile = () => {
   const profileData = useSelector((state) => state.profile)
@@ -42,17 +42,14 @@ const Profile = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  useEffect(() => {
+    document.title = 'LMS - User Profile'
+    window.scrollTo(0, 0)
+  }, [])
+
   const handleAvatar = () => {
     setOpen(true)
     return
-  }
-  const toastMessage = (type, mes) => {
-    message[type]({
-      content: mes,
-      style: {
-        transform: `translate(0, 8vh)`,
-      },
-    })
   }
 
   const handleCropAvatar = (view) => {
@@ -75,7 +72,6 @@ const Profile = () => {
         setIsEditMode(false)
         dispatch(setProfile({ ...profileData, avatar_url: response.avatar_url }))
         setError('You have successfully changed your avatar, refresh page to see you changed!')
-        toastMessage('success', 'You have successfully changed your avatar, refresh page to see you changed!')
         window.location.reload(true)
       })
       .catch((error) => {
@@ -102,7 +98,7 @@ const Profile = () => {
       setError('Your full name must longer than 3 characters')
       return
     }
-    if (mobile?.length < 9 || mobile?.length >= 11) {
+    if (mobile?.length < 9 || mobile?.length > 11) {
       setError('Your mobile number must 10-11 characters')
       return
     }
@@ -116,7 +112,17 @@ const Profile = () => {
       .then((response) => {
         setIsEditMode(false)
         setError('You have successfully changed your profile!')
-        // dispatch(setProfile({ ...profileData, ...response }))
+        console.log(response)
+        console.log(profileData)
+        dispatch(
+          setProfile({
+            ...profileData,
+            avatar_url: response.avatar_url,
+            username: response.username,
+            fullName: response.fullName,
+            mobile: response.mobile,
+          }),
+        )
       })
       .catch((error) => {
         console.log(error)

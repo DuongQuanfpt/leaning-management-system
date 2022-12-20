@@ -41,6 +41,10 @@ const AdminUserList = () => {
       setListStatus(response.statusFilter)
     })
   }, [])
+  useEffect(() => {
+    document.title = 'LMS - User List'
+    window.scrollTo(0, 0)
+  }, [])
 
   useEffect(() => {
     loadData(currentPage, filter, search)

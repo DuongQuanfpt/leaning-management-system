@@ -66,7 +66,7 @@ const Evaluations = () => {
           </Skeleton>
 
           <div className="col-lg-12 mt-3">
-            <Button type="primary" onClick={() => navigateTo('/submit-list')}>
+            <Button type="primary" onClick={() => navigateTo(-1)}>
               Back
             </Button>
           </div>

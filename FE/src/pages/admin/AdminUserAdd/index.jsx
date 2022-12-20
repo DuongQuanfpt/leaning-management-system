@@ -33,6 +33,10 @@ const AdminUserAdd = () => {
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+  useEffect(() => {
+    document.title = 'LMS - User Add'
+    window.scrollTo(0, 0)
+  }, [])
 
   const handleChangeStatus = (e) => {
     setStatus(e.target.value)
@@ -81,8 +85,8 @@ const AdminUserAdd = () => {
       setError('Mobile must not empty!')
       return
     }
-    if (mobile.length < 9 || mobile.length > 10) {
-      setError('Mobile length must 9-10 characters!')
+    if (mobile.length < 9 || mobile.length > 11) {
+      setError('Mobile length must 10-11 characters!')
       return
     }
     if (roles.length === 0) {

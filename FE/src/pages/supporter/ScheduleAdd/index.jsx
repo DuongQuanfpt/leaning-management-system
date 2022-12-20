@@ -51,6 +51,11 @@ const ScheduleAdd = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  useEffect(() => {
+    document.title = 'LMS - Schedule Add'
+    window.scrollTo(0, 0)
+  }, [])
+
   const handleAdd = async () => {
     if (detail.modules.slot.trim() === '') {
       setError('Slot name must not empty')

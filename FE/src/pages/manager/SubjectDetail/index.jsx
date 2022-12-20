@@ -52,6 +52,10 @@ const SubjectDetail = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+  useEffect(() => {
+    document.title = 'LMS - Subject Detail'
+    window.scrollTo(0, 0)
+  }, [])
 
   const loadData = async () => {
     setLoading(true)

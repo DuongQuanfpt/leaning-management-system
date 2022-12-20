@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { CButton } from '@coreui/react'
 
@@ -12,6 +12,11 @@ import forgetPasswordApi from '~/api/forgetPasswordApi'
 const ForgetPassword = () => {
   const [email, setEmail] = useState('')
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    document.title = 'LMS - Forgot Password'
+    window.scrollTo(0, 0)
+  }, [])
 
   const handleSubmit = async () => {
     setError('')

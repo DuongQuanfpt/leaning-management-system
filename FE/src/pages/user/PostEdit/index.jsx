@@ -40,6 +40,11 @@ const PostEdit = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  useEffect(() => {
+    document.title = 'LMS - Post Edit'
+    window.scrollTo(0, 0)
+  }, [])
+
   const loadData = async () => {
     setLoading(true)
     const params = {

@@ -1,7 +1,8 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react'
 
-import { Link, useParams } from 'react-router-dom'
-import { Breadcrumb, Modal, Radio } from 'antd'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Breadcrumb, Modal, Radio, Skeleton, Typography } from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 
 import { CButton } from '@coreui/react'
@@ -15,6 +16,7 @@ import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 
 const EvalCriteriaDetail = () => {
   const { id } = useParams()
+  const navigateTo = useNavigate()
 
   const [defaultDetail, setDefaulDetail] = useState({})
   const [detail, setDetail] = useState({
@@ -32,13 +34,20 @@ const EvalCriteriaDetail = () => {
 
   const [error, setError] = useState('')
   const [isEditMode, setIsEditMode] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     loadData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  useEffect(() => {
+    document.title = 'LMS - Eval Criteria Detail'
+    window.scrollTo(0, 0)
+  }, [])
+
   const loadData = async () => {
+    setLoading(true)
     await evalCriteriaApi
       .getDetail(id)
       .then((response) => {
@@ -54,6 +63,7 @@ const EvalCriteriaDetail = () => {
       .catch((error) => {
         setError('Something went wrong, please try again')
       })
+      .finally(() => setLoading(false))
   }
 
   const handleEdit = () => {
@@ -163,136 +173,145 @@ const EvalCriteriaDetail = () => {
             <div className="col-lg-12 m-b30">
               <div className="widget-box">
                 <div className="widget-inner">
-                  <div className="row">
-                    <div className="form-group col-4">
-                      <div>
-                        <label className="col-form-label">Subject</label>
-                        <input className="form-control" type="text" value={detail.subjectName} disabled />
+                  <Skeleton loading={loading}>
+                    <div className="row">
+                      <div className="form-group col-6">
+                        <div>
+                          <label className="col-form-label">Subject</label>
+                          <input className="form-control" type="text" value={detail.subjectName} disabled />
+                        </div>
                       </div>
-                    </div>
-                    <div className="form-group col-4">
-                      <label className="col-form-label">Assignment</label>
-                      <input className="form-control" type="text" value={detail.assignment.title} disabled />
-                    </div>
-                    <div className="form-group col-4">
-                      <label className="col-form-label">Eval Criteria Name</label>
-                      <div>
-                        <input
-                          className="form-control"
-                          type="text"
-                          value={detail.criteriaName}
-                          disabled={!isEditMode}
-                          onChange={(e) => setDetail((prev) => ({ ...prev, criteriaName: e.target.value }))}
-                        />
+                      <div className="form-group col-6">
+                        <label className="col-form-label">Assignment</label>
+                        <input className="form-control" type="text" value={detail.assignment.title} disabled />
                       </div>
-                    </div>
-                    <div className="form-group col-6">
-                      <label className="col-form-label">Evaluation Weight (%)</label>
-                      <div>
-                        <input
-                          className="form-control"
-                          type="number"
-                          value={detail.evalWeight}
-                          disabled={!isEditMode}
-                          onChange={(e) => setDetail((prev) => ({ ...prev, evalWeight: e.target.value }))}
-                        />
+                      <div className="form-group col-12">
+                        <label className="col-form-label">
+                          Eval Criteria Name <Typography.Text type="danger">*</Typography.Text>
+                        </label>
+                        <div>
+                          <input
+                            className="form-control"
+                            type="text"
+                            value={detail.criteriaName}
+                            onChange={(e) => setDetail((prev) => ({ ...prev, criteriaName: e.target.value }))}
+                          />
+                        </div>
                       </div>
-                    </div>
-                    <div className="form-group col-6">
-                      <label className="col-form-label">Expected Work</label>
-                      <div>
-                        <input
-                          className="form-control"
-                          type="number"
-                          value={detail.expectedWork}
-                          disabled={!isEditMode}
-                          onChange={(e) => setDetail((prev) => ({ ...prev, expectedWork: e.target.value }))}
-                        />
-                        {/* <textarea
+                      <div className="form-group col-6">
+                        <label className="col-form-label">
+                          Evaluation Weight (%) <Typography.Text type="danger">*</Typography.Text>
+                        </label>
+                        <div>
+                          <input
+                            className="form-control"
+                            type="number"
+                            value={detail.evalWeight}
+                            onChange={(e) => setDetail((prev) => ({ ...prev, evalWeight: e.target.value }))}
+                          />
+                        </div>
+                      </div>
+                      <div className="form-group col-6">
+                        <label className="col-form-label">
+                          Expected Work <Typography.Text type="danger">*</Typography.Text>
+                        </label>
+                        <div>
+                          <input
+                            className="form-control"
+                            type="number"
+                            value={detail.expectedWork}
+                            onChange={(e) => setDetail((prev) => ({ ...prev, expectedWork: e.target.value }))}
+                          />
+                          {/* <textarea
                           name="message"
                           rows="4"
                           className="form-control"
                           required
                           value={detail.expectedWork}
-                          disabled={!isEditMode}
+                          
                           onChange={(e) => setDetail((prev) => ({ ...prev, expectedWork: e.target.value }))}
                         ></textarea> */}
+                        </div>
                       </div>
-                    </div>
-                    <div className="form-group col-4">
-                      <label className="col-form-label">Status</label>
-                      <div>
-                        <Radio.Group
-                          value={detail.status}
-                          disabled={!isEditMode}
-                          onChange={(e) => setDetail((prev) => ({ ...prev, status: e.target.value }))}
-                        >
-                          <Radio value={1}>Active</Radio>
-                          <Radio value={0}>Inactive</Radio>
-                        </Radio.Group>
+
+                      <div className="form-group col-4">
+                        <label className="col-form-label">
+                          Team Evaluation? <Typography.Text type="danger">*</Typography.Text>
+                        </label>
+                        <div>
+                          <Radio.Group
+                            value={detail.isTeamEval}
+                            onChange={(e) => setDetail((prev) => ({ ...prev, isTeamEval: e.target.value }))}
+                          >
+                            <Radio value={1}>Yes</Radio>
+                            <Radio value={0}>No</Radio>
+                          </Radio.Group>
+                        </div>
                       </div>
-                    </div>
-                    <div className="form-group col-4">
-                      <label className="col-form-label">Is Team Eval</label>
-                      <div>
-                        <Radio.Group
-                          value={detail.isTeamEval}
-                          disabled={!isEditMode}
-                          onChange={(e) => setDetail((prev) => ({ ...prev, isTeamEval: e.target.value }))}
-                        >
-                          <Radio value={1}>Yes</Radio>
-                          <Radio value={0}>No</Radio>
-                        </Radio.Group>
+                      <div className="form-group col-4">
+                        <label className="col-form-label">
+                          Work Evaluation? <Typography.Text type="danger">*</Typography.Text>
+                        </label>
+                        <div>
+                          <Radio.Group
+                            value={detail.isWorkEval}
+                            onChange={(e) => setDetail((prev) => ({ ...prev, isWorkEval: e.target.value }))}
+                          >
+                            <Radio value={1}>Yes</Radio>
+                            <Radio value={0}>No</Radio>
+                          </Radio.Group>
+                        </div>
                       </div>
-                    </div>
-                    <div className="form-group col-4">
-                      <label className="col-form-label">Is Work Eval</label>
-                      <div>
-                        <Radio.Group
-                          value={detail.isWorkEval}
-                          disabled={!isEditMode}
-                          onChange={(e) => setDetail((prev) => ({ ...prev, isWorkEval: e.target.value }))}
-                        >
-                          <Radio value={1}>Yes</Radio>
-                          <Radio value={0}>No</Radio>
-                        </Radio.Group>
+                      <div className="form-group col-4">
+                        <label className="col-form-label">
+                          Status <Typography.Text type="danger">*</Typography.Text>
+                        </label>
+                        <div>
+                          <Radio.Group
+                            value={detail.status}
+                            onChange={(e) => setDetail((prev) => ({ ...prev, status: e.target.value }))}
+                          >
+                            <Radio value={1}>Active</Radio>
+                            <Radio value={0}>Inactive</Radio>
+                          </Radio.Group>
+                        </div>
                       </div>
-                    </div>
-                    <div className="form-group col-12">
-                      <label className="col-form-label">Description</label>
-                      <div>
-                        <textarea
-                          name="message"
-                          rows="4"
-                          className="form-control"
-                          required
-                          value={detail.description}
-                          disabled={!isEditMode}
-                          onChange={(e) => setDetail((prev) => ({ ...prev, description: e.target.value }))}
-                        ></textarea>
+                      <div className="form-group col-12">
+                        <label className="col-form-label">
+                          Description <Typography.Text type="danger">*</Typography.Text>
+                        </label>
+                        <div>
+                          <textarea
+                            name="message"
+                            rows="4"
+                            className="form-control"
+                            required
+                            value={detail.description}
+                            onChange={(e) => setDetail((prev) => ({ ...prev, description: e.target.value }))}
+                          ></textarea>
+                        </div>
                       </div>
-                    </div>
-                    <ErrorMsg
-                      errorMsg={error}
-                      isError={error === 'You have successfully change your eval criteria detail' ? false : true}
-                    />
-                    <div className="d-flex">
-                      {isEditMode ? (
-                        <>
+                      <>
+                        <ErrorMsg
+                          errorMsg={error}
+                          isError={error === 'You have successfully change your eval criteria detail' ? false : true}
+                        />
+                        <div className="d-flex">
                           <CButton size="md" className="mr-3" color="warning" onClick={modalConfirm}>
                             Save
                           </CButton>
-                          <CButton size="md" className="mr-3" color="warning" onClick={handleCancel}>
+                          <CButton
+                            size="md"
+                            className="mr-3"
+                            color="warning"
+                            onClick={() => navigateTo('/criteria-list')}
+                          >
                             Cancel
                           </CButton>
-                        </>
-                      ) : (
-                        <CButton size="md" className="mr-3" color="warning" onClick={handleEdit}>
-                          Edit
-                        </CButton>
-                      )}
+                        </div>
+                      </>
                     </div>
-                  </div>
+                  </Skeleton>
                 </div>
               </div>
             </div>

@@ -25,6 +25,7 @@ const Group = () => {
   const [isTrainer, setIsTrainer] = useState(false)
 
   useEffect(() => {
+    console.log(username)
     if (roles.includes('trainer')) {
       setIsTrainer(true)
     }
@@ -120,21 +121,26 @@ const Group = () => {
       dataIndex: 'submitUrl',
       width: '10%',
       ellipsis: true,
-      hidden: !roles.includes('trainer'),
-      render: (_, { submitUrl }) => (
-        <Typography.Link href={submitUrl} target="_blank">
-          {submitUrl?.slice(
-            submitUrl?.lastIndexOf('https://lms-assignment-g23.s3.ap-southeast-1.amazonaws.com') + 59,
-            submitUrl?.length,
-          )}
-        </Typography.Link>
-      ),
+      render: (_, { submitUrl, group }) => {
+        const listUsername = group?.memberId?.map((item) => item.username)
+        const isDownloadable = listUsername?.includes(username) || roles.includes('trainer')
+        return isDownloadable ? (
+          <Typography.Link href={submitUrl} target="_blank">
+            {submitUrl?.slice(
+              submitUrl?.lastIndexOf('https://lms-assignment-g23.s3.ap-southeast-1.amazonaws.com') + 59,
+              submitUrl?.length,
+            )}
+          </Typography.Link>
+        ) : (
+          <Typography.Text>-</Typography.Text>
+        )
+      },
     },
     {
       title: 'Submit At',
       dataIndex: 'lastUpdate',
       width: '10%',
-      render: (_, { lastUpdate }) => lastUpdate?.slice(0, -4),
+      render: (_, { lastUpdate }) => lastUpdate?.slice(0, -5),
     },
     {
       title: 'Status',

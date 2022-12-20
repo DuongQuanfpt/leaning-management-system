@@ -1,8 +1,9 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import moment from 'moment'
 
-import { Breadcrumb, DatePicker, Modal } from 'antd'
+import { Breadcrumb, DatePicker, Modal, Typography } from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 
 import { CButton, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
@@ -13,8 +14,10 @@ import ErrorMsg from '~/components/Common/ErrorMsg'
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
+import { useSelector } from 'react-redux'
 
 const NewMilestone = () => {
+  const { currentClass } = useSelector((state) => state.profile)
   const [detail, setDetail] = useState({
     class: {
       classCode: 'Class',
@@ -43,6 +46,11 @@ const NewMilestone = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  useEffect(() => {
+    document.title = 'LMS - New Milestone'
+    window.scrollTo(0, 0)
+  }, [])
+
   const loadData = async () => {
     await milestoneApi
       .getFilter()
@@ -63,10 +71,6 @@ const NewMilestone = () => {
     if (typeof detail.toDate === 'object') {
       detail.toDate = detail.toDate.format('YYYY-MM-DD')
     }
-    if (detail.class.classCode === 'Class') {
-      setError('You must select one Class')
-      return
-    }
     if (detail.assignment.title === 'Assignment') {
       setError('You must select one Assignment')
       return
@@ -85,7 +89,7 @@ const NewMilestone = () => {
     }
 
     const params = {
-      classesCode: detail.class.classCode,
+      classesCode: currentClass,
       assignmentId: detail.assignment.assId,
       title: detail.title,
       fromDate: detail.fromDate,
@@ -93,8 +97,6 @@ const NewMilestone = () => {
       status: 0,
       description: detail.description,
     }
-
-    console.log(params)
 
     await milestoneApi
       .addMilestone(params)
@@ -156,46 +158,21 @@ const NewMilestone = () => {
               <div className="widget-box">
                 <div className="widget-inner">
                   <div className="row">
-                    <div className="form-group col-6">
-                      <div>
-                        <label className="col-form-label">Class</label>
-                        <CDropdown className="w-100">
-                          <CDropdownToggle color="warning">{`${detail.class.classCode} - ${detail.class.subjectCode}`}</CDropdownToggle>
-                          <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
-                            {listFilter.classFilter.map((classes) => (
-                              <CDropdownItem
-                                onClick={() => {
-                                  setDetail((prev) => ({
-                                    ...prev,
-                                    class: classes,
-                                    assignment: {
-                                      title: 'Assignment',
-                                      subjectName: 'Subject',
-                                    },
-                                  }))
-                                  setListFilter((prev) => ({
-                                    ...prev,
-                                    assFilter: listAss.filter((ass) => ass.subjectName === classes.subjectCode),
-                                  }))
-                                }}
-                              >
-                                {`${classes.classCode} - ${classes.subjectCode}`}
-                              </CDropdownItem>
-                            ))}
-                          </CDropdownMenu>
-                        </CDropdown>
-                      </div>
-                    </div>
-                    <div className="form-group col-6">
-                      <label className="col-form-label">Assignment</label>
+                    <div className="form-group col-12">
+                      <label className="col-form-label">
+                        Assignment <Typography.Text type="danger">*</Typography.Text>
+                      </label>
                       <CDropdown className="w-100">
-                        <CDropdownToggle
-                          color="warning"
-                          disabled={detail.class.classCode === 'Class'}
-                        >{`${detail.assignment.subjectName} - ${detail.assignment.title}`}</CDropdownToggle>
+                        <CDropdownToggle color="warning">{`${detail.assignment.subjectName} - ${detail.assignment.title}`}</CDropdownToggle>
                         <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
                           {listFilter.assFilter.map((assignment) => (
-                            <CDropdownItem onClick={() => setDetail((prev) => ({ ...prev, assignment: assignment }))}>
+                            <CDropdownItem
+                              onClick={() => {
+                                setDetail((prev) => ({ ...prev, assignment: assignment, title: assignment.title }))
+                                console.log(assignment)
+                                console.log(detail)
+                              }}
+                            >
                               {`${assignment.subjectName} - ${assignment.title}`}
                             </CDropdownItem>
                           ))}
@@ -203,8 +180,10 @@ const NewMilestone = () => {
                       </CDropdown>
                     </div>
 
-                    <div className="form-group col-4">
-                      <label className="col-form-label">Title</label>
+                    <div className="form-group col-12">
+                      <label className="col-form-label">
+                        Title <Typography.Text type="danger">*</Typography.Text>
+                      </label>
                       <input
                         className="form-control"
                         type="text"
@@ -213,8 +192,10 @@ const NewMilestone = () => {
                       />
                     </div>
 
-                    <div className="form-group col-4">
-                      <label className="col-form-label">From Date</label>
+                    <div className="form-group col-6">
+                      <label className="col-form-label">
+                        From Date <Typography.Text type="danger">*</Typography.Text>
+                      </label>
                       <DatePicker
                         className="form-control"
                         value={moment(detail.fromDate, 'YYYY-MM-DD')}
@@ -222,8 +203,10 @@ const NewMilestone = () => {
                         allowClear={false}
                       />
                     </div>
-                    <div className="form-group col-4">
-                      <label className="col-form-label">To Date</label>
+                    <div className="form-group col-6">
+                      <label className="col-form-label">
+                        To Date <Typography.Text type="danger">*</Typography.Text>
+                      </label>
                       <DatePicker
                         className="form-control"
                         value={moment(detail.toDate, 'YYYY-MM-DD')}
@@ -233,7 +216,9 @@ const NewMilestone = () => {
                     </div>
 
                     <div className="form-group col-12">
-                      <label className="col-form-label">Description</label>
+                      <label className="col-form-label">
+                        Description <Typography.Text type="danger">*</Typography.Text>
+                      </label>
                       <div>
                         <textarea
                           name="message"

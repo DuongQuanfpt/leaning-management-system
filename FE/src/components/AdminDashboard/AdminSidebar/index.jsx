@@ -2,11 +2,8 @@ import React, { memo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { setSidebarShow, setSidebarUnfoldable } from '~/redux/SidebarSlice/sidebarSlice'
 
-import { CSidebar, CSidebarBrand, CSidebarNav, CSidebarToggler } from '@coreui/react'
-import CIcon from '@coreui/icons-react'
-
-import { logoNegative } from 'src/assets/brand/logo-negative'
-import { sygnet } from 'src/assets/brand/sygnet'
+import { CSidebar, CSidebarBrand, CSidebarNav } from '@coreui/react'
+import avatar from '~/assets/images/profile/pic1.jpg'
 
 import { AdminSidebarNav } from './AdminSidebarNav'
 
@@ -16,8 +13,15 @@ import '~/assets/css/custom/scrollbar.css'
 
 // sidebar nav config
 import _nav from '~/utils/navigator/_nav'
+import { Avatar, Space, Typography } from 'antd'
+import styled from 'styled-components'
+
+const SpaceStyled = styled(Space)`
+  gap: 0px !important;
+`
 
 const AdminSidebar = () => {
+  const profileData = useSelector((state) => state.profile)
   const dispatch = useDispatch()
   const sidebarShow = useSelector((state) => state.sidebar.sidebarShow)
   const unfoldable = useSelector((state) => state.sidebar.sidebarUnfoldable)
@@ -33,9 +37,27 @@ const AdminSidebar = () => {
           dispatch(setSidebarUnfoldable(!unfoldable))
         }}
       >
-        <CSidebarBrand className="d-none d-md-flex" to="/">
-          <CIcon className="sidebar-brand-full" icon={logoNegative} height={35} />
-          <CIcon className="sidebar-brand-narrow" icon={sygnet} height={35} />
+        <CSidebarBrand className="d-none d-md-flex py-2 w-100" to="/">
+          <Space className="d-flex flex-column p-2" style={{ gap: 0 }}>
+            <Avatar src={!!profileData.avatar_url === true ? profileData.avatar_url : avatar} size="large" />
+          </Space>
+          <SpaceStyled className="d-flex flex-column px-2 py-0">
+            <Space className="d-flex flex-rows p-0 m-0" style={{ gap: 0 }}>
+              <Typography.Text strong style={{ fontSize: '16px', lineHeight: '0', color: '#fff' }}>
+                {profileData.fullName}
+              </Typography.Text>
+            </Space>
+            <Space className="d-flex flex-rows p-0 m-0" style={{ gap: 0 }}>
+              <Typography.Text italic style={{ fontSize: '12px', lineHeight: '0', color: '#fff' }}>
+                {profileData.username}
+              </Typography.Text>
+            </Space>
+            <Space className="d-flex flex-rows p-0 m-0" style={{ gap: 0 }}>
+              <Typography.Text italic style={{ fontSize: '12px', lineHeight: '0', color: '#fff' }}>
+                {profileData.email}
+              </Typography.Text>
+            </Space>
+          </SpaceStyled>
         </CSidebarBrand>
         <CSidebarNav>
           <SimpleBar>

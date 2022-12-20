@@ -1,6 +1,6 @@
 /* eslint-disable array-callback-return */
 import React, { useState, useEffect } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { utils, writeFileXLSX, read } from 'xlsx'
 
@@ -56,6 +56,7 @@ const EditableCell = ({ editing, dataIndex, title, inputType, record, index, chi
 }
 
 const AssignementEvaluation = () => {
+  const navigateTo = useNavigate()
   const { milestoneId, groupId } = useParams()
   const { currentClass, roles } = useSelector((state) => state.profile)
   const [loading, setLoading] = useState(false)
@@ -119,6 +120,11 @@ const AssignementEvaluation = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter?.group?.value])
+
+  useEffect(() => {
+    document.title = 'LMS - Assignment Evaluation'
+    window.scrollTo(0, 0)
+  }, [])
 
   const loadFilter = async () => {
     evaluationApi
@@ -308,25 +314,33 @@ const AssignementEvaluation = () => {
       width: 35,
       editable: true,
       fixed: 'left',
-      render: (_, { bonusGrade }) => (bonusGrade === null ? null : bonusGrade.toFixed(2)),
+      render: (_, { bonusGrade }) => (bonusGrade === null ? null : Number(bonusGrade?.toFixed(1))),
     },
     {
-      title: 'WP',
+      title: () => (
+        <Tooltip title="Work Point">
+          <Typography.Text>WP</Typography.Text>
+        </Tooltip>
+      ),
       dataIndex: 'workPoint',
       key: Math.random(),
       width: 35,
       editable: false,
       fixed: 'left',
-      render: (_, { workPoint }) => (workPoint === null ? null : workPoint.toFixed(2)),
+      render: (_, { workPoint }) => (workPoint === null ? null : Number(workPoint?.toFixed(1))),
     },
     {
-      title: 'WG',
+      title: () => (
+        <Tooltip title="Work Grade">
+          <Typography.Text>WG</Typography.Text>
+        </Tooltip>
+      ),
       dataIndex: 'workGrade',
       key: Math.random(),
       width: 35,
       editable: false,
       fixed: 'left',
-      render: (_, { workGrade }) => (workGrade === null ? null : workGrade.toFixed(2)),
+      render: (_, { workGrade }) => (workGrade === null ? null : Number(workGrade?.toFixed(1))),
     },
     {
       title: () => (
@@ -339,7 +353,21 @@ const AssignementEvaluation = () => {
       key: Math.random(),
       editable: false,
       fixed: 'left',
-      render: (_, { milestoneGrade }) => (milestoneGrade === null ? null : milestoneGrade.toFixed(2)),
+      render: (_, evaluation) =>
+        evaluation.userName === 'Group' ? (
+          evaluation.milestoneGrade === null ? (
+            0
+          ) : (
+            Number(evaluation.milestoneGrade?.toFixed(1))
+          )
+        ) : (
+          <Typography.Link
+            className="hover-text-decoration"
+            onClick={() => navigateTo(`/trainee-evaluation/${evaluation.submitId}`)}
+          >
+            {evaluation.milestoneGrade === null ? 0 : Number(evaluation.milestoneGrade?.toFixed(1))}
+          </Typography.Link>
+        ),
     },
     {
       title: 'Full Name',
@@ -447,7 +475,7 @@ const AssignementEvaluation = () => {
           <Typography.Text className="mr-2">
             {assignmentEval?.criteriaPoints[index]?.grade === null
               ? null
-              : Number(assignmentEval?.criteriaPoints[index]?.grade)?.toFixed(2)}
+              : Number(assignmentEval?.criteriaPoints[index]?.grade)?.toFixed(1)}
           </Typography.Text>
           {isEditable && (
             <Button

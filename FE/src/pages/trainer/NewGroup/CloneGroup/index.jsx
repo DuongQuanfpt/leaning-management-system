@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { Space, Divider, Radio, Typography, Row, Col, Card, Button, Modal, message } from 'antd'
+import { Space, Divider, Radio, Typography, Row, Col, Card, Button, Modal, message, Skeleton } from 'antd'
 import groupApi from '~/api/groupApi'
 import { CrownTwoTone, ExclamationCircleOutlined, UsergroupAddOutlined } from '@ant-design/icons'
 
@@ -11,6 +11,7 @@ const CloneGroup = () => {
   const [listGroup, setListGroup] = useState([])
   const [isReusable, setIsReusable] = useState(false)
   const [reuse, setReuse] = useState({})
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     loadData()
@@ -18,6 +19,7 @@ const CloneGroup = () => {
   }, [])
 
   const loadData = async () => {
+    setLoading(true)
     await groupApi
       .getReuseFilter(id)
       .then((response) => {
@@ -28,6 +30,7 @@ const CloneGroup = () => {
       .catch((error) => {
         setIsReusable(false)
       })
+      .finally(() => setLoading(false))
   }
 
   const toastMessage = (type, mes) => {
@@ -64,6 +67,7 @@ const CloneGroup = () => {
       memberList: item.noGroup,
     })
     setListGroup(listGroup)
+    console.log(listGroup)
   }
 
   const handleFinish = async () => {
@@ -79,42 +83,44 @@ const CloneGroup = () => {
 
   return (
     <div className="widget-inner">
-      <div className="row mb-3">
-        <Typography.Text className="ml-3 mt-2 mb-2">Select Milestone want to clone:</Typography.Text>
-        <Divider />
-        <Space
-          align="center"
-          style={{
-            width: '100%',
-            height: '150px',
-            minHeight: '150px',
-            flexDirection: 'column',
-            overflowX: 'hidden',
-            alignItems: 'flex-start',
-            textOverflow: 'ellipsis',
-          }}
-        >
-          {isReusable && (
-            <Radio.Group defaultValue={1} className="d-flex flex-column align-items-start w-100">
-              {listReuse.map((item) => (
-                <Radio className="ant-radio-custom" value={item.milestoneId} onChange={() => handleChange(item)}>
-                  {`${item.classesCode} - ${item.title}`}
-                </Radio>
-              ))}
-            </Radio.Group>
-          )}
-          {!isReusable && (
-            <Typography.Text
-              className="d-flex align-items-center justify-content-center text-center w-100"
-              type="warning"
-              strong
-            >
-              No Milestone Cloneable
-            </Typography.Text>
-          )}
-        </Space>
-        <Divider />
-      </div>
+      <Skeleton loading={loading}>
+        <div className="row mb-3">
+          <Typography.Text className="ml-3 mt-2 mb-2">Select Milestone want to clone:</Typography.Text>
+          <Divider />
+          <Space
+            align="center"
+            style={{
+              width: '100%',
+              height: '150px',
+              minHeight: '150px',
+              flexDirection: 'column',
+              overflowX: 'hidden',
+              alignItems: 'flex-start',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            {isReusable && (
+              <Radio.Group defaultValue={1} className="d-flex flex-column align-items-start w-100">
+                {listReuse.map((item) => (
+                  <Radio className="ant-radio-custom" value={item.milestoneId} onChange={() => handleChange(item)}>
+                    {`${item.classesCode} - ${item.title}`}
+                  </Radio>
+                ))}
+              </Radio.Group>
+            )}
+            {!isReusable && (
+              <Typography.Text
+                className="d-flex align-items-center justify-content-center text-center w-100"
+                type="warning"
+                strong
+              >
+                No Milestone Cloneable
+              </Typography.Text>
+            )}
+          </Space>
+          <Divider />
+        </div>
+      </Skeleton>
       {isReusable && (
         <>
           {listGroup.length !== 0 && (
@@ -157,7 +163,7 @@ const CloneGroup = () => {
                   {group?.memberList?.map((student) => (
                     <Typography className="p-0 m-0 d-flex flex-row">
                       {student?.fullName} - {student?.userName}{' '}
-                      {student?.isLeader && <CrownTwoTone className="ml-2 d-flex align-items-center" />}
+                      {student?.leader && <CrownTwoTone className="ml-2 d-flex align-items-center" />}
                     </Typography>
                   ))}
                 </Card>

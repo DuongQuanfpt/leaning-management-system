@@ -30,6 +30,11 @@ const RequirementAdd = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  useEffect(() => {
+    document.title = 'LMS - Requirement Add'
+    window.scrollTo(0, 0)
+  }, [])
+
   const loadData = async () => {
     await issueApi
       .getRequirementAddFilter(currentClass)

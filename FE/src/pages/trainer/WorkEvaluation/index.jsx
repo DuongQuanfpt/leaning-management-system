@@ -21,6 +21,11 @@ const WorkEvaluation = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  useEffect(() => {
+    document.title = 'LMS - Work Evaluation'
+    window.scrollTo(0, 0)
+  }, [])
+
   const loadData = async () => {
     const res = submitApi.getListSubmitFilter(id).then((response) => console.log(response))
     console.log(res)

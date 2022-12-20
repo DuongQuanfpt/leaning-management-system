@@ -54,6 +54,11 @@ const ScheduleList = () => {
   }, [])
 
   useEffect(() => {
+    document.title = 'LMS - Schedule List'
+    window.scrollTo(0, 0)
+  }, [])
+
+  useEffect(() => {
     loadData(currentPage, filter, search)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, currentClass])

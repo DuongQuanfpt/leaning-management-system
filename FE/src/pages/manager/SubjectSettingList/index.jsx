@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
-import { Breadcrumb, Button, Modal, Pagination, Space, Table, Tag, Tooltip } from 'antd'
+import { Breadcrumb, Button, Input, Modal, Pagination, Space, Table, Tag, Tooltip } from 'antd'
 import { ExclamationCircleOutlined, CloseOutlined, CheckOutlined, EyeOutlined } from '@ant-design/icons'
 
 import { CButton, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import { cilPlus, cilSearch, cilSync } from '@coreui/icons'
+import { cilPlus } from '@coreui/icons'
 
 import subjectSettingListApi from '~/api/subjectSettingListApi'
 
@@ -30,14 +30,14 @@ const SubjectSettingList = () => {
     statusFilter: [],
   })
   const [filter, setFilter] = useState({
-    subject: 'Select Subject',
+    subject: 'All Subjects',
     type: {
-      title: 'Select Type',
-      value: '',
+      title: 'All Types',
+      value: undefined,
     },
     status: {
-      name: 'Select Status',
-      value: '',
+      name: 'All Statuses',
+      value: undefined,
     },
   })
 
@@ -66,6 +66,11 @@ const SubjectSettingList = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter])
 
+  useEffect(() => {
+    document.title = 'LMS - Subject Setting List'
+    window.scrollTo(0, 0)
+  }, [])
+
   const loadData = async (page, filter, q = '') => {
     const params = {
       limit: ITEM_PER_PAGE,
@@ -74,13 +79,13 @@ const SubjectSettingList = () => {
     if (q !== '') {
       params.q = q.trim()
     }
-    if (filter?.subject !== 'Select Subject') {
+    if (filter?.subject !== 'All Subjects') {
       params.filterSubject = filter?.subject
     }
-    if (filter?.type?.value !== '') {
+    if (filter?.type?.value !== undefined) {
       params.filterType = filter?.type?.value
     }
-    if (filter?.status?.value !== '') {
+    if (filter?.status?.value !== undefined) {
       params.filterStatus = filter?.status?.value
     }
     setLoading(true)
@@ -110,27 +115,9 @@ const SubjectSettingList = () => {
     setFilter((prev) => ({ ...prev, status: status }))
     setCurrentPage(1)
   }
-
   const handleChangePage = (pageNumber) => {
     setCurrentPage(pageNumber)
     loadData(pageNumber, filter, search)
-  }
-
-  const handleReload = () => {
-    ITEM_PER_PAGE = 10
-    setSearch('')
-    setFilter({
-      subject: 'Select Subject',
-      type: {
-        title: 'Select Type',
-        value: '',
-      },
-      status: {
-        name: 'Select Status',
-        value: '',
-      },
-    })
-    setCurrentPage(1)
   }
 
   const handleAdd = () => {
@@ -164,45 +151,40 @@ const SubjectSettingList = () => {
 
   const columns = [
     {
-      title: 'Code',
+      title: 'Subject',
       dataIndex: 'subjectCode',
-      sorter: (a, b) => a.subjectCode?.length - b.subjectCode?.length,
-      width: '10%',
+      sorter: (a, b) => a.subjectCode.localeCompare(b.subjectCode, 'en', { sensitivity: 'base' }),
+      width: '15%',
     },
     {
-      title: 'Setting title',
+      title: 'Subject Setting Title',
       dataIndex: 'settingTitle',
-      sorter: (a, b) => a.settingTitle?.length - b.settingTitle?.length,
-      width: '15%',
+      sorter: (a, b) => a.settingTitle.localeCompare(b.settingTitle, 'en', { sensitivity: 'base' }),
+      width: '20%',
     },
     {
-      title: 'Setting value',
+      title: 'Subject Setting Value',
       dataIndex: 'settingValue',
-      sorter: (a, b) => a.settingValue?.length - b.settingValue?.length,
-      width: '15%',
+      sorter: (a, b) => a.settingValue.localeCompare(b.settingValue, 'en', { sensitivity: 'base' }),
+      width: '30%',
     },
     {
       title: 'Type',
       dataIndex: 'typeName',
-      sorter: (a, b) => a.typeName?.length - b.typeName?.length,
+      sorter: (a, b) => a.typeName.localeCompare(b.typeName, 'en', { sensitivity: 'base' }),
       width: '15%',
       render: (_, { typeName }) => typeName.title,
     },
     {
       title: 'Status',
       dataIndex: 'status',
+      sorter: (a, b) => a.status.localeCompare(b.status, 'en', { sensitivity: 'base' }),
       width: '10%',
       render: (_, { status }) => (
         <Tag color={status === 'Active' ? 'blue' : 'red'} key={status}>
           {status}
         </Tag>
       ),
-    },
-    {
-      title: 'Description',
-      dataIndex: 'description',
-      width: '25%',
-      sorter: (a, b) => a.description?.length - b.description?.length,
     },
     {
       title: 'Actions',
@@ -251,50 +233,48 @@ const SubjectSettingList = () => {
                 </Breadcrumb>
               </div>
               <div className="col-4 d-flex w-80">
-                <input
-                  type="search"
-                  id="form1"
-                  className="form-control"
-                  placeholder="Searching by Setting title..."
+                <Input.Search
+                  placeholder="Search by Setting title..."
+                  size="large"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
+                  onSearch={handleSearch}
                 />
-                <CButton color="primary" type="submit" className="text-light ml-10" onClick={handleSearch}>
-                  <CIcon icon={cilSearch} />
-                </CButton>
               </div>
-              <div className="col-6 d-flex justify-content-end">
-                <CDropdown className="ml-4">
+              <div className="col-6 d-flex justify-content-end" style={{ gap: '10px' }}>
+                <CDropdown className="">
                   <CDropdownToggle color="secondary">{filter.subject}</CDropdownToggle>
                   <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
+                    <CDropdownItem onClick={() => handleFilterSubject('All Subjects')}>{'All Subjects'}</CDropdownItem>
                     {listFilter.subjectFilter.map((subject) => (
                       <CDropdownItem onClick={() => handleFilterSubject(subject)}>{subject}</CDropdownItem>
                     ))}
                   </CDropdownMenu>
                 </CDropdown>
-                <CDropdown className="ml-4">
+                <CDropdown className="">
                   <CDropdownToggle color="secondary">{filter.type.title}</CDropdownToggle>
                   <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
+                    <CDropdownItem onClick={() => handleFilterType({ title: 'All Types', value: undefined })}>
+                      {'All Types'}
+                    </CDropdownItem>
                     {listFilter.typeFilter.map((type) => (
                       <CDropdownItem onClick={() => handleFilterType(type)}>{type.title}</CDropdownItem>
                     ))}
                   </CDropdownMenu>
                 </CDropdown>
-                <CDropdown className="ml-4">
+                <CDropdown className="">
                   <CDropdownToggle color="secondary">{filter.status.name}</CDropdownToggle>
                   <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
+                    <CDropdownItem onClick={() => handleFilterStatus({ name: 'All Statuses', value: undefined })}>
+                      {'All Statuses'}
+                    </CDropdownItem>
                     {listFilter.statusFilter.map((status) => (
                       <CDropdownItem onClick={() => handleFilterStatus(status)}>{status.name}</CDropdownItem>
                     ))}
                   </CDropdownMenu>
                 </CDropdown>
-                <Tooltip title="Reload" placement="top">
-                  <CButton color="success" type="submit" className="text-light ml-4" onClick={handleReload}>
-                    <CIcon icon={cilSync} />
-                  </CButton>
-                </Tooltip>
                 <Tooltip title="Add New Subject Setting" placement="right">
-                  <CButton color="danger" type="submit" className="text-light ml-4" onClick={handleAdd}>
+                  <CButton color="danger" type="submit" className="text-light " onClick={handleAdd}>
                     <CIcon icon={cilPlus} />
                   </CButton>
                 </Tooltip>

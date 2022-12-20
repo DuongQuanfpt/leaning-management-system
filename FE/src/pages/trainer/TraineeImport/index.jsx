@@ -27,6 +27,11 @@ const TraineeImport = () => {
     handleReset()
   }, [currentClass])
 
+  useEffect(() => {
+    document.title = 'LMS - Trainee Import'
+    window.scrollTo(0, 0)
+  }, [])
+
   const handleDownloadTemplate = async () => {
     try {
       const listExport = []
@@ -37,7 +42,6 @@ const TraineeImport = () => {
       ws['!cols'] = wscols
       utils.book_append_sheet(wb, ws, 'Data')
       writeFileXLSX(wb, 'TraineeImportTemplate.xlsx')
-      toastMessage('success', 'Download Template Successfully')
     } catch {
       toastMessage('error', 'Download Template Failed, try again later')
     }
@@ -108,6 +112,10 @@ const TraineeImport = () => {
         })
 
         readFile.then((data) => {
+          if (data.length === 0) {
+            toastMessage('error', 'File is empty, follow the Template please')
+            return
+          }
           setListTrainee(data)
           handleReadFile()
         })
@@ -119,6 +127,7 @@ const TraineeImport = () => {
     setIsImported(false)
     setListTraineeImported([])
     console.log(listTrainee)
+
     for (let i = 0; i < listTrainee.length; i++) {
       listTrainee[i]['Fullname'] = listTrainee[i]['Fullname']?.trim()
       listTrainee[i]['Email'] = listTrainee[i]['Email']?.trim()
@@ -235,9 +244,11 @@ const TraineeImport = () => {
                       <Typography.Text type="success" className="mr-1" strong>
                         {`Total ${numberTraineeCountType['Successfully!']} trainee imported successfully`}
                       </Typography.Text>
-                      <Typography.Text type="danger" strong>
-                        {` - ${numberTraineeCountType['Failed!']} trainee imported failed`}
-                      </Typography.Text>
+                      {numberTraineeCountType['Failed!'] !== 0 && (
+                        <Typography.Text type="danger" strong>
+                          {` - ${numberTraineeCountType['Failed!']} trainee imported failed`}
+                        </Typography.Text>
+                      )}
                     </div>
                   ) : (
                     <div className="col-9 d-flex justify-content-start mb-2 mt-2"></div>

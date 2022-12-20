@@ -21,6 +21,11 @@ const AdminDashboard = () => {
   })
 
   useEffect(() => {
+    document.title = 'LMS - Dashboard'
+    window.scrollTo(0, 0)
+  }, [])
+
+  useEffect(() => {
     loadData(paginate.currentPage, searchQueryDashboard)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ITEM_PER_PAGE, searchQueryDashboard])

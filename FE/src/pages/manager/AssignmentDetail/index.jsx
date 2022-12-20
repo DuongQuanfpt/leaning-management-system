@@ -1,7 +1,8 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react'
 
-import { Link, useParams } from 'react-router-dom'
-import { Breadcrumb, Modal, Radio } from 'antd'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Breadcrumb, Modal, Radio, Skeleton, Typography } from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 
 import { CButton } from '@coreui/react'
@@ -15,6 +16,7 @@ import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 
 const AssignmentDetail = () => {
   const { id } = useParams()
+  const navigateTo = useNavigate()
 
   const [defaultDetail, setDefaulDetail] = useState({})
   const [detail, setDetail] = useState({
@@ -22,7 +24,7 @@ const AssignmentDetail = () => {
     title: '',
     assBody: '',
     eval_weight: '',
-    isOnGoing: 0,
+    isOnGoing: 1,
     isTeamWork: 0,
     isFinal: 0,
     status: 0,
@@ -30,13 +32,20 @@ const AssignmentDetail = () => {
 
   const [error, setError] = useState('')
   const [isEditMode, setIsEditMode] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     loadData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  useEffect(() => {
+    document.title = 'LMS - Assignment Detail'
+    window.scrollTo(0, 0)
+  }, [])
+
   const loadData = async () => {
+    setLoading(true)
     await assignmentApi
       .getDetail(id)
       .then((response) => {
@@ -52,11 +61,9 @@ const AssignmentDetail = () => {
       .catch((error) => {
         setError('Something went wrong, please try again')
       })
+      .finally(() => setLoading(false))
   }
 
-  const handleEdit = () => {
-    setIsEditMode(true)
-  }
   const handleSave = async () => {
     if (detail.title.trim() === '') {
       setError('Assignment title must not empty')
@@ -98,16 +105,6 @@ const AssignmentDetail = () => {
         setError('Something went wrong, please try again')
       })
   }
-  const handleCancel = () => {
-    setDetail((prev) => ({
-      ...prev,
-      ...defaultDetail,
-      eval_weight: Number(defaultDetail.eval_weight.slice(0, -1)),
-      status: defaultDetail.status === 'Active' ? 1 : 0,
-    }))
-    setIsEditMode(false)
-  }
-
   const modalConfirm = () => {
     setError('')
     Modal.confirm({
@@ -129,7 +126,7 @@ const AssignmentDetail = () => {
       <div className="wrapper d-flex flex-column min-vh-100 bg-light">
         <AdminHeader />
         <div className="body flex-grow-1 px-3">
-          <div className="col-lg-12 m-b30">
+          <div className="col-lg-12">
             <div className="row">
               <div className="col-lg-12 m-b30">
                 <div className="row">
@@ -152,121 +149,126 @@ const AssignmentDetail = () => {
             <div className="col-lg-12 m-b30">
               <div className="widget-box">
                 <div className="widget-inner">
-                  <div className="row">
-                    <div className="form-group col-4">
-                      <label className="col-form-label">Subject</label>
-                      <div>
-                        <input className="form-control" type="text" value={detail.subjectName} disabled={true} />
+                  <Skeleton loading={loading}>
+                    <div className="row">
+                      <div className="form-group col-6">
+                        <label className="col-form-label">Subject </label>
+                        <div>
+                          <input className="form-control" type="text" value={detail.subjectName} disabled={true} />
+                        </div>
                       </div>
-                    </div>
-                    <div className="form-group col-4">
-                      <label className="col-form-label">Title</label>
-                      <div>
-                        <input
-                          className="form-control"
-                          type="text"
-                          value={detail.title}
-                          disabled={!isEditMode}
-                          onChange={(e) => setDetail((prev) => ({ ...prev, title: e.target.value }))}
-                        />
+                      <div className="form-group col-6">
+                        <label className="col-form-label">
+                          Evaluation Weight (%) <Typography.Text type="danger">*</Typography.Text>
+                        </label>
+                        <div>
+                          <input
+                            className="form-control"
+                            type="number"
+                            value={detail.eval_weight}
+                            onChange={(e) => setDetail((prev) => ({ ...prev, eval_weight: e.target.value }))}
+                            disabled={detail.isOnGoing !== 0}
+                          />
+                        </div>
                       </div>
-                    </div>
-                    <div className="form-group col-4">
-                      <label className="col-form-label">Evaluation Weight (%)</label>
-                      <div>
-                        <input
-                          className="form-control"
-                          type="number"
-                          value={detail.eval_weight}
-                          disabled={!isEditMode}
-                          onChange={(e) => setDetail((prev) => ({ ...prev, eval_weight: e.target.value }))}
-                        />
+                      <div className="form-group col-12">
+                        <label className="col-form-label">
+                          Assignment Title <Typography.Text type="danger">*</Typography.Text>
+                        </label>
+                        <div>
+                          <input
+                            className="form-control"
+                            type="text"
+                            value={detail.title}
+                            onChange={(e) => setDetail((prev) => ({ ...prev, title: e.target.value }))}
+                            disabled={detail.isOnGoing !== 0}
+                          />
+                        </div>
                       </div>
-                    </div>
-                    <div className="form-group col-3">
-                      <label className="col-form-label">Status</label>
-                      <div>
-                        <Radio.Group
-                          value={detail.status}
-                          disabled={!isEditMode}
-                          onChange={(e) => setDetail((prev) => ({ ...prev, status: e.target.value }))}
-                        >
-                          <Radio value={1}>Active</Radio>
-                          <Radio value={0}>Inactive</Radio>
-                        </Radio.Group>
+
+                      <div className="form-group col-4">
+                        <label className="col-form-label">
+                          Status <Typography.Text type="danger">*</Typography.Text>
+                        </label>
+                        <div>
+                          <Radio.Group
+                            value={detail.status}
+                            onChange={(e) => setDetail((prev) => ({ ...prev, status: e.target.value }))}
+                            disabled={detail.isOnGoing !== 0}
+                          >
+                            <Radio value={1}>Active</Radio>
+                            <Radio value={0}>Inactive</Radio>
+                          </Radio.Group>
+                        </div>
                       </div>
-                    </div>
-                    <div className="form-group col-3">
-                      <label className="col-form-label">Is Ongoing</label>
-                      <div>
-                        <Radio.Group value={detail.isOnGoing} disabled>
-                          <Radio value={1}>Yes</Radio>
-                          <Radio value={0}>No</Radio>
-                        </Radio.Group>
+
+                      <div className="form-group col-4">
+                        <label className="col-form-label">
+                          Teamwork Assignment? <Typography.Text type="danger">*</Typography.Text>
+                        </label>
+                        <div>
+                          <Radio.Group
+                            value={detail.isTeamWork}
+                            onChange={(e) => setDetail((prev) => ({ ...prev, isTeamWork: e.target.value }))}
+                            disabled={detail.isOnGoing !== 0}
+                          >
+                            <Radio value={1}>Yes</Radio>
+                            <Radio value={0}>No</Radio>
+                          </Radio.Group>
+                        </div>
                       </div>
-                    </div>
-                    <div className="form-group col-3">
-                      <label className="col-form-label">Is Teamwork</label>
-                      <div>
-                        <Radio.Group
-                          value={detail.isTeamWork}
-                          disabled={!isEditMode}
-                          onChange={(e) => setDetail((prev) => ({ ...prev, isTeamWork: e.target.value }))}
-                        >
-                          <Radio value={1}>Yes</Radio>
-                          <Radio value={0}>No</Radio>
-                        </Radio.Group>
+                      <div className="form-group col-4">
+                        <label className="col-form-label">
+                          Final Assignment? <Typography.Text type="danger">*</Typography.Text>
+                        </label>
+                        <div>
+                          <Radio.Group
+                            value={detail.isFinal}
+                            onChange={(e) => setDetail((prev) => ({ ...prev, isFinal: e.target.value }))}
+                            disabled={detail.isOnGoing !== 0}
+                          >
+                            <Radio value={1}>Yes</Radio>
+                            <Radio value={0}>No</Radio>
+                          </Radio.Group>
+                        </div>
                       </div>
-                    </div>
-                    <div className="form-group col-3">
-                      <label className="col-form-label">Is Final</label>
-                      <div>
-                        <Radio.Group
-                          value={detail.isFinal}
-                          disabled={!isEditMode}
-                          onChange={(e) => setDetail((prev) => ({ ...prev, isFinal: e.target.value }))}
-                        >
-                          <Radio value={1}>Yes</Radio>
-                          <Radio value={0}>No</Radio>
-                        </Radio.Group>
+                      <div className="form-group col-12">
+                        <label className="col-form-label">
+                          Body <Typography.Text type="danger">*</Typography.Text>
+                        </label>
+                        <div>
+                          <textarea
+                            name="message"
+                            rows="4"
+                            className="form-control"
+                            required
+                            value={detail.assBody}
+                            onChange={(e) => setDetail((prev) => ({ ...prev, assBody: e.target.value }))}
+                            disabled={detail.isOnGoing !== 0}
+                          ></textarea>
+                        </div>
                       </div>
-                    </div>
-                    <div className="form-group col-12">
-                      <label className="col-form-label">Body</label>
-                      <div>
-                        <textarea
-                          name="message"
-                          rows="4"
-                          className="form-control"
-                          required
-                          value={detail.assBody}
-                          disabled={!isEditMode}
-                          onChange={(e) => setDetail((prev) => ({ ...prev, assBody: e.target.value }))}
-                        ></textarea>
-                      </div>
-                    </div>
-                    <ErrorMsg
-                      errorMsg={error}
-                      isError={error === 'You have successfully change your assignment detail' ? false : true}
-                    />
-                    <div className="d-flex">
-                      {defaultDetail.isOnGoing !== 1 &&
-                        (isEditMode ? (
-                          <>
-                            <CButton size="md" className="mr-3" color="warning" onClick={modalConfirm}>
-                              Save
-                            </CButton>
-                            <CButton size="md" className="mr-3" color="warning" onClick={handleCancel}>
-                              Cancel
-                            </CButton>
-                          </>
-                        ) : (
-                          <CButton size="md" className="mr-3" color="warning" onClick={handleEdit}>
-                            Edit
+                      <ErrorMsg
+                        errorMsg={error}
+                        isError={error === 'You have successfully change your assignment detail' ? false : true}
+                      />
+                      {detail.isOnGoing === 0 ? (
+                        <div className="d-flex">
+                          <CButton size="md" className="mr-3" color="warning" onClick={modalConfirm}>
+                            Save
                           </CButton>
-                        ))}
+                          <CButton
+                            size="md"
+                            className="mr-3"
+                            color="warning"
+                            onClick={() => navigateTo('/assignment-list')}
+                          >
+                            Cancel
+                          </CButton>
+                        </div>
+                      ) : null}
                     </div>
-                  </div>
+                  </Skeleton>
                 </div>
               </div>
             </div>
