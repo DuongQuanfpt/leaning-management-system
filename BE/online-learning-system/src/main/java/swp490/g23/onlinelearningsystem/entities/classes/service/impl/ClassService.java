@@ -54,63 +54,65 @@ public class ClassService implements IClassService {
 
         User currentUser = userRepository.findById(user.getUserId()).get();
         List<ClassResponseDTO> classes = new ArrayList<>();
-        List<ClassStatusEntity> statusFilter = new ArrayList<>();
-        List<ClassTypeResponseDTO> listTerm = new ArrayList<>();
-        List<ClassTypeResponseDTO> listBranch = new ArrayList<>();
-        List<String> trainerList = new ArrayList<>();
-        List<String> supporterList = new ArrayList<>();
-        List<String> classFilter = new ArrayList<>();
+        // List<ClassStatusEntity> statusFilter = new ArrayList<>();
+        // List<ClassTypeResponseDTO> listTerm = new ArrayList<>();
+        // List<ClassTypeResponseDTO> listBranch = new ArrayList<>();
+        // List<String> trainerList = new ArrayList<>();
+        // List<String> supporterList = new ArrayList<>();
+        // List<String> classFilter = new ArrayList<>();
 
         TypedQuery<Classes> queryResult = classCriteria.displayClass(keyword, filterTerm, filterTrainer,
                 filterSupporter, filterBranch, filterStatus, currentUser,filterSubject);
 
-        List<Classes> classList = queryResult.getResultList();
+        // List<Classes> classList = queryResult.getResultList();
 
-        for (ClassStatus status : new ArrayList<ClassStatus>(EnumSet.allOf(ClassStatus.class))) {
-            statusFilter.add(new ClassStatusEntity(status));
-        }
+        // for (ClassStatus status : new ArrayList<ClassStatus>(EnumSet.allOf(ClassStatus.class))) {
+        //     statusFilter.add(new ClassStatusEntity(status));
+        // }
 
-        for (Classes clazz : classList) {
-            if (clazz.getUserTrainer() != null && !trainerList.contains(clazz.getUserTrainer().getAccountName())) {
-                trainerList.add(clazz.getUserTrainer().getAccountName());
-            }
+        // for (Classes clazz : classList) {
+        //     if (clazz.getUserTrainer() != null && !trainerList.contains(clazz.getUserTrainer().getAccountName())) {
+        //         trainerList.add(clazz.getUserTrainer().getAccountName());
+        //     }
 
-            if (clazz.getUserSupporter() != null
-                    && !supporterList.contains(clazz.getUserSupporter().getAccountName())) {
-                supporterList.add(clazz.getUserSupporter().getAccountName());
-            }
+        //     if (clazz.getUserSupporter() != null
+        //             && !supporterList.contains(clazz.getUserSupporter().getAccountName())) {
+        //         supporterList.add(clazz.getUserSupporter().getAccountName());
+        //     }
 
-            boolean canAdd = true;
-            if (clazz.getSettingBranch() != null) {
-                for (ClassTypeResponseDTO ct : listBranch) {
-                    if (clazz.getSettingBranch().getSettingValue().equals(ct.getValue())) {
-                        canAdd = false;
-                        break;
-                    }
-                }
-                if (canAdd == true) {
-                    listBranch.add(new ClassTypeResponseDTO(clazz.getSettingBranch().getSettingTitle(),
-                            clazz.getSettingBranch().getSettingValue()));
-                }
+        //     boolean canAdd = true;
+        //     if (clazz.getSettingBranch() != null) {
+        //         for (ClassTypeResponseDTO ct : listBranch) {
+        //             if (clazz.getSettingBranch().getSettingValue().equals(ct.getValue())) {
+        //                 canAdd = false;
+        //                 break;
+        //             }
+        //         }
+        //         if (canAdd == true) {
+        //             listBranch.add(new ClassTypeResponseDTO(clazz.getSettingBranch().getSettingTitle(),
+        //                     clazz.getSettingBranch().getSettingValue()));
+        //         }
 
-            }
+        //     }
 
-            canAdd = true;
-            if (clazz.getSettingTerm() != null) {
+        //     canAdd = true;
+        //     if (clazz.getSettingTerm() != null) {
 
-                for (ClassTypeResponseDTO ct : listTerm) {
-                    if (clazz.getSettingTerm().getSettingValue().equals(ct.getValue())) {
-                        canAdd = false;
-                        break;
-                    }
-                }
-                if (canAdd == true) {
-                    listTerm.add(new ClassTypeResponseDTO(clazz.getSettingTerm().getSettingTitle(),
-                            clazz.getSettingTerm().getSettingValue()));
-                }
-            }
-            classFilter.add(clazz.getCode());
-        }
+        //         for (ClassTypeResponseDTO ct : listTerm) {
+        //             if (clazz.getSettingTerm().getSettingValue().equals(ct.getValue())) {
+        //                 canAdd = false;
+        //                 break;
+        //             }
+        //         }
+        //         if (canAdd == true) {
+        //             listTerm.add(new ClassTypeResponseDTO(clazz.getSettingTerm().getSettingTitle(),
+        //                     clazz.getSettingTerm().getSettingValue()));
+        //         }
+        //     }
+        //     classFilter.add(clazz.getCode());
+        // }
+
+        
 
         int totalItem = queryResult.getResultList().size();
         int totalPage;
@@ -131,12 +133,13 @@ public class ClassService implements IClassService {
         responseDTO.setTotalItem(totalItem);
         responseDTO.setListResult(classes);
         responseDTO.setTotalPage(totalPage);
-        responseDTO.setBranchFilter(listBranch);
-        responseDTO.setTermFilter(listTerm);
-        responseDTO.setTrainerFilter(trainerList);
-        responseDTO.setSupporterFilter(supporterList);
-        responseDTO.setStatusFilter(statusFilter);
-        responseDTO.setClassFilter(classFilter);
+        // responseDTO.setBranchFilter(listBranch);
+        // responseDTO.setTermFilter(listTerm);
+        // responseDTO.setTrainerFilter(trainerList);
+        // responseDTO.setSupporterFilter(supporterList);
+        // responseDTO.setStatusFilter(statusFilter);
+        // responseDTO.setClassFilter(classFilter);
+        // responseDTO.setSubjectFilter(subjectFilter);
 
         return ResponseEntity.ok(responseDTO);
     }
@@ -224,18 +227,21 @@ public class ClassService implements IClassService {
         List<String> listTrainer = new ArrayList<>();
         List<String> listSupporter = new ArrayList<>();
         List<String> subjectFilter = new ArrayList<>();
+        List<String> subjectFilterAdd = new ArrayList<>();
         List<ClassTypeResponseDTO> listTerm = new ArrayList<>();
         List<ClassTypeResponseDTO> listBranch = new ArrayList<>();
 
         List<Setting> settingTerm = settingRepositories.termList();
         List<Setting> settingBranch = settingRepositories.branchList();
-        // Setting roleTrainer = settingRepositories.findBySettingValue("ROLE_TRAINER");
-        // Setting roleSupporter = settingRepositories.findBySettingValue("ROLE_SUPPORTER");
         List<ClassStatusEntity> statuses = new ArrayList<>();
         List<User> userTrainers = userRepository.findTrainer();
         List<User> userSupporters = userRepository.findSupport();
         List<Subject> subjects = subjecRepository.findSubjectOfUser(currentUser);
-        // List<Classes> classes = classRepositories.findAll();
+        List<Subject> subjectsAdd = subjecRepository.findSubjectOfManager(currentUser);
+
+        for (Subject subject : subjectsAdd) {
+            subjectFilterAdd.add(subject.getSubjectCode());
+        }
 
         for (Subject subject : subjects) {
             subjectFilter.add(subject.getSubjectCode());
@@ -262,10 +268,6 @@ public class ClassService implements IClassService {
             statuses.add(new ClassStatusEntity(status));
         }
 
-        // for (Classes clazz : classes) {
-        //     classFilter.add(clazz.getCode());
-        // }
-
         ClassFilterDTO filterDTO = new ClassFilterDTO();
         filterDTO.setStatusFilter(statuses);
         filterDTO.setTrainerFilter(listTrainer);
@@ -274,7 +276,7 @@ public class ClassService implements IClassService {
         filterDTO.setBranches(listBranch);
         filterDTO.setBranches(listBranch);
         filterDTO.setSubjectFilter(subjectFilter);
-        // filterDTO.setClassCodeFilter(classFilter);
+        filterDTO.setSubjectFilterAdd(subjectFilterAdd);
 
         return ResponseEntity.ok(filterDTO);
     }

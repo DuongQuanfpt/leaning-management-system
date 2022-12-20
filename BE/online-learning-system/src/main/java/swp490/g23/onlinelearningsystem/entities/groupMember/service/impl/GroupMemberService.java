@@ -52,12 +52,6 @@ public class GroupMemberService implements IGroupMemberService {
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException("group doesnt exist"));
 
-        // if (milestoneRepository.findById(milestoneId).get().getStatus() !=
-        // MilestoneStatusEnum.Open) {
-        // throw new CustomException("Cant apply changes , Milestone of this group is in
-        // progress or have been close");
-        // }
-
         List<Milestone> milestoneOfGroup = milestoneRepository.milestoneOfGroup(groupId);
         for (Milestone milestone : milestoneOfGroup) {
             if (!milestoneService.isMilestoneOpen(milestone)) {
@@ -76,10 +70,16 @@ public class GroupMemberService implements IGroupMemberService {
         }
         memberRepositories.delete(member);
 
-        if (member.getIsLeader() == true && group.getGroupMembers().size() >= 1) {
-            GroupMember newLeader = group.getGroupMembers().get(0);
-            newLeader.setIsLeader(true);
-            memberRepositories.save(newLeader);
+        if (member.getIsLeader() == true && !group.getGroupMembers().isEmpty()) {
+            GroupMember newLeader = new GroupMember();
+            for (int i = 0; i < group.getGroupMembers().size(); i++) {
+                if (!member.equals(group.getGroupMembers().get(i))) {
+                    newLeader = group.getGroupMembers().get(i);
+                    newLeader.setIsLeader(true);
+                    memberRepositories.save(newLeader);
+                    break;
+                }
+            }
         }
 
         List<Submit> submits = submitRepository.getFromGroupAndUserName(groupId, userName);
@@ -128,12 +128,17 @@ public class GroupMemberService implements IGroupMemberService {
             if (oldMember.getMember().equals(classUser.getUser())) {
                 memberRepositories.removeMemberByGroup(oldMember.getMember(), oldMember.getGroup());
 
-                if (oldMember.getIsLeader() && oldGroup.getGroupMembers().size() >= 1) {
-                    GroupMember newLeader = oldGroup.getGroupMembers().get(0);
-                    newLeader.setIsLeader(true);
-                    memberRepositories.save(newLeader);
+                if (oldMember.getIsLeader() && !oldGroup.getGroupMembers().isEmpty()) {
+                    GroupMember newLeader = new GroupMember();
+                    for (int i = 0; i < oldGroup.getGroupMembers().size(); i++) {
+                        if (!oldMember.equals(oldGroup.getGroupMembers().get(i))) {
+                            newLeader = oldGroup.getGroupMembers().get(i);
+                            newLeader.setIsLeader(true);
+                            memberRepositories.save(newLeader);
+                            break;
+                        }
+                    }
                 }
-
                 break;
             }
         }

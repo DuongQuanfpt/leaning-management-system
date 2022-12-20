@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
@@ -15,7 +16,7 @@ import {
   CDropdownMenu,
   CDropdownItem,
 } from '@coreui/react'
-import { Breadcrumb, Radio, Modal } from 'antd'
+import { Breadcrumb, Radio, Modal, Typography, Skeleton } from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 
 import classListApi from '~/api/classListApi'
@@ -25,6 +26,7 @@ import ErrorMsg from '~/components/Common/ErrorMsg'
 const ClassDetail = () => {
   const { id } = useParams()
   const { roles } = useSelector((state) => state.profile)
+  const navigateTo = useNavigate()
 
   const [defaultClass, setDefaultClass] = useState({})
   const [list, setList] = useState({
@@ -53,6 +55,7 @@ const ClassDetail = () => {
     isTrainer: false,
   })
   const [isEditMode, setIsEditMode] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     loadData()
@@ -71,8 +74,13 @@ const ClassDetail = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+  useEffect(() => {
+    document.title = 'LMS - Class Detail'
+    window.scrollTo(0, 0)
+  }, [])
 
   const loadData = async () => {
+    setLoading(true)
     classListApi
       .getFilter()
       .then((response) => {
@@ -86,6 +94,7 @@ const ClassDetail = () => {
         }))
       })
       .catch((error) => setObject({ ...object, error: 'Something went wrong when fetch filter, please try again' }))
+      .finally(() => setLoading(false))
 
     classListApi
       .getDetail(id)
@@ -199,148 +208,167 @@ const ClassDetail = () => {
                   <div className="col-lg-12 m-b30">
                     <div className="widget-box">
                       <div className="widget-inner">
-                        <div className="row">
-                          <div className="form-group col-6">
-                            <label className="col-form-label">Class</label>
-                            <div>
-                              <input
-                                className="form-control"
-                                type="text"
-                                value={object.classes}
-                                onChange={(e) => setObject((prev) => ({ ...prev, classes: e.target.value }))}
-                                disabled={role.isManager ? !isEditMode : true}
+                        <Skeleton loading={loading}>
+                          <div className="row">
+                            <div className="form-group col-6">
+                              <label className="col-form-label">
+                                Class <Typography.Text type="danger">*</Typography.Text>
+                              </label>
+                              <div>
+                                <input
+                                  className="form-control"
+                                  type="text"
+                                  value={object.classes}
+                                  onChange={(e) => setObject((prev) => ({ ...prev, classes: e.target.value }))}
+                                  disabled={role.isManager ? false : true}
+                                />
+                              </div>
+                            </div>
+                            <div className="form-group col-6">
+                              <label className="col-form-label">
+                                Subject <Typography.Text type="danger">*</Typography.Text>
+                              </label>
+                              <div>
+                                <input className="form-control" type="text" value={object.subject} disabled={true} />
+                              </div>
+                            </div>
+                            <div className="form-group col-6">
+                              <label className="col-form-label">
+                                Term <Typography.Text type="danger">*</Typography.Text>
+                              </label>
+                              <CDropdown className="w-100">
+                                <CDropdownToggle color="warning" disabled={role.isManager ? false : true}>
+                                  {object.term.title}
+                                </CDropdownToggle>
+                                <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
+                                  {list.term.map((item) => (
+                                    <CDropdownItem
+                                      onClick={() =>
+                                        setObject((prev) => ({ ...prev, term: { ...prev.term, title: item.title } }))
+                                      }
+                                    >
+                                      {item.title}
+                                    </CDropdownItem>
+                                  ))}
+                                </CDropdownMenu>
+                              </CDropdown>
+                            </div>
+                            <div className="form-group col-6">
+                              <label className="col-form-label">
+                                Branch <Typography.Text type="danger">*</Typography.Text>
+                              </label>
+                              <CDropdown className="w-100">
+                                <CDropdownToggle color="warning" disabled={role.isManager ? false : true}>
+                                  {object.branch.title}
+                                </CDropdownToggle>
+                                <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
+                                  {list.branch.map((item) => (
+                                    <CDropdownItem
+                                      onClick={() =>
+                                        setObject((prev) => ({
+                                          ...prev,
+                                          branch: { ...prev.branch, title: item.title },
+                                        }))
+                                      }
+                                    >
+                                      {item.title}
+                                    </CDropdownItem>
+                                  ))}
+                                </CDropdownMenu>
+                              </CDropdown>
+                            </div>
+                            <div className="form-group col-6">
+                              <label className="col-form-label">
+                                Supporter <Typography.Text type="danger">*</Typography.Text>
+                              </label>
+                              <CDropdown className="w-100">
+                                <CDropdownToggle color="warning" disabled={role.isManager ? false : true}>
+                                  {object.supporter}
+                                </CDropdownToggle>
+                                <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
+                                  {list.supporter.map((item) => (
+                                    <CDropdownItem onClick={() => setObject((prev) => ({ ...prev, supporter: item }))}>
+                                      {item}
+                                    </CDropdownItem>
+                                  ))}
+                                </CDropdownMenu>
+                              </CDropdown>
+                            </div>
+                            <div className="form-group col-6">
+                              <label className="col-form-label">
+                                Trainer <Typography.Text type="danger">*</Typography.Text>
+                              </label>
+                              <CDropdown className="w-100">
+                                <CDropdownToggle
+                                  color="warning"
+                                  disabled={role.isSupporter || role.isManager ? false : true}
+                                >
+                                  {object.trainer}
+                                </CDropdownToggle>
+                                <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
+                                  {list.trainer.map((item) => (
+                                    <CDropdownItem onClick={() => setObject((prev) => ({ ...prev, trainer: item }))}>
+                                      {item}
+                                    </CDropdownItem>
+                                  ))}
+                                </CDropdownMenu>
+                              </CDropdown>
+                            </div>
+                            <div className="form-group col-6">
+                              <label className="col-form-label">
+                                Status <Typography.Text type="danger">*</Typography.Text>
+                              </label>
+                              <div>
+                                <Radio.Group
+                                  value={object.status}
+                                  onChange={(e) => {
+                                    setObject((prev) => ({ ...prev, status: e.target.value }))
+                                  }}
+                                  disabled={role.isSupporter || role.isManager ? false : true}
+                                >
+                                  <Radio value={1}>Active</Radio>
+                                  <Radio value={0}>Inactive</Radio>
+                                  <Radio value={-1}>Closed</Radio>
+                                </Radio.Group>
+                              </div>
+                            </div>
+                            <div className="form-group col-12">
+                              <label className="col-form-label">Description</label>
+                              <div>
+                                <textarea
+                                  className="form-control"
+                                  type="text"
+                                  value={object.description}
+                                  onChange={(e) => setObject((prev) => ({ ...prev, description: e.target.value }))}
+                                  disabled={role.isSupporter || role.isManager ? false : true}
+                                />
+                              </div>
+                            </div>
+                            <>
+                              <ErrorMsg
+                                errorMsg={object.error}
+                                isError={
+                                  object.error === 'You have successfully changed your class detail' ? false : true
+                                }
                               />
-                            </div>
-                          </div>
-                          <div className="form-group col-6">
-                            <label className="col-form-label">Subject</label>
-                            <div>
-                              <input className="form-control" type="text" value={object.subject} disabled={true} />
-                            </div>
-                          </div>
-                          <div className="form-group col-3">
-                            <label className="col-form-label">Term</label>
-                            <CDropdown className="w-100">
-                              <CDropdownToggle color="warning" disabled={role.isManager ? !isEditMode : true}>
-                                {object.term.title}
-                              </CDropdownToggle>
-                              <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
-                                {list.term.map((item) => (
-                                  <CDropdownItem
-                                    onClick={() =>
-                                      setObject((prev) => ({ ...prev, term: { ...prev.term, title: item.title } }))
-                                    }
-                                  >
-                                    {item.title}
-                                  </CDropdownItem>
-                                ))}
-                              </CDropdownMenu>
-                            </CDropdown>
-                          </div>
-                          <div className="form-group col-3">
-                            <label className="col-form-label">Branch</label>
-                            <CDropdown className="w-100">
-                              <CDropdownToggle color="warning" disabled={role.isManager ? !isEditMode : true}>
-                                {object.branch.title}
-                              </CDropdownToggle>
-                              <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
-                                {list.branch.map((item) => (
-                                  <CDropdownItem
-                                    onClick={() =>
-                                      setObject((prev) => ({ ...prev, branch: { ...prev.branch, title: item.title } }))
-                                    }
-                                  >
-                                    {item.title}
-                                  </CDropdownItem>
-                                ))}
-                              </CDropdownMenu>
-                            </CDropdown>
-                          </div>
-                          <div className="form-group col-3">
-                            <label className="col-form-label">Supporter</label>
-                            <CDropdown className="w-100">
-                              <CDropdownToggle color="warning" disabled={role.isManager ? !isEditMode : true}>
-                                {object.supporter}
-                              </CDropdownToggle>
-                              <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
-                                {list.supporter.map((item) => (
-                                  <CDropdownItem onClick={() => setObject((prev) => ({ ...prev, supporter: item }))}>
-                                    {item}
-                                  </CDropdownItem>
-                                ))}
-                              </CDropdownMenu>
-                            </CDropdown>
-                          </div>
-                          <div className="form-group col-3">
-                            <label className="col-form-label">Trainer</label>
-                            <CDropdown className="w-100">
-                              <CDropdownToggle
-                                color="warning"
-                                disabled={role.isSupporter || role.isManager ? !isEditMode : true}
-                              >
-                                {object.trainer}
-                              </CDropdownToggle>
-                              <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
-                                {list.trainer.map((item) => (
-                                  <CDropdownItem onClick={() => setObject((prev) => ({ ...prev, trainer: item }))}>
-                                    {item}
-                                  </CDropdownItem>
-                                ))}
-                              </CDropdownMenu>
-                            </CDropdown>
-                          </div>
-
-                          <div className="form-group col-6">
-                            <label className="col-form-label">Status</label>
-                            <div>
-                              <Radio.Group
-                                value={object.status}
-                                onChange={(e) => {
-                                  setObject((prev) => ({ ...prev, status: e.target.value }))
-                                }}
-                                disabled={role.isSupporter || role.isManager ? !isEditMode : true}
-                              >
-                                <Radio value={1}>Active</Radio>
-                                <Radio value={0}>Inactive</Radio>
-                                <Radio value={-1}>Closed</Radio>
-                              </Radio.Group>
-                            </div>
-                          </div>
-                          <div className="form-group col-12">
-                            <label className="col-form-label">Description</label>
-                            <div>
-                              <textarea
-                                className="form-control"
-                                type="text"
-                                value={object.description}
-                                onChange={(e) => setObject((prev) => ({ ...prev, description: e.target.value }))}
-                                disabled={role.isSupporter || role.isManager ? !isEditMode : true}
-                              />
-                            </div>
-                          </div>
-                          <ErrorMsg
-                            errorMsg={object.error}
-                            isError={object.error === 'You have successfully changed your class detail' ? false : true}
-                          />
-                          {role.isTrainer ? null : (
-                            <div className="d-flex">
-                              {isEditMode ? (
-                                <>
+                              {role.isTrainer ? null : (
+                                <div className="d-flex">
                                   <CButton size="md" className="mr-5" color="warning" onClick={modalConfirm}>
                                     Save
                                   </CButton>
-                                  <CButton size="md" className="mr-5" color="warning" onClick={handleCancel}>
+                                  <CButton
+                                    size="md"
+                                    className="mr-5"
+                                    color="warning"
+                                    onClick={() => navigateTo('/class-list')}
+                                  >
                                     Cancel
                                   </CButton>
-                                </>
-                              ) : (
-                                <CButton size="md" className="mr-5" color="warning" onClick={handleEdit}>
-                                  Edit
-                                </CButton>
+                                </div>
                               )}
-                            </div>
-                          )}
-                        </div>
+                            </>
+                          </div>
+                        </Skeleton>
                       </div>
                     </div>
                   </div>

@@ -149,9 +149,9 @@ const UploadFile = () => {
     const result = []
 
     for (const [key, value] of Object.entries(grouped)) {
-      if (key === '') {
+      if (key === 'undefined') {
         result.unshift({
-          groupCode: key,
+          groupCode: 'Waiting List',
           topicName: `Topic Waiting List`,
           description: `Description Waiting List`,
           fullData: value,
@@ -174,26 +174,27 @@ const UploadFile = () => {
       }
     }
 
-    result[0].fullData = result[0].fullData.map((item) => ({ ...item, 'Is Leader': false }))
-
     setDisplay(result)
     setResult(result)
     setIsClickedNextStep(true)
-    console.log(result)
   }
 
   const handleFinish = async () => {
-    function removeObjectWithId(arr, value) {
-      // eslint-disable-next-line no-self-compare
-      const objWithIdIndex = arr.findIndex((obj) => obj.groupCode === value)
-      arr.splice(objWithIdIndex, 1)
-      return arr
+    let paramsGroup = [...result]
+    paramsGroup = paramsGroup.map((item) => ({
+      ...item,
+      members: item.fullData.map((item2) => ({
+        memberName: item2.Username,
+        isLeader: item2['Is Leader'] === true ? true : false,
+      })),
+    }))
+    if (paramsGroup[0].groupCode === 'Waiting List') {
+      paramsGroup.shift()
     }
-
     const params = {
-      listGroup: removeObjectWithId(result, ''),
+      listGroup: paramsGroup,
     }
-
+    console.log(params)
     await groupApi
       .overrideGroup(id, params)
       .then((response) => {
@@ -233,8 +234,7 @@ const UploadFile = () => {
                 className="p-0 m-0"
                 type="link"
                 onClick={async () => {
-                  await handleDownloadFileStudent()
-                  toastMessage('success', 'Download File of Student List Successfully!')
+                  handleDownloadFileStudent()
                 }}
               >
                 File of Student List

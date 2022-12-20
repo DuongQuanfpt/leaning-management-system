@@ -84,6 +84,11 @@ const ClassEvaluation = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentClass, search])
 
+  useEffect(() => {
+    document.title = 'LMS - Class Evaluation'
+    window.scrollTo(0, 0)
+  }, [])
+
   const loadData = async () => {
     const params = {
       classCode: currentClass,
@@ -198,7 +203,7 @@ const ClassEvaluation = () => {
       editable: false,
       width: 70,
       fixed: 'left',
-      render: (_, { finalEval }) => (finalEval === null ? null : finalEval.toFixed(2)),
+      render: (_, { finalEval }) => (finalEval === null ? null : Number(finalEval?.toFixed(2))),
     },
     {
       title: 'OG',
@@ -206,7 +211,7 @@ const ClassEvaluation = () => {
       editable: false,
       width: 70,
       fixed: 'left',
-      render: (_, { ongoing }) => (ongoing === null ? null : ongoing.toFixed(2)),
+      render: (_, { ongoing }) => (ongoing === null ? null : Number(ongoing?.toFixed(2))),
     },
     {
       title: 'GPA',
@@ -214,7 +219,7 @@ const ClassEvaluation = () => {
       editable: false,
       width: 70,
       fixed: 'left',
-      render: (_, { gpa }) => (gpa === null ? null : gpa.toFixed(2)),
+      render: (_, { gpa }) => (gpa === null ? null : Number(gpa?.toFixed(2))),
     },
     { title: 'Full Name', dataIndex: 'fullName', editable: false, width: 120, fixed: 'left' },
     { title: 'Student', dataIndex: 'userName', editable: false, width: 120, fixed: 'left' },

@@ -10,6 +10,11 @@ const authApi = {
     const url = `/auth/login-google`
     return axiosClient.post(url, params)
   },
+
+  resendVerifyMail: (params) => {
+    const url = `/auth/resend-verify`
+    return axiosClient.put(url, params)
+  },
 }
 
 export default authApi

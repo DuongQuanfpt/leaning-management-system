@@ -505,7 +505,7 @@ const WorkEvaluations = () => {
               </Form>
             </Modal>
           </div>
-          <Button type="primary" className="mt-3" onClick={() => navigateTo('/submit-list')}>
+          <Button type="primary" className="mt-3" onClick={() => navigateTo(-1)}>
             Back
           </Button>
         </div>

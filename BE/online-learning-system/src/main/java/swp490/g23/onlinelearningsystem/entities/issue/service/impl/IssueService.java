@@ -51,6 +51,7 @@ import swp490.g23.onlinelearningsystem.entities.submit_work.domain.SubmitWork;
 import swp490.g23.onlinelearningsystem.entities.submit_work.repositories.SubmitWorkRepository;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
+import swp490.g23.onlinelearningsystem.enums.MilestoneStatusEnum;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
 
 @Service
@@ -90,6 +91,7 @@ public class IssueService implements IIssueService {
     public ResponseEntity<IssueListDTO> getIssueList(int page, int limit, String keyword, String classCode,
             boolean isIssue, Long filterMilestoneId, IssueFilterRequestDTO filterRequestDTO) {
         Classes classes = classRepositories.findClassByCode(classCode);
+       
         if (classes == null) {
             throw new CustomException("Class doesnt exist");
         }
@@ -120,6 +122,16 @@ public class IssueService implements IIssueService {
         dto.setTotalItem(totalItem);
         dto.setTotalPage(totalPage);
         dto.setIssueList(issueResponseDTOs);
+
+        if(milestoneRepository.findById(filterMilestoneId).isPresent()){
+            Milestone milestone = milestoneRepository.findById(filterMilestoneId).get();
+            if(milestone.getStatus() != MilestoneStatusEnum.In_Progress) {
+                dto.setEditable(false);
+            } else {
+                dto.setEditable(true);
+            }
+        }
+      
         return ResponseEntity.ok(dto);
     }
 
@@ -247,7 +259,7 @@ public class IssueService implements IIssueService {
             if (issue.getRequirement() != null) {
                 dto.setRequirement(issue.getRequirement().getTitle());
                 requirement = issue.getRequirement();
-            } 
+            }
         } else {
             requirement = issue;
         }
@@ -509,7 +521,9 @@ public class IssueService implements IIssueService {
                     for (Submit submit : groupMember.getGroup().getSubmits()) {
                         if (!milestoneOfClass.contains(submit.getMilestone())
                                 && submit.getMilestone().getClasses().getCode().equals(classCode)) {
-                            milestoneOfClass.add(submit.getMilestone());
+                            if(submit.getMilestone().getStatus() == MilestoneStatusEnum.In_Progress){
+                                milestoneOfClass.add(submit.getMilestone());
+                            }
                         }
                     }
                 }
@@ -990,6 +1004,29 @@ public class IssueService implements IIssueService {
         issueRepository.saveAll(issuesNew);
         workRepository.deleteAll(submitWorksNew);
         return ResponseEntity.ok(issuesNew.size() + " issue updated");
+    }
+
+    @Override
+    public ResponseEntity<String> removeIssue(Long issueId, User user) {
+        Issue issue = issueRepository.findById(issueId)
+        .orElseThrow(() -> new CustomException("Issue doesnt exist"));
+
+        if(!issue.getSubmitWorks().isEmpty()){
+            throw new CustomException("Requirement already submitted , cant delete");
+        }
+
+        if(!issue.getIssueOfRequirement().isEmpty()){
+            List<Issue> updatedIssue = new ArrayList<>();
+            for (Issue issueOfRequirement : issue.getIssueOfRequirement()) {
+                issueOfRequirement.setRequirement(null);
+                updatedIssue.add(issueOfRequirement);
+            }
+
+            issueRepository.saveAll(updatedIssue);
+        }
+
+        issueRepository.delete(issue);
+        return ResponseEntity.ok("Issue removed");
     }
 
 }

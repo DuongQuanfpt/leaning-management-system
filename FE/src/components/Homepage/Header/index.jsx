@@ -40,7 +40,7 @@ const Header = ({ isPost = false }) => {
 
   const handleLogout = () => {
     localStorage.removeItem('persist:LMS')
-    navigateTo('/login')
+    window.location.replace('/login')
   }
 
   return (
@@ -136,7 +136,7 @@ const Header = ({ isPost = false }) => {
                             <CIcon icon={cilLockLocked} className="me-2" />
                             <Link to="/change-password">Change Password</Link>
                           </CDropdownItem>
-                          <CDropdownItem onClick={() => handleLogout()}>
+                          <CDropdownItem onClick={handleLogout} className="text-danger">
                             <CIcon icon={cilAccountLogout} className="me-2" />
                             Logout
                           </CDropdownItem>

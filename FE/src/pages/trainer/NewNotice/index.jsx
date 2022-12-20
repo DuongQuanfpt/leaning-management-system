@@ -38,6 +38,11 @@ const NewNotice = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  useEffect(() => {
+    document.title = 'LMS - New Notice'
+    window.scrollTo(0, 0)
+  }, [])
+
   const loadData = async () => {
     const params = {
       isNotice: true,
@@ -181,9 +186,9 @@ const NewNotice = () => {
             <div className="row">
               <div className="col-lg-12 mb-3">
                 <Typography.Text strong>Title</Typography.Text>
-                <Input
+                <Input.TextArea
                   value={postDetail.postTitle}
-                  placeholder="Title of Post"
+                  placeholder="Title of Notice"
                   onChange={(e) => setPostDetail((prev) => ({ ...prev, postTitle: e.target.value }))}
                 />
               </div>
@@ -193,7 +198,7 @@ const NewNotice = () => {
                   showCount
                   maxLength={300}
                   value={postDetail.excerpt}
-                  placeholder="Excerpt of Post"
+                  placeholder="Excerpt of Notice"
                   onChange={(e) => setPostDetail((prev) => ({ ...prev, excerpt: e.target.value }))}
                 />
               </div>

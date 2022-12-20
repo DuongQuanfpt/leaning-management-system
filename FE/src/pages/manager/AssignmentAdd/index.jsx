@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 import { Link } from 'react-router-dom'
-import { Breadcrumb, Modal, Radio } from 'antd'
+import { Breadcrumb, Modal, Radio, Skeleton, Typography } from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 
 import { CButton, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
@@ -22,20 +22,26 @@ const AssignmentAdd = () => {
     title: '',
     assBody: '',
     eval_weight: 0,
-    isOnGoing: 0,
+    isOnGoing: 1,
     isTeamWork: 0,
     isFinal: 0,
     status: 0,
   })
 
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     loadData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+  useEffect(() => {
+    document.title = 'LMS - Assignment Add'
+    window.scrollTo(0, 0)
+  }, [])
 
   const loadData = async () => {
+    setLoading(true)
     await assignmentApi
       .getFilter()
       .then((response) => {
@@ -45,6 +51,7 @@ const AssignmentAdd = () => {
       .catch((error) => {
         setError('Something went wrong, please try again')
       })
+      .finally(() => setLoading(false))
   }
 
   const handleSave = async () => {
@@ -78,7 +85,6 @@ const AssignmentAdd = () => {
       title: detail.title.trim(),
       assBody: detail.assBody.trim(),
       eval_weight: detail.eval_weight + '%',
-      isOnGoing: detail.isOnGoing,
       isTeamWork: detail.isTeamWork,
       isFinal: detail.isFinal,
       status: detail.status,
@@ -115,7 +121,7 @@ const AssignmentAdd = () => {
       <div className="wrapper d-flex flex-column min-vh-100 bg-light">
         <AdminHeader />
         <div className="body flex-grow-1 px-3">
-          <div className="col-lg-12 m-b30">
+          <div className="col-lg-12">
             <div className="row">
               <div className="col-lg-12 m-b30">
                 <div className="row">
@@ -135,117 +141,121 @@ const AssignmentAdd = () => {
             </div>
           </div>
           <div className="col-12 d-flex ">
-            <div className="col-lg-12 m-b30">
+            <div className="col-lg-12">
               <div className="widget-box">
                 <div className="widget-inner">
-                  <div className="row">
-                    <div className="form-group col-4">
-                      <label className="col-form-label">Subject</label>
-                      <CDropdown className="w-100">
-                        <CDropdownToggle color="warning">{detail.subjectName}</CDropdownToggle>
-                        <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
-                          {filter.subjectFilter.map((item) => (
-                            <CDropdownItem onClick={() => setDetail((prev) => ({ ...prev, subjectName: item }))}>
-                              {item}
-                            </CDropdownItem>
-                          ))}
-                        </CDropdownMenu>
-                      </CDropdown>
-                    </div>
-                    <div className="form-group col-4">
-                      <label className="col-form-label">Title</label>
-                      <div>
-                        <input
-                          className="form-control"
-                          type="text"
-                          value={detail.title}
-                          onChange={(e) => setDetail((prev) => ({ ...prev, title: e.target.value }))}
-                        />
+                  <Skeleton loading={loading}>
+                    <div className="row">
+                      <div className="form-group col-6">
+                        <label className="col-form-label">
+                          Subject <Typography.Text type="danger">*</Typography.Text>
+                        </label>
+                        <CDropdown className="w-100">
+                          <CDropdownToggle color="warning">{detail.subjectName}</CDropdownToggle>
+                          <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
+                            {filter.subjectFilter.map((item) => (
+                              <CDropdownItem onClick={() => setDetail((prev) => ({ ...prev, subjectName: item }))}>
+                                {item}
+                              </CDropdownItem>
+                            ))}
+                          </CDropdownMenu>
+                        </CDropdown>
+                      </div>
+                      <div className="form-group col-6">
+                        <label className="col-form-label">
+                          Evaluation Weight (%) <Typography.Text type="danger">*</Typography.Text>
+                        </label>
+                        <div>
+                          <input
+                            className="form-control"
+                            type="number"
+                            value={detail.eval_weight}
+                            onChange={(e) => setDetail((prev) => ({ ...prev, eval_weight: e.target.value }))}
+                          />
+                        </div>
+                      </div>
+                      <div className="form-group col-12">
+                        <label className="col-form-label">
+                          Assignment Title <Typography.Text type="danger">*</Typography.Text>
+                        </label>
+                        <div>
+                          <input
+                            className="form-control"
+                            type="text"
+                            value={detail.title}
+                            onChange={(e) => setDetail((prev) => ({ ...prev, title: e.target.value }))}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="form-group col-4">
+                        <label className="col-form-label">
+                          Status <Typography.Text type="danger">*</Typography.Text>
+                        </label>
+                        <div>
+                          <Radio.Group
+                            value={detail.status}
+                            onChange={(e) => setDetail((prev) => ({ ...prev, status: e.target.value }))}
+                          >
+                            <Radio value={1}>Active</Radio>
+                            <Radio value={0}>Inactive</Radio>
+                          </Radio.Group>
+                        </div>
+                      </div>
+                      <div className="form-group col-4">
+                        <label className="col-form-label">
+                          Teamwork Assignment? <Typography.Text type="danger">*</Typography.Text>
+                        </label>
+                        <div>
+                          <Radio.Group
+                            value={detail.isTeamWork}
+                            onChange={(e) => setDetail((prev) => ({ ...prev, isTeamWork: e.target.value }))}
+                          >
+                            <Radio value={1}>Yes</Radio>
+                            <Radio value={0}>No</Radio>
+                          </Radio.Group>
+                        </div>
+                      </div>
+                      <div className="form-group col-4">
+                        <label className="col-form-label">
+                          Final Assignment? <Typography.Text type="danger">*</Typography.Text>
+                        </label>
+                        <div>
+                          <Radio.Group
+                            value={detail.isFinal}
+                            onChange={(e) => setDetail((prev) => ({ ...prev, isFinal: e.target.value }))}
+                          >
+                            <Radio value={1}>Yes</Radio>
+                            <Radio value={0}>No</Radio>
+                          </Radio.Group>
+                        </div>
+                      </div>
+                      <div className="form-group col-12">
+                        <label className="col-form-label">
+                          Body <Typography.Text type="danger">*</Typography.Text>
+                        </label>
+                        <div>
+                          <textarea
+                            name="message"
+                            rows="4"
+                            className="form-control"
+                            required
+                            value={detail.assBody}
+                            onChange={(e) => setDetail((prev) => ({ ...prev, assBody: e.target.value }))}
+                          ></textarea>
+                        </div>
+                      </div>
+                      <ErrorMsg
+                        errorMsg={error}
+                        isError={error === 'You have successfully add new your assignment detail' ? false : true}
+                      />
+                      <div className="d-flex">
+                        <CButton size="md" className="mr-3" color="warning" onClick={modalConfirm}>
+                          Add
+                        </CButton>
                       </div>
                     </div>
-                    <div className="form-group col-4">
-                      <label className="col-form-label">Evaluation Weight (%)</label>
-                      <div>
-                        <input
-                          className="form-control"
-                          type="number"
-                          value={detail.eval_weight}
-                          onChange={(e) => setDetail((prev) => ({ ...prev, eval_weight: e.target.value }))}
-                        />
-                      </div>
-                    </div>
-                    <div className="form-group col-3">
-                      <label className="col-form-label">Status</label>
-                      <div>
-                        <Radio.Group
-                          value={detail.status}
-                          onChange={(e) => setDetail((prev) => ({ ...prev, status: e.target.value }))}
-                        >
-                          <Radio value={1}>Active</Radio>
-                          <Radio value={0}>Inactive</Radio>
-                        </Radio.Group>
-                      </div>
-                    </div>
-                    <div className="form-group col-3">
-                      <label className="col-form-label">Is Ongoing</label>
-                      <div>
-                        <Radio.Group
-                          disabled
-                          value={detail.isOnGoing}
-                          onChange={(e) => setDetail((prev) => ({ ...prev, isOnGoing: e.target.value }))}
-                        >
-                          <Radio value={1}>Yes</Radio>
-                          <Radio value={0}>No</Radio>
-                        </Radio.Group>
-                      </div>
-                    </div>
-                    <div className="form-group col-3">
-                      <label className="col-form-label">Is Teamwork</label>
-                      <div>
-                        <Radio.Group
-                          value={detail.isTeamWork}
-                          onChange={(e) => setDetail((prev) => ({ ...prev, isTeamWork: e.target.value }))}
-                        >
-                          <Radio value={1}>Yes</Radio>
-                          <Radio value={0}>No</Radio>
-                        </Radio.Group>
-                      </div>
-                    </div>
-                    <div className="form-group col-3">
-                      <label className="col-form-label">Is Final</label>
-                      <div>
-                        <Radio.Group
-                          value={detail.isFinal}
-                          onChange={(e) => setDetail((prev) => ({ ...prev, isFinal: e.target.value }))}
-                        >
-                          <Radio value={1}>Yes</Radio>
-                          <Radio value={0}>No</Radio>
-                        </Radio.Group>
-                      </div>
-                    </div>
-                    <div className="form-group col-12">
-                      <label className="col-form-label">Body</label>
-                      <div>
-                        <textarea
-                          name="message"
-                          rows="4"
-                          className="form-control"
-                          required
-                          value={detail.assBody}
-                          onChange={(e) => setDetail((prev) => ({ ...prev, assBody: e.target.value }))}
-                        ></textarea>
-                      </div>
-                    </div>
-                    <ErrorMsg
-                      errorMsg={error}
-                      isError={error === 'You have successfully add new your assignment detail' ? false : true}
-                    />
-                    <div className="d-flex">
-                      <CButton size="md" className="mr-3" color="warning" onClick={modalConfirm}>
-                        Add
-                      </CButton>
-                    </div>
-                  </div>
+                  </Skeleton>
                 </div>
               </div>
             </div>

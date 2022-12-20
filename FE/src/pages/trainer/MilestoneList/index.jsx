@@ -7,6 +7,7 @@ import {
   Button,
   Card,
   Col,
+  Input,
   message,
   Modal,
   Pagination,
@@ -28,13 +29,14 @@ import {
 
 import { CButton, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import { cilPlus, cilSearch, cilSync } from '@coreui/icons'
+import { cilPlus } from '@coreui/icons'
 
 import milestoneApi from '~/api/milestoneApi'
 
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
+import moment from 'moment/moment'
 
 const MilestoneList = () => {
   const ITEM_PER_PAGE = 10
@@ -48,11 +50,11 @@ const MilestoneList = () => {
 
   const [filter, setFilter] = useState({
     assignment: {
-      title: 'Select Assignment',
+      title: 'All Assignments',
       value: '',
     },
     status: {
-      name: 'Select Status',
+      name: 'All Statuses',
       value: '',
     },
   })
@@ -78,6 +80,11 @@ const MilestoneList = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, currentClass])
 
+  useEffect(() => {
+    document.title = 'LMS - Milestone List'
+    window.scrollTo(0, 0)
+  }, [])
+
   const loadData = async (page, filter, q = '') => {
     setLoading(true)
     const params = {
@@ -92,7 +99,7 @@ const MilestoneList = () => {
     if (filter.assignment.title !== 'Select Assignment') {
       params.filterAssignment = filter.assignment.assId
     }
-    if (filter.status.name !== 'Select Status') {
+    if (filter.status.name !== 'All Statuses') {
       params.filterStatus = filter.status.value
     }
 
@@ -119,21 +126,7 @@ const MilestoneList = () => {
     setCurrentPage(pageNumber)
     loadData(pageNumber, filter, search)
   }
-  const handleReload = () => {
-    setSearch('')
-    setFilter({
-      assignment: {
-        title: 'Select Assignment',
-        value: '',
-      },
-      class: 'Select Class',
-      status: {
-        name: 'Select Status',
-        value: '',
-      },
-    })
-    setCurrentPage(1)
-  }
+
   const handleAdd = () => {
     navigateTo('/new-milestone')
   }
@@ -318,42 +311,45 @@ const MilestoneList = () => {
     {
       title: 'Title',
       dataIndex: 'title',
-      sorter: (a, b) => a.title.length - b.title.length,
-      width: '15%',
+      sorter: (a, b) => a.title.toString().localeCompare(b.title.toString(), 'en', { sensitivity: 'base' }),
+      width: '20%',
     },
     {
       title: 'Assignment',
       dataIndex: 'assignment',
-      sorter: (a, b) => a.assignment.title.length - b.assignment.title.length,
-      width: '15%',
+      sorter: (a, b) =>
+        a.assignment.title.toString().localeCompare(b.assignment.title.toString(), 'en', { sensitivity: 'base' }),
+      width: '20%',
       render: (_, { assignment }) => assignment.title,
     },
     {
-      title: 'From Date',
+      title: 'Date From',
       dataIndex: 'fromDate',
-      width: '12.5%',
+      sorter: (a, b) => a.fromDate.toString().localeCompare(b.fromDate.toString(), 'en', { sensitivity: 'base' }),
+      width: '9%',
+      render: (_, { fromDate }) => moment(fromDate).format('DD-MM-YYYY'),
     },
     {
-      title: 'To Date',
+      title: 'Date To',
       dataIndex: 'toDate',
-      width: '12.5%',
+      sorter: (a, b) => a.toDate.toString().localeCompare(b.toDate.toString(), 'en', { sensitivity: 'base' }),
+      width: '9%',
+      render: (_, { toDate }) => moment(toDate).format('DD-MM-YYYY'),
     },
     {
-      title: 'Is Teamwork',
+      title: 'Teamwork?',
+      sorter: (a, b) =>
+        a.assignment.isTeamWork
+          .toString()
+          .localeCompare(b.assignment.isTeamWork.toString(), 'en', { sensitivity: 'base' }),
       render: (_, { assignment }) => (assignment.isTeamWork === 1 ? 'Yes' : 'No'),
-      width: '10%',
-    },
-    {
-      title: 'Description',
-      dataIndex: 'description',
-      sorter: (a, b) => a.description.length - b.description.length,
-      width: '25%',
+      width: '9%',
     },
     {
       title: 'Status',
       dataIndex: 'status',
       width: '5%',
-      sorter: (a, b) => a.status?.length - b.status?.length,
+      sorter: (a, b) => a.status.toString().localeCompare(b.status.toString(), 'en', { sensitivity: 'base' }),
       render: (_, { status }) => (
         <Tag color={status === 'Open' ? 'blue' : status === 'In_Progress' ? 'green' : 'grey'} key={status}>
           {status}
@@ -452,32 +448,27 @@ const MilestoneList = () => {
                     </Breadcrumb>
                   </div>
                   <div className="col-5 d-flex w-80">
-                    <input
-                      type="search"
-                      id="form1"
-                      className="form-control"
+                    <Input.Search
+                      size="large"
                       placeholder="Searching by Title or Description..."
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
+                      onSearch={handleSearch}
                     />
-                    <CButton color="primary" type="submit" className="text-light ml-10" onClick={handleSearch}>
-                      <CIcon icon={cilSearch} />
-                    </CButton>
                   </div>
                   <div className="col-5 d-flex justify-content-end">
                     <CDropdown className="ml-4">
                       <CDropdownToggle color="secondary">{filter.status.name}</CDropdownToggle>
                       <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
+                        <CDropdownItem onClick={() => handleFilterStatus({ name: 'All Statuses', value: '' })}>
+                          All Statuses
+                        </CDropdownItem>
+
                         {listFilter?.statusFilter?.map((status) => (
                           <CDropdownItem onClick={() => handleFilterStatus(status)}>{status.name}</CDropdownItem>
                         ))}
                       </CDropdownMenu>
                     </CDropdown>
-                    <Tooltip title="Reload" placement="top">
-                      <CButton color="success" type="submit" className="text-light ml-4" onClick={handleReload}>
-                        <CIcon icon={cilSync} />
-                      </CButton>
-                    </Tooltip>
                     <Tooltip title="Add New Milestones" placement="right">
                       <CButton color="danger" type="submit" className="text-light ml-4" onClick={handleAdd}>
                         <CIcon icon={cilPlus} />

@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
-import { Breadcrumb, Button, Modal, Pagination, Space, Table, Tag, Tooltip } from 'antd'
-import { CheckOutlined, CloseOutlined, ExclamationCircleOutlined, EyeOutlined } from '@ant-design/icons'
+import { Breadcrumb, Button, Input, Modal, Pagination, Space, Table, Tag, Tooltip } from 'antd'
+import { CheckOutlined, CloseOutlined, CopyOutlined, ExclamationCircleOutlined, EyeOutlined } from '@ant-design/icons'
 
 import { CButton, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import { cilPlus, cilSearch, cilSync } from '@coreui/icons'
+import { cilPlus } from '@coreui/icons'
 
 import classEvalCriteriaApi from '~/api/classEvalCriteriaApi'
 
@@ -33,11 +33,11 @@ const ClassEvalCriteriaList = () => {
   })
   const [filter, setFilter] = useState({
     milestone: {
-      milestoneTitle: 'Select Milestone',
+      milestoneTitle: 'All Milestones',
       value: '',
     },
     status: {
-      name: 'Select Status',
+      name: 'All Statuses',
       value: '',
     },
   })
@@ -73,15 +73,20 @@ const ClassEvalCriteriaList = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, currentClass])
 
+  useEffect(() => {
+    document.title = 'LMS - Class Eval Criteria List'
+    window.scrollTo(0, 0)
+  }, [])
+
   const loadData = async (page, filter, q = '') => {
     const params = { limit: ITEM_PER_PAGE, page: page, filterClass: currentClass }
     if (q !== '') {
       params.q = q.trim()
     }
-    if (filter.milestone.title !== 'Select Milestone') {
+    if (filter.milestone.title !== 'All Milestones' && filter.milestone.milestoneTitle !== 'All Milestones') {
       params.filterMilestone = filter.milestone.milestoneId
     }
-    if (filter.status.name !== 'Select Status') {
+    if (filter.status.name !== 'All Statuses') {
       params.filterStatus = filter.status.value
     }
     setLoading(true)
@@ -117,20 +122,6 @@ const ClassEvalCriteriaList = () => {
     loadData(pageNumber, filter)
   }
 
-  const handleReload = () => {
-    setSearch('')
-    setFilter({
-      milestone: {
-        milestoneTitle: 'Select Milestone',
-        value: '',
-      },
-      status: {
-        name: 'Select Status',
-        value: '',
-      },
-    })
-  }
-
   const handleAdd = () => {
     navigateTo(`/class-criteria-add`)
   }
@@ -148,67 +139,55 @@ const ClassEvalCriteriaList = () => {
 
   const columns = [
     {
-      title: 'Subject',
-      dataIndex: 'subjectName',
-      sorter: (a, b) => a.subjectName.length - b.subjectName.length,
-      width: '7.5%',
-    },
-    {
       title: 'Milestone',
-      dataIndex: 'milestone',
-      sorter: (a, b) => a.milestone.length - b.milestone.length,
-      render: (_, { milestone }) => milestone.milestoneTitle,
-      width: '12.5%',
-    },
-    {
-      title: 'Assignment',
       dataIndex: 'assignment',
-      sorter: (a, b) => a.assignment.length - b.assignment.length,
-      width: '15%',
+      sorter: (a, b) => a.assignment.title.localeCompare(b.assignment.title, 'en', { sensitivity: 'base' }),
+      width: '20%',
       render: (_, { assignment }) => assignment.title,
     },
     {
       title: 'Name',
       dataIndex: 'criteriaName',
-      sorter: (a, b) => a.criteriaName.length - b.criteriaName.length,
-      width: '15%',
+      sorter: (a, b) => a.criteriaName.localeCompare(b.criteriaName, 'en', { sensitivity: 'base' }),
+      width: '20%',
+    },
+    {
+      title: 'Eval Weight',
+      dataIndex: 'evalWeight',
+      sorter: (a, b) => a.evalWeight.toString().localeCompare(b.evalWeight.toString(), 'en', { sensitivity: 'base' }),
+      width: '10%',
     },
     {
       title: 'Expected Work',
       dataIndex: 'expectedWork',
-      sorter: (a, b) => a.expectedWork.length - b.expectedWork.length,
-      width: '17.5%',
+      sorter: (a, b) =>
+        a.expectedWork.toString().localeCompare(b.expectedWork.toString(), 'en', { sensitivity: 'base' }),
+      width: '10%',
+    },
+    {
+      title: 'Team Eval?',
+      dataIndex: 'isTeamEval',
+      sorter: (a, b) => a.isTeamEval.toString().localeCompare(b.isTeamEval.toString(), 'en', { sensitivity: 'base' }),
+      width: '10%',
+      render: (_, { isTeamEval }) => (isTeamEval === 1 ? 'Yes' : 'No'),
+    },
+    {
+      title: 'Work Eval?',
+      dataIndex: 'isWorkEval',
+      sorter: (a, b) => a.isWorkEval.toString().localeCompare(b.isWorkEval.toString(), 'en', { sensitivity: 'base' }),
+      width: '10%',
+      render: (_, { isWorkEval }) => (isWorkEval === 1 ? 'Yes' : 'No'),
     },
     {
       title: 'Status',
       dataIndex: 'status',
       width: '10%',
-      sorter: (a, b) => a.status?.length - b.status?.length,
+      sorter: (a, b) => a.status.toString().localeCompare(b.status.toString(), 'en', { sensitivity: 'base' }),
       render: (_, { status }) => (
         <Tag color={status === 'Active' ? 'blue' : status === 'Inactive' ? 'red' : 'grey'} key={status}>
           {status}
         </Tag>
       ),
-    },
-    {
-      title: 'Eval Weight',
-      dataIndex: 'evalWeight',
-      sorter: (a, b) => a.evalWeight.length - b.evalWeight.length,
-      width: '10%',
-    },
-    {
-      title: 'Is Teameval',
-      dataIndex: 'isTeamEval',
-      sorter: (a, b) => a.isTeamEval - b.isTeamEval,
-      width: '10%',
-      render: (_, { isTeamEval }) => (isTeamEval === 1 ? 'Yes' : 'No'),
-    },
-    {
-      title: 'Is Workeval',
-      dataIndex: 'isWorkEval',
-      sorter: (a, b) => a.isWorkEval - b.isWorkEval,
-      width: '10%',
-      render: (_, { isWorkEval }) => (isWorkEval === 1 ? 'Yes' : 'No'),
     },
     {
       title: 'Actions',
@@ -223,6 +202,16 @@ const ClassEvalCriteriaList = () => {
               icon={subject.status === 'Active' ? <CloseOutlined /> : <CheckOutlined />}
               onClick={() => {
                 modalConfirm(subject)
+              }}
+            ></Button>
+          </Tooltip>
+          <Tooltip title="Clone" placement="top">
+            <Button
+              type="primary"
+              shape="circle"
+              icon={<CopyOutlined />}
+              onClick={() => {
+                navigateTo(`/class-criteria-add/${subject?.criteriaId}`)
               }}
             ></Button>
           </Tooltip>
@@ -276,22 +265,23 @@ const ClassEvalCriteriaList = () => {
                     </Breadcrumb>
                   </div>
                   <div className="col-4 d-flex w-80">
-                    <input
-                      type="search"
-                      id="form1"
-                      className="form-control"
-                      placeholder="Searching by Title..."
+                    <Input.Search
+                      placeholder="Search by Title..."
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
+                      size="large"
+                      onSearch={handleSearch}
                     />
-                    <CButton color="primary" type="submit" className="text-light ml-10" onClick={handleSearch}>
-                      <CIcon icon={cilSearch} />
-                    </CButton>
                   </div>
-                  <div className="col-5 d-flex justify-content-end">
-                    <CDropdown className="ml-4">
+                  <div className="col-5 d-flex justify-content-end" style={{ gap: '10px' }}>
+                    <CDropdown className="">
                       <CDropdownToggle color="secondary">{filter.milestone.milestoneTitle}</CDropdownToggle>
                       <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
+                        <CDropdownItem
+                          onClick={() => handleFilterMilestone({ milestoneTitle: 'All Milestones', milestoneId: '' })}
+                        >
+                          All Milestone
+                        </CDropdownItem>
                         {listFilter.milestoneFilter.map((milestone) => (
                           <CDropdownItem onClick={() => handleFilterMilestone(milestone)}>
                             {milestone.milestoneTitle}
@@ -299,21 +289,20 @@ const ClassEvalCriteriaList = () => {
                         ))}
                       </CDropdownMenu>
                     </CDropdown>
-                    <CDropdown className="ml-4">
+                    <CDropdown className="">
                       <CDropdownToggle color="secondary">{filter.status.name}</CDropdownToggle>
                       <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
+                        <CDropdownItem onClick={() => handleFilterStatus({ name: 'All Statuses', value: '' })}>
+                          All Statuses
+                        </CDropdownItem>
+
                         {listFilter.statusFilter.map((status) => (
                           <CDropdownItem onClick={() => handleFilterStatus(status)}>{status.name}</CDropdownItem>
                         ))}
                       </CDropdownMenu>
                     </CDropdown>
-                    <Tooltip title="Reload" placement="top">
-                      <CButton color="success" type="submit" className="text-light ml-4" onClick={handleReload}>
-                        <CIcon icon={cilSync} />
-                      </CButton>
-                    </Tooltip>
                     <Tooltip title="Add New Class Eval Criteria" placement="right">
-                      <CButton color="danger" type="submit" className="text-light ml-4" onClick={handleAdd}>
+                      <CButton color="danger" type="submit" className="text-light " onClick={handleAdd}>
                         <CIcon icon={cilPlus} />
                       </CButton>
                     </Tooltip>

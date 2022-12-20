@@ -494,6 +494,7 @@ public class ClassUserService implements IClassUserService {
                     milestone.getAssignment().getEval_weight().length() - 1);
             type.setAssignmentId(milestone.getAssignment().getAssId());
             type.setAssignmentTitle(milestone.getAssignment().getTitle());
+            type.setMilestoneTitle(milestone.getTitle());
             type.setEvalWeight(evalWeight);
             if (milestone.getAssignment().isFinal()) {
                 type.setFinal(true);
@@ -524,6 +525,7 @@ public class ClassUserService implements IClassUserService {
                 AssignmentGradeDTO grade = new AssignmentGradeDTO();
                 grade.setAssignmentId(milestone.getAssignment().getAssId());
                 grade.setAssingmentTitle(milestone.getAssignment().getTitle());
+                grade.setMilestoneTitle(milestone.getTitle());
                 grade.setStatus(milestone.getStatus());
                 String evalWeight = milestone.getAssignment().getEval_weight().substring(0,
                         milestone.getAssignment().getEval_weight().length() - 1);

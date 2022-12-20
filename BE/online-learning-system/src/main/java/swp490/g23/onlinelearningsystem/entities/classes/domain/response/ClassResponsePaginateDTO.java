@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import swp490.g23.onlinelearningsystem.enums.enumentities.ClassStatusEntity;
+
 
 @Getter
 @Setter
@@ -18,10 +18,11 @@ public class ClassResponsePaginateDTO {
 	private int totalPage;
 	private long totalItem;
 	private List<ClassResponseDTO> listResult = new ArrayList<>();
-	private List<ClassTypeResponseDTO> termFilter;
-	private List<ClassTypeResponseDTO> branchFilter;
-	private List<String> trainerFilter;
-	private List<String> supporterFilter;
-	private List<ClassStatusEntity> statusFilter;
-	private List<String> classFilter;
+	// private List<ClassTypeResponseDTO> termFilter;
+	// private List<ClassTypeResponseDTO> branchFilter;
+	// private List<String> trainerFilter;
+	// private List<String> subjectFilter;
+	// private List<String> supporterFilter;
+	// private List<ClassStatusEntity> statusFilter;
+	// private List<String> classFilter;
 }

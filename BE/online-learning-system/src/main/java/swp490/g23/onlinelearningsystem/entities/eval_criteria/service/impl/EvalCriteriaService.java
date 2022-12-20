@@ -377,7 +377,7 @@ public class EvalCriteriaService implements IEvalCriteriaService {
         }
         if (dto.getIsWorkEval() == 1) {
             for (EvalCriteria eval : evalCriteria.getAssignment().getEvalCriteriaList()) {
-                if (eval.isWorkEval() == true) {
+                if (eval.isWorkEval() == true && !evalCriteria.getCriteriaId().equals(eval.getCriteriaId())) {
                     throw new CustomException("Assignment of this eval already got eval is work eval");
                 }
             }

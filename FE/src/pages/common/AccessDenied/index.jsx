@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 // Images
@@ -7,6 +7,11 @@ import bannerImg from '~/assets/images/background/bg2.jpg'
 import { CButton } from '@coreui/react'
 
 const AccessDenied = () => {
+  useEffect(() => {
+    document.title = 'LMS - Access Denied'
+    window.scrollTo(0, 0)
+  }, [])
+
   return (
     <>
       <div className="account-form">

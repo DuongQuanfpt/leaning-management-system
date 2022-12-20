@@ -7,6 +7,7 @@ import javax.mail.internet.MimeMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -42,13 +43,15 @@ public class EmailService implements IEmailService {
     @Override
     public void sendMimeMail(EmailDetails details) throws UnsupportedEncodingException, MessagingException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage,
+                MimeMessageHelper.MULTIPART_MODE_MIXED);
 
         mimeMessageHelper.setFrom(sender, "Support");
         mimeMessageHelper.setTo(details.getRecipient());
         mimeMessageHelper.setSubject(details.getSubject());
-        mimeMessageHelper.setText(details.getMsgBody(), true);
-
+        // mimeMessageHelper.setText(details.getMsgBody(), true);
+        mimeMessageHelper.setText("<html><body><img src='cid:image1'>" + details.getMsgBody() + "</body></html>", true);
+        mimeMessageHelper.addInline("image1", new ClassPathResource("/img/Logo_Dai_hoc_FPT.png"));
         javaMailSender.send(mimeMessage);
 
     }

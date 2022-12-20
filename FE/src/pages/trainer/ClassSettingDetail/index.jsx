@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import { Breadcrumb, Modal, Radio } from 'antd'
+import { Breadcrumb, Modal, Radio, Skeleton, Typography } from 'antd'
 
 import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
@@ -41,6 +41,7 @@ const ClassSettingDetail = () => {
 
   const [error, setError] = useState('')
   const [isEditMode, setIsEditMode] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     loadData()
@@ -53,7 +54,13 @@ const ClassSettingDetail = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  useEffect(() => {
+    document.title = 'LMS - Class Setting Detail'
+    window.scrollTo(0, 0)
+  }, [])
+
   const loadData = async () => {
+    setLoading(true)
     await classSettingListApi
       .getDetail(id)
       .then((response) => {
@@ -73,6 +80,7 @@ const ClassSettingDetail = () => {
         console.log(error)
         setError(error)
       })
+      .finally(setLoading(false))
 
     await classSettingListApi
       .getFilter()
@@ -83,6 +91,7 @@ const ClassSettingDetail = () => {
         console.log(error)
         setError(error)
       })
+      .finally(setLoading(false))
   }
 
   const handleCancel = () => {
@@ -171,144 +180,160 @@ const ClassSettingDetail = () => {
             <div className="col-lg-12 m-b30">
               <div className="widget-box">
                 <div className="widget-inner">
-                  <div className="row">
-                    <div className="form-group col-6">
-                      <label className="col-form-label">Code</label>
-                      <div>
-                        <input className="form-control" type="text" value={detail.classCode} disabled={true} />
+                  <Skeleton loading={loading}>
+                    <div className="row">
+                      <div className="form-group col-6">
+                        <label className="col-form-label">
+                          Code <Typography.Text type="danger"> *</Typography.Text>
+                        </label>
+                        <div>
+                          <input className="form-control" type="text" value={detail.classCode} disabled={true} />
+                        </div>
                       </div>
-                    </div>
-                    <div className="form-group col-6">
-                      <label className="col-form-label">Type</label>
-                      <div>
-                        <input className="form-control" type="text" value={detail.typeName.title} disabled={true} />
+                      <div className="form-group col-6">
+                        <label className="col-form-label">
+                          Type <Typography.Text type="danger"> *</Typography.Text>
+                        </label>
+                        <div>
+                          <input className="form-control" type="text" value={detail.typeName.title} disabled={true} />
+                        </div>
                       </div>
-                    </div>
-                    <div className="form-group col-6">
-                      <label className="col-form-label">Title</label>
-                      <div>
-                        <input
-                          className="form-control"
-                          type="text"
-                          value={detail.settingTitle}
-                          onChange={(e) => setDetail((prev) => ({ ...prev, settingTitle: e.target.value }))}
-                          disabled={!isEditMode}
-                        />
-                      </div>
-                    </div>
-                    <div className="form-group col-6">
-                      <label className="col-form-label">Value</label>
-
-                      {detail.typeName.title === 'Issue status' && (
-                        <CDropdown className="w-100">
-                          <CDropdownToggle color="warning" disabled={!isEditMode}>
-                            {detail.settingValue}
-                          </CDropdownToggle>
-                          <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
-                            {filter.issueStatus.map((status) => (
-                              <CDropdownItem onClick={() => setDetail((prev) => ({ ...prev, settingValue: status }))}>
-                                {status}
-                              </CDropdownItem>
-                            ))}
-                          </CDropdownMenu>
-                        </CDropdown>
-                      )}
-
-                      {detail.typeName.title === 'Issue type' && (
-                        <CDropdown className="w-100">
-                          <CDropdownToggle color="warning" disabled={!isEditMode}>
-                            {detail.settingValue}
-                          </CDropdownToggle>
-                          <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
-                            {filter.issueType.map((type) => (
-                              <CDropdownItem onClick={() => setDetail((prev) => ({ ...prev, settingValue: type }))}>
-                                {type}
-                              </CDropdownItem>
-                            ))}
-                          </CDropdownMenu>
-                        </CDropdown>
-                      )}
-                      {detail.typeName.title !== 'Issue status' && detail.typeName.title !== 'Issue type' && (
+                      <div className="form-group col-6">
+                        <label className="col-form-label">
+                          Class Setting Title <Typography.Text type="danger"> *</Typography.Text>
+                        </label>
                         <div>
                           <input
                             className="form-control"
                             type="text"
-                            value={detail.settingValue}
-                            onChange={(e) => setDetail((prev) => ({ ...prev, settingValue: e.target.value }))}
+                            value={detail.settingTitle}
+                            onChange={(e) => setDetail((prev) => ({ ...prev, settingTitle: e.target.value }))}
                             disabled={!isEditMode}
                           />
                         </div>
-                      )}
-                    </div>
-                    <div className="form-group col-6">
-                      <label className="col-form-label">Status</label>
-                      <div>
-                        <Radio.Group
-                          value={detail.status}
-                          disabled={!isEditMode}
-                          onChange={(e) => setDetail((prev) => ({ ...prev, status: e.target.value }))}
-                        >
-                          <Radio value={1}>Active</Radio>
-                          <Radio value={0}>Inactive</Radio>
-                        </Radio.Group>
                       </div>
-                    </div>
-                    <div className="form-group col-6">
-                      <label className="col-form-label">Display Order</label>
-                      <div>
-                        <input
-                          className="form-control"
-                          type="number"
-                          value={detail.displayOrder}
-                          onChange={(e) => setDetail((prev) => ({ ...prev, displayOrder: e.target.value }))}
-                          disabled={!isEditMode}
-                        />
-                      </div>
-                    </div>
-                    <div className="form-group col-12">
-                      <label className="col-form-label">Description</label>
-                      <div>
-                        <textarea
-                          className="form-control"
-                          type="text"
-                          value={detail.description}
-                          onChange={(e) => setDetail((prev) => ({ ...prev, description: e.target.value }))}
-                          disabled={!isEditMode}
-                        />
-                      </div>
-                    </div>
-                    <ErrorMsg
-                      errorMsg={error}
-                      isError={error === 'You have successfully changed your class setting detail' ? false : true}
-                    />
-                    {role.isTrainer && (
-                      <div className="d-flex">
-                        {isEditMode ? (
-                          <>
-                            <CButton className="mr-3" size="md" color="warning" onClick={modalConfirm}>
-                              Save
-                            </CButton>
-                            <CButton className="mr-3" size="md" color="warning" onClick={handleCancel}>
-                              Cancel
-                            </CButton>
-                          </>
-                        ) : (
-                          <>
-                            <CButton
-                              size="md"
-                              color="warning"
-                              onClick={() => {
-                                setIsEditMode(true)
-                                setError('')
-                              }}
-                            >
-                              Edit
-                            </CButton>
-                          </>
+                      <div className="form-group col-6">
+                        <label className="col-form-label">
+                          Class Setting Value <Typography.Text type="danger"> *</Typography.Text>
+                        </label>
+
+                        {detail.typeName.title === 'Issue status' && (
+                          <CDropdown className="w-100">
+                            <CDropdownToggle color="warning" disabled={!isEditMode}>
+                              {detail.settingValue}
+                            </CDropdownToggle>
+                            <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
+                              {filter.issueStatus.map((status) => (
+                                <CDropdownItem onClick={() => setDetail((prev) => ({ ...prev, settingValue: status }))}>
+                                  {status}
+                                </CDropdownItem>
+                              ))}
+                            </CDropdownMenu>
+                          </CDropdown>
+                        )}
+
+                        {detail.typeName.title === 'Issue type' && (
+                          <CDropdown className="w-100">
+                            <CDropdownToggle color="warning" disabled={!isEditMode}>
+                              {detail.settingValue}
+                            </CDropdownToggle>
+                            <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
+                              {filter.issueType.map((type) => (
+                                <CDropdownItem onClick={() => setDetail((prev) => ({ ...prev, settingValue: type }))}>
+                                  {type}
+                                </CDropdownItem>
+                              ))}
+                            </CDropdownMenu>
+                          </CDropdown>
+                        )}
+                        {detail.typeName.title !== 'Issue status' && detail.typeName.title !== 'Issue type' && (
+                          <div>
+                            <input
+                              className="form-control"
+                              type="text"
+                              value={detail.settingValue}
+                              onChange={(e) => setDetail((prev) => ({ ...prev, settingValue: e.target.value }))}
+                              disabled={!isEditMode}
+                            />
+                          </div>
                         )}
                       </div>
-                    )}
-                  </div>
+                      <div className="form-group col-6">
+                        <label className="col-form-label">
+                          Status <Typography.Text type="danger"> *</Typography.Text>
+                        </label>
+                        <div>
+                          <Radio.Group
+                            value={detail.status}
+                            disabled={!isEditMode}
+                            onChange={(e) => setDetail((prev) => ({ ...prev, status: e.target.value }))}
+                          >
+                            <Radio value={1}>Active</Radio>
+                            <Radio value={0}>Inactive</Radio>
+                          </Radio.Group>
+                        </div>
+                      </div>
+                      <div className="form-group col-6">
+                        <label className="col-form-label">
+                          Display Order <Typography.Text type="danger"> *</Typography.Text>
+                        </label>
+                        <div>
+                          <input
+                            className="form-control"
+                            type="number"
+                            value={detail.displayOrder}
+                            onChange={(e) => setDetail((prev) => ({ ...prev, displayOrder: e.target.value }))}
+                            disabled={!isEditMode}
+                          />
+                        </div>
+                      </div>
+                      <div className="form-group col-12">
+                        <label className="col-form-label">
+                          Description <Typography.Text type="danger"> *</Typography.Text>
+                        </label>
+                        <div>
+                          <textarea
+                            className="form-control"
+                            type="text"
+                            value={detail.description}
+                            onChange={(e) => setDetail((prev) => ({ ...prev, description: e.target.value }))}
+                            disabled={!isEditMode}
+                          />
+                        </div>
+                      </div>
+                      <ErrorMsg
+                        errorMsg={error}
+                        isError={error === 'You have successfully changed your class setting detail' ? false : true}
+                      />
+                      {role.isTrainer && (
+                        <div className="d-flex">
+                          {isEditMode ? (
+                            <>
+                              <CButton className="mr-3" size="md" color="warning" onClick={modalConfirm}>
+                                Save
+                              </CButton>
+                              <CButton className="mr-3" size="md" color="warning" onClick={handleCancel}>
+                                Cancel
+                              </CButton>
+                            </>
+                          ) : (
+                            <>
+                              <CButton
+                                size="md"
+                                color="warning"
+                                onClick={() => {
+                                  setIsEditMode(true)
+                                  setError('')
+                                }}
+                              >
+                                Edit
+                              </CButton>
+                            </>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </Skeleton>
                 </div>
               </div>
             </div>

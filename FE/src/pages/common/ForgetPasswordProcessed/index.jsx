@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
 // Images
@@ -16,6 +16,11 @@ const ForgetPasswordProcessed = () => {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
   const [isResetSuccess, setIsResetSuccess] = useState(false)
+
+  useEffect(() => {
+    document.title = 'LMS - New Password'
+    window.scrollTo(0, 0)
+  }, [])
 
   const handleSubmit = async () => {
     if (password.length < 6 || confirmPassword.length < 6) {

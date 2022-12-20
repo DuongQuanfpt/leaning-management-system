@@ -36,6 +36,10 @@ const AdminSettingAdd = () => {
   useEffect(() => {
     loadData()
   }, [])
+  useEffect(() => {
+    document.title = 'LMS - Setting Add'
+    window.scrollTo(0, 0)
+  }, [])
 
   const loadData = async () => {
     settingListApi.getFilter().then((response) => {

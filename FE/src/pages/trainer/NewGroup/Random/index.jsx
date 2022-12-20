@@ -56,6 +56,7 @@ const Random = () => {
   }
 
   const handleNextStep = () => {
+    console.log(groupDetail.traineeList)
     const listStudent = [...groupDetail.traineeList]
 
     const numberStudent = groupDetail.traineeList.length
@@ -83,8 +84,13 @@ const Random = () => {
         members: member,
       })
     }
-    for (let k = 0; k <= listStudent.length; k++) {
-      result[k].members.push(...listStudent.splice(Math.floor(Math.random() * listStudent.length), 1))
+    const listStudentLeft = listStudent.length
+    for (let k = 0; k <= listStudentLeft; k++) {
+      if (listStudent.length !== 0) {
+        result[k].members.push(listStudent.pop())
+      } else {
+        break
+      }
     }
 
     result.forEach((group) => {
@@ -93,7 +99,8 @@ const Random = () => {
       })
       group.members[0].isLeader = true
     })
-
+    console.log(result)
+    console.log(listStudent)
     setListGroup(result)
     setIsClickedNextStep(true)
   }

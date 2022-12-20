@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
-import { Breadcrumb, Button, Modal, Pagination, Space, Table, Tag, Tooltip } from 'antd'
+import { Breadcrumb, Button, Input, Modal, Pagination, Space, Table, Tag, Tooltip } from 'antd'
 import { CheckOutlined, CloseOutlined, ExclamationCircleOutlined, EyeOutlined } from '@ant-design/icons'
 
 import { CButton, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import { cilPlus, cilSearch, cilSync } from '@coreui/icons'
+import { cilPlus } from '@coreui/icons'
 
 import assignmentApi from '~/api/assignmentApi'
 
@@ -30,9 +30,9 @@ const AssignmentList = () => {
   })
 
   const [filter, setFilter] = useState({
-    subject: 'Select Subject',
+    subject: 'All Subjects',
     status: {
-      name: 'Select Status',
+      name: 'All Statuses',
       value: '',
     },
   })
@@ -60,6 +60,10 @@ const AssignmentList = () => {
     loadData(currentPage, filter, search)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter])
+  useEffect(() => {
+    document.title = 'LMS - Assignment List'
+    window.scrollTo(0, 0)
+  }, [])
 
   const loadData = async (page, filter, q = '') => {
     const params = {
@@ -69,10 +73,10 @@ const AssignmentList = () => {
     if (q !== '') {
       params.q = q.trim()
     }
-    if (filter.subject !== 'Select Subject') {
+    if (filter.subject !== 'All Subjects') {
       params.filterSubject = filter.subject
     }
-    if (filter.status.name !== 'Select Status') {
+    if (filter.status.name !== 'All Statuses') {
       params.filterStatus = filter.status.value
     }
     setLoading(true)
@@ -100,17 +104,6 @@ const AssignmentList = () => {
 
   const handleFilterStatus = (status) => {
     setFilter((prev) => ({ ...prev, status: { ...prev.status, name: status.name, value: status.value } }))
-  }
-
-  const handleReload = () => {
-    setSearch('')
-    setFilter({
-      subject: 'Select Subject',
-      status: {
-        name: 'Select Status',
-        value: '',
-      },
-    })
   }
 
   const handleAdd = () => {
@@ -153,58 +146,45 @@ const AssignmentList = () => {
     {
       title: 'Subject',
       dataIndex: 'subjectName',
-      sorter: (a, b) => a.subjectName.length - b.subjectName.length,
+      sorter: (a, b) => a.subjectName.localeCompare(b.subjectName, 'en', { sensitivity: 'base' }),
       width: '10%',
     },
     {
-      title: 'Title',
+      title: 'Assignment Title',
       dataIndex: 'title',
-      sorter: (a, b) => a.title.length - b.title.length,
-      width: '15%',
+      sorter: (a, b) => a.title.localeCompare(b.title, 'en', { sensitivity: 'base' }),
+      width: '40%',
     },
     {
-      title: 'Body',
-      dataIndex: 'assBody',
-      sorter: (a, b) => a.assBody.length - b.assBody.length,
-      width: '25%',
+      title: 'Evaluation Weight',
+      dataIndex: 'eval_weight',
+      sorter: (a, b) => a.eval_weight.localeCompare(b.eval_weight, 'en', { sensitivity: 'base' }),
+      width: '10%',
+    },
+    {
+      title: 'Teamwork Assignment?',
+      dataIndex: 'isTeamWork',
+      sorter: (a, b) => a.isTeamWork.toString().localeCompare(b.isTeamWork.toString(), 'en', { sensitivity: 'base' }),
+      width: '10%',
+      render: (_, { isTeamWork }) => (isTeamWork === 1 ? 'Yes' : 'No'),
+    },
+    {
+      title: 'Final Assignment?',
+      dataIndex: 'isFinal',
+      sorter: (a, b) => a.isFinal.toString().localeCompare(b.isFinal.toString(), 'en', { sensitivity: 'base' }),
+      width: '10%',
+      render: (_, { isFinal }) => (isFinal === 1 ? 'Yes' : 'No'),
     },
     {
       title: 'Status',
       dataIndex: 'status',
       width: '10%',
-      sorter: (a, b) => a.status?.length - b.status?.length,
+      sorter: (a, b) => a.status.localeCompare(b.status, 'en', { sensitivity: 'base' }),
       render: (_, { status }) => (
         <Tag color={status === 'Active' ? 'blue' : status === 'Inactive' ? 'red' : 'grey'} key={status}>
           {status}
         </Tag>
       ),
-    },
-    {
-      title: 'Weight',
-      dataIndex: 'eval_weight',
-      sorter: (a, b) => a.eval_weight.length - b.eval_weight.length,
-      width: '10%',
-    },
-    {
-      title: 'Is Teamwork',
-      dataIndex: 'isTeamWork',
-      sorter: (a, b) => a.isTeamWork - b.isTeamWork,
-      width: '10%',
-      render: (_, { isTeamWork }) => (isTeamWork === 1 ? 'Yes' : 'No'),
-    },
-    {
-      title: 'Is Ongoing',
-      dataIndex: 'isOnGoing',
-      sorter: (a, b) => a.isOnGoing - b.isOnGoing,
-      width: '10%',
-      render: (_, { isOnGoing }) => (isOnGoing === 1 ? 'Yes' : 'No'),
-    },
-    {
-      title: 'Is Final',
-      dataIndex: 'isFinal',
-      sorter: (a, b) => a.isFinal - b.isFinal,
-      width: '10%',
-      render: (_, { isFinal }) => (isFinal === 1 ? 'Yes' : 'No'),
     },
     {
       title: 'Actions',
@@ -254,23 +234,24 @@ const AssignmentList = () => {
                       <Breadcrumb.Item>Assignment List</Breadcrumb.Item>
                     </Breadcrumb>
                   </div>
-                  <div className="col-4 d-flex w-80">
-                    <input
-                      type="search"
-                      id="form1"
-                      className="form-control"
+                  <div className="col-5 d-flex">
+                    <Input.Search
                       placeholder="Searching by Subject or Title..."
+                      className="w-100"
+                      size="large"
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
+                      onSearch={handleSearch}
                     />
-                    <CButton color="primary" type="submit" className="text-light ml-10" onClick={handleSearch}>
-                      <CIcon icon={cilSearch} />
-                    </CButton>
                   </div>
-                  <div className="col-6 d-flex justify-content-end">
-                    <CDropdown className="ml-4">
+                  <div className="col-5 d-flex justify-content-end" style={{ gap: '10px' }}>
+                    <CDropdown className="">
                       <CDropdownToggle color="secondary">{filter.subject}</CDropdownToggle>
                       <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
+                        <CDropdownItem onClick={() => handleFilterSubject('All Subjects')}>
+                          {'All Subjects'}
+                        </CDropdownItem>
+
                         {listFilter?.subjectFilter?.map((subject) => (
                           <CDropdownItem onClick={() => handleFilterSubject(subject)}>{subject}</CDropdownItem>
                         ))}
@@ -279,21 +260,20 @@ const AssignmentList = () => {
                         )}
                       </CDropdownMenu>
                     </CDropdown>
-                    <CDropdown className="ml-4">
+                    <CDropdown className="">
                       <CDropdownToggle color="secondary">{filter.status.name}</CDropdownToggle>
                       <CDropdownMenu style={{ maxHeight: '300px', overflow: 'auto' }}>
+                        <CDropdownItem onClick={() => handleFilterStatus({ name: 'All Statuses', value: '' })}>
+                          {'All Statuses'}
+                        </CDropdownItem>
+
                         {listFilter?.statusFilter?.map((status) => (
                           <CDropdownItem onClick={() => handleFilterStatus(status)}>{status.name}</CDropdownItem>
                         ))}
                       </CDropdownMenu>
                     </CDropdown>
-                    <Tooltip title="Reload" placement="top">
-                      <CButton color="success" type="submit" className="text-light ml-4" onClick={handleReload}>
-                        <CIcon icon={cilSync} />
-                      </CButton>
-                    </Tooltip>
                     <Tooltip title="Add New Assignment" placement="right">
-                      <CButton color="danger" type="submit" className="text-light ml-4" onClick={handleAdd}>
+                      <CButton color="danger" type="submit" className="text-light " onClick={handleAdd}>
                         <CIcon icon={cilPlus} />
                       </CButton>
                     </Tooltip>

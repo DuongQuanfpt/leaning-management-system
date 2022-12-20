@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 
 import { CButton, CDropdown, CDropdownToggle, CDropdownMenu, CDropdownItem } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import { cilPlus, cilSearch, cilSync } from '@coreui/icons'
+import { cilPlus } from '@coreui/icons'
 
 import { Table, Button, Space, Tag, Breadcrumb, Tooltip, Modal, Pagination, Input } from 'antd'
 import { ExclamationCircleOutlined, CloseOutlined, CheckOutlined, EyeOutlined } from '@ant-design/icons'
@@ -50,6 +50,10 @@ const SubjectList = () => {
     loadData(1, filter, search)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter])
+  useEffect(() => {
+    document.title = 'LMS - Subject List'
+    window.scrollTo(0, 0)
+  }, [])
 
   const loadData = async (page, filter, q = '') => {
     const params = {
