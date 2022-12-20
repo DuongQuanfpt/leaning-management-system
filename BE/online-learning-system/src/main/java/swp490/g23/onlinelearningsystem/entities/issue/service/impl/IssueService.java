@@ -340,6 +340,12 @@ public class IssueService implements IIssueService {
             dto.setEvaluated(false);
         }
 
+        if(issue.getSubmitWorks().isEmpty()){
+            dto.setCanDelete(true);
+        }else {
+            dto.setCanDelete(false);
+        }
+
         return dto;
     }
 
