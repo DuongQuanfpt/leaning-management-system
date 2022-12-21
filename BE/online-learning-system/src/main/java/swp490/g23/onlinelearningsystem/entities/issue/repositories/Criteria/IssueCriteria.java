@@ -1,24 +1,40 @@
 package swp490.g23.onlinelearningsystem.entities.issue.repositories.Criteria;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import lombok.RequiredArgsConstructor;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.Issue;
 import swp490.g23.onlinelearningsystem.entities.issue.domain.request.IssueFilterRequestDTO;
 import swp490.g23.onlinelearningsystem.entities.issue.repositories.CriteriaEntity.IssueQuery;
+import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
+import swp490.g23.onlinelearningsystem.entities.milestone.repositories.MilestoneRepository;
+import swp490.g23.onlinelearningsystem.entities.setting.domain.Setting;
+import swp490.g23.onlinelearningsystem.entities.submit.domain.Submit;
+import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 
 @Repository
 @RequiredArgsConstructor
 public class IssueCriteria {
     private final EntityManager em;
 
+    @Autowired
+    private MilestoneRepository milestoneRepository;
+
     public IssueQuery searchFilterQuery(String keyword, String classCode, boolean isIssue, Long filterMilestoneId,
-            IssueFilterRequestDTO filterRequestDTO) {
+            IssueFilterRequestDTO filterRequestDTO, User user) {
+
+        List<Setting> settings = user.getSettings();
+        List<String> roles = new ArrayList<>();
+        for (Setting setting : settings) {
+            roles.add(setting.getSettingValue());
+        }
 
         StringBuilder query = new StringBuilder(
                 "SELECT i FROM Issue i LEFT JOIN i.asignee as a WHERE i.classes.code = '" + classCode + "'");
@@ -31,12 +47,28 @@ public class IssueCriteria {
 
         if (filterMilestoneId != null && filterMilestoneId != 0) {
             query.append(" AND i.milestone.milestoneId = '" + filterMilestoneId + "'");
+
+            if (roles.contains("ROLE_TRAINEE")) {
+                Milestone milestone = milestoneRepository.findById(filterMilestoneId).get();
+                if (milestone.getAssignment().isTeamWork()) {
+                    for (Submit submit : milestone.getSubmits()) {
+                        if (submit.getClassUser()!=null && submit.getClassUser().getUser().equals(user)) {
+                            if (submit.getGroup() != null) {
+                                query.append(" AND i.group.groupId = '" + submit.getGroup().getGroupId() + "'");  
+                            } else {
+                                query.append(" AND i.group.groupId = '" + 0 + "'");
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
         if (keyword != null) {
             query.append(" AND (i.title LIKE '%" + keyword + "%' OR i.issueId LIKE '%" + keyword + "%')");
         }
-    
+
         if (filterRequestDTO != null) {
             List<Long> groupFilter = filterRequestDTO.getGroupIds();
             if (groupFilter != null && !groupFilter.isEmpty()) {
@@ -132,39 +164,6 @@ public class IssueCriteria {
                 query.append(" )");
             }
         }
-
-        // if (roles.contains("ROLE_TRAINER")) {
-
-        // } else if (roles.contains("ROLE_SUPPORTER")) {
-        // query.append(" AND cs.classes.userSupporter.accountName = '" +
-        // user.getAccountName() + "' ");
-        // }
-
-        // if (filterGroupId != null) {
-        // query.append(" AND i.group.groupId = '" + filterGroupId + "'");
-        // }
-
-        // if (filterAsigneeName != null) {
-        // query.append(" AND i.asignee.accountName = '" + filterAsigneeName + "'");
-        // }
-
-        // if (filterTypeId != null) {
-        // query.append(" AND i.type.classSettingId = '" + filterTypeId + "'");
-        // }
-
-        // if (filterRequirementId != null) {
-        // query.append(" AND i.requirement.issueId = '" + filterRequirementId + "'");
-        // }
-
-        // if (filterStatusId != null) {
-        // if (filterStatusId == 1 ) {
-        // query.append(" AND i.isClosed = 0");
-        // } else if (filterStatusId == 0) {
-        // query.append(" AND i.isClosed = 1");
-        // } else {
-        // query.append(" AND i.status.classSettingId = '" + filterStatusId + "'");
-        // }
-        // }
 
         StringBuilder queryCount = new StringBuilder(
                 query.toString().replaceAll("SELECT i", "SELECT COUNT(*)"));

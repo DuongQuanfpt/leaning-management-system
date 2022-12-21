@@ -45,4 +45,6 @@ public class IssueResponseDTO {
 
     boolean evaluated;
 
+    Boolean canDelete;
+
 }

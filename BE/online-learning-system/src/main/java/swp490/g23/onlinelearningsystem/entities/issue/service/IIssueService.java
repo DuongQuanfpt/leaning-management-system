@@ -13,7 +13,7 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 
 public interface IIssueService {
     ResponseEntity<IssueListDTO> getIssueList(int page, int limit, String keyword, String classCode, boolean isIssue,
-            Long filterMilestoneId, IssueFilterRequestDTO filterRequestDTO);
+            Long filterMilestoneId, IssueFilterRequestDTO filterRequestDTO , User user);
 
     ResponseEntity<IssueFilter> issueListFilter(String classCode , User user , Long milestoneId);
 
