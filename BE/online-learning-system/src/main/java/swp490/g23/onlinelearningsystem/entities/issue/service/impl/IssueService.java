@@ -89,15 +89,15 @@ public class IssueService implements IIssueService {
 
     @Override
     public ResponseEntity<IssueListDTO> getIssueList(int page, int limit, String keyword, String classCode,
-            boolean isIssue, Long filterMilestoneId, IssueFilterRequestDTO filterRequestDTO , User user) {
+            boolean isIssue, Long filterMilestoneId, IssueFilterRequestDTO filterRequestDTO, User user) {
         Classes classes = classRepositories.findClassByCode(classCode);
-       
+
         if (classes == null) {
             throw new CustomException("Class doesnt exist");
         }
         User login = userRepository.findById(user.getUserId()).get();
         IssueQuery result = issueCriteria.searchFilterQuery(keyword, classCode, isIssue, filterMilestoneId,
-                filterRequestDTO , login);
+                filterRequestDTO, login);
         TypedQuery<Issue> queryResult = result.getResultQuery();
         TypedQuery<Long> countQuery = result.getCountQuery();
 
@@ -123,15 +123,15 @@ public class IssueService implements IIssueService {
         dto.setTotalPage(totalPage);
         dto.setIssueList(issueResponseDTOs);
 
-        if(milestoneRepository.findById(filterMilestoneId).isPresent()){
+        if (milestoneRepository.findById(filterMilestoneId).isPresent()) {
             Milestone milestone = milestoneRepository.findById(filterMilestoneId).get();
-            if(milestone.getStatus() != MilestoneStatusEnum.In_Progress) {
+            if (milestone.getStatus() != MilestoneStatusEnum.In_Progress) {
                 dto.setEditable(false);
             } else {
                 dto.setEditable(true);
             }
         }
-      
+
         return ResponseEntity.ok(dto);
     }
 
@@ -340,9 +340,9 @@ public class IssueService implements IIssueService {
             dto.setEvaluated(false);
         }
 
-        if(issue.getSubmitWorks().isEmpty()){
+        if (issue.getSubmitWorks().isEmpty()) {
             dto.setCanDelete(true);
-        }else {
+        } else {
             dto.setCanDelete(false);
         }
 
@@ -390,8 +390,18 @@ public class IssueService implements IIssueService {
 
         List<Group> groups = new ArrayList<>();
         if (milestoneId != null) {
-            if(author.getSettings().contains(trainerRole)){
+            Milestone milestone = milestoneRepository.findById(milestoneId)
+                    .orElseThrow(() -> new CustomException("milestone doesnt exist"));
+            if (author.getSettings().contains(trainerRole)) {
                 groups = groupRepository.findGroupByMilestone(milestoneId);
+            } else if (author.getSettings().contains(traineeRole)) {
+                for (Submit submit : milestone.getSubmits()) {
+                    if (submit.getClassUser() != null && submit.getClassUser().getUser().equals(author)
+                            && submit.getGroup() != null) {
+                        groups.add(submit.getGroup());
+                        break;
+                    }
+                }
             }
         }
 
@@ -528,7 +538,7 @@ public class IssueService implements IIssueService {
                     for (Submit submit : groupMember.getGroup().getSubmits()) {
                         if (!milestoneOfClass.contains(submit.getMilestone())
                                 && submit.getMilestone().getClasses().getCode().equals(classCode)) {
-                            if(submit.getMilestone().getStatus() == MilestoneStatusEnum.In_Progress){
+                            if (submit.getMilestone().getStatus() == MilestoneStatusEnum.In_Progress) {
                                 milestoneOfClass.add(submit.getMilestone());
                             }
                         }
@@ -1016,13 +1026,13 @@ public class IssueService implements IIssueService {
     @Override
     public ResponseEntity<String> removeIssue(Long issueId, User user) {
         Issue issue = issueRepository.findById(issueId)
-        .orElseThrow(() -> new CustomException("Issue doesnt exist"));
+                .orElseThrow(() -> new CustomException("Issue doesnt exist"));
 
-        if(!issue.getSubmitWorks().isEmpty()){
+        if (!issue.getSubmitWorks().isEmpty()) {
             throw new CustomException("Requirement already submitted , cant delete");
         }
 
-        if(!issue.getIssueOfRequirement().isEmpty()){
+        if (!issue.getIssueOfRequirement().isEmpty()) {
             List<Issue> updatedIssue = new ArrayList<>();
             for (Issue issueOfRequirement : issue.getIssueOfRequirement()) {
                 issueOfRequirement.setRequirement(null);

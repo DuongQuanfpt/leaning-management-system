@@ -329,8 +329,11 @@ public class MilestoneEvalService implements IMilestoneEvalService {
           
 
             if(requestDTO.getGrade() != null){
-                if (requestDTO.getGrade() >= 0 && requestDTO.getGrade() <= 10) {
+                if (requestDTO.getGrade() >= 0 ) {
                     milestoneEval.setGrade(requestDTO.getGrade());
+                    if(requestDTO.getGrade() > 10){
+                        milestoneEval.setGrade((double) 10);
+                    }
                 }else {
                     throw new CustomException("invalid milestone grade"); 
                 }
