@@ -655,7 +655,7 @@ public class ClassUserService implements IClassUserService {
                         classUser.setFinalEval(finalEval);
                     }
                     if (eval.getGrade() == null) {
-                        classUser.setFinalEval(null);
+                        classUser.setFinalEval(0.0);
                     }
 
                     continue;
@@ -766,7 +766,7 @@ public class ClassUserService implements IClassUserService {
                         classUser.setFinalEval(finalEval);
                     }
                     if (eval.getGrade() == null) {
-                        classUser.setFinalEval(null);
+                        classUser.setFinalEval(0.0);
                     }
 
                     continue;
