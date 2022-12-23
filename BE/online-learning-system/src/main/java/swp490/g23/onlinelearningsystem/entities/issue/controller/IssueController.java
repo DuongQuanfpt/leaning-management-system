@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,7 +47,8 @@ public class IssueController {
 			@RequestParam(name = "isIssue", required = false) boolean isIssue,
 			@RequestParam(name = "filter", required = false) String filterJson,
 			@RequestParam(name = "milestoneId", required = false) Long filterMilestoneId,
-			@PathVariable("classCode") String classCode) throws JsonMappingException, JsonProcessingException{
+			@PathVariable("classCode") String classCode,
+			@AuthenticationPrincipal User user) throws JsonMappingException, JsonProcessingException{
 
 		int page = (currentPage == null) ? 1 : Integer.parseInt(currentPage);
 		int limit = (requestLimit == null) ? 0 : Integer.parseInt(requestLimit);
@@ -58,7 +60,7 @@ public class IssueController {
 			filterRequestDTO = new ObjectMapper().readValue(decodedFilter, IssueFilterRequestDTO.class);
 			
 		}
-		return issueService.getIssueList(page, limit, keyword, classCode, isIssue, filterMilestoneId, filterRequestDTO);
+		return issueService.getIssueList(page, limit, keyword, classCode, isIssue, filterMilestoneId, filterRequestDTO ,user);
 	}
 
 	@GetMapping(value = "/issue-list-filter/{classCode}")
@@ -118,5 +120,12 @@ public class IssueController {
 		@AuthenticationPrincipal User user) {
 
 		return issueService.issueDetail(issueId , user);
+	}
+
+	@DeleteMapping(value = "/issue-delete/{issueId}")
+	public ResponseEntity<String> deleteIssue(@PathVariable("issueId") Long issueId,
+		@AuthenticationPrincipal User user) {
+
+		return issueService.removeIssue(issueId, user);
 	}
 }

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import swp490.g23.onlinelearningsystem.entities.eval_criteria.domain.EvalCriteria;
 import swp490.g23.onlinelearningsystem.entities.eval_detail.domain.EvalDetail;
 import swp490.g23.onlinelearningsystem.entities.eval_detail.repositories.EvalDetailRepositories;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
@@ -30,6 +31,7 @@ import swp490.g23.onlinelearningsystem.entities.work_eval.repositories.WorkEvalR
 import swp490.g23.onlinelearningsystem.entities.work_eval.service.IWorkEvalService;
 import swp490.g23.onlinelearningsystem.entities.work_update.domain.WorkUpdate;
 import swp490.g23.onlinelearningsystem.entities.work_update.repositories.WorkUpdateRepository;
+import swp490.g23.onlinelearningsystem.enums.Status;
 import swp490.g23.onlinelearningsystem.enums.SubmitStatusEnum;
 import swp490.g23.onlinelearningsystem.enums.SubmitWorkStatusEnum;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
@@ -211,7 +213,14 @@ public class WorkEvalService implements IWorkEvalService {
 
         if (!submitWork.getSubmit().getMilestoneEvals().isEmpty()) {
             milestoneRevaluate(newSubmitWork.getSubmit().getMilestoneEvals().get(0));
-            // milestoneRevaluate(savedEval.getSubmitWork().getSubmit().getMilestoneEvals().get(0));
+
+        } else {
+            MilestoneEval newMilestoneEval = new MilestoneEval();
+            newMilestoneEval.setClassUser(submitWork.getSubmit().getClassUser());
+            newMilestoneEval.setMilestone(currentMilestone);
+            newMilestoneEval.setSubmit(submitWork.getSubmit());
+            newMilestoneEval.setBonus((double) 0);
+            milestoneRevaluate(newMilestoneEval);
         }
 
         Submit submit = submitWork.getSubmit();
@@ -219,7 +228,7 @@ public class WorkEvalService implements IWorkEvalService {
             List<Submit> changedSubmits = new ArrayList<>();
             for (Submit submitOfGroup : submit.getGroup().getSubmits()) {
                 if (submitOfGroup.getMilestone().getMilestoneId().equals(currentMilestone.getMilestoneId())) {
-                    if(submitOfGroup.getStatus() != SubmitStatusEnum.Evaluated){
+                    if (submitOfGroup.getStatus() != SubmitStatusEnum.Evaluated) {
                         submitOfGroup.setStatus(SubmitStatusEnum.Evaluated);
                         changedSubmits.add(submitOfGroup);
                     }
@@ -258,44 +267,84 @@ public class WorkEvalService implements IWorkEvalService {
     private void milestoneRevaluate(MilestoneEval milestoneEval) {
         Double milestoneGrade = (double) 0;
         boolean isUpdate = false;
-        for (EvalDetail evalDetail : milestoneEval.getEvalDetails()) {
-            if (evalDetail.getEvalCriteria().isWorkEval()) {
-                isUpdate = true;
+        if (milestoneEval.getEvalDetails() == null || milestoneEval.getEvalDetails().isEmpty()) {
+            EvalDetail workEvalDetail = new EvalDetail();
+            workEvalDetail.setMilestoneEval(milestoneEval);
+            for (EvalCriteria criteria : milestoneEval.getMilestone().getCriteriaList()) {
+                if(criteria.isWorkEval()){
+                    workEvalDetail.setEvalCriteria(criteria);
 
-                Long workPoint = (long) 0;
-                for (SubmitWork submitWork : milestoneEval.getSubmit().getSubmitWorks()) {
-                    WorkEval latestEval = new WorkEval();
-                    for (WorkEval eval : submitWork.getWorkEvals()) {
-                        if (latestEval.getCreatedDate() == null) {
-                            latestEval = eval;
-                        }
+                    Long workPoint = (long) 0;
+                    for (SubmitWork submitWork : milestoneEval.getSubmit().getSubmitWorks()) {
+                        WorkEval latestEval = new WorkEval();
+                        for (WorkEval eval : submitWork.getWorkEvals()) {
+                            if (latestEval.getCreatedDate() == null) {
+                                latestEval = eval;
+                            }
 
-                        if (latestEval.getCreatedDate().before(eval.getCreatedDate())) {
-                            latestEval = eval;
+                            if (latestEval.getCreatedDate().before(eval.getCreatedDate())) {
+                                latestEval = eval;
+                            }
                         }
+                        workPoint += latestEval.getWorkEval();
+
                     }
-                    workPoint += latestEval.getWorkEval();
+                    workEvalDetail.setTotalLoc(workPoint);
+
+                    double expectedWork = workEvalDetail.getEvalCriteria().getExpectedWork();
+                    double workGrade = workPoint / expectedWork * 10.0;
+                    workEvalDetail.setGrade(Math.round(workGrade * 100.0) / 100.0);
+
+                    Double grade = workEvalDetail.getGrade() * workEvalDetail.getEvalCriteria().getEvalWeight() / 100;
+                    grade = Math.round(grade * 100.0) / 100.0;
+                    milestoneGrade += grade;
+        
+                    milestoneEval.setGrade(milestoneGrade + milestoneEval.getBonus());
+                    milestoneEvalRepository.save(milestoneEval);
+
+                    evalDetailRepositories.save(workEvalDetail);
+                }
+            }
+        } else {
+
+            for (EvalDetail evalDetail : milestoneEval.getEvalDetails()) {
+                if (evalDetail.getEvalCriteria().isWorkEval()) {
+                    isUpdate = true;
+
+                    Long workPoint = (long) 0;
+                    for (SubmitWork submitWork : milestoneEval.getSubmit().getSubmitWorks()) {
+                        WorkEval latestEval = new WorkEval();
+                        for (WorkEval eval : submitWork.getWorkEvals()) {
+                            if (latestEval.getCreatedDate() == null) {
+                                latestEval = eval;
+                            }
+
+                            if (latestEval.getCreatedDate().before(eval.getCreatedDate())) {
+                                latestEval = eval;
+                            }
+                        }
+                        workPoint += latestEval.getWorkEval();
+
+                    }
+                    evalDetail.setTotalLoc(workPoint);
+
+                    double expectedWork = evalDetail.getEvalCriteria().getExpectedWork();
+                    double workGrade = workPoint / expectedWork * 10.0;
+                    evalDetail.setGrade(Math.round(workGrade * 100.0) / 100.0);
+
+                    evalDetailRepositories.save(evalDetail);
 
                 }
-                evalDetail.setTotalLoc(workPoint);
-
-                double expectedWork = evalDetail.getEvalCriteria().getExpectedWork();
-                double workGrade = workPoint / expectedWork * 10.0;
-                evalDetail.setGrade(Math.round(workGrade * 100.0) / 100.0);
-
-                evalDetailRepositories.save(evalDetail);
-
+                Double grade = evalDetail.getGrade() * evalDetail.getEvalCriteria().getEvalWeight() / 100;
+                grade = Math.round(grade * 100.0) / 100.0;
+                milestoneGrade += grade;
             }
-            Double grade = evalDetail.getGrade() * evalDetail.getEvalCriteria().getEvalWeight() / 100;
-            grade = Math.round(grade * 100.0) / 100.0;
-            milestoneGrade += grade;
-        }
 
-        if (isUpdate == true) {
-            milestoneEval.setGrade(milestoneGrade + milestoneEval.getBonus());
-            milestoneEvalRepository.save(milestoneEval);
+            if (isUpdate == true) {
+                milestoneEval.setGrade(milestoneGrade + milestoneEval.getBonus());
+                milestoneEvalRepository.save(milestoneEval);
+            }
         }
-
     }
 
     @Override

@@ -141,7 +141,8 @@ public class SubmitService implements ISubmitService {
         List<SubmitFilterMilestoneDTO> filterMilestoneDTOs = new ArrayList<>();
         SubmitFilterMilestoneDTO allMilestone = new SubmitFilterMilestoneDTO();
         allMilestone.setMilestoneId((long) 0);
-        allMilestone.setMilestoneTitle("All Milestone");
+        allMilestone.setMilestoneTitle("All Assignment");
+        allMilestone.setAssignmentTitle("All Assignment");
 
         filterMilestoneDTOs.add(allMilestone);
         for (Milestone milestone : milestoneOfClass) {
@@ -201,12 +202,13 @@ public class SubmitService implements ISubmitService {
     }
 
     @Override
-    public ResponseEntity<List<SubmitNewResponseDTO>> newSubmit(User user, Long submitId, SubmitRequirementWrapper requestDTO,
+    public ResponseEntity<List<SubmitNewResponseDTO>> newSubmit(User user, Long submitId,
+            SubmitRequirementWrapper requestDTO,
             MultipartFile file) {
         Submit currentSubmit = submitRepository.findById(submitId)
                 .orElseThrow(() -> new CustomException("submit doesnt exist"));
-        
-        if(file == null){
+
+        if (file == null) {
             throw new CustomException("must submit a file");
         }
 
@@ -319,10 +321,10 @@ public class SubmitService implements ISubmitService {
         return ResponseEntity.ok(newResponseDTOs(savedSubmitWorks));
     }
 
-    private List<SubmitNewResponseDTO> newResponseDTOs ( List<SubmitWork> savedSubmitWorks) {
+    private List<SubmitNewResponseDTO> newResponseDTOs(List<SubmitWork> savedSubmitWorks) {
         List<SubmitNewResponseDTO> dtos = new ArrayList<>();
         for (SubmitWork submitWork : savedSubmitWorks) {
-            dtos.add(new SubmitNewResponseDTO(submitWork.getSubmit().getSubmitId(),submitWork.getWork().getIssueId()));
+            dtos.add(new SubmitNewResponseDTO(submitWork.getSubmit().getSubmitId(), submitWork.getWork().getIssueId()));
         }
         return dtos;
     }
@@ -380,7 +382,7 @@ public class SubmitService implements ISubmitService {
 
             for (Milestone milestone : submit.getClassUser().getClasses().getMilestones()) {
                 if (!milestone.getAssignment().isTeamWork()) {
-                    milestones.add(toMilestoneFilterDto(submit.getMilestone()));
+                    milestones.add(toMilestoneFilterDto(milestone));
                 }
             }
 
@@ -591,14 +593,19 @@ public class SubmitService implements ISubmitService {
                 boolean isAdd = true;
                 boolean canAdd = true;
                 if (currentSubmit.getMilestone().getAssignment().isFinal() == true) {
+                    // if (!submitWork.getMilestone().equals(currentSubmit.getMilestone())) {
+                    // for (WorkUpdate update : submitWork.getSubmit().getUpdates()) {
+                    // if (!update.getRequirement().equals(submitWork.getWork())) {
+                    // isAdd = false;
+                    // } else {
+                    // isAdd = true;
+                    // break;
+                    // }
+                    // }
+                    // }
                     if (!submitWork.getMilestone().equals(currentSubmit.getMilestone())) {
-                        for (WorkUpdate update : submitWork.getSubmit().getUpdates()) {
-                            if (!update.getRequirement().equals(submitWork.getWork())) {
-                                isAdd = false;
-                            } else {
-                                isAdd = true;
-                                break;
-                            }
+                        if (submitWork.getSubmit().getUpdates().isEmpty()) {
+                            isAdd = false;
                         }
                     }
                 }

@@ -191,6 +191,24 @@ public class ScheduleService implements IScheduleService {
         List<ClassSetting> listClassSetting = classSettingRepository.findByClassAndSlot(clazz.getCode());
         List<String> listSlot = new ArrayList<>();
         List<Schedule> scheduleList = new ArrayList<>();
+
+        if (dto.getDate() != null) {
+            if (requestDate.isBefore(dateNow)) {
+                throw new CustomException("Date is before now, ilegal to create new!");
+            } else if (requestDate.equals(dateNow)
+                    && (requestFromTime.isBefore(timeNow) || requestToTime.isBefore(timeNow))) {
+                throw new CustomException("Time is before now, ilegal to create new!");
+            } else {
+                if (requestFromTime.isAfter(requestToTime)) {
+                    throw new CustomException("From Time must before To Time");
+                } else {
+                    schedule.setTrainingDate(LocalDate.parse(dto.getDate()));
+                    schedule.setFromTime(LocalTime.parse(dto.getFromTime()));
+                    schedule.setToTime(LocalTime.parse(dto.getToTime()));
+                }
+            }
+        }
+
         for (ClassSetting clazzSetting : listClassSetting) {
             listSlot.add(clazzSetting.getSettingValue().toLowerCase());
             scheduleList.addAll(clazzSetting.getSchedules());
@@ -207,6 +225,7 @@ public class ScheduleService implements IScheduleService {
             }
             settingClass.setSettingValue(dto.getSlot());
             settingClass.setClasses(clazz);
+            settingClass.setSettingTitle(dto.getTopic());
             settingClass.setStatus(Status.Active);
             settingClass.setType(settingRepositories.findBySettingValue("TYPE_CLASS_MODULE"));
             classSettingRepository.save(settingClass);
@@ -226,22 +245,7 @@ public class ScheduleService implements IScheduleService {
             }
             schedule.setSetting(setting);
         }
-        if (dto.getDate() != null) {
-            if (requestDate.isBefore(dateNow)) {
-                throw new CustomException("Date is before now, ilegal to udpate!");
-            } else if (requestDate.equals(dateNow)
-                    && (requestFromTime.isBefore(timeNow) || requestToTime.isBefore(timeNow))) {
-                throw new CustomException("Time is before now, ilegal to udpate!");
-            } else {
-                if (requestFromTime.isAfter(requestToTime)) {
-                    throw new CustomException("From Time must before To Time");
-                } else {
-                    schedule.setTrainingDate(LocalDate.parse(dto.getDate()));
-                    schedule.setFromTime(LocalTime.parse(dto.getFromTime()));
-                    schedule.setToTime(LocalTime.parse(dto.getToTime()));
-                }
-            }
-        }
+
         if (dto.getTopic() != null) {
             schedule.setTopic(dto.getTopic());
         }
@@ -263,6 +267,7 @@ public class ScheduleService implements IScheduleService {
         LocalDate requestDate = LocalDate.parse(dto.getDate());
         LocalTime requestFromTime = LocalTime.parse(dto.getFromTime());
         LocalTime requestToTime = LocalTime.parse(dto.getToTime());
+        ClassSetting classSetting = schedule.getClassSetting();
 
         if (schedule.getStatus().equals(null) || schedule.getStatus().equals(ScheduleStatus.Active)) {
             throw new CustomException("schedule had taken attendence, can't change information!");
@@ -273,6 +278,7 @@ public class ScheduleService implements IScheduleService {
                     if (slot.equalsIgnoreCase(sche.getClassSetting().getSettingValue())) {
                         if (dto.getTopic() != null) {
                             schedule.setTopic(dto.getTopic());
+                            classSetting.setSettingTitle(dto.getTopic());
                             if (dto.getDate() != null) {
                                 if (requestDate.equals(sche.getTrainingDate())
                                         && requestFromTime.equals(sche.getFromTime())
@@ -368,6 +374,7 @@ public class ScheduleService implements IScheduleService {
         }
         if (entity.getClassSetting() != null) {
             responseDTO.setSlot(entity.getClassSetting().getSettingValue());
+            responseDTO.setTopic(entity.getClassSetting().getSettingTitle());
         }
         if (entity.getSetting() != null) {
             responseDTO.setRoom(new SettingTypeResponseDTO(entity.getSetting().getSettingTitle(),
@@ -382,9 +389,9 @@ public class ScheduleService implements IScheduleService {
         if (entity.getTrainingDate() != null) {
             responseDTO.setDate(entity.getTrainingDate());
         }
-        if (entity.getTopic() != null) {
-            responseDTO.setTopic(entity.getTopic());
-        }
+        // if (entity.getTopic() != null) {
+        // responseDTO.setTopic(entity.getTopic());
+        // }
         responseDTO.setStatus(entity.getStatus());
         return responseDTO;
     }

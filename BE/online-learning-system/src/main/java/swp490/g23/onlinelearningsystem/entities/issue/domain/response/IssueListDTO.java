@@ -15,6 +15,7 @@ public class IssueListDTO {
     private int page;
 	private int totalPage;
 	private long totalItem;
+    private Boolean editable;
     private List<IssueResponseDTO> issueList;
 
 }
