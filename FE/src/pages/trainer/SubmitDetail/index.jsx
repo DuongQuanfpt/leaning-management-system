@@ -612,7 +612,7 @@ const SubmitDetail = () => {
                             <Select
                               className="w-100"
                               options={listWorkEval?.complexityFilter?.map((item) => ({
-                                label: item.title,
+                                label: `${item.title} (${item.point})`,
                                 value: item.id,
                                 point: item.point,
                               }))}
@@ -633,7 +633,7 @@ const SubmitDetail = () => {
                             <Select
                               className="w-100"
                               options={listWorkEval?.qualityFilter?.map((item) => ({
-                                label: item.title,
+                                label: `${item.title} (${item.point}%)`,
                                 value: item.id,
                                 point: item.point,
                               }))}
@@ -808,7 +808,7 @@ const SubmitDetail = () => {
                             <Select
                               className="w-100"
                               options={listWorkEval?.complexityFilter?.map((item) => ({
-                                label: item.title,
+                                label: `${item.title} (${item.point})`,
                                 value: item.id,
                                 point: item.point,
                               }))}
@@ -829,7 +829,7 @@ const SubmitDetail = () => {
                             <Select
                               className="w-100"
                               options={listWorkEval?.qualityFilter?.map((item) => ({
-                                label: item.title,
+                                label: `${item.title} (${item.point}%)`,
                                 value: item.id,
                                 point: item.point,
                               }))}

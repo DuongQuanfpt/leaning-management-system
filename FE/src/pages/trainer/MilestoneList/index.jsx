@@ -312,14 +312,14 @@ const MilestoneList = () => {
       title: 'Title',
       dataIndex: 'title',
       sorter: (a, b) => a.title.toString().localeCompare(b.title.toString(), 'en', { sensitivity: 'base' }),
-      width: '20%',
+      width: '17.5%',
     },
     {
       title: 'Assignment',
       dataIndex: 'assignment',
       sorter: (a, b) =>
         a.assignment.title.toString().localeCompare(b.assignment.title.toString(), 'en', { sensitivity: 'base' }),
-      width: '20%',
+      width: '17.5%',
       render: (_, { assignment }) => assignment.title,
     },
     {
@@ -344,6 +344,11 @@ const MilestoneList = () => {
           .localeCompare(b.assignment.isTeamWork.toString(), 'en', { sensitivity: 'base' }),
       render: (_, { assignment }) => (assignment.isTeamWork === 1 ? 'Yes' : 'No'),
       width: '9%',
+    },
+    {
+      title: 'Expected Workpoint',
+      render: (_, { expectedWork }) => expectedWork ?? `0`,
+      width: '5%',
     },
     {
       title: 'Status',

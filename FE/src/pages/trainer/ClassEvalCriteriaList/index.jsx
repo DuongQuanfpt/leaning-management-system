@@ -143,7 +143,7 @@ const ClassEvalCriteriaList = () => {
       dataIndex: 'assignment',
       sorter: (a, b) => a.assignment.title.localeCompare(b.assignment.title, 'en', { sensitivity: 'base' }),
       width: '20%',
-      render: (_, { assignment }) => assignment.title,
+      render: (_, { milestone }) => milestone.milestoneTitle,
     },
     {
       title: 'Name',
