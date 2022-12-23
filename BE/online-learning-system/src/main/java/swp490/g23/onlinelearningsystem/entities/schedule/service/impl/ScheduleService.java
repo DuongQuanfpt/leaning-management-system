@@ -267,6 +267,7 @@ public class ScheduleService implements IScheduleService {
         LocalDate requestDate = LocalDate.parse(dto.getDate());
         LocalTime requestFromTime = LocalTime.parse(dto.getFromTime());
         LocalTime requestToTime = LocalTime.parse(dto.getToTime());
+        ClassSetting classSetting = schedule.getClassSetting();
 
         if (schedule.getStatus().equals(null) || schedule.getStatus().equals(ScheduleStatus.Active)) {
             throw new CustomException("schedule had taken attendence, can't change information!");
@@ -277,6 +278,7 @@ public class ScheduleService implements IScheduleService {
                     if (slot.equalsIgnoreCase(sche.getClassSetting().getSettingValue())) {
                         if (dto.getTopic() != null) {
                             schedule.setTopic(dto.getTopic());
+                            classSetting.setSettingTitle(dto.getTopic());
                             if (dto.getDate() != null) {
                                 if (requestDate.equals(sche.getTrainingDate())
                                         && requestFromTime.equals(sche.getFromTime())
@@ -372,6 +374,7 @@ public class ScheduleService implements IScheduleService {
         }
         if (entity.getClassSetting() != null) {
             responseDTO.setSlot(entity.getClassSetting().getSettingValue());
+            responseDTO.setTopic(entity.getClassSetting().getSettingTitle());
         }
         if (entity.getSetting() != null) {
             responseDTO.setRoom(new SettingTypeResponseDTO(entity.getSetting().getSettingTitle(),
@@ -386,9 +389,9 @@ public class ScheduleService implements IScheduleService {
         if (entity.getTrainingDate() != null) {
             responseDTO.setDate(entity.getTrainingDate());
         }
-        if (entity.getTopic() != null) {
-            responseDTO.setTopic(entity.getTopic());
-        }
+        // if (entity.getTopic() != null) {
+        // responseDTO.setTopic(entity.getTopic());
+        // }
         responseDTO.setStatus(entity.getStatus());
         return responseDTO;
     }
