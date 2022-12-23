@@ -46,6 +46,11 @@ const contactUsApi = {
     const url = `/api/issue-batch-update`
     return axiosClient.put(url, params, header)
   },
+
+  deleteIssue: (issueId) => {
+    const url = `api/issue-delete/${issueId}`
+    return axiosClient.delete(url, header)
+  },
 }
 
 export default contactUsApi

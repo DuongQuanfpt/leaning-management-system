@@ -77,7 +77,7 @@ const User = () => {
             })}
           </Route>
           {/* Only users with trainee role can access */}
-          <Route element={<RequireAuth allowedRoles={['trainee']} />}>
+          <Route element={<RequireAuth allowedRoles={['trainee', 'trainer']} />}>
             {traineeRoutes.map((route, index) => {
               const Page = route.component
               return <Route key={index} path={route.path} element={<Page />} />

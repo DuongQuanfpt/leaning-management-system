@@ -156,21 +156,23 @@ const ClassEvalCriteriaList = () => {
       dataIndex: 'evalWeight',
       sorter: (a, b) => a.evalWeight.toString().localeCompare(b.evalWeight.toString(), 'en', { sensitivity: 'base' }),
       width: '10%',
+      render: (_, { evalWeight }) => `${evalWeight}%`,
     },
     {
-      title: 'Expected Work',
+      title: 'Expected WorkPoint?',
       dataIndex: 'expectedWork',
       sorter: (a, b) =>
         a.expectedWork.toString().localeCompare(b.expectedWork.toString(), 'en', { sensitivity: 'base' }),
       width: '10%',
+      render: (_, { expectedWork, isWorkEval }) => (isWorkEval ? expectedWork : `-`),
     },
-    {
-      title: 'Team Eval?',
-      dataIndex: 'isTeamEval',
-      sorter: (a, b) => a.isTeamEval.toString().localeCompare(b.isTeamEval.toString(), 'en', { sensitivity: 'base' }),
-      width: '10%',
-      render: (_, { isTeamEval }) => (isTeamEval === 1 ? 'Yes' : 'No'),
-    },
+    // {
+    //   title: 'Team Eval?',
+    //   dataIndex: 'isTeamEval',
+    //   sorter: (a, b) => a.isTeamEval.toString().localeCompare(b.isTeamEval.toString(), 'en', { sensitivity: 'base' }),
+    //   width: '10%',
+    //   render: (_, { isTeamEval }) => (isTeamEval === 1 ? 'Yes' : 'No'),
+    // },
     {
       title: 'Work Eval?',
       dataIndex: 'isWorkEval',

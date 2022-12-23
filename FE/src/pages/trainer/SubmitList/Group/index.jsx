@@ -145,7 +145,7 @@ const Group = () => {
     {
       title: 'Status',
       dataIndex: 'status',
-      width: '10%',
+      width: '7.5%',
       render: (_, { status }) => (
         <Tag color={status === 'Pending' ? 'green' : status === 'Submitted' ? 'blue' : 'purple'}> {status}</Tag>
       ),
@@ -153,7 +153,7 @@ const Group = () => {
     {
       title: 'Actions',
       dataIndex: '',
-      width: '10%',
+      width: '12.5%',
       render: (_, submit) => (
         <Space size="middle" align="baseline">
           {!isTrainer && username === submit.traineeTitle && submit.status !== 'Evaluated' && (

@@ -59,6 +59,7 @@ const AttendanceTracking = () => {
       dataIndex: 'absentPercent',
       fixed: 'left',
       width: '7%',
+      render: (_, { absentPercent }) => absentPercent + `%`,
     },
     {
       title: () => {

@@ -575,8 +575,8 @@ const IssueList = () => {
                           <Breadcrumb.Item>Issue List</Breadcrumb.Item>
                         </Breadcrumb>
                       </div>
-                      <div className="col-4 d-flex w-80"></div>
-                      <div className="col-2 d-flex justify-content-end">
+                      <div className="col-2 d-flex w-80"></div>
+                      <div className="col-4 d-flex justify-content-end">
                         <Select
                           className="w-100"
                           placeholder="Select Milestone"
@@ -584,6 +584,7 @@ const IssueList = () => {
                             value: milestone.milestoneId,
                             label: milestone.milestoneTitle,
                           }))}
+                          loading={isLoading}
                           value={filter?.milestoneId}
                           onChange={(value) => {
                             const milestoneSelect = listFilter.milestoneFilter.filter(
