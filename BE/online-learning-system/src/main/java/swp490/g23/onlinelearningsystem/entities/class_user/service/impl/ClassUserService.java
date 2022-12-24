@@ -752,8 +752,13 @@ public class ClassUserService implements IClassUserService {
                                 // evals.add(eval);
                             }
                         }
-                        eval.setGrade(markEval + bonus);
-                        evals.add(eval);
+                        if (markEval + bonus >= 10.0) {
+                            eval.setGrade(10.0);
+                            evals.add(eval);
+                        } else {
+                            eval.setGrade(markEval + bonus);
+                            evals.add(eval);
+                        }
                     }
                 }
             }
