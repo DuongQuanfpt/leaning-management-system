@@ -729,23 +729,31 @@ public class ClassUserService implements IClassUserService {
                         evals.add(eval);
                     }
                     if (eval.getMilestone().equals(milestone)) {
+                        Double markEval = 0.0;
+                        Double bonus = 0.0;
                         for (EvalDetail detail : details) {
                             if (detail.getGrade() != null && eval.getBonus() != null) {
-                                Double markEval = detail.getGrade() * detail.getEvalCriteria().getEvalWeight()
+                                markEval += detail.getGrade() * detail.getEvalCriteria().getEvalWeight()
                                         / 100;
-                                Double mark = markEval + eval.getBonus();
-                                eval.setGrade(mark);
-                                evals.add(eval);
+                                // Double mark = markEval + eval.getBonus();
+                                bonus = eval.getBonus();
+                                // eval.setGrade(bonus);
+                                // evals.add(eval);
                             } else if (detail.getGrade() != null && eval.getBonus() == null) {
-                                Double markEval = detail.getGrade() * detail.getEvalCriteria().getEvalWeight()
+                                markEval += detail.getGrade() * detail.getEvalCriteria().getEvalWeight()
                                         / 100;
-                                eval.setGrade(markEval);
-                                evals.add(eval);
+                                bonus = 0.0;
+                                // eval.setGrade(markEval);
+                                // evals.add(eval);
                             } else {
-                                eval.setGrade(null);
-                                evals.add(eval);
+                                markEval = 0.0;
+                                bonus = 0.0;
+                                // eval.setGrade(null);
+                                // evals.add(eval);
                             }
                         }
+                        eval.setGrade(markEval + bonus);
+                        evals.add(eval);
                     }
                 }
             }
