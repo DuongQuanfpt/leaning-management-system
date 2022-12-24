@@ -30,7 +30,7 @@ const ClassSettingDetail = () => {
     settingTitle: '',
     settingValue: '',
     status: 0,
-    displayOrder: 0,
+    displayOrder: 1,
     description: '',
   })
   // eslint-disable-next-line no-unused-vars
@@ -64,16 +64,17 @@ const ClassSettingDetail = () => {
     await classSettingListApi
       .getDetail(id)
       .then((response) => {
+        console.log(response)
         setClassSettingDetail(response)
         setDetail((prev) => ({
           ...prev,
           classCode: response.classCode,
           typeName: response.typeName,
-          settingTitle: response.settingTitle,
-          settingValue: response.settingValue,
+          settingTitle: response.settingTitle ?? '',
+          settingValue: response.settingValue ?? '',
           status: response.status === 'Active' ? 1 : 0,
-          displayOrder: response.displayOrder,
-          description: response.description,
+          displayOrder: response.displayOrder ?? 1,
+          description: response.description ?? '',
         }))
       })
       .catch((error) => {
@@ -113,7 +114,7 @@ const ClassSettingDetail = () => {
       setError('Class setting title must not empty')
       return
     }
-    if (detail?.displayOrder.length === 0) {
+    if (detail?.displayOrder?.length === 0) {
       setError('Display Order must not empty')
       return
     }

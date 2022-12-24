@@ -13,6 +13,7 @@ import {
   Layout,
   message,
   Pagination,
+  Popconfirm,
   Row,
   Select,
   Space,
@@ -22,7 +23,7 @@ import {
   Typography,
 } from 'antd'
 
-import { CalendarOutlined, ClockCircleOutlined, SearchOutlined } from '@ant-design/icons'
+import { CalendarOutlined, ClockCircleOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons'
 
 import issueApi from '~/api/issueApi'
 
@@ -30,10 +31,11 @@ import AdminHeader from '~/components/AdminDashboard/AdminHeader'
 import AdminSidebar from '~/components/AdminDashboard/AdminSidebar'
 import AdminFooter from '~/components/AdminDashboard/AdminFooter'
 import moment from 'moment'
+import ToastMessage from '~/components/Common/ToastMessage'
 
 const RequirementList = () => {
   let ITEM_PER_PAGE = 10
-  const { roles, currentClass, ofGroup } = useSelector((state) => state.profile)
+  const { roles, currentClass, ofGroup, username } = useSelector((state) => state.profile)
 
   const navigateTo = useNavigate()
 
@@ -63,6 +65,8 @@ const RequirementList = () => {
 
   const [listGroupLeader, setListGroupLeader] = useState([])
   const [loading, setLoading] = useState(false)
+
+  const [isAddRequirementable, setIsAddRequirementable] = useState(false)
 
   useEffect(() => {
     const baseListGroupLeader = []
@@ -174,6 +178,7 @@ const RequirementList = () => {
         setListIssue(response.issueList.map((item, index) => ({ ...item, key: index })))
         setCurrentPage(page)
         setTotalItem(response.totalItem)
+        setIsAddRequirementable(response.editable)
       })
       .then(() => setLoading(false))
       .catch((error) => {
@@ -276,6 +281,18 @@ const RequirementList = () => {
       labels[1] = 'Any'
     }
     return <span key={Math.random()}>{`${labels[0]} : ${labels[1]}`}</span>
+  }
+
+  const handleDeteleIssue = (issueId) => {
+    issueApi
+      .deleteIssue(issueId)
+      .then(() => {
+        ToastMessage('success', 'Delete Issue Successfully!')
+      })
+      .catch(() => {
+        ToastMessage('error', 'Delete Issue Failed, try again later!')
+      })
+      .finally(() => loadData(currentPage, filter, search))
   }
 
   const columns = [
@@ -424,6 +441,44 @@ const RequirementList = () => {
               <Tag className="ml-2" color="green">
                 {issue.status}
               </Tag>
+
+              {issue.canDelete ? (
+                roles.includes('trainee') ? (
+                  issue.group !== null ? (
+                    listGroupLeader.includes(issue.group.groupId) ? (
+                      <Popconfirm
+                        title="Are you sure to delete this requirement?"
+                        onConfirm={() => {
+                          handleDeteleIssue(issue.issueId)
+                        }}
+                        onCancel={() => {}}
+                        okText="Confirm"
+                        cancelText="Cancel"
+                        okType="primary"
+                      >
+                        <Button size="small" icon={<DeleteOutlined />} type="primary" danger></Button>
+                      </Popconfirm>
+                    ) : null
+                  ) : (
+                    (issue?.author?.username === username ||
+                      issue?.modifiedBy?.username === username ||
+                      issue?.asignee?.username === username) && (
+                      <Popconfirm
+                        title="Are you sure to delete this requirement?"
+                        onConfirm={() => {
+                          handleDeteleIssue(issue.issueId)
+                        }}
+                        onCancel={() => {}}
+                        okText="Confirm"
+                        cancelText="Cancel"
+                        okType="primary"
+                      >
+                        <Button size="small" icon={<DeleteOutlined />} type="primary" danger></Button>
+                      </Popconfirm>
+                    )
+                  )
+                ) : null
+              ) : null}
             </Typography.Text>
           </Space>
         </Space>
@@ -434,6 +489,7 @@ const RequirementList = () => {
       align: 'end',
       title: () =>
         // eslint-disable-next-line no-mixed-operators
+        isAddRequirementable &&
         (listGroupLeader.length !== 0 || roles.includes('trainer')) && (
           <>
             <Space>
@@ -532,18 +588,6 @@ const RequirementList = () => {
     },
   ]
 
-  // const modalConfirm = (subject) => {
-  //   Modal.confirm({
-  //     title: `Are you want to ?`,
-  //     icon: <ExclamationCircleOutlined />,
-  //     okText: 'OK',
-  //     cancelText: 'Cancel',
-  //     okType: 'danger',
-  //     onOk() {},
-  //     onCancel() {},
-  //   })
-  // }
-
   return (
     <div>
       <AdminSidebar />
@@ -564,8 +608,8 @@ const RequirementList = () => {
                           <Breadcrumb.Item>Requirement List</Breadcrumb.Item>
                         </Breadcrumb>
                       </div>
-                      <div className="col-4 d-flex w-80"></div>
-                      <div className="col-2 d-flex justify-content-end">
+                      <div className="col-2 d-flex w-80"></div>
+                      <div className="col-4 d-flex justify-content-end">
                         <Select
                           className="w-100"
                           placeholder="Select Milestone"
@@ -573,6 +617,7 @@ const RequirementList = () => {
                             value: milestone.milestoneId,
                             label: milestone.milestoneTitle,
                           }))}
+                          loading={loading}
                           value={filter?.milestoneId}
                           onChange={(value) => setFilter((prev) => ({ ...prev, milestoneId: value }))}
                         ></Select>

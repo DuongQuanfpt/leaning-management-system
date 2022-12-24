@@ -40,13 +40,13 @@ const ClassSettingAdd = () => {
     loadData()
   }, [])
 
-  useEffect(() => {
-    if (detail.typeName.title === 'Issue type' || detail.typeName.title === 'Issue status') {
-      setDetail((prev) => ({ ...prev, settingValue: 'Select Value' }))
-    } else {
-      setDetail((prev) => ({ ...prev, settingValue: '' }))
-    }
-  }, [detail.typeName.title])
+  // useEffect(() => {
+  //   if (detail.typeName.title === 'Issue type' || detail.typeName.title === 'Issue status') {
+  //     setDetail((prev) => ({ ...prev, settingValue: 'Select Value' }))
+  //   } else {
+  //     setDetail((prev) => ({ ...prev, settingValue: '' }))
+  //   }
+  // }, [detail.typeName.title])
 
   useEffect(() => {
     document.title = 'LMS - Class Setting Add'
@@ -203,7 +203,7 @@ const ClassSettingAdd = () => {
                           Class Setting Value <Typography.Text type="danger">*</Typography.Text>
                         </label>
 
-                        {detail.typeName.title === 'Issue status' && (
+                        {/* {detail.typeName.title === 'Issue status' && (
                           <CDropdown className="w-100">
                             <CDropdownToggle color="warning">{detail.settingValue}</CDropdownToggle>
                             <CDropdownMenu className="w-100" style={{ maxHeight: '300px', overflow: 'auto' }}>
@@ -227,8 +227,8 @@ const ClassSettingAdd = () => {
                               ))}
                             </CDropdownMenu>
                           </CDropdown>
-                        )}
-                        {detail.typeName.title !== 'Issue status' && detail.typeName.title !== 'Issue type' && (
+                        )} */}
+                        {/* {detail.typeName.title !== 'Issue status' && detail.typeName.title !== 'Issue type' && (
                           <div>
                             <input
                               className="form-control"
@@ -237,7 +237,16 @@ const ClassSettingAdd = () => {
                               onChange={(e) => setDetail((prev) => ({ ...prev, settingValue: e.target.value }))}
                             />
                           </div>
-                        )}
+                        )} */}
+
+                        <div>
+                          <input
+                            className="form-control"
+                            type="text"
+                            value={detail.settingValue}
+                            onChange={(e) => setDetail((prev) => ({ ...prev, settingValue: e.target.value }))}
+                          />
+                        </div>
                       </div>
                       <div className="form-group col-6">
                         <label className="col-form-label">

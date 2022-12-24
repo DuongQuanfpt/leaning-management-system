@@ -48,21 +48,6 @@ public class IssueCriteria {
         if (filterMilestoneId != null && filterMilestoneId != 0) {
             query.append(" AND i.milestone.milestoneId = '" + filterMilestoneId + "'");
 
-            if (roles.contains("ROLE_TRAINEE")) {
-                Milestone milestone = milestoneRepository.findById(filterMilestoneId).get();
-                if (milestone.getAssignment().isTeamWork()) {
-                    for (Submit submit : milestone.getSubmits()) {
-                        if (submit.getClassUser()!=null && submit.getClassUser().getUser().equals(user)) {
-                            if (submit.getGroup() != null) {
-                                query.append(" AND i.group.groupId = '" + submit.getGroup().getGroupId() + "'");  
-                            } else {
-                                query.append(" AND i.group.groupId = '" + 0 + "'");
-                            }
-                            break;
-                        }
-                    }
-                }
-            }
         }
 
         if (keyword != null) {
@@ -87,6 +72,22 @@ public class IssueCriteria {
                 }
 
                 query.append(" )");
+            } else {
+                if (roles.contains("ROLE_TRAINEE") && filterMilestoneId != null && filterMilestoneId != 0) {
+                    Milestone milestone = milestoneRepository.findById(filterMilestoneId).get();
+                    if (milestone.getAssignment().isTeamWork()) {
+                        for (Submit submit : milestone.getSubmits()) {
+                            if (submit.getClassUser()!=null && submit.getClassUser().getUser().equals(user)) {
+                                if (submit.getGroup() != null) {
+                                    query.append(" AND ( i.group.groupId = '" + submit.getGroup().getGroupId() + "' OR i.group IS NULL )");  
+                                } else {
+                                    query.append(" AND ( i.group.groupId = '" + 0 + "' OR i.group IS NULL )");
+                                }
+                               break;
+                            }
+                        }
+                    }
+                }
             }
 
             List<Long> statusFilter = filterRequestDTO.getStatusIds();

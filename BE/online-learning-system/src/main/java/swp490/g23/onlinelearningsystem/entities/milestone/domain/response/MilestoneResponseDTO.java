@@ -32,6 +32,8 @@ public class MilestoneResponseDTO {
 
     private String status;
 
+    private Long expectedWork;
+
     private List<MilestoneGroupDTO> groups;
 
     private List<MilestoneNoGroupDTO>noGroup;
