@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import swp490.g23.onlinelearningsystem.entities.classes.domain.Classes;
 import swp490.g23.onlinelearningsystem.entities.classes.repositories.ClassRepositories;
 import swp490.g23.onlinelearningsystem.entities.eval_criteria.domain.EvalCriteria;
-import swp490.g23.onlinelearningsystem.entities.eval_criteria.repositories.EvalCriteriaRepositories;
 import swp490.g23.onlinelearningsystem.entities.eval_detail.domain.EvalDetail;
 import swp490.g23.onlinelearningsystem.entities.eval_detail.repositories.EvalDetailRepositories;
 import swp490.g23.onlinelearningsystem.entities.group.domain.Group;
@@ -65,9 +64,6 @@ public class MilestoneEvalService implements IMilestoneEvalService {
 
     @Autowired
     private GroupRepository groupRepository;
-
-    @Autowired
-    private EvalCriteriaRepositories criteriaRepositories;
 
     @Autowired
     private EvalDetailRepositories evalDetailRepositories;
@@ -256,6 +252,9 @@ public class MilestoneEvalService implements IMilestoneEvalService {
 
                 double expectedWork = workCriteria.getExpectedWork();
                 double workGrade = workPoint / expectedWork * 10.0;
+                if(workGrade >10) {
+                    workGrade = 10;
+                }
                 dto.setWorkGrade(Math.round(workGrade * 100.0) / 100.0);
                 dto.setWorkWeight(workCriteria.getEvalWeight());
                 dto.setWorkCriteriaId(workCriteria.getCriteriaId());

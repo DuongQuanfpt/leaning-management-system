@@ -40,6 +40,7 @@ import swp490.g23.onlinelearningsystem.entities.user.domain.response.UserTypeRes
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.criteria.UserRepositoriesCriteria;
 import swp490.g23.onlinelearningsystem.entities.user.service.IUserService;
+import swp490.g23.onlinelearningsystem.enums.ClassStatus;
 import swp490.g23.onlinelearningsystem.enums.UserStatus;
 import swp490.g23.onlinelearningsystem.enums.enumentities.UserStatusEntity;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
@@ -435,15 +436,20 @@ public class UserService implements IUserService {
         List<String> classCode = new ArrayList<>();
         List<UserGroupDTO> groupDTOs = new ArrayList<>();
         if(roleNames.contains("manager")){
-            List<Classes> classesAll = classRepositories.findAll();
+            List<Classes> classesAll = classRepositories.getClassByManager(entity.getAccountName());
             for (Classes classes : classesAll) {
-                classCode.add(classes.getCode());
+                if(classes.getStatus() == ClassStatus.Active) {
+                    classCode.add(classes.getCode());
+                }
+               
             }
             
         } else if(roleNames.contains("supporter") || roleNames.contains("trainer")) {
             List<Classes> classesAll = classRepositories.getClassByUser(entity.getAccountName());
             for (Classes classes : classesAll) {
-                classCode.add(classes.getCode());
+                if(classes.getStatus() == ClassStatus.Active) {
+                    classCode.add(classes.getCode());
+                }
             }
 
             for (GroupMember member :  entity.getGroupMembers()) {

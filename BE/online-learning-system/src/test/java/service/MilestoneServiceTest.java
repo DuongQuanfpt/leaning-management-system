@@ -240,6 +240,7 @@ public class MilestoneServiceTest {
         mockRepository.setAssignment(assignment);
         mockRepository.setClasses(classes);
         mockRepository.setSubmits(new ArrayList<>());
+        mockRepository.setCriteriaList(new ArrayList<>());
 
         return mockRepository;
     }

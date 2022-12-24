@@ -85,6 +85,7 @@ public class WorkEvalServiceTest {
         Milestone milestone = new Milestone();
         milestone.setMilestoneId((long) 1);
         milestone.setAssignment(assignment);
+        milestone.setCriteriaList(new ArrayList<>());
 
         Setting complexityType = new Setting();
         complexityType.setSettingValue("TYPE_COMPLEXITY");

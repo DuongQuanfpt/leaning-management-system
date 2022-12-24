@@ -348,6 +348,14 @@ public class MilestoneService implements IMilestoneService {
             responseDTO.setTitle(entity.getTitle());
         }
 
+        if(!entity.getCriteriaList().isEmpty()){
+            for (EvalCriteria criteria : entity.getCriteriaList()) {
+                if(criteria.isWorkEval() == true){
+                    responseDTO.setExpectedWork(criteria.getExpectedWork());
+                }
+            }
+        }
+
       
         List<MilestoneGroupDTO> groupResponseDTOs = new ArrayList<>();
         List<MilestoneNoGroupDTO> noGroupDTOs = new ArrayList<>();
