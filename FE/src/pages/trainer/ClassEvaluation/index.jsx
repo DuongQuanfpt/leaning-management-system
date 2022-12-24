@@ -265,9 +265,9 @@ const ClassEvaluation = () => {
         <Space className="d-flex flex-column-reverse align-items-center justify-content-center align-content-center">
           <Typography.Text>
             <Tooltip
-              title={`${item.assignmentTitle} (${item.evalWeight}%) <${item.status}> ${item.final ? 'Is Final' : ''}`}
+              title={`${item.milestoneTitle} (${item.evalWeight}%) <${item.status}> ${item.final ? 'Is Final' : ''}`}
             >
-              <Typography.Text>{`Assignment ${index + 1}`}</Typography.Text>
+              <Typography.Text>{`Milestone ${index + 1}`}</Typography.Text>
             </Tooltip>
             {data.length > 0 && item.status === 'Closed' && isEditable && (
               <Popover
@@ -588,7 +588,7 @@ const ClassEvaluation = () => {
             evaluation.assignmentGrade.forEach((item, index) => {
               objectReturn = {
                 ...objectReturn,
-                [`${item.assingmentTitle} ${item.evalWeight}%`]: item.grade,
+                [`${item.milestoneTitle} ${item.evalWeight}%`]: item.grade,
               }
             })
 
@@ -596,12 +596,14 @@ const ClassEvaluation = () => {
           }),
         ]
 
-        listAssignment.forEach((item) => {
-          colName.push(`${item?.assignmentTitle} ${item?.evalWeight}%`)
-          colWidth.push({ wch: 15 })
-        })
+        // listAssignment.forEach((item) => {
+        //   colName.push(`${item?.milestoneTitle} ${item?.evalWeight}%`)
+        //   colWidth.push({ wch: 15 })
+        // })
       } else {
       }
+      console.log(listExport)
+      console.log(data)
       const ws = utils.json_to_sheet(listExport)
       const wb = utils.book_new()
       utils.sheet_add_aoa(ws, [colName], { origin: 'A1' })
@@ -689,9 +691,9 @@ const ClassEvaluation = () => {
                       style={{
                         width: '100%',
                       }}
-                      placeholder="Select Assignment "
+                      placeholder="Select Milestone "
                       options={listAssignment.map((item, index) => ({
-                        label: `Assignment ${index + 1}`,
+                        label: `Milestone ${index + 1} `,
                         value: item.assignmentId,
                       }))}
                       value={filter?.assignment.value}
@@ -702,6 +704,7 @@ const ClassEvaluation = () => {
                       }}
                       multiple
                       maxTagCount="responsive"
+                      loading={loading}
                     />
                   </div>
                   <div className="col-lg-3">

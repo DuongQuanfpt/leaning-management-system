@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import moment from 'moment/moment'
 
-import { Breadcrumb, DatePicker, Modal, TimePicker } from 'antd'
+import { Breadcrumb, DatePicker, Modal, Skeleton, TimePicker } from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import { CButton, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle } from '@coreui/react'
 
@@ -36,8 +36,10 @@ const ScheduleDetail = () => {
 
   const [error, setError] = useState('')
   const [isEditMode, setIsEditMode] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
+    setLoading(true)
     scheduleApi
       .getFilter()
       .then((response) => {
@@ -46,6 +48,7 @@ const ScheduleDetail = () => {
       .catch((error) => {
         console.log(error)
       })
+      .finally(() => setLoading(false))
     loadData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -56,6 +59,7 @@ const ScheduleDetail = () => {
   }, [])
 
   const loadData = async () => {
+    setLoading(true)
     await scheduleApi
       .getDetail(id)
       .then((response) => {
@@ -78,6 +82,7 @@ const ScheduleDetail = () => {
       .catch((error) => {
         console.log(error)
       })
+      .finally(() => setLoading(false))
   }
 
   const handleEdit = () => {
@@ -161,114 +166,118 @@ const ScheduleDetail = () => {
               <div className="col-lg-12 m-b30">
                 <div className="widget-box">
                   <div className="widget-inner">
-                    <div className="row">
-                      <div className="form-group col-6">
-                        <label className="col-form-label">Slot</label>
-                        <input className="form-control" type="text" value={detail?.slot} disabled={true} />
-                      </div>
-                      <div className="form-group col-6">
-                        <label className="col-form-label">Topic</label>
-                        <div>
-                          <input
-                            className="form-control"
-                            type="text"
-                            value={detail?.topic}
-                            onChange={(e) => setDetail((prev) => ({ ...prev, topic: e.target.value }))}
-                            disabled={!isEditMode}
-                          />
+                    <Skeleton loading={loading}>
+                      <div className="row">
+                        <div className="form-group col-6">
+                          <label className="col-form-label">Slot</label>
+                          <input className="form-control" type="text" value={detail?.slot} disabled={true} />
                         </div>
-                      </div>
-                      <div className="form-group col-3">
-                        <label className="col-form-label">Room</label>
-                        <div>
-                          <CDropdown className="w-100">
-                            <CDropdownToggle disabled={!isEditMode} color="warning">
-                              {detail.room.title}
-                            </CDropdownToggle>
-                            <CDropdownMenu style={{ width: '100%', maxHeight: '300px', overflow: 'auto' }}>
-                              {listFilter?.roomFilter?.map((room) => (
-                                <CDropdownItem
-                                  value={room}
-                                  onClick={() => setDetail((prev) => ({ ...prev, room: room }))}
-                                >
-                                  {room.title}
-                                </CDropdownItem>
-                              ))}
-                            </CDropdownMenu>
-                          </CDropdown>
+                        <div className="form-group col-6">
+                          <label className="col-form-label">Topic</label>
+                          <div>
+                            <input
+                              className="form-control"
+                              type="text"
+                              value={detail?.topic}
+                              onChange={(e) => setDetail((prev) => ({ ...prev, topic: e.target.value }))}
+                              disabled={!isEditMode}
+                            />
+                          </div>
                         </div>
-                      </div>
-                      <div className="form-group col-3">
-                        <label className="col-form-label">Date</label>
-                        <div>
-                          <DatePicker
-                            className="w-100"
-                            size={'large'}
-                            disabled={!isEditMode}
-                            format={'YYYY-MM-DD'}
-                            allowClear={false}
-                            disabledDate={(current) => current && current < moment().startOf('day')}
-                            value={detail.date}
-                            onChange={(date) => setDetail((prev) => ({ ...prev, date: date }))}
-                          />
+                        <div className="form-group col-3">
+                          <label className="col-form-label">Room</label>
+                          <div>
+                            <CDropdown className="w-100">
+                              <CDropdownToggle disabled={!isEditMode} color="warning">
+                                {detail.room.title}
+                              </CDropdownToggle>
+                              <CDropdownMenu style={{ width: '100%', maxHeight: '300px', overflow: 'auto' }}>
+                                {listFilter?.roomFilter?.map((room) => (
+                                  <CDropdownItem
+                                    value={room}
+                                    onClick={() => setDetail((prev) => ({ ...prev, room: room }))}
+                                  >
+                                    {room.title}
+                                  </CDropdownItem>
+                                ))}
+                              </CDropdownMenu>
+                            </CDropdown>
+                          </div>
                         </div>
-                      </div>
-                      <div className="form-group col-3">
-                        <label className="col-form-label">From</label>
-                        <div>
-                          <TimePicker
-                            className="w-100"
-                            size={'large'}
-                            disabled={!isEditMode}
-                            showNow={false}
-                            minuteStep={10}
-                            secondStep={60}
-                            allowClear={false}
-                            value={detail.fromTime}
-                            onChange={(time) => setDetail((prev) => ({ ...prev, fromTime: time }))}
-                          />
+                        <div className="form-group col-3">
+                          <label className="col-form-label">Date</label>
+                          <div>
+                            <DatePicker
+                              className="w-100"
+                              size={'large'}
+                              disabled={!isEditMode}
+                              format={'YYYY-MM-DD'}
+                              allowClear={false}
+                              disabledDate={(current) => current && current < moment().startOf('day')}
+                              value={detail.date}
+                              onChange={(date) => setDetail((prev) => ({ ...prev, date: date }))}
+                            />
+                          </div>
                         </div>
-                      </div>
-                      <div className="form-group col-3">
-                        <label className="col-form-label">To</label>
-                        <div>
-                          <TimePicker
-                            className="w-100"
-                            size={'large'}
-                            disabled={!isEditMode}
-                            showNow={false}
-                            minuteStep={10}
-                            secondStep={60}
-                            allowClear={false}
-                            value={detail.toTime}
-                            onChange={(time) => setDetail((prev) => ({ ...prev, toTime: time }))}
-                          />
+                        <div className="form-group col-3">
+                          <label className="col-form-label">From</label>
+                          <div>
+                            <TimePicker
+                              className="w-100"
+                              size={'large'}
+                              disabled={!isEditMode}
+                              showNow={false}
+                              minuteStep={10}
+                              secondStep={60}
+                              allowClear={false}
+                              value={detail.fromTime}
+                              onChange={(time) => setDetail((prev) => ({ ...prev, fromTime: time }))}
+                            />
+                          </div>
                         </div>
-                      </div>
+                        <div className="form-group col-3">
+                          <label className="col-form-label">To</label>
+                          <div>
+                            <TimePicker
+                              className="w-100"
+                              size={'large'}
+                              disabled={!isEditMode}
+                              showNow={false}
+                              minuteStep={10}
+                              secondStep={60}
+                              allowClear={false}
+                              value={detail.toTime}
+                              onChange={(time) => setDetail((prev) => ({ ...prev, toTime: time }))}
+                            />
+                          </div>
+                        </div>
 
-                      <ErrorMsg
-                        errorMsg={error}
-                        isError={error === 'You have successfully changed your schedule detail' ? false : true}
-                      />
-                      <div className="d-flex">
-                        {isEditMode ? (
-                          <>
-                            <CButton size="md" className="mr-5" color="warning" onClick={modalConfirm}>
-                              Save
-                            </CButton>
-                            <CButton size="md" color="warning" onClick={handleCancel}>
-                              Cancel
-                            </CButton>
-                          </>
-                        ) : (
-                          <>
-                            <CButton size="md" color="warning" onClick={handleEdit}>
-                              Edit
-                            </CButton>
-                          </>
-                        )}
+                        <ErrorMsg
+                          errorMsg={error}
+                          isError={error === 'You have successfully changed your schedule detail' ? false : true}
+                        />
+                        {defaultDetail.status !== null ? (
+                          <div className="d-flex">
+                            {isEditMode ? (
+                              <>
+                                <CButton size="md" className="mr-5" color="warning" onClick={modalConfirm}>
+                                  Save
+                                </CButton>
+                                <CButton size="md" color="warning" onClick={handleCancel}>
+                                  Cancel
+                                </CButton>
+                              </>
+                            ) : (
+                              <>
+                                <CButton size="md" color="warning" onClick={handleEdit}>
+                                  Edit
+                                </CButton>
+                              </>
+                            )}
+                          </div>
+                        ) : null}
                       </div>
-                    </div>
+                    </Skeleton>
                   </div>
                 </div>
               </div>

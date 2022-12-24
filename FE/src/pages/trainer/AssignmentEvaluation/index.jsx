@@ -87,6 +87,7 @@ const AssignementEvaluation = () => {
   const [listCriteriaSelectCopy, setListCriteriaSelectCopy] = useState([])
   const isEditing = (record) => record.key === editingKey
   const [isEditable, setIsEditable] = useState(false)
+  const [fullData, setFullData] = useState({})
 
   useEffect(() => {
     setIsEditable(false)
@@ -98,6 +99,7 @@ const AssignementEvaluation = () => {
   }, [currentClass])
 
   useEffect(() => {
+    setFullData({})
     setData([])
     setEditingKey('')
     setCopyMode(false)
@@ -131,6 +133,7 @@ const AssignementEvaluation = () => {
       .getAssignmentEvalFilter(currentClass)
       .then((response) => {
         setFilter({})
+        setFullData({})
         setData([])
         setListFilter((prev) => ({ ...prev, milestone: response.milestones }))
 
@@ -185,6 +188,7 @@ const AssignementEvaluation = () => {
       .getAssignmentEvalList(filter?.milestone?.value, params)
       .then((response) => {
         console.log(response)
+        setFullData(response)
         setData(response.listResult.map((item, index) => ({ ...item, key: index })))
         setIsEditable(response.editable)
         if (roles.includes('trainee')) {
@@ -318,7 +322,7 @@ const AssignementEvaluation = () => {
     },
     {
       title: () => (
-        <Tooltip title="Work Point">
+        <Tooltip title={`Work Point`}>
           <Typography.Text>WP</Typography.Text>
         </Tooltip>
       ),
@@ -331,7 +335,7 @@ const AssignementEvaluation = () => {
     },
     {
       title: () => (
-        <Tooltip title="Work Grade">
+        <Tooltip title={`Work Grade (Expected ${fullData.expectedWork ?? 0} WP) <${fullData.workWeight ?? 0}%>`}>
           <Typography.Text>WG</Typography.Text>
         </Tooltip>
       ),
@@ -519,10 +523,7 @@ const AssignementEvaluation = () => {
       toastMessage('error', 'You must choose at least one evaluation')
       return
     }
-    console.log(rowSelected)
     const groupData = data[0]
-
-    console.log(listCriteriaSelectCopy)
 
     rowSelected.forEach((item) => {
       item.criteriaPoints.forEach((item2, index) => {
@@ -531,8 +532,6 @@ const AssignementEvaluation = () => {
         }
       })
     })
-
-    console.log(rowSelected)
 
     const params = {
       evalList: rowSelected.map((item) => ({
@@ -809,7 +808,7 @@ const AssignementEvaluation = () => {
                   <div className="col-lg-2">
                     <Select
                       className="w-100"
-                      placeholder="Select Assignment"
+                      placeholder="Select Milestone"
                       value={filter.milestone}
                       options={listFilter?.milestone?.map((item) => ({
                         label: item.milestoneName,

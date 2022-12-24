@@ -92,7 +92,7 @@ const _nav = [
         ],
       }
     : { component: CNavGroup },
-  isSupporter || isTrainer || isManager
+  isSupporter || isTrainer || isManager || isTrainee
     ? {
         component: CNavGroup,
         name: 'Class Configuration',
@@ -134,7 +134,7 @@ const _nav = [
               }
             : { component: CNavGroup },
 
-          isSupporter || isTrainer || isManager
+          isTrainer || isTrainee
             ? {
                 component: CNavItem,
                 name: 'Trainee Groups',
@@ -150,7 +150,7 @@ const _nav = [
         name: 'Training Tracking',
         icon: <CIcon icon={cilPen} customClassName="nav-icon" />,
         items: [
-          isTrainee
+          isTrainee || isTrainer
             ? {
                 component: CNavItem,
                 name: 'Class Attendance',
