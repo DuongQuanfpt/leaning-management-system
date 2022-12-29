@@ -14,7 +14,7 @@ public interface IMilestoneService {
 
     ResponseEntity<MilestoneResponseDTO> milestoneDetail(Long id);
 
-    ResponseEntity<MilestoneFilter> milestoneFilter(Long id);
+    ResponseEntity<MilestoneFilter> milestoneFilter(Long id , String classCode);
 
     ResponseEntity<String> milestonAdd(MilestoneRequestDTO dto);
 

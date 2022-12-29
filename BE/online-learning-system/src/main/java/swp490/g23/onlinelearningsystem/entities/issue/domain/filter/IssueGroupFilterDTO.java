@@ -16,4 +16,5 @@ public class IssueGroupFilterDTO {
     String groupName;
     String groupTopic;
     List<String> memberId;
+
 }

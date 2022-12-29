@@ -173,7 +173,7 @@ public class SubmitServiceTest {
     currentLogin.setUserId((long) 1);
     currentLogin.setAccountName("quan");
 
-    byte[] data = new byte[] { 1, 2, 3, 4 };
+    byte[] data = new byte[] {};
     InputStream stream = new ByteArrayInputStream(data);
     MultipartFile multipartFile = new MockMultipartFile("file", stream);
 

@@ -156,22 +156,22 @@ public class MilestoneService implements IMilestoneService {
     }
 
     @Override
-    public ResponseEntity<MilestoneFilter> milestoneFilter(Long id) {
+    public ResponseEntity<MilestoneFilter> milestoneFilter(Long id , String classCode) {
         User user = userRepository.findById(id).get();
         MilestoneFilter filter = new MilestoneFilter();
-        List<Classes> classes = classRepositories.findClassTrainerAssigned(user.getAccountName());
-        List<Assignment> assignments = assignmentRepository.findAll();
-
+        // List<Classes> classes = classRepositories.findClassTrainerAssigned(user.getAccountName());
+        Classes currentClass = classRepositories.findClassByCode(classCode);
+        List<Assignment> assignments = assignmentRepository.findAssigmentBySubjectCode(currentClass.getSubject().getSubjectCode());
         List<MilestoneStatusEntity> statusFilter = new ArrayList<>();
         for (MilestoneStatusEnum status : new ArrayList<MilestoneStatusEnum>(
                 EnumSet.allOf(MilestoneStatusEnum.class))) {
             statusFilter.add(new MilestoneStatusEntity(status));
         }
 
-        List<MilestoneFilterClass> classFilter = new ArrayList<>();
-        for (Classes c : classes) {
-            classFilter.add(new MilestoneFilterClass(c.getCode(), c.getSubject().getSubjectCode()));
-        }
+        // List<MilestoneFilterClass> classFilter = new ArrayList<>();
+        // for (Classes c : classes) {
+        //     classFilter.add(new MilestoneFilterClass(c.getCode(), c.getSubject().getSubjectCode()));
+        // }
 
         List<AssignmentResponseDTO> assFilter = new ArrayList<>();
         for (Assignment assignment : assignments) {
@@ -183,7 +183,7 @@ public class MilestoneService implements IMilestoneService {
 
         filter.setStatusFilter(statusFilter);
         filter.setAssFilter(assFilter);
-        filter.setClassFilter(classFilter);
+        // filter.setClassFilter(classFilter);
         return ResponseEntity.ok(filter);
     }
 

@@ -12,4 +12,7 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
 
     @Query(value = "SELECT a FROM Assignment a WHERE a.forSubject.subjectStatus = '1'")
     List<Assignment> findAssigmentWithActiveSubject();
+
+    @Query(value = "SELECT a FROM Assignment a WHERE a.forSubject.subjectCode = :subjectCode AND a.status = '1'")
+    List<Assignment> findAssigmentBySubjectCode(String subjectCode);
 }

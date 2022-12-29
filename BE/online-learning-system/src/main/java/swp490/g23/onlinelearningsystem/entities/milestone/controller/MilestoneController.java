@@ -75,9 +75,10 @@ public class MilestoneController {
         return milestoneService.milestonAdd(dto);
     }
 
-    @GetMapping(value = "/milestone-filter")
-    public ResponseEntity<MilestoneFilter> milestoneFilter(@AuthenticationPrincipal User user) {
+    @GetMapping(value = "/milestone-filter/{classCode}")
+    public ResponseEntity<MilestoneFilter> milestoneFilter(@AuthenticationPrincipal User user,
+    @PathVariable String classCode) {
 
-        return milestoneService.milestoneFilter(user.getUserId());
+        return milestoneService.milestoneFilter(user.getUserId(),classCode);
     }
 }

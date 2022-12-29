@@ -25,12 +25,16 @@ import swp490.g23.onlinelearningsystem.entities.eval_criteria.repositories.crite
 import swp490.g23.onlinelearningsystem.entities.eval_criteria.repositories.criteria.CriteriaRepositories;
 import swp490.g23.onlinelearningsystem.entities.eval_criteria.repositories.criteriaEntity.CriteriaQuery;
 import swp490.g23.onlinelearningsystem.entities.eval_criteria.service.IEvalCriteriaService;
+import swp490.g23.onlinelearningsystem.entities.eval_detail.domain.EvalDetail;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.Milestone;
 import swp490.g23.onlinelearningsystem.entities.milestone.domain.response.MilestoneResponseDTO;
 import swp490.g23.onlinelearningsystem.entities.milestone.repositories.MilestoneRepository;
 import swp490.g23.onlinelearningsystem.entities.milestone.service.impl.MilestoneService;
+import swp490.g23.onlinelearningsystem.entities.milestone_eval.domain.MilestoneEval;
+import swp490.g23.onlinelearningsystem.entities.milestone_eval.repositories.MilestoneEvalRepository;
 import swp490.g23.onlinelearningsystem.entities.user.domain.User;
 import swp490.g23.onlinelearningsystem.entities.user.repositories.UserRepository;
+import swp490.g23.onlinelearningsystem.enums.MilestoneStatusEnum;
 import swp490.g23.onlinelearningsystem.enums.Status;
 import swp490.g23.onlinelearningsystem.enums.enumentities.StatusEntity;
 import swp490.g23.onlinelearningsystem.errorhandling.CustomException.CustomException;
@@ -55,6 +59,9 @@ public class EvalCriteriaService implements IEvalCriteriaService {
 
     @Autowired
     private MilestoneRepository milestoneRepository;
+
+    @Autowired
+    private MilestoneEvalRepository milestoneEvalRepository;
 
     @Autowired
     private MilestoneService milestoneService;
@@ -124,6 +131,7 @@ public class EvalCriteriaService implements IEvalCriteriaService {
     @Override
     public ResponseEntity<String> updateStatus(Long criteriaId) {
         EvalCriteria evalCriteria = evalCriteriaRepositories.findById(criteriaId).get();
+
         if (evalCriteria == null) {
             throw new CustomException("Criteria doesn't exist!");
         }
@@ -133,7 +141,51 @@ public class EvalCriteriaService implements IEvalCriteriaService {
             evalCriteria.setStatus(Status.Active);
         }
         evalCriteriaRepositories.save(evalCriteria);
+
+        if (evalCriteria.getMilestone() != null && evalCriteria.getEvalDetails() != null
+                && !evalCriteria.getEvalDetails().isEmpty()) {
+            if (evalCriteria.getMilestone().getStatus() == MilestoneStatusEnum.In_Progress) {
+                milestoneEvaluate(evalCriteria);
+            }
+
+        }
         return ResponseEntity.ok("Status update successfully");
+    }
+
+    private void milestoneEvaluate(EvalCriteria evalCriteria) {
+        List<MilestoneEval> newEvals = new ArrayList<>();
+        for (MilestoneEval milestoneEval : evalCriteria.getMilestone().getMilestoneEvals()) {
+            Double newGrade = (double) 0;
+            if (milestoneEval.getSubmit().getClassUser() != null) {
+                for (EvalDetail detail : milestoneEval.getEvalDetails()) {
+                    if (detail.getEvalCriteria().getStatus() == Status.Active) {
+                        newGrade += (detail.getGrade() * detail.getEvalCriteria().getEvalWeight() / 100);
+                    }
+                }
+
+            } else {
+                Double weight = (double) 0;
+                for (EvalDetail detail : milestoneEval.getEvalDetails()) {
+                    if (detail.getEvalCriteria().getStatus() == Status.Active) {
+                        newGrade += (detail.getGrade() * detail.getEvalCriteria().getEvalWeight());
+                        weight += detail.getEvalCriteria().getEvalWeight();
+                    }
+                }
+                newGrade = newGrade/weight;
+            }
+
+            if (milestoneEval.getBonus() != null) {
+                newGrade += milestoneEval.getBonus();
+            }
+
+            if (newGrade >= 10) {
+                newGrade = (double) 10;
+            }
+
+            milestoneEval.setGrade(newGrade);
+            newEvals.add(milestoneEval);
+        }
+        milestoneEvalRepository.saveAll(newEvals);
     }
 
     @Override
@@ -174,7 +226,7 @@ public class EvalCriteriaService implements IEvalCriteriaService {
         }
         if (dto.getIsWorkEval() == 1) {
             for (EvalCriteria eval : evalCriteria.getAssignment().getEvalCriteriaList()) {
-                if (eval.isWorkEval() == true) {
+                if (eval.isWorkEval() == true && !evalCriteria.getCriteriaId().equals(eval.getCriteriaId())) {
                     throw new CustomException("Assignment of this eval already got eval is work eval");
                 }
             }
@@ -184,6 +236,14 @@ public class EvalCriteriaService implements IEvalCriteriaService {
         }
 
         evalCriteriaRepositories.save(evalCriteria);
+
+        if (evalCriteria.getMilestone() != null && evalCriteria.getEvalDetails() != null
+                && !evalCriteria.getEvalDetails().isEmpty()) {
+            if (evalCriteria.getMilestone().getStatus() == MilestoneStatusEnum.In_Progress) {
+                milestoneEvaluate(evalCriteria);
+            }
+        }
+
         return ResponseEntity.ok("Criteria updated successfully");
     }
 
@@ -335,6 +395,14 @@ public class EvalCriteriaService implements IEvalCriteriaService {
         } else {
             evalCriteria.setStatus(Status.Active);
         }
+
+        if (evalCriteria.getMilestone() != null && evalCriteria.getEvalDetails() != null
+                && !evalCriteria.getEvalDetails().isEmpty()) {
+            if (evalCriteria.getMilestone().getStatus() == MilestoneStatusEnum.In_Progress) {
+                milestoneEvaluate(evalCriteria);
+            }
+
+        }
         evalCriteriaRepositories.save(evalCriteria);
         return ResponseEntity.ok("Status update successfully");
     }
@@ -386,6 +454,13 @@ public class EvalCriteriaService implements IEvalCriteriaService {
             evalCriteria.setWorkEval(false);
         }
         evalCriteriaRepositories.save(evalCriteria);
+
+        if (evalCriteria.getMilestone() != null && evalCriteria.getEvalDetails() != null
+                && !evalCriteria.getEvalDetails().isEmpty()) {
+            if (evalCriteria.getMilestone().getStatus() == MilestoneStatusEnum.In_Progress) {
+                milestoneEvaluate(evalCriteria);
+            }
+        }
         return ResponseEntity.ok("Criteria updated successfully");
     }
 
@@ -460,11 +535,13 @@ public class EvalCriteriaService implements IEvalCriteriaService {
         if (entity.getAssignment().getForSubject().getSubjectCode() != null) {
             responseDTO.setSubjectName(entity.getAssignment().getForSubject().getSubjectCode());
         }
+
         if (entity.getMilestone() != null) {
             responseDTO.setMilestone(
                     new MilestoneType(entity.getMilestone().getMilestoneId(), entity.getMilestone().getTitle()));
             responseDTO.setClassCode(entity.getMilestone().getClasses().getCode());
         }
+
         responseDTO.setStatus(entity.getStatus());
         responseDTO.setIsTeamEval(entity.isTeamEval() ? 1 : 0);
         responseDTO.setIsWorkEval(entity.isWorkEval() ? 1 : 0);

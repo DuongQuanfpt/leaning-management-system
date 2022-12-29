@@ -317,7 +317,7 @@ public class MilestoneEvalService implements IMilestoneEvalService {
 
             milestoneEval.setComment(requestDTO.getComment());
             if(requestDTO.getBonus() != null) {
-                if (requestDTO.getBonus() >= 0 && requestDTO.getBonus() <= 2) {
+                if (requestDTO.getBonus() >= -2 && requestDTO.getBonus() <= 2) {
                     milestoneEval.setBonus(requestDTO.getBonus());
                 }else {
                     throw new CustomException("invalid milestone bonus grade"); 

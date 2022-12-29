@@ -21,7 +21,8 @@ public class CriteriaRepositories {
                 "SELECT e FROM EvalCriteria e WHERE e.assignment.forSubject.subjectStatus = '1' ");
 
         if (keyword != null) {
-            query.append(" AND (e.criteriaName LIKE '%" + keyword + "%')");
+            query.append(" AND (e.criteriaName LIKE '%" + keyword + "%' OR e.assignment.title LIKE '%" + keyword
+                    + "%' OR e.assignment.forSubject.subjectCode LIKE '%" + keyword + "%')");
         }
 
         if (filterStatus != null) {

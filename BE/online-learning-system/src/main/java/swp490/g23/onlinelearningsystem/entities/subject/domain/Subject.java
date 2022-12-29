@@ -43,7 +43,7 @@ public class Subject extends BaseEntity {
     @Column
     private Status subjectStatus;
 
-    @Column
+    @Column(columnDefinition="TEXT")
     private String body;
 
     @ManyToOne
